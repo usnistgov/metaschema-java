@@ -26,10 +26,38 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.model.IInstance;
+
 /**
  * Represents a Metaschema module instance bound to Java data.
  */
-// REFACTOR: combine with IBoundModuleInstance
-public interface IBoundInstance extends IBoundProperty {
-  // no additional methods
+public interface IBoundInstance extends IBoundProperty, IInstance {
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Don't delegate to the definition, since this is an inline instance that is
+   * both a definition and an instance.
+   */
+  @Override
+  default Object getEffectiveDefaultValue() {
+    return IInstance.super.getEffectiveDefaultValue();
+  }
+
+  @Override
+  IBoundDefinitionModel getContainingDefinition();
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * An instance is contained in the parent definition's module.
+   */
+  @Override
+  default IBoundModule getContainingModule() {
+    return getContainingDefinition().getContainingModule();
+  }
+
+  @Override
+  default Object getValue(Object parent) {
+    return IBoundProperty.super.getValue(parent);
+  }
 }

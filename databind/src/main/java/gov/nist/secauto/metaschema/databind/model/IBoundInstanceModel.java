@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * Represents an assembly or field instance bound to Java data.
  */
 public interface IBoundInstanceModel
-    extends IBoundModuleInstance, IModelInstance, IFeatureJavaField {
+    extends IBoundInstance, IModelInstance {
   /**
    * Get the collection Java item type for the Java field associated with this
    * instance.
@@ -121,7 +121,7 @@ public interface IBoundInstanceModel
    */
   @Override
   default Object getValue(Object parent) {
-    return IFeatureJavaField.super.getValue(parent);
+    return IBoundInstance.super.getValue(parent);
   }
 
   /**
@@ -131,6 +131,6 @@ public interface IBoundInstanceModel
    */
   @Override
   default void setValue(Object parentObject, Object value) {
-    IFeatureJavaField.super.setValue(parentObject, value);
+    IBoundInstance.super.setValue(parentObject, value);
   }
 }

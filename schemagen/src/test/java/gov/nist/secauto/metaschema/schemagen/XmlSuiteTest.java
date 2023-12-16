@@ -75,7 +75,7 @@ import javax.xml.stream.XMLStreamException;
 class XmlSuiteTest
     extends AbstractSchemaGeneratorTestSuite {
   // private static final XmlSchemaContentValidator SCHEMA_VALIDATOR;
-
+  //
   // static {
   // URL schemaResource =
   // ModuleLoader.class.getResource("/schema/xml/XMLSchema.xsd");
@@ -90,8 +90,8 @@ class XmlSuiteTest
 
   @Override
   protected Supplier<IContentValidator> getSchemaValidatorSupplier() {
-    return null;
     // return () -> SCHEMA_VALIDATOR;
+    return null;
   }
 
   @Override
@@ -105,7 +105,7 @@ class XmlSuiteTest
   }
 
   @Override
-  protected BiFunction<IModule, Writer, Void> getGeneratorSupplier() {
+  protected BiFunction<IModule<?, ?, ?, ?, ?>, Writer, Void> getGeneratorSupplier() {
     return XML_SCHEMA_PROVIDER;
   }
 
@@ -138,7 +138,6 @@ class XmlSuiteTest
         contentCase(Format.JSON, "collapsible_test_singleton_PASS.json", true));
   }
 
-  @Disabled
   @Test
   void testByKey() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     doTest(

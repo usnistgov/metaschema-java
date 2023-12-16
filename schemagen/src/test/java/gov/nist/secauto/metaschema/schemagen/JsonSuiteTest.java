@@ -74,7 +74,7 @@ class JsonSuiteTest
   }
 
   @Override
-  protected BiFunction<IModule, Writer, Void> getGeneratorSupplier() {
+  protected BiFunction<IModule<?, ?, ?, ?, ?>, Writer, Void> getGeneratorSupplier() {
     return JSON_SCHEMA_PROVIDER;
   }
 

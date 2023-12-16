@@ -63,11 +63,11 @@ public abstract class AbstractBoundInstanceModelJavaField<A extends Annotation>
   public IModelInstanceCollectionInfo getCollectionInfo() {
     return collectionInfo.get();
   }
-
-  @Override
-  public Object getValue(Object parent) {
-    return IFeatureInstanceModelGroupAs.super.getValue(parent);
-  }
+  //
+  // @Override
+  // public Object getValue(Object parent) {
+  // return IFeatureInstanceModelGroupAs.super.getValue(parent);
+  // }
 
   @Override
   public void setValue(Object parentObject, Object value) {

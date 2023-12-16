@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
-import gov.nist.secauto.metaschema.databind.model.IBoundModuleInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstance;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -36,7 +36,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractBoundInstanceJavaField<A extends Annotation, P extends IBoundDefinitionModel>
     extends AbstractBoundAnnotatedJavaField<A>
-    implements IBoundModuleInstance {
+    implements IBoundInstance {
   @NonNull
   private final P containingDefinition;
 
@@ -56,5 +56,10 @@ public abstract class AbstractBoundInstanceJavaField<A extends Annotation, P ext
   @Override
   public P getParentContainer() {
     return containingDefinition;
+  }
+
+  @Override
+  public Object getValue(Object parentItem) {
+    return super.getValue(parentItem);
   }
 }

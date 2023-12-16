@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly
 import java.math.BigInteger;
 
 @SuppressWarnings("PMD")
-@MetaschemaAssembly(name = "simple-assembly", moduleClass = TestMetaschema.class, rootName = "test",
+@MetaschemaAssembly(name = "simple-assembly", rootName = "test", moduleClass = TestMetaschema.class,
     rootNamespace = "http://example.com/ns")
 public class SimpleAssembly {
   @BoundFlag(useName = "id")

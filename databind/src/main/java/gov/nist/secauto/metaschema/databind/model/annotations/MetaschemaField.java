@@ -131,5 +131,4 @@ public @interface MetaschemaField {
    * @return the value constraints
    */
   ValueConstraints valueConstraints() default @ValueConstraints;
-
 }

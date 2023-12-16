@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValida
 import gov.nist.secauto.metaschema.core.model.validation.XmlSchemaContentValidator;
 import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
@@ -77,9 +78,9 @@ public abstract class AbstractSchemaGeneratorTestSuite
   @NonNull
   protected static final IConfiguration<SchemaGenerationFeature<?>> SCHEMA_GENERATION_CONFIG;
   @NonNull
-  protected static final BiFunction<IModule, Writer, Void> XML_SCHEMA_PROVIDER;
+  protected static final BiFunction<IModule<?, ?, ?, ?, ?>, Writer, Void> XML_SCHEMA_PROVIDER;
   @NonNull
-  protected static final BiFunction<IModule, Writer, Void> JSON_SCHEMA_PROVIDER;
+  protected static final BiFunction<IModule<?, ?, ?, ?, ?>, Writer, Void> JSON_SCHEMA_PROVIDER;
   @NonNull
   protected static final JsonSchemaContentValidator JSON_SCHEMA_VALIDATOR;
   @NonNull
@@ -95,7 +96,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     features.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     SCHEMA_GENERATION_CONFIG = features;
 
-    BiFunction<IModule, Writer, Void> xmlProvider = (module, writer) -> {
+    BiFunction<IModule<?, ?, ?, ?, ?>, Writer, Void> xmlProvider = (module, writer) -> {
       assert module != null;
       assert writer != null;
       try {
@@ -107,7 +108,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     };
     XML_SCHEMA_PROVIDER = xmlProvider;
 
-    BiFunction<IModule, Writer, Void> jsonProvider = (module, writer) -> {
+    BiFunction<IModule<?, ?, ?, ?, ?>, Writer, Void> jsonProvider = (module, writer) -> {
       assert module != null;
       assert writer != null;
       try {
@@ -128,10 +129,12 @@ public abstract class AbstractSchemaGeneratorTestSuite
     }
 
     @SuppressWarnings("null")
-    @NonNull Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
+    @NonNull
+    Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
       try {
         URL schemaResource = path.toUri().toURL();
-        @SuppressWarnings("resource") StreamSource source
+        @SuppressWarnings("resource")
+        StreamSource source
             = new StreamSource(schemaResource.openStream(), schemaResource.toString());
         List<? extends Source> schemaSources = Collections.singletonList(source);
         return new XmlSchemaContentValidator(schemaSources);
@@ -141,7 +144,8 @@ public abstract class AbstractSchemaGeneratorTestSuite
     };
     XML_CONTENT_VALIDATOR_PROVIDER = xmlContentValidatorProvider;
 
-    @NonNull Function<Path, JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
+    @NonNull
+    Function<Path, JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
       try (InputStream is = Files.newInputStream(path, StandardOpenOption.READ)) {
         assert is != null;
         return new JsonSchemaContentValidator(is);
@@ -163,12 +167,13 @@ public abstract class AbstractSchemaGeneratorTestSuite
     return ObjectUtils.notNull(Paths.get("target/test-schemagen"));
   }
 
-  protected Path produceXmlSchema(@NonNull IModule module, @NonNull Path schemaPath) throws IOException {
+  protected Path produceXmlSchema(@NonNull IModule<?, ?, ?, ?, ?> module, @NonNull Path schemaPath) throws IOException {
     produceSchema(module, schemaPath, XML_SCHEMA_PROVIDER);
     return schemaPath;
   }
 
-  protected Path produceJsonSchema(@NonNull IModule module, @NonNull Path schemaPath) throws IOException {
+  protected Path produceJsonSchema(@NonNull IModule<?, ?, ?, ?, ?> module, @NonNull Path schemaPath)
+      throws IOException {
     produceSchema(module, schemaPath, JSON_SCHEMA_PROVIDER);
     return schemaPath;
   }
@@ -187,7 +192,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     ModuleLoader loader = new ModuleLoader();
     loader.allowEntityResolution();
     Path modulePath = collectionPath.resolve(metaschemaName);
-    IModule module = loader.load(modulePath);
+    IModule<?, ?, ?, ?, ?> module = loader.load(modulePath);
 
     Path jsonSchema = produceJsonSchema(module, generationDir.resolve(generatedSchemaName + ".json"));
     assertEquals(true, validate(JSON_SCHEMA_VALIDATOR, jsonSchema),
@@ -207,7 +212,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
       throw new IllegalStateException();
     }
 
-    IBindingContext context = IBindingContext.instance();
+    IBindingContext context = new DefaultBindingContext();
     context.registerModule(module, generationDir);
     for (ContentCase contentCase : contentCases) {
       Path contentPath = collectionPath.resolve(contentCase.getName());

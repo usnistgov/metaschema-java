@@ -68,11 +68,11 @@ public abstract class AbstractBoundDefinitionFlagContainer<A extends Annotation>
     this.bindingContext = bindingContext;
     this.module = ObjectUtils.notNull(Lazy.lazy(() -> bindingContext.registerModule(getModuleClass())));
     this.beforeDeserializeMethod = ClassIntrospector.getMatchingMethod(
-        getBoundClass(),
+        clazz,
         "beforeDeserialize",
         Object.class);
     this.afterDeserializeMethod = ClassIntrospector.getMatchingMethod(
-        getBoundClass(),
+        clazz,
         "afterDeserialize",
         Object.class);
   }

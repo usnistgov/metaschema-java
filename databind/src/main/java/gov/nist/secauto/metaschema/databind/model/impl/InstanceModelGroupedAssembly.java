@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
-import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -53,7 +53,7 @@ public class InstanceModelGroupedAssembly
   @NonNull
   private final IBoundDefinitionAssembly definition;
   @NonNull
-  private final Lazy<List<IBoundProperty>> jsonProperties;
+  private final Lazy<Map<String, IBoundProperty>> jsonProperties;
 
   /**
    * Construct a new field model instance instance that is a member of a choice
@@ -74,7 +74,7 @@ public class InstanceModelGroupedAssembly
     this.definition = definition;
     this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> {
       IBoundInstanceFlag jsonKey = getJsonKey();
-      Predicate<IBoundInstanceFlag> flagFilter = jsonKey == null ? null : (flag) -> jsonKey.equals(flag);
+      Predicate<IBoundInstanceFlag> flagFilter = jsonKey == null ? null : (flag) -> !jsonKey.equals(flag);
       return getDefinition().getJsonProperties(flagFilter);
     }));
   }
@@ -84,7 +84,7 @@ public class InstanceModelGroupedAssembly
   // ------------------------------------------
 
   @Override
-  public List<IBoundProperty> getJsonProperties() {
+  public Map<String, IBoundProperty> getJsonProperties() {
     return ObjectUtils.notNull(jsonProperties.get());
   }
 

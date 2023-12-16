@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents an assembly model instance that is a member of a choice group
@@ -80,7 +79,7 @@ public interface IBoundInstanceModelGroupedAssembly
   IBoundDefinitionAssembly getDefinition();
 
   @Override
-  default Object readItem(@Nullable Object parent, @NonNull IItemReadHandler handler) throws IOException {
+  default Object readItem(Object parent, @NonNull IItemReadHandler handler) throws IOException {
     return handler.readItemAssembly(ObjectUtils.requireNonNull(parent, "parent"), this);
   }
 

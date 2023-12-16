@@ -48,7 +48,6 @@ import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,7 +75,7 @@ public class DefinitionAssembly
   @Nullable
   private final QName xmlRootQName;
   @NonNull
-  private final Lazy<List<IBoundProperty>> jsonProperties;
+  private final Lazy<Map<String, IBoundProperty>> jsonProperties;
 
   public DefinitionAssembly(
       @NonNull Class<?> clazz,
@@ -101,7 +100,7 @@ public class DefinitionAssembly
     }));
     this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> getJsonProperties(null)));
 
-    if (isRoot()) {
+    if (this.xmlRootQName != null) {
       bindingContext.registerBindingMatcher(this);
     }
   }
@@ -141,7 +140,7 @@ public class DefinitionAssembly
   }
 
   @Override
-  public List<IBoundProperty> getJsonProperties() {
+  public Map<String, IBoundProperty> getJsonProperties() {
     return ObjectUtils.notNull(jsonProperties.get());
   }
 

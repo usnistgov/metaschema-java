@@ -31,7 +31,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceModelAssemblyComplex;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
@@ -44,8 +43,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Represents an assembly instance bound to Java field.
  */
 public interface IBoundInstanceModelAssembly
-    extends IBoundInstanceModelNamed, IAssemblyInstance,
-    IFeatureComplexItemValueHandler {
+    extends IBoundInstanceModelNamedComplex, IAssemblyInstance {
 
   /**
    * Create a new bound assembly instance.
@@ -94,7 +92,7 @@ public interface IBoundInstanceModelAssembly
 
   @Override
   default String getJsonKeyFlagName() {
-    return IBoundInstanceModelNamed.super.getJsonKeyFlagName();
+    return IBoundInstanceModelNamedComplex.super.getJsonKeyFlagName();
   }
 
   @Override

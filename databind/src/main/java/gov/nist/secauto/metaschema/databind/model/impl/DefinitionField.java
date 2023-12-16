@@ -49,7 +49,6 @@ import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -72,7 +71,7 @@ public class DefinitionField
   @NonNull
   private final Lazy<IValueConstrained> constraints;
   @NonNull
-  private final Lazy<List<IBoundProperty>> jsonProperties;
+  private final Lazy<Map<String, IBoundProperty>> jsonProperties;
 
   /**
    * Collect all fields that are part of the model for this class.
@@ -125,8 +124,8 @@ public class DefinitionField
     if (field == null) {
       throw new IllegalArgumentException(
           String.format("Class '%s' is missing the '%s' annotation on one of its fields.",
-              getBoundClass().getName(),
-              BoundFieldValue.class.getName()));
+              clazz.getName(),
+              BoundFieldValue.class.getName())); // NOPMD false positive
     }
     this.fieldValue = new FieldValue(field, BoundFieldValue.class);
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(this, this::handleFlagInstance)));
@@ -138,7 +137,7 @@ public class DefinitionField
     }));
     this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> {
       IBoundInstanceFlag jsonValueKey = getJsonValueKeyFlagInstance();
-      Predicate<IBoundInstanceFlag> flagFilter = jsonValueKey == null ? null : (flag) -> flag.equals(jsonValueKey);
+      Predicate<IBoundInstanceFlag> flagFilter = jsonValueKey == null ? null : (flag) -> !flag.equals(jsonValueKey);
       return getJsonProperties(flagFilter);
     }));
   }
@@ -194,7 +193,7 @@ public class DefinitionField
   }
 
   @Override
-  public List<IBoundProperty> getJsonProperties() {
+  public Map<String, IBoundProperty> getJsonProperties() {
     return ObjectUtils.notNull(jsonProperties.get());
   }
 
@@ -261,9 +260,10 @@ public class DefinitionField
         @NonNull Field javaField,
         @NonNull Class<BoundFieldValue> annotationClass) {
       super(javaField, annotationClass);
-      this.javaTypeAdapter
-          = ModelUtil.getDataTypeAdapter(getAnnotation().typeAdapter(), getBindingContext());
-      this.defaultValue = ModelUtil.resolveNullOrValue(getAnnotation().defaultValue(), getJavaTypeAdapter());
+      this.javaTypeAdapter = ModelUtil.getDataTypeAdapter(
+          getAnnotation().typeAdapter(),
+          getBindingContext());
+      this.defaultValue = ModelUtil.resolveNullOrValue(getAnnotation().defaultValue(), this.javaTypeAdapter);
     }
 
     @Override

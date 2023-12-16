@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
@@ -46,15 +47,14 @@ import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAsse
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
 import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
-import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
-import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -65,7 +65,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class MetaschemaJsonReader
-    implements IJsonParsingContext, IItemReadHandler {
+    implements IJsonParsingContext {
   private static final Logger LOGGER = LogManager.getLogger(MetaschemaJsonReader.class);
 
   @NonNull
@@ -110,394 +110,468 @@ public class MetaschemaJsonReader
     return problemHandler;
   }
 
-  /**
-   * Parses JSON into a bound object. This assembly must be a root assembly for
-   * which a call to {@link IBoundDefinitionAssembly#isRoot()} will return
-   * {@code true}.
-   * <p>
-   * This method expects the parser's current token to be:
-   * <ul>
-   * <li>{@code null} indicating that the parser has not yet parsed a JSON
-   * node;</li>
-   * <li>a {@link JsonToken#START_OBJECT} which represents the object wrapper
-   * containing the root field,</li>
-   * <li>a {@link JsonToken#FIELD_NAME} representing the root field to parse,
-   * or</li>
-   * <li>a peer field to the root field that will be handled by the
-   * {@link IJsonProblemHandler#handleUnknownProperty(gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel, Object, String, IJsonParsingContext)}
-   * method.</li>
-   * </ul>
-   * <p>
-   * After parsing the current token will be:
-   * <ul>
-   * <li>the next token after the {@link JsonToken#END_OBJECT} corresponding to
-   * the initial {@link JsonToken#START_OBJECT} parsed by this method;</li>
-   * <li>the next token after the {@link JsonToken#END_OBJECT} for the root
-   * field's value; or</li>
-   * <li>the next token after all fields and associated values have been parsed
-   * looking for the root field. This next token will be the
-   * {@link JsonToken#END_OBJECT} for the object containing the fields. In this
-   * case the method will throw an {@link IOException} indicating the root was not
-   * found.</li>
-   * </ul>
-   *
-   * @param <T>
-   *          the Java type of the resulting bound instance
-   * @param targetDefinition
-   *          the definition describing the root element data to parse
-   * @return the bound object instance representing the JSON object
-   * @throws IOException
-   *           if an error occurred while parsing the JSON
-   */
-  @SuppressWarnings({
-      "PMD.CyclomaticComplexity", "PMD.NPathComplexity" // acceptable
-  })
-  @Nullable
-  public <T> T read(@NonNull IBoundDefinitionAssembly targetDefinition) throws IOException {
-    if (!targetDefinition.isRoot()) {
-      throw new UnsupportedOperationException(
-          String.format("The assembly '%s' is not a root assembly.", targetDefinition.getBoundClass().getName()));
+  public class InstanceReader implements IJsonParsingContext.IInstanceReader {
+    @NonNull
+    private final ItemReader itemReader;
+
+    protected InstanceReader(@NonNull ItemReader itemReader) {
+      this.itemReader = itemReader;
     }
 
-    boolean objectWrapper = false;
-    if (parser.currentToken() == null) {
-      // advance to the first token
-      parser.nextToken();
+    /**
+     * @return the startElement
+     */
+    @Override
+    @NonNull
+    public JsonParser getJsonParser() {
+      return getItemReader().getJsonParser();
     }
 
-    if (JsonToken.START_OBJECT.equals(parser.currentToken())) {
-      // advance past the start object to the field name
-      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-      objectWrapper = true;
+    @Override
+    @NonNull
+    public IJsonParsingContext.ItemReader getItemReader() {
+      return itemReader;
     }
 
-    String rootFieldName = targetDefinition.getRootJsonName();
-    JsonToken token;
-    Object instance = null;
-    while (!(JsonToken.END_OBJECT.equals(token = parser.currentToken()) || token == null)) {
-      if (!JsonToken.FIELD_NAME.equals(token)) {
-        throw new IOException(String.format("Expected FIELD_NAME token, found '%s'", token.toString()));
+    @Override
+    public Object readItemFlag(Object parentItem, IBoundInstanceFlag instance) throws IOException {
+      return readInstance(instance, parentItem);
+    }
+
+    @Override
+    public Object readItemField(Object parentItem, IBoundInstanceModelFieldScalar instance) throws IOException {
+      return readModelInstance(instance, parentItem);
+    }
+
+    @Override
+    public Object readItemField(Object parentItem, IBoundInstanceModelFieldComplex instance) throws IOException {
+      return readModelInstance(instance, parentItem);
+    }
+
+    @Override
+    public Object readItemField(Object parentItem, IBoundInstanceModelGroupedField instance) throws IOException {
+      throw new UnsupportedOperationException("not needed");
+    }
+
+    @Override
+    public Object readItemField(Object item, IBoundDefinitionFieldComplex definition) throws IOException {
+      return definition.readItem(item, getItemReader());
+    }
+
+    @Override
+    public Object readItemFieldValue(Object parentItem, IBoundFieldValue fieldValue) throws IOException {
+      return readInstance(fieldValue, parentItem);
+    }
+
+    @Override
+    public Object readItemAssembly(Object parentItem, IBoundInstanceModelAssembly instance) throws IOException {
+      return readModelInstance(instance, parentItem);
+    }
+
+    @Override
+    public Object readItemAssembly(Object parentItem, IBoundInstanceModelGroupedAssembly instance) throws IOException {
+      throw new UnsupportedOperationException("not needed");
+    }
+
+    @Override
+    public Object readItemAssembly(Object item, IBoundDefinitionAssembly definition) throws IOException {
+      return getItemReader().readItemAssembly(item, definition);
+    }
+
+    @Override
+    public Object readChoiceGroupItem(Object parentItem, IBoundInstanceModelChoiceGroup instance) throws IOException {
+      return readModelInstance(instance, parentItem);
+    }
+
+    @NonNull
+    private Object readInstance(
+        @NonNull IBoundProperty instance,
+        @NonNull Object parentItem) throws IOException {
+      return instance.readItem(parentItem, getItemReader());
+    }
+
+    @NonNull
+    private Object readModelInstance(
+        @NonNull IBoundInstanceModel instance,
+        @NonNull Object parentItem) throws IOException {
+      IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
+      return collectionInfo.readItems(new ModelInstanceReadHandler(instance, parentItem, getItemReader()));
+    }
+  }
+
+  private class ItemReader implements IJsonParsingContext.ItemReader {
+    @NonNull
+    private final JsonParser parser;
+
+    protected ItemReader(@NonNull JsonParser parser) {
+      this.parser = parser;
+    }
+
+    /**
+     * @return the startElement
+     */
+    @Override
+    @NonNull
+    public JsonParser getJsonParser() {
+      return parser;
+    }
+
+    @Override
+    public Object readItemFlag(Object parentItem, IBoundInstanceFlag instance) throws IOException {
+      return readScalarItem(instance);
+    }
+
+    @Override
+    public Object readItemField(Object parentItem, IBoundInstanceModelFieldScalar instance) throws IOException {
+      return readScalarItem(instance);
+    }
+
+    @Override
+    public Object readItemField(Object parentItem, IBoundInstanceModelFieldComplex instance) throws IOException {
+      IBoundInstanceFlag jsonKey = instance.getJsonKey();
+      IBoundDefinitionFieldComplex definition = instance.getDefinition();
+      Map<String, IBoundProperty> jsonProperties = instance.getJsonProperties();
+      Object retval;
+
+      IBoundInstanceFlag jsonValueKey = definition.getJsonValueKeyFlagInstance();
+      IJsonProblemHandler problemHandler = jsonValueKey == null
+          ? getProblemHandler()
+          : new JsomValueKeyProblemHandler(getProblemHandler(), jsonValueKey);
+
+      if (jsonProperties.isEmpty() && jsonValueKey == null) {
+        retval = readComplexDefinitionObject(
+            parentItem,
+            definition,
+            jsonKey,
+            (def, parent, problem) -> {
+              IBoundFieldValue fieldValue = definition.getFieldValue();
+              Object item = readItemFieldValue(parent, fieldValue);
+              fieldValue.setValue(parent, item);
+            },
+            problemHandler);
+
+      } else
+
+      {
+        retval = readComplexDefinitionObject(
+            parentItem,
+            definition,
+            jsonKey,
+            new PropertyBodyHandler(instance.getJsonProperties()),
+            problemHandler);
+      }
+      return retval;
+    }
+
+    @Override
+    public Object readItemField(Object parentItem, IBoundInstanceModelGroupedField instance) throws IOException {
+      IBoundInstanceFlag jsonKey = instance.getJsonKey();
+      IBoundDefinitionModelComplex definition = instance.getDefinition();
+      return readComplexDefinitionObject(
+          parentItem,
+          definition,
+          jsonKey,
+          new PropertyBodyHandler(instance.getJsonProperties()),
+          getProblemHandler()); // TODO: json value key handling
+    }
+
+    @Override
+    public Object readItemField(Object item, IBoundDefinitionFieldComplex definition) throws IOException {
+      return readComplexDefinitionObject(
+          null,
+          definition,
+          null,
+          new PropertyBodyHandler(definition.getJsonProperties()),
+          getProblemHandler()); // TODO: json value key handling
+    }
+
+    @Override
+    public Object readItemFieldValue(Object parentItem, IBoundFieldValue fieldValue) throws IOException {
+      // handled the non JSON value key flag case
+      return readScalarItem(fieldValue);
+    }
+
+    @Override
+    public Object readItemAssembly(Object parentItem, IBoundInstanceModelAssembly instance) throws IOException {
+      IBoundInstanceFlag jsonKey = instance.getJsonKey();
+      IBoundDefinitionModelComplex definition = instance.getDefinition();
+      return readComplexDefinitionObject(
+          parentItem,
+          definition,
+          jsonKey,
+          new PropertyBodyHandler(instance.getJsonProperties()),
+          getProblemHandler());
+    }
+
+    @Override
+    public Object readItemAssembly(Object parentItem, IBoundInstanceModelGroupedAssembly instance) throws IOException {
+      IBoundInstanceFlag jsonKey = instance.getJsonKey();
+      IBoundDefinitionModelComplex definition = instance.getDefinition();
+      return readComplexDefinitionObject(
+          parentItem,
+          definition,
+          jsonKey,
+          new PropertyBodyHandler(instance.getJsonProperties()),
+          getProblemHandler());
+    }
+
+    @Override
+    public Object readItemAssembly(Object parentItem, IBoundDefinitionAssembly definition) throws IOException {
+      return readComplexDefinitionObject(
+          parentItem,
+          definition,
+          null,
+          new PropertyBodyHandler(definition.getJsonProperties()),
+          getProblemHandler());
+    }
+
+    @SuppressWarnings("resource")
+    @NonNull
+    private Object readScalarItem(@NonNull IFeatureScalarItemValueHandler handler)
+        throws IOException {
+      return handler.getJavaTypeAdapter().parse(getJsonParser());
+    }
+
+    @Override
+    public Object readChoiceGroupItem(Object parentItem, IBoundInstanceModelChoiceGroup instance) throws IOException {
+      throw new UnsupportedOperationException();
+    }
+
+    private class JsonKeyBodyHandler implements DefinitionBodyHandler<IBoundDefinitionModelComplex> {
+      @NonNull
+      private final IBoundInstanceFlag jsonKey;
+      @NonNull
+      private final DefinitionBodyHandler<IBoundDefinitionModelComplex> bodyHandler;
+
+      private JsonKeyBodyHandler(
+          @NonNull IBoundInstanceFlag jsonKey,
+          @NonNull DefinitionBodyHandler<IBoundDefinitionModelComplex> bodyHandler) {
+        this.jsonKey = jsonKey;
+        this.bodyHandler = bodyHandler;
       }
 
-      String fieldName = parser.currentName();
-      if (fieldName.equals(rootFieldName)) {
-        // process the object value, bound to the requested class
-        JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
+      @Override
+      public void accept(IBoundDefinitionModelComplex definition, Object parentItem, IJsonProblemHandler problemHandler)
+          throws IOException {
+        JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
 
-        // read the top-level definition
-        instance = targetDefinition.readItem(null, this);
+        // the field will be the JSON key
+        String key = ObjectUtils.notNull(parser.currentName());
+        Object value = jsonKey.getDefinition().getJavaTypeAdapter().parse(key);
+        jsonKey.setValue(parentItem, ObjectUtils.notNull(value.toString()));
 
-        // stop now, since we found the root field
-        break;
-      }
+        // skip to the next token
+        parser.nextToken();
+        // JsonUtil.assertCurrent(parser, JsonToken.START_OBJECT);
 
-      if (!getProblemHandler().handleUnknownProperty(targetDefinition, instance, fieldName, this)) {
-        LOGGER.warn("Skipping unhandled top-level JSON field '{}'.", fieldName);
-        JsonUtil.skipNextValue(parser);
-      }
-    }
+        // // advance past the JSON key's start object
+        // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
 
-    if (instance == null) {
-      throw new IOException(String.format("Failed to find root field '%s'.", rootFieldName));
-    }
+        // read the property values
+        bodyHandler.accept(definition, parentItem, problemHandler);
 
-    if (objectWrapper) {
-      // advance past the end object
-      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-    }
-
-    return ObjectUtils.asType(instance);
-  }
-
-  /**
-   * Read the data associated with the {@code instance} and apply it to the
-   * provided {@code parentObject}.
-   * <p>
-   * Consumes the field if the field's name matches. If it matches, then
-   * {@code true} is returned after parsing the value. Otherwise, {@code false} is
-   * returned to indicate the property was not parsed.
-   *
-   * @param targetInstance
-   *          the instance to parse data for
-   * @param parentObject
-   *          the Java object that data parsed by this method will be stored in
-   * @return {@code true} if the instance was parsed, or {@code false} if the data
-   *         did not contain information for this instance
-   * @throws IOException
-   *           if an error occurred while parsing the data
-   */
-  protected boolean readInstance(
-      @NonNull IBoundProperty targetInstance,
-      @NonNull Object parentObject) throws IOException {
-    // the parser's current token should be the JSON field name
-    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
-
-    String propertyName = parser.currentName();
-    if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("reading property {}", propertyName);
-    }
-
-    boolean handled = targetInstance.canHandleJsonPropertyName(propertyName);
-    if (handled) {
-      // advance past the field name
-      parser.nextToken();
-
-      Object value;
-      if (targetInstance instanceof IBoundInstanceFlag) {
-        value = ((IBoundInstanceFlag) targetInstance).readItem(parentObject, this);
-      } else if (targetInstance instanceof IBoundInstanceModel) {
-        IBoundInstanceModel instance = (IBoundInstanceModel) targetInstance;
-        IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
-
-        ModelInstanceReadHandler handler = new ModelInstanceReadHandler(
-            collectionInfo,
-            parentObject);
-
-        // let the property info decide how to parse the value
-        value = collectionInfo.readItems(handler);
-      } else if (targetInstance instanceof IBoundFieldValue) {
-        value = ((IBoundFieldValue) targetInstance).readItem(parentObject, this);
-      } else {
-        throw new UnsupportedOperationException(
-            String.format("Unsupported instance type: %s", targetInstance.getClass().getName()));
-      }
-
-      if (value != null) {
-        targetInstance.setValue(parentObject, value);
+        // // advance past the JSON key's end object
+        // JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
       }
     }
 
-    // the current token will be either the next instance field name or the end of
-    // the parent object
-    JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
-    return handled;
-  }
+    private class PropertyBodyHandler implements DefinitionBodyHandler<IBoundDefinitionModelComplex> {
+      @NonNull
+      private final Map<String, IBoundProperty> jsonProperties;
 
-  // @SuppressFBWarnings(value = "UC_USELESS_CONDITION", justification = "false
-  // positive")
-  // REFACTOR: rename to readItem
-  @SuppressWarnings({
-      "PMD.CyclomaticComplexity", "PMD.CognitiveComplexity" // acceptable
-  })
-  @Override
-  public void readDefinitionValue(
-      IBoundDefinitionModel targetDefinition,
-      Object targetObject,
-      Map<String, ? extends IBoundProperty> instances) throws IOException {
-    IBoundInstanceFlag valueKeyFlag = null;
-    if (targetDefinition instanceof IBoundDefinitionFieldComplex) {
-      IBoundDefinitionFieldComplex targetFieldDefinition = (IBoundDefinitionFieldComplex) targetDefinition;
-      valueKeyFlag = targetFieldDefinition.getJsonValueKeyFlagInstance();
-    }
-
-    // make a copy, since we use the remaining values to initialize default values
-    Map<String, ? extends IBoundProperty> remainingInstances = new HashMap<>(instances); // NOPMD not concurrent
-
-    // handle each property
-    while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {
-      boolean handled = false;
-      String propertyName = parser.getCurrentName();
-      assert propertyName != null;
-
-      if (JsonToken.FIELD_NAME.equals(parser.currentToken())) {
-        // found a matching property
-        IBoundProperty instance = remainingInstances.get(propertyName);
-        if (instance != null) {
-          handled = readInstance(instance, targetObject);
-          remainingInstances.remove(propertyName);
-        }
-      } else {
-        throw new IOException(
-            String.format("Unexpected token: " + JsonUtil.toString(parser)));
+      private PropertyBodyHandler(@NonNull Map<String, IBoundProperty> jsonProperties) {
+        this.jsonProperties = jsonProperties;
       }
 
-      if (!handled) {
-        if (valueKeyFlag != null) {
-          // Handle JSON value key flag case
-          valueKeyFlag.setValue(targetObject,
-              valueKeyFlag.getDefinition().getJavaTypeAdapter().parse(propertyName));
-          remainingInstances.remove(valueKeyFlag.getEffectiveName());
-
-          // advance past the FIELD_NAME to get the value
-          JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-
-          IBoundDefinitionFieldComplex targetFieldDefinition = (IBoundDefinitionFieldComplex) targetDefinition;
-          IBoundFieldValue fieldValue = targetFieldDefinition.getFieldValue();
-          fieldValue.setValue(
-              targetObject,
-              fieldValue.getJavaTypeAdapter().parse(parser));
-          valueKeyFlag = null; // NOPMD used as boolean check to avoid value key check
-        } else if (!getProblemHandler().handleUnknownProperty(
-            targetDefinition,
-            targetObject,
-            propertyName,
-            this)) {
-          // handle unrecognized property case
-          if (LOGGER.isWarnEnabled()) {
-            LOGGER.warn("Unrecognized property named '{}' at '{}'", propertyName,
-                JsonUtil.toString(ObjectUtils.notNull(parser.getCurrentLocation())));
-          }
-          JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-          JsonUtil.skipNextValue(parser);
-        }
-      }
-    }
-
-    if (!remainingInstances.isEmpty()) {
-      getProblemHandler().handleMissingInstances(
-          targetDefinition,
-          targetObject,
-          ObjectUtils.notNull(remainingInstances.values()));
-    }
-  }
-
-  @Override
-  public Object readItemFlag(Object parent, IBoundInstanceFlag flag) throws IOException {
-    return readScalarItem(flag);
-  }
-
-  @Override
-  public Object readItemField(Object parent, IBoundInstanceModelFieldScalar field) throws IOException {
-    return readScalarItem(field);
-  }
-
-  @Override
-  public Object readItemField(Object parent, IBoundInstanceModelFieldComplex field) throws IOException {
-    return readComplexItem(parent, field);
-  }
-
-  @Override
-  public Object readItemField(Object parent, IBoundDefinitionFieldComplex field) throws IOException {
-    return readComplexItem(parent, field);
-  }
-
-  @Override
-  public Object readItemFieldValue(Object parent, IBoundFieldValue fieldValue) throws IOException {
-    return readScalarItem(fieldValue);
-  }
-
-  @Override
-  public Object readItemAssembly(Object parent, IBoundInstanceModelAssembly assembly) throws IOException {
-    return readComplexItem(parent, assembly);
-  }
-
-  @Override
-  public Object readItemAssembly(Object parent, IBoundDefinitionAssembly assembly) throws IOException {
-    return readComplexItem(parent, assembly);
-  }
-
-  @SuppressWarnings("resource")
-  @NonNull
-  private Object readScalarItem(IFeatureScalarItemValueHandler handler) throws IOException {
-    return handler.getJavaTypeAdapter().parse(getReader());
-  }
-
-  @SuppressWarnings({
-      "resource", // not owned
-      "PMD.NPathComplexity", "PMD.CyclomaticComplexity" // ok
-  })
-  @NonNull
-  private Object readComplexItem(Object parent, IFeatureComplexItemValueHandler handler) throws IOException {
-    JsonParser parser = getReader(); // NOPMD - intentional
-    boolean objectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
-    if (objectWrapper) {
-      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-    }
-
-    IBoundDefinitionModel definition = handler.getDefinition();
-    Object targetObject;
-    try {
-      targetObject = handler.newInstance();
-      handler.callBeforeDeserialize(targetObject, parent);
-    } catch (BindingException ex) {
-      throw new IOException(ex);
-    }
-
-    // String jsonKeyFlagName = handler.getJsonKeyFlagName();
-    // IBoundInstanceFlag jsonKey = jsonKeyFlagName == null ? null :
-    // definition.getFlagInstanceByName(jsonKeyFlagName);
-
-    IBoundInstanceFlag jsonKey = definition.getJsonKeyFlagInstance();
-    boolean keyObjectWrapper = false;
-    if (jsonKey != null) {
-      // the field will be the JSON key
-      String key = ObjectUtils.notNull(parser.getCurrentName());
-
-      Object value = jsonKey.getDefinition().getJavaTypeAdapter().parse(key);
-      jsonKey.setValue(targetObject, value.toString());
-
-      // advance past the FIELD_NAME
-      JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-
-      keyObjectWrapper = JsonToken.START_OBJECT.equals(parser.currentToken());
-      if (keyObjectWrapper) {
+      @Override
+      public void accept(IBoundDefinitionModelComplex definition, Object parentItem, IJsonProblemHandler problemHandler)
+          throws IOException {
+        // advance past the start object
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+
+        // make a copy, since we use the remaining values to initialize default values
+        Map<String, IBoundProperty> remainingInstances = new HashMap<>(jsonProperties); // NOPMD not concurrent
+
+        // handle each property
+        while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {
+
+          // the parser's current token should be the JSON field name
+          JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
+
+          String propertyName = ObjectUtils.notNull(parser.currentName());
+          if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("reading property {}", propertyName);
+          }
+
+          IBoundProperty property = remainingInstances.get(propertyName);
+
+          boolean handled = false;
+          if (property != null) {
+            // advance past the field name
+            parser.nextToken();
+
+            Object value = property.readItem(property, new InstanceReader(ItemReader.this));
+            property.setValue(parentItem, value);
+
+            // mark handled
+            remainingInstances.remove(propertyName);
+            handled = true;
+          }
+
+          if (!handled) {
+            if (!problemHandler.handleUnknownProperty(
+                definition,
+                parentItem,
+                propertyName,
+                new InstanceReader(ItemReader.this))) {
+              LOGGER.warn("Skipping unhandled JSON field '{}'.", propertyName);
+              JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
+              JsonUtil.skipNextValue(parser);
+            }
+          }
+
+          // the current token will be either the next instance field name or the end of
+          // the parent object
+          JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
+        }
+
+        problemHandler.handleMissingInstances(
+            definition,
+            parentItem,
+            ObjectUtils.notNull(remainingInstances.values()));
+
+        // advance past the end object
+        JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
       }
     }
 
-    if (keyObjectWrapper || JsonToken.FIELD_NAME.equals(parser.currentToken())) {
-      readDefinitionValue(definition, targetObject, MetaschemaJsonUtil.getJsonInstanceMap(definition, jsonKey));
-    } else if (parser.currentToken().isScalarValue()) {
-      // REFACTOR: need to figure out why this special case exists
-      // this is just a value
-      IBoundDefinitionFieldComplex fieldDefinition = (IBoundDefinitionFieldComplex) definition;
-      Object fieldValue = fieldDefinition.getJavaTypeAdapter().parse(parser);
-      fieldDefinition.getFieldValue().setValue(targetObject, fieldValue);
-    } else {
-      Map<String, ? extends IBoundProperty> remainingInstances = MetaschemaJsonUtil.getJsonInstanceMap(
-          definition,
-          jsonKey);
-      getProblemHandler().handleMissingInstances(
-          definition,
-          targetObject,
-          ObjectUtils.notNull(remainingInstances.values()));
+    public class JsomValueKeyProblemHandler implements IJsonProblemHandler {
+      @NonNull
+      private final IJsonProblemHandler delegate;
+      @NonNull
+      private final IBoundInstanceFlag jsonValueKyeFlag;
+      private boolean foundJsonValueKey = false;
+
+      private JsomValueKeyProblemHandler(
+          @NonNull IJsonProblemHandler delegate,
+          @NonNull IBoundInstanceFlag jsonValueKyeFlag) {
+        this.delegate = delegate;
+        this.jsonValueKyeFlag = jsonValueKyeFlag;
+      }
+
+      @Override
+      public void handleMissingInstances(IBoundDefinitionModel parentDefinition, Object targetObject,
+          Collection<? extends IBoundProperty> unhandledInstances) throws IOException {
+        delegate.handleMissingInstances(parentDefinition, targetObject, unhandledInstances);
+      }
+
+      @Override
+      public boolean handleUnknownProperty(IBoundDefinitionModelComplex definition, Object parentItem, String fieldName,
+          IInstanceReader reader) throws IOException {
+        boolean retval;
+        if (foundJsonValueKey) {
+          retval = delegate.handleUnknownProperty(definition, parentItem, fieldName, reader);
+        } else {
+          // handle JSON value key
+          String key = ObjectUtils.notNull(reader.getJsonParser().getCurrentName());
+          Object keyValue = jsonValueKyeFlag.getJavaTypeAdapter().parse(key);
+          jsonValueKyeFlag.setValue(ObjectUtils.notNull(parentItem), keyValue);
+
+          // advance past the field name
+          JsonUtil.assertAndAdvance(reader.getJsonParser(), JsonToken.FIELD_NAME);
+
+          IBoundFieldValue fieldValue = ((IBoundDefinitionFieldComplex) definition).getFieldValue();
+          Object value = reader.getItemReader().readItemFieldValue(
+              ObjectUtils.notNull(parentItem),
+              fieldValue);
+          fieldValue.setValue(ObjectUtils.notNull(parentItem), value);
+
+          retval = foundJsonValueKey = true;
+        }
+        return retval;
+      }
+
     }
 
-    try {
-      handler.callAfterDeserialize(targetObject, parent);
-    } catch (BindingException ex) {
-      throw new IOException(ex);
+    @NonNull
+    private Object readComplexDefinitionObject(
+        @Nullable Object parentItem,
+        @NonNull IBoundDefinitionModelComplex definition,
+        @Nullable IBoundInstanceFlag jsonKey,
+        @NonNull DefinitionBodyHandler<IBoundDefinitionModelComplex> bodyHandler,
+        @NonNull IJsonProblemHandler problemHandler) throws IOException {
+      DefinitionBodyHandler<IBoundDefinitionModelComplex> actualBodyHandler = jsonKey == null
+          ? bodyHandler
+          : new JsonKeyBodyHandler(jsonKey, bodyHandler);
+
+      // boolean hasStartObject =
+      // JsonToken.START_OBJECT.equals(parser.currentToken());
+      // if (hasStartObject) {
+      // advance past the start object
+      // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+      // }
+
+      // construct the item
+      Object item = definition.newInstance();
+
+      try {
+        // call pre-parse initialization hook
+        definition.callBeforeDeserialize(item, parentItem);
+
+        // read the property values
+        actualBodyHandler.accept(definition, item, problemHandler);
+
+        // call post-parse initialization hook
+        definition.callAfterDeserialize(item, parentItem);
+      } catch (BindingException ex) {
+        throw new IOException(ex);
+      }
+
+      // if (hasStartObject) {
+      // advance past the end object
+      // JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+      // }
+
+      return item;
     }
-
-    if (keyObjectWrapper) {
-      // advance past the END_OBJECT for the JSON key
-      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-    }
-
-    if (objectWrapper) {
-      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-    }
-    return ObjectUtils.asType(targetObject);
-  }
-
-  @Override
-  public Object readChoiceGroupItem(Object parent, IBoundInstanceModelChoiceGroup instance) {
-    throw new UnsupportedOperationException("implement");
-  }
-
-  @Override
-  public Object readItemField(Object parent, IBoundInstanceModelGroupedField instance) throws IOException {
-    throw new UnsupportedOperationException("implement");
-  }
-
-  @Override
-  public Object readItemAssembly(Object parent, IBoundInstanceModelGroupedAssembly instance) throws IOException {
-    throw new UnsupportedOperationException("implement");
+    //
+    // @NonNull
+    // private <I extends IBoundInstanceModelNamedComplex> Object
+    // readComplexModelObject(
+    // @NonNull Object parent,
+    // @NonNull I instance,
+    // @NonNull DefinitionBodyHandler<IBoundDefinitionModelComplex> bodyHandler,
+    // @NonNull IJsonProblemHandler problemHandler) throws IOException {
+    // IBoundInstanceFlag jsonKey = instance.getJsonKey();
+    // @SuppressWarnings("unchecked")
+    // IBoundDefinitionModelComplex definition = instance.getDefinition();
+    // return readComplexDefinitionObject(parent, definition, jsonKey, bodyHandler,
+    // problemHandler);
+    // }
   }
 
   private class ModelInstanceReadHandler
       extends AbstractModelInstanceReadHandler {
+    @NonNull
+    private final IJsonParsingContext.ItemReader itemReader;
 
     protected ModelInstanceReadHandler(
-        @NonNull IModelInstanceCollectionInfo collectionInfo,
-        @NonNull Object parentObject) {
-      super(collectionInfo, parentObject);
+        @NonNull IBoundInstanceModel instance,
+        @NonNull Object parentItem,
+        @NonNull IJsonParsingContext.ItemReader itemReader) {
+      super(instance, parentItem);
+      this.itemReader = itemReader;
+    }
+
+    @NonNull
+    protected IJsonParsingContext.ItemReader getItemReader() {
+      return itemReader;
     }
 
     @SuppressWarnings("resource") // no need to close parser
     @Override
     public List<?> readList() throws IOException {
-      JsonParser parser = getReader();
+      JsonParser parser = getItemReader().getJsonParser();
 
       List<Object> items = new LinkedList<>();
       switch (parser.currentToken()) {
@@ -569,7 +643,77 @@ public class MetaschemaJsonReader
     @NonNull
     public Object readItem() throws IOException {
       IBoundInstanceModel instance = getCollectionInfo().getInstance();
-      return instance.readItem(getParentObject(), MetaschemaJsonReader.this);
+      return instance.readItem(getParentObject(), getItemReader());
     }
+
+  }
+
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public <T> T readObject(@NonNull IBoundDefinitionModelComplex definition) throws IOException {
+    return (T) definition.readItem(null, new InstanceReader(new ItemReader(parser)));
+  }
+
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public <T> T readField(
+      @NonNull IBoundDefinitionModelComplex definition,
+      @NonNull String expectedFieldName) throws IOException {
+    // check if at the start of parsing a document
+    if (parser.currentToken() == null) {
+      parser.nextToken();
+    }
+
+    boolean hasStartObject = JsonToken.START_OBJECT.equals(parser.currentToken());
+    if (hasStartObject) {
+      // advance past the start object
+      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+    }
+
+    T retval = null;
+    JsonToken token;
+    while (!(JsonToken.END_OBJECT.equals(token = parser.currentToken()) || token == null)) {
+      if (!JsonToken.FIELD_NAME.equals(token)) {
+        throw new IOException(String.format("Expected FIELD_NAME token, found '%s'", token.toString()));
+      }
+
+      String fieldName = parser.currentName();
+      if (expectedFieldName.equals(fieldName)) {
+        // process the object value, bound to the requested class
+        JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
+
+        // stop now, since we found the field
+        retval = (T) definition.readItem(null, new InstanceReader(new ItemReader(parser)));
+        break;
+      }
+
+      if (!getProblemHandler().handleUnknownProperty(
+          definition,
+          null,
+          fieldName,
+          new InstanceReader(new ItemReader(parser)))) {
+        LOGGER.warn("Skipping unhandled JSON field '{}'.", fieldName);
+        JsonUtil.skipNextValue(parser);
+      }
+    }
+    if (hasStartObject) {
+      // advance past the end object
+      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+    }
+
+    if (retval == null) {
+      throw new IOException(String.format("Failed to find property with name '%s'%s.",
+          expectedFieldName,
+          JsonUtil.generateLocationMessage(parser)));
+    }
+    return retval;
+  }
+
+  @FunctionalInterface
+  private interface DefinitionBodyHandler<DEF extends IBoundDefinitionModelComplex> {
+    void accept(
+        @NonNull DEF definition,
+        @NonNull Object item,
+        @NonNull IJsonProblemHandler problemHandler) throws IOException;
   }
 }

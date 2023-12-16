@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind.model;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
-import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import javax.xml.namespace.QName;
@@ -67,5 +67,5 @@ public interface IBoundDefinitionModelComplex
   }
 
   @NonNull
-  List<IBoundProperty> getJsonProperties(@Nullable Predicate<IBoundInstanceFlag> flagFilter);
+  Map<String, IBoundProperty> getJsonProperties(@Nullable Predicate<IBoundInstanceFlag> flagFilter);
 }

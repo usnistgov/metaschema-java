@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -77,12 +77,12 @@ public interface IBoundDefinitionAssembly
 
   @Override
   default QName getXmlQName() {
-    return getRootXmlQName();
+    return ObjectUtils.requireNonNull(getRootXmlQName());
   }
 
   @Override
   @NonNull
-  default List<IBoundProperty> getJsonProperties(@Nullable Predicate<IBoundInstanceFlag> flagFilter) {
+  default Map<String, IBoundProperty> getJsonProperties(@Nullable Predicate<IBoundInstanceFlag> flagFilter) {
     Stream<? extends IBoundInstanceFlag> flagStream = getFlagInstances().stream();
 
     if (flagFilter != null) {
@@ -90,7 +90,8 @@ public interface IBoundDefinitionAssembly
     }
 
     return ObjectUtils.notNull(Stream.concat(flagStream, getModelInstances().stream())
-        .collect(Collectors.toUnmodifiableList()));
+        .collect(Collectors.toUnmodifiableMap(
+            (p) -> p.getJsonName(), (p) -> p)));
   }
 
   @Override

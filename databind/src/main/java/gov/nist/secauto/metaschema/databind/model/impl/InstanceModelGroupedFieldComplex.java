@@ -36,7 +36,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
-import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -48,7 +48,7 @@ public class InstanceModelGroupedFieldComplex
   @NonNull
   private final DefinitionField definition;
   @NonNull
-  private final Lazy<List<IBoundProperty>> jsonProperties;
+  private final Lazy<Map<String, IBoundProperty>> jsonProperties;
 
   public InstanceModelGroupedFieldComplex(
       @NonNull BoundGroupedField annotation,
@@ -60,12 +60,12 @@ public class InstanceModelGroupedFieldComplex
       Predicate<IBoundInstanceFlag> flagFilter = null;
       IBoundInstanceFlag jsonKey = getJsonKey();
       if (jsonKey != null) {
-        flagFilter = (flag) -> jsonKey.equals(flag);
+        flagFilter = (flag) -> !jsonKey.equals(flag);
       }
 
       IBoundInstanceFlag jsonValueKey = getDefinition().getJsonValueKeyFlagInstance();
       if (jsonValueKey != null) {
-        Predicate<IBoundInstanceFlag> jsonValueKeyFilter = (flag) -> flag.equals(jsonValueKey);
+        Predicate<IBoundInstanceFlag> jsonValueKeyFilter = (flag) -> !flag.equals(jsonValueKey);
         flagFilter = flagFilter == null ? jsonValueKeyFilter : flagFilter.and(jsonValueKeyFilter);
       }
       return getDefinition().getJsonProperties(flagFilter);
@@ -77,7 +77,7 @@ public class InstanceModelGroupedFieldComplex
   // ------------------------------------------
 
   @Override
-  public List<IBoundProperty> getJsonProperties() {
+  public Map<String, IBoundProperty> getJsonProperties() {
     return ObjectUtils.notNull(jsonProperties.get());
   }
 

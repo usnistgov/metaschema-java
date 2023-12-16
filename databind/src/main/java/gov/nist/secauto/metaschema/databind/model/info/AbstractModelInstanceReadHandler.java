@@ -26,20 +26,32 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public abstract class AbstractModelInstanceReadHandler implements IModelInstanceReadHandler {
   @NonNull
-  private final IModelInstanceCollectionInfo collectionInfo;
+  private final IBoundInstanceModel instance;
   @NonNull
   private final Object parentObject;
 
   protected AbstractModelInstanceReadHandler(
-      @NonNull IModelInstanceCollectionInfo collectionInfo,
+      @NonNull IBoundInstanceModel instance,
       @NonNull Object parentObject) {
-    this.collectionInfo = collectionInfo;
+    this.instance = instance;
     this.parentObject = parentObject;
+  }
+
+  /**
+   * Get the model instance associated with this handler.
+   *
+   * @return the collection information
+   */
+  @NonNull
+  public IBoundInstanceModel getInstance() {
+    return instance;
   }
 
   /**
@@ -49,7 +61,7 @@ public abstract class AbstractModelInstanceReadHandler implements IModelInstance
    */
   @NonNull
   public IModelInstanceCollectionInfo getCollectionInfo() {
-    return collectionInfo;
+    return getInstance().getCollectionInfo();
   }
 
   /**

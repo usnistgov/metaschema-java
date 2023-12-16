@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
@@ -44,7 +45,6 @@ import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
-import gov.nist.secauto.metaschema.databind.model.IBoundModuleInstance;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
@@ -93,7 +93,7 @@ public class MetaschemaXmlReader
 
   public Object readItem(
       @NonNull Object item,
-      @NonNull IBoundModuleInstance instance,
+      @NonNull IBoundInstance instance,
       @NonNull StartElement start) throws IOException {
     return instance.readItem(item, new ItemReadHandler(start));
   }
@@ -303,13 +303,11 @@ public class MetaschemaXmlReader
 
         IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
 
-        ModelInstanceReadHandler handler = new ModelInstanceReadHandler(collectionInfo, parentObject);
+        ModelInstanceReadHandler handler = new ModelInstanceReadHandler(instance, parentObject);
 
         // let the property info decide how to parse the value
         Object value = collectionInfo.readItems(handler);
-        if (value != null) {
-          instance.setValue(parentObject, value);
-        }
+        instance.setValue(parentObject, value);
 
         // consume extra whitespace between elements
         XmlEventUtil.skipWhitespace(reader);
@@ -329,9 +327,9 @@ public class MetaschemaXmlReader
       extends AbstractModelInstanceReadHandler {
 
     private ModelInstanceReadHandler(
-        @NonNull IModelInstanceCollectionInfo collectionInfo,
+        @NonNull IBoundInstanceModel instance,
         @NonNull Object parentObject) {
-      super(collectionInfo, parentObject);
+      super(instance, parentObject);
     }
 
     @Override
@@ -359,16 +357,14 @@ public class MetaschemaXmlReader
 
     @NonNull
     private List<Object> readCollection() throws IOException {
-      XMLEventReader2 eventReader = getReader();
-
       List<Object> retval = new LinkedList<>();
       try {
         // consume extra whitespace between elements
-        XmlEventUtil.skipWhitespace(eventReader);
+        XmlEventUtil.skipWhitespace(reader);
 
         IBoundInstanceModel instance = getCollectionInfo().getInstance();
         XMLEvent event;
-        while ((event = eventReader.peek()).isStartElement()
+        while ((event = reader.peek()).isStartElement()
             && instance.canHandleXmlQName(ObjectUtils.notNull(event.asStartElement().getName()))) {
 
           // Consume the start element
@@ -376,7 +372,7 @@ public class MetaschemaXmlReader
           retval.add(value);
 
           // consume extra whitespace between elements
-          XmlEventUtil.skipWhitespace(eventReader);
+          XmlEventUtil.skipWhitespace(reader);
         }
       } catch (XMLStreamException ex) {
         throw new IOException(ex);

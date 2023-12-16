@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.core.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This marker interface indicates that this object is an instance.
@@ -42,8 +43,6 @@ public interface IInstance extends IInstanceBase {
    *          the object associated with the definition containing this property
    * @return the value if available, or {@code null} otherwise
    */
-  default Object getValue(@NonNull Object parent) {
-    return getDefaultValue();
-  }
-
+  @Nullable
+  Object getValue(@NonNull Object parent);
 }

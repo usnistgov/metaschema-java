@@ -115,20 +115,13 @@ public class DefaultJsonDeserializer<CLASS>
 
       if (definition.isRoot()
           && configuration.isFeatureEnabled(DeserializationFeature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
-
         // now parse the root property
-        CLASS value = ObjectUtils.requireNonNull(parser.read(definition));
-
-        // // we should be at the end object
-        // JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
-        //
-        // // advance past the end object
-        // JsonToken end = parser.nextToken();
+        CLASS value = ObjectUtils.requireNonNull(parser.readField(definition, definition.getRootJsonName()));
 
         retval = INodeItemFactory.instance().newDocumentNodeItem(definition, documentUri, value);
       } else {
         // read the top-level definition
-        CLASS value = ObjectUtils.asType(definition.readItem(null, parser));
+        CLASS value = ObjectUtils.asType(parser.readObject(definition));
 
         retval = INodeItemFactory.instance().newAssemblyNodeItem(definition, documentUri, value);
       }
@@ -148,17 +141,11 @@ public class DefaultJsonDeserializer<CLASS>
           && configuration.isFeatureEnabled(DeserializationFeature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
 
         // now parse the root property
-        retval = ObjectUtils.requireNonNull(parser.read(definition));
-
-        // // we should be at the end object
-        // JsonUtil.assertCurrent(parser, JsonToken.END_OBJECT);
-        //
-        // // advance past the end object
-        // JsonToken end = parser.nextToken();
+        retval = ObjectUtils.requireNonNull(parser.readField(definition, definition.getRootJsonName()));
       } else {
         // read the top-level definition
         retval = ObjectUtils.asType(ObjectUtils.requireNonNull(
-            definition.readItem(null, parser)));
+            parser.readObject(definition)));
       }
       return retval;
     }

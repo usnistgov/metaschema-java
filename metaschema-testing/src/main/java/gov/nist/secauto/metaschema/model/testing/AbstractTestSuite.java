@@ -102,7 +102,7 @@ public abstract class AbstractTestSuite {
   protected abstract Path getGenerationPath();
 
   @NonNull
-  protected abstract BiFunction<IModule, Writer, Void> getGeneratorSupplier();
+  protected abstract BiFunction<IModule<?, ?, ?, ?, ?>, Writer, Void> getGeneratorSupplier();
 
   @Nullable
   protected abstract Supplier<? extends IContentValidator> getSchemaValidatorSupplier();
@@ -200,12 +200,12 @@ public abstract class AbstractTestSuite {
             .sequential());
   }
 
-  protected void produceSchema(@NonNull IModule module, @NonNull Path schemaPath) throws IOException {
+  protected void produceSchema(@NonNull IModule<?, ?, ?, ?, ?> module, @NonNull Path schemaPath) throws IOException {
     produceSchema(module, schemaPath, getGeneratorSupplier());
   }
 
-  protected void produceSchema(@NonNull IModule module, @NonNull Path schemaPath,
-      @NonNull BiFunction<IModule, Writer, Void> schemaProducer) throws IOException {
+  protected void produceSchema(@NonNull IModule<?, ?, ?, ?, ?> module, @NonNull Path schemaPath,
+      @NonNull BiFunction<IModule<?, ?, ?, ?, ?>, Writer, Void> schemaProducer) throws IOException {
     Path parentDir = schemaPath.getParent();
     if (parentDir != null && !Files.exists(parentDir)) {
       Files.createDirectories(parentDir);
@@ -249,8 +249,8 @@ public abstract class AbstractTestSuite {
     URI metaschemaUri = collectionUri.resolve(metaschemaDirective.getLocation());
 
     ExecutorService executor = Executors.newSingleThreadExecutor(); // NOPMD - intentional use of threads
-    Future<IModule> loadModuleFuture = executor.submit(() -> {
-      IModule module;
+    Future<IModule<?, ?, ?, ?, ?>> loadModuleFuture = executor.submit(() -> {
+      IModule<?, ?, ?, ?, ?> module;
       try {
         module = LOADER.load(ObjectUtils.notNull(metaschemaUri.toURL()));
       } catch (IOException | MetaschemaException ex) {
@@ -267,13 +267,13 @@ public abstract class AbstractTestSuite {
       } catch (IOException ex) {
         throw new JUnitException("Unable to create schema temp file", ex);
       }
-      IModule module = loadModuleFuture.get();
+      IModule<?, ?, ?, ?, ?> module = loadModuleFuture.get();
       produceSchema(ObjectUtils.notNull(module), ObjectUtils.notNull(schemaPath));
       return schemaPath;
     });
 
     Future<IBindingContext> dynamicBindingContextFuture = executor.submit(() -> {
-      IModule module = loadModuleFuture.get();
+      IModule<?, ?, ?, ?, ?> module = loadModuleFuture.get();
       IBindingContext context;
       try {
         context = new DefaultBindingContext();
@@ -349,7 +349,8 @@ public abstract class AbstractTestSuite {
       throw new JUnitException("Unable to create schema temp file", ex);
     }
 
-    @SuppressWarnings("rawtypes") ISerializer serializer
+    @SuppressWarnings("rawtypes")
+    ISerializer serializer
         = context.newSerializer(getRequiredContentFormat(), object.getClass());
     serializer.serialize(object, convertedContetPath, getWriteOpenOptions());
 

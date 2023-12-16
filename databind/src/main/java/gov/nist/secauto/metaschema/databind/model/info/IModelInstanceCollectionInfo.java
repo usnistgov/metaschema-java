@@ -170,11 +170,11 @@ public interface IModelInstanceCollectionInfo {
    *
    * @param handler
    *          the item parsing handler
-   * @return {@code true} if data was read, or {@code false} otherwise
+   * @return the item collection object
    * @throws IOException
    *           if there was an error when reading the data
    */
-  @Nullable
+  @NonNull
   Object readItems(@NonNull IModelInstanceReadHandler handler) throws IOException;
 
   <T> void writeItems(

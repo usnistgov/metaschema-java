@@ -68,9 +68,9 @@ public interface IFeatureJavaField {
   }
 
   /**
-   * Get the current value from the provided {@code parentInstance} object. The
-   * provided object must be of the type associated with the definition containing
-   * this instance.
+   * Get the current bound value from the provided {@code parentInstance} object.
+   * <p>
+   * The provided object must be of the type associated with this instance.
    *
    * @param parent
    *          the object associated with the definition containing this instance

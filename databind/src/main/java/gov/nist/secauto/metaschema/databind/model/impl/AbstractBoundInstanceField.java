@@ -68,7 +68,7 @@ public abstract class AbstractBoundInstanceField
         throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
             javaField.getName(),
             javaField.getDeclaringClass().getName(),
-            GroupAs.class.getName()));
+            GroupAs.class.getName())); // NOPMD false positive
       }
     } else if (!IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
       // max is 1 and a groupAs is set
@@ -77,7 +77,7 @@ public abstract class AbstractBoundInstanceField
               "Field '%s' on class '%s' has the '%s' annotation, but maxOccurs=1. A groupAs must not be specfied.",
               javaField.getName(),
               javaField.getDeclaringClass().getName(),
-              GroupAs.class.getName()));
+              GroupAs.class.getName())); // NOPMD false positive
     }
   }
 

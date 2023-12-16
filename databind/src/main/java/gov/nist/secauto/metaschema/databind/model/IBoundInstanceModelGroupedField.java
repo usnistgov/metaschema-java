@@ -41,7 +41,6 @@ import java.lang.reflect.Field;
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents a field model instance that is a member of a choice group
@@ -93,7 +92,7 @@ public interface IBoundInstanceModelGroupedField
   }
 
   @Override
-  default Object readItem(@Nullable Object parent, @NonNull IItemReadHandler handler) throws IOException {
+  default Object readItem(Object parent, @NonNull IItemReadHandler handler) throws IOException {
     return handler.readItemField(ObjectUtils.requireNonNull(parent, "parent"), this);
   }
 

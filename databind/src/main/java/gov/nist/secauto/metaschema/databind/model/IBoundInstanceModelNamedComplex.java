@@ -26,33 +26,10 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IInstance;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
-public interface IBoundModuleInstance extends IBoundInstance, IInstance {
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Don't delegate to the definition, since this is an inline instance that is
-   * both a definition and an instance.
-   */
-  @Override
-  default Object getEffectiveDefaultValue() {
-    return IInstance.super.getEffectiveDefaultValue();
-  }
+public interface IBoundInstanceModelNamedComplex extends IBoundInstanceModelNamed, IFeatureComplexItemValueHandler {
 
   @Override
-  IBoundDefinitionModel getContainingDefinition();
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * An instance is contained in the parent definition's module.
-   */
-  @Override
-  default IBoundModule getContainingModule() {
-    return getContainingDefinition().getContainingModule();
-  }
-
-  @Override
-  Object getValue(Object parentItem);
+  IBoundDefinitionModelComplex getDefinition();
 }

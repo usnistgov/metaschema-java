@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
+import gov.nist.secauto.metaschema.databind.model.IFeatureJavaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.lang.annotation.Annotation;
@@ -33,7 +34,7 @@ import java.lang.reflect.Field;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractBoundAnnotatedJavaField<A extends Annotation> {
+public abstract class AbstractBoundAnnotatedJavaField<A extends Annotation> implements IFeatureJavaField {
   @NonNull
   private final Field javaField;
   @NonNull
@@ -59,6 +60,7 @@ public abstract class AbstractBoundAnnotatedJavaField<A extends Annotation> {
    *
    * @return the bound Java field
    */
+  @Override
   @NonNull
   public Field getField() {
     return javaField;

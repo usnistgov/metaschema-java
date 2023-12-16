@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.databind.io.json;
 
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.databind.io.AbstractProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -48,13 +48,13 @@ public class DefaultJsonProblemHandler
   @SuppressWarnings("resource")
   @Override
   public boolean handleUnknownProperty(
-      IBoundDefinitionModel classBinding,
+      IBoundDefinitionModelComplex classBinding,
       Object targetObject,
       String fieldName,
-      IJsonParsingContext parsingContext) throws IOException {
+      IJsonParsingContext.IInstanceReader reader) throws IOException {
     boolean retval = false;
     if (IGNORED_FIELD_NAMES.contains(fieldName)) {
-      JsonUtil.skipNextValue(parsingContext.getReader());
+      JsonUtil.skipNextValue(reader.getJsonParser());
       retval = true;
     }
     return retval;

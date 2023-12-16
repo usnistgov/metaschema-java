@@ -540,7 +540,7 @@ class ModelTest
                   () -> assertEquals(
                       "value6",
                       ObjectUtils.requireNonNull(value).getValue(),
-                      "list contents not equal"));
+                      "field value list contents not equal"));
             },
             () -> {
               Map<String, RootAssemblyWithFields.JsonKeyField> value = ObjectUtils.requireNonNull(item).getField6();
@@ -559,7 +559,7 @@ class ModelTest
                   () -> assertEquals(
                       "value7",
                       ObjectUtils.requireNonNull(value).get("flag-value4").getValue(),
-                      "list contents not equal"));
+                      "field value list contents not equal"));
             });
       }
     }

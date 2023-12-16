@@ -35,6 +35,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IFeatureScalarItemValueHandler
     extends IItemValueHandler {
 
+  @Nullable
   Object getValue(@NonNull Object parent);
 
   void setValue(@NonNull Object parent, Object value);

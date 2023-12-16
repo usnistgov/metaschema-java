@@ -49,9 +49,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * Represents a flag instance bound to Java data.
  */
 public interface IBoundInstanceFlag
-    extends IFlagInstance, IBoundDefinitionFlag, IBoundModuleInstance,
-    IFeatureScalarItemValueHandler,
-    IFeatureJavaField {
+    extends IFlagInstance, IBoundDefinitionFlag, IBoundInstance,
+    IFeatureScalarItemValueHandler {
 
   /**
    * Create a new bound flag instance.
@@ -137,7 +136,7 @@ public interface IBoundInstanceFlag
   @Override
   @NonNull
   default IBoundModule getContainingModule() {
-    return IBoundModuleInstance.super.getContainingModule();
+    return IBoundInstance.super.getContainingModule();
   }
 
   /**
@@ -187,7 +186,7 @@ public interface IBoundInstanceFlag
   @Override
   @Nullable
   default Object getValue(@NonNull Object parent) {
-    return IFeatureJavaField.super.getValue(parent);
+    return IBoundInstance.super.getValue(parent);
   }
 
   /**
@@ -197,7 +196,7 @@ public interface IBoundInstanceFlag
    */
   @Override
   default void setValue(@NonNull Object parentObject, @Nullable Object value) {
-    IFeatureJavaField.super.setValue(parentObject, value);
+    IBoundInstance.super.setValue(parentObject, value);
   }
 
   @Override
@@ -210,7 +209,7 @@ public interface IBoundInstanceFlag
 
   @Override
   @NonNull
-  default Object readItem(@Nullable Object parent, @NonNull IItemReadHandler handler) throws IOException {
+  default Object readItem(Object parent, @NonNull IItemReadHandler handler) throws IOException {
     return handler.readItemFlag(ObjectUtils.requireNonNull(parent, "parent"), this);
   }
 

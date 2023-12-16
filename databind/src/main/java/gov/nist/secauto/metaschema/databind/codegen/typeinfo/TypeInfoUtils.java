@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.Constants;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class TypeInfoUtils {
+public final class TypeInfoUtils {
   private TypeInfoUtils() {
     // disable construction
   }

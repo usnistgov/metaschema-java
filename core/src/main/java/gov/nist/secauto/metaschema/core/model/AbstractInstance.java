@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.core.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public abstract class AbstractInstance<P extends IContainer> implements IInstance {
   @NonNull
@@ -53,4 +54,9 @@ public abstract class AbstractInstance<P extends IContainer> implements IInstanc
     return getParentContainer().getOwningDefinition();
   }
 
+  @Override
+  @Nullable
+  public Object getValue(Object parent) {
+    return getEffectiveDefaultValue();
+  }
 }

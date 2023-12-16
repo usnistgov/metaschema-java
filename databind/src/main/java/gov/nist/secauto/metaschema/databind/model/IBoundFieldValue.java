@@ -41,7 +41,7 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundFieldValue extends IBoundProperty, IFeatureScalarItemValueHandler, IFeatureJavaField {
+public interface IBoundFieldValue extends IFeatureScalarItemValueHandler, IBoundProperty {
 
   @Override
   default IBoundFieldValue getInstance() {
@@ -95,12 +95,12 @@ public interface IBoundFieldValue extends IBoundProperty, IFeatureScalarItemValu
 
   @Override
   default Object getValue(Object parent) {
-    return IFeatureJavaField.super.getValue(parent);
+    return IBoundProperty.super.getValue(parent);
   }
 
   @Override
   default void setValue(Object parentObject, Object value) {
-    IFeatureJavaField.super.setValue(parentObject, value);
+    IBoundProperty.super.setValue(parentObject, value);
   }
 
   @Override

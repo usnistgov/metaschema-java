@@ -28,14 +28,12 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundProperty extends IBinding {
+public interface IBoundProperty extends IBinding, IFeatureJavaField {
   /**
    * Get the Metaschema module instance associated with this binding.
    *
@@ -62,21 +60,6 @@ public interface IBoundProperty extends IBinding {
   // REFACTOR: rename to getEffectiveJsonName
   @NonNull
   String getJsonName();
-
-  @Nullable
-  Object getValue(@NonNull Object parentItem);
-
-  /**
-   * Set the provided value on the provided object. The provided object must be of
-   * the item's type associated with this instance.
-   *
-   * @param parentObject
-   *          the object
-   * @param value
-   *          a value, which may be a simple {@link Type} or a
-   *          {@link ParameterizedType} for a collection
-   */
-  void setValue(@NonNull Object parentObject, Object value);
 
   Collection<? extends Object> getItemValues(Object value);
 

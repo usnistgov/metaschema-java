@@ -88,7 +88,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     definition.writeItem(item, new InstanceWriter(qname));
   }
 
-  private class ModelInstanceWriteHandler
+  private static class ModelInstanceWriteHandler
       extends AbstractModelInstanceWriteHandler {
     @NonNull
     private final ItemWriter itemWriter;

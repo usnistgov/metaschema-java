@@ -39,7 +39,6 @@ import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -61,7 +60,7 @@ public class InstanceModelAssemblyComplex
   @NonNull
   private final IGroupAs groupAs;
   @NonNull
-  private final Lazy<List<IBoundProperty>> jsonProperties;
+  private final Lazy<Map<String, IBoundProperty>> jsonProperties;
 
   /**
    * Construct a new field instance bound to a Java field, supported by a bound
@@ -99,7 +98,7 @@ public class InstanceModelAssemblyComplex
     }
     this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> {
       IBoundInstanceFlag jsonKey = getJsonKey();
-      Predicate<IBoundInstanceFlag> flagFilter = jsonKey == null ? null : (flag) -> jsonKey.equals(flag);
+      Predicate<IBoundInstanceFlag> flagFilter = jsonKey == null ? null : (flag) -> !jsonKey.equals(flag);
       return getDefinition().getJsonProperties(flagFilter);
     }));
   }
@@ -109,7 +108,7 @@ public class InstanceModelAssemblyComplex
   // ------------------------------------------
 
   @Override
-  public List<IBoundProperty> getJsonProperties() {
+  public Map<String, IBoundProperty> getJsonProperties() {
     return ObjectUtils.notNull(jsonProperties.get());
   }
 

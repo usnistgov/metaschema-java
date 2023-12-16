@@ -28,12 +28,12 @@ package gov.nist.secauto.metaschema.databind.model.info;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -45,7 +45,7 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
    * @return the definition
    */
   @NonNull
-  IBoundDefinitionModel getDefinition();
+  IBoundDefinitionModelComplex getDefinition();
 
   // /**
   // * Get the name of the JSON key, if a JSON key is configured.
@@ -56,7 +56,8 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   // @Nullable
   // String getJsonKeyFlagName();
 
-  List<IBoundProperty> getJsonProperties();
+  @NonNull
+  Map<String, IBoundProperty> getJsonProperties();
 
   // REFACTOR: flatten implementations?
   @Override

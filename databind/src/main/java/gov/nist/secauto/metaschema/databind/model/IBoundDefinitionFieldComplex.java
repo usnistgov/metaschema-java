@@ -32,7 +32,8 @@ import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -121,18 +122,42 @@ public interface IBoundDefinitionFieldComplex
 
   @Override
   @NonNull
-  default List<IBoundProperty> getJsonProperties(@Nullable Predicate<IBoundInstanceFlag> flagFilter) {
-    Stream<? extends IBoundInstanceFlag> flagStream = getFlagInstances().stream();
+  default Map<String, IBoundProperty> getJsonProperties(@Nullable Predicate<IBoundInstanceFlag> flagFilter) {
+    Predicate<IBoundInstanceFlag> actualFlagFilter = flagFilter;
 
-    if (flagFilter != null) {
-      flagStream = flagStream.filter(flagFilter);
+    IBoundFieldValue fieldValue = getFieldValue();
+    IBoundInstanceFlag jsonValueKey = getDefinition().getJsonValueKeyFlagInstance();
+    if (jsonValueKey != null) {
+      Predicate<IBoundInstanceFlag> jsonValueKeyFilter = (flag) -> !flag.equals(jsonValueKey);
+      actualFlagFilter = actualFlagFilter == null ? jsonValueKeyFilter : actualFlagFilter.and(jsonValueKeyFilter);
+      // ensure the field value is omitted too!
+      fieldValue = null;
     }
 
-    // return ObjectUtils.notNull(Stream.concat(flagStream,
-    // Stream.of(getFieldValue()))
-    // .collect(Collectors.toUnmodifiableList()));
-    return ObjectUtils.notNull(flagStream
-        .collect(Collectors.toUnmodifiableList()));
+    Stream<? extends IBoundInstanceFlag> flagStream = getFlagInstances().stream();
+    if (actualFlagFilter != null) {
+      flagStream = flagStream.filter(actualFlagFilter);
+    }
+
+    if (fieldValue != null) {
+      // determine if we use the field value or not
+      Collection<? extends IBoundInstanceFlag> flagInstances = flagStream
+          .collect(Collectors.toList());
+
+      if (flagInstances.isEmpty()) {
+        // no relevant flags, so this field should expect a scalar value
+        fieldValue = null;
+      }
+      flagStream = flagInstances.stream();
+    }
+
+    Stream<? extends IBoundProperty> resultStream = fieldValue == null
+        ? flagStream
+        : Stream.concat(flagStream, Stream.of(getFieldValue()));
+
+    return ObjectUtils.notNull(resultStream
+        .collect(Collectors.toUnmodifiableMap(
+            (p) -> p.getJsonName(), (p) -> p)));
   }
 
   @Override
