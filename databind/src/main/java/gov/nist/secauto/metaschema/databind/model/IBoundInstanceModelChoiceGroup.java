@@ -106,6 +106,19 @@ public interface IBoundInstanceModelChoiceGroup
   IBoundInstanceModelGroupedNamed getGroupedModelInstance(@NonNull QName name);
 
   /**
+   * Get the bound grouped model instance associated with the provided JSON
+   * discriminator value.
+   *
+   * @param discriminator
+   *          the JSON discriminator value which should be bound to a grouped
+   *          model instance
+   * @return the grouped model instance or {code null} if no instance was bound to
+   *         the requested JSON discriminator value
+   */
+  @Nullable
+  IBoundInstanceModelGroupedNamed getGroupedModelInstance(@NonNull String discriminator);
+
+  /**
    * Get the bound grouped model instance associated with the provided item.
    *
    * @param item

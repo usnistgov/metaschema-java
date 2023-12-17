@@ -69,6 +69,8 @@ public class InstanceModelChoiceGroup
   private final Lazy<Map<Class<?>, IBoundInstanceModelGroupedNamed>> classToInstanceMap;
   @NonNull
   private final Lazy<Map<QName, IBoundInstanceModelGroupedNamed>> qnameToInstanceMap;
+  @NonNull
+  private final Lazy<Map<String, IBoundInstanceModelGroupedNamed>> discriminatorToInstanceMap;
 
   /**
    * Construct a new Metaschema module choice group instance.
@@ -114,6 +116,11 @@ public class InstanceModelChoiceGroup
             .collect(Collectors.toMap(
                 item -> item.getXmlQName(),
                 CustomCollectors.identity())))));
+    this.discriminatorToInstanceMap = ObjectUtils.notNull(Lazy.lazy(() -> Collections.unmodifiableMap(
+        getNamedModelInstances().stream()
+            .collect(Collectors.toMap(
+                item -> item.getEffectiveDisciminatorValue(),
+                CustomCollectors.identity())))));
   }
 
   // ------------------------------------------
@@ -143,6 +150,18 @@ public class InstanceModelChoiceGroup
     return classToInstanceMap.get();
   }
 
+  /**
+   * Get the mapping of JSON discriminator values bound to a distinct grouped
+   * model instance.
+   *
+   * @return the mapping
+   */
+  @SuppressWarnings("null")
+  @NonNull
+  protected Map<String, IBoundInstanceModelGroupedNamed> getDiscriminatorToInstanceMap() {
+    return discriminatorToInstanceMap.get();
+  }
+
   @Override
   @Nullable
   public IBoundInstanceModelGroupedNamed getGroupedModelInstance(@NonNull Class<?> clazz) {
@@ -153,6 +172,11 @@ public class InstanceModelChoiceGroup
   @Nullable
   public IBoundInstanceModelGroupedNamed getGroupedModelInstance(@NonNull QName name) {
     return getQNameToInstanceMap().get(name);
+  }
+
+  @Override
+  public IBoundInstanceModelGroupedNamed getGroupedModelInstance(String discriminator) {
+    return getDiscriminatorToInstanceMap().get(discriminator);
   }
 
   @Override

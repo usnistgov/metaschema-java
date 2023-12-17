@@ -28,6 +28,9 @@ package gov.nist.secauto.metaschema.databind.io.json;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -45,6 +48,7 @@ import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComple
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
 import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
@@ -63,6 +67,7 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 public class MetaschemaJsonReader
     implements IJsonParsingContext {
@@ -72,6 +77,8 @@ public class MetaschemaJsonReader
   private final JsonParser parser;
   @NonNull
   private final IJsonProblemHandler problemHandler;
+  @NonNull
+  private final Lazy<ObjectMapper> objectMapper;
 
   /**
    * Construct a new Module-aware JSON parser using the default problem handler.
@@ -98,6 +105,7 @@ public class MetaschemaJsonReader
       @NonNull IJsonProblemHandler problemHandler) {
     this.parser = parser;
     this.problemHandler = problemHandler;
+    this.objectMapper = ObjectUtils.notNull(Lazy.lazy(() -> new ObjectMapper()));
   }
 
   @Override
@@ -108,6 +116,11 @@ public class MetaschemaJsonReader
   @Override
   public IJsonProblemHandler getProblemHandler() {
     return problemHandler;
+  }
+
+  @NonNull
+  protected ObjectMapper getObjectMapper() {
+    return ObjectUtils.notNull(objectMapper.get());
   }
 
   public class InstanceReader implements IJsonParsingContext.IInstanceReader {
@@ -226,18 +239,19 @@ public class MetaschemaJsonReader
       return readScalarItem(instance);
     }
 
-    @Override
-    public Object readItemField(Object parentItem, IBoundInstanceModelFieldComplex instance) throws IOException {
-      IBoundInstanceFlag jsonKey = instance.getJsonKey();
-      IBoundDefinitionFieldComplex definition = instance.getDefinition();
-      Map<String, IBoundProperty> jsonProperties = instance.getJsonProperties();
-      Object retval;
-
+    @NonNull
+    private Object readFieldObject(
+        @Nullable Object parentItem,
+        @NonNull IBoundDefinitionFieldComplex definition,
+        @NonNull Map<String, IBoundProperty> jsonProperties,
+        @Nullable IBoundInstanceFlag jsonKey,
+        @NonNull IJsonProblemHandler problemHandler) throws IOException {
       IBoundInstanceFlag jsonValueKey = definition.getJsonValueKeyFlagInstance();
-      IJsonProblemHandler problemHandler = jsonValueKey == null
-          ? getProblemHandler()
-          : new JsomValueKeyProblemHandler(getProblemHandler(), jsonValueKey);
+      IJsonProblemHandler actualProblemHandler = jsonValueKey == null
+          ? problemHandler
+          : new JsomValueKeyProblemHandler(problemHandler, jsonValueKey);
 
+      Object retval;
       if (jsonProperties.isEmpty() && jsonValueKey == null) {
         retval = readComplexDefinitionObject(
             parentItem,
@@ -248,46 +262,60 @@ public class MetaschemaJsonReader
               Object item = readItemFieldValue(parent, fieldValue);
               fieldValue.setValue(parent, item);
             },
-            problemHandler);
+            actualProblemHandler);
 
-      } else
-
-      {
+      } else {
         retval = readComplexDefinitionObject(
             parentItem,
             definition,
             jsonKey,
-            new PropertyBodyHandler(instance.getJsonProperties()),
-            problemHandler);
+            new PropertyBodyHandler(jsonProperties),
+            actualProblemHandler);
       }
       return retval;
     }
 
     @Override
-    public Object readItemField(Object parentItem, IBoundInstanceModelGroupedField instance) throws IOException {
-      IBoundInstanceFlag jsonKey = instance.getJsonKey();
-      IBoundDefinitionModelComplex definition = instance.getDefinition();
-      return readComplexDefinitionObject(
+    public Object readItemField(Object parentItem, IBoundInstanceModelFieldComplex instance) throws IOException {
+      return readFieldObject(
           parentItem,
-          definition,
-          jsonKey,
-          new PropertyBodyHandler(instance.getJsonProperties()),
-          getProblemHandler()); // TODO: json value key handling
+          instance.getDefinition(),
+          instance.getJsonProperties(),
+          instance.getJsonKey(),
+          getProblemHandler());
     }
 
     @Override
-    public Object readItemField(Object item, IBoundDefinitionFieldComplex definition) throws IOException {
+    public Object readItemField(Object parentItem, IBoundInstanceModelGroupedField instance) throws IOException {
+      IJsonProblemHandler problemHandler = new GroupedInstanceProblemHandler(instance, getProblemHandler());
+      IBoundDefinitionFieldComplex definition = instance.getDefinition();
+      IBoundInstanceFlag jsonValueKeyFlag = definition.getJsonValueKeyFlagInstance();
+
+      IJsonProblemHandler actualProblemHandler = jsonValueKeyFlag == null
+          ? problemHandler
+          : new JsomValueKeyProblemHandler(problemHandler, jsonValueKeyFlag);
+
       return readComplexDefinitionObject(
-          null,
+          parentItem,
           definition,
+          instance.getJsonKey(),
+          new PropertyBodyHandler(instance.getJsonProperties()),
+          actualProblemHandler);
+    }
+
+    @Override
+    public Object readItemField(Object parentItem, IBoundDefinitionFieldComplex definition) throws IOException {
+      return readFieldObject(
+          parentItem,
+          definition,
+          definition.getJsonProperties(),
           null,
-          new PropertyBodyHandler(definition.getJsonProperties()),
-          getProblemHandler()); // TODO: json value key handling
+          getProblemHandler());
     }
 
     @Override
     public Object readItemFieldValue(Object parentItem, IBoundFieldValue fieldValue) throws IOException {
-      // handled the non JSON value key flag case
+      // read the field value's value
       return readScalarItem(fieldValue);
     }
 
@@ -305,14 +333,12 @@ public class MetaschemaJsonReader
 
     @Override
     public Object readItemAssembly(Object parentItem, IBoundInstanceModelGroupedAssembly instance) throws IOException {
-      IBoundInstanceFlag jsonKey = instance.getJsonKey();
-      IBoundDefinitionModelComplex definition = instance.getDefinition();
       return readComplexDefinitionObject(
           parentItem,
-          definition,
-          jsonKey,
+          instance.getDefinition(),
+          instance.getJsonKey(),
           new PropertyBodyHandler(instance.getJsonProperties()),
-          getProblemHandler());
+          new GroupedInstanceProblemHandler(instance, getProblemHandler()));
     }
 
     @Override
@@ -334,7 +360,24 @@ public class MetaschemaJsonReader
 
     @Override
     public Object readChoiceGroupItem(Object parentItem, IBoundInstanceModelChoiceGroup instance) throws IOException {
-      throw new UnsupportedOperationException();
+      ObjectMapper mapper = getObjectMapper();
+      @SuppressWarnings("resource")
+      JsonNode node = mapper.readTree(getJsonParser());
+      if (!node.isObject()) {
+        throw new IllegalStateException();
+      }
+
+      ObjectNode object = (ObjectNode) node;
+      JsonNode descriminatorNode = object.get(instance.getJsonDiscriminatorProperty());
+      String discriminator = descriminatorNode.asText();
+
+      IBoundInstanceModelGroupedNamed actualInstance = instance.getGroupedModelInstance(discriminator);
+      assert actualInstance != null;
+      try (JsonParser parser = node.traverse()) {
+        // get initial token
+        parser.nextToken();
+        return actualInstance.readItem(parentItem, new ItemReader(parser));
+      }
     }
 
     private class JsonKeyBodyHandler implements DefinitionBodyHandler<IBoundDefinitionModelComplex> {
@@ -410,7 +453,7 @@ public class MetaschemaJsonReader
             // advance past the field name
             parser.nextToken();
 
-            Object value = property.readItem(property, new InstanceReader(ItemReader.this));
+            Object value = property.readItem(parentItem, new InstanceReader(ItemReader.this));
             property.setValue(parentItem, value);
 
             // mark handled
@@ -445,7 +488,43 @@ public class MetaschemaJsonReader
       }
     }
 
-    public class JsomValueKeyProblemHandler implements IJsonProblemHandler {
+    private class GroupedInstanceProblemHandler implements IJsonProblemHandler {
+      @NonNull
+      private final IBoundInstanceModelGroupedNamed instance;
+      @NonNull
+      private final IJsonProblemHandler delegate;
+
+      private GroupedInstanceProblemHandler(
+          @NonNull IBoundInstanceModelGroupedNamed instance,
+          @NonNull IJsonProblemHandler delegate) {
+        this.instance = instance;
+        this.delegate = delegate;
+      }
+
+      @Override
+      public void handleMissingInstances(IBoundDefinitionModel parentDefinition, Object targetObject,
+          Collection<? extends IBoundProperty> unhandledInstances) throws IOException {
+        delegate.handleMissingInstances(parentDefinition, targetObject, unhandledInstances);
+      }
+
+      @Override
+      public boolean handleUnknownProperty(
+          IBoundDefinitionModelComplex definition,
+          Object parentItem,
+          String fieldName,
+          IInstanceReader reader) throws IOException {
+        boolean retval;
+        if (instance.getParentContainer().getJsonDiscriminatorProperty().equals(fieldName)) {
+          JsonUtil.skipNextValue(reader.getJsonParser());
+          retval = true;
+        } else {
+          retval = delegate.handleUnknownProperty(definition, parentItem, fieldName, reader);
+        }
+        return retval;
+      }
+    }
+
+    private class JsomValueKeyProblemHandler implements IJsonProblemHandler {
       @NonNull
       private final IJsonProblemHandler delegate;
       @NonNull
@@ -504,13 +583,6 @@ public class MetaschemaJsonReader
           ? bodyHandler
           : new JsonKeyBodyHandler(jsonKey, bodyHandler);
 
-      // boolean hasStartObject =
-      // JsonToken.START_OBJECT.equals(parser.currentToken());
-      // if (hasStartObject) {
-      // advance past the start object
-      // JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
-      // }
-
       // construct the item
       Object item = definition.newInstance();
 
@@ -527,27 +599,8 @@ public class MetaschemaJsonReader
         throw new IOException(ex);
       }
 
-      // if (hasStartObject) {
-      // advance past the end object
-      // JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
-      // }
-
       return item;
     }
-    //
-    // @NonNull
-    // private <I extends IBoundInstanceModelNamedComplex> Object
-    // readComplexModelObject(
-    // @NonNull Object parent,
-    // @NonNull I instance,
-    // @NonNull DefinitionBodyHandler<IBoundDefinitionModelComplex> bodyHandler,
-    // @NonNull IJsonProblemHandler problemHandler) throws IOException {
-    // IBoundInstanceFlag jsonKey = instance.getJsonKey();
-    // @SuppressWarnings("unchecked")
-    // IBoundDefinitionModelComplex definition = instance.getDefinition();
-    // return readComplexDefinitionObject(parent, definition, jsonKey, bodyHandler,
-    // problemHandler);
-    // }
   }
 
   private class ModelInstanceReadHandler
@@ -580,7 +633,8 @@ public class MetaschemaJsonReader
         JsonUtil.assertAndAdvance(parser, JsonToken.START_ARRAY);
 
         // parse items
-        while (!JsonToken.END_ARRAY.equals(parser.currentToken())) {
+        JsonToken token;
+        while (!JsonToken.END_ARRAY.equals(token = parser.currentToken())) {
           items.add(readItem());
         }
 
@@ -613,7 +667,8 @@ public class MetaschemaJsonReader
       JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
 
       // process all map items
-      while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {
+      JsonToken token;
+      while (!JsonToken.END_OBJECT.equals(token = parser.currentToken())) {
 
         // a map item will always start with a FIELD_NAME, since this represents the key
         JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);

@@ -67,10 +67,36 @@ class MetaschemaModuleMetaschemaTest
   void testReadMetaschemaAsXml() throws IOException {
     IBindingContext context = IBindingContext.instance();
 
-    IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.XML, METASCHEMA.class);
-    METASCHEMA metaschema = deserializer.deserialize(METASCHEMA_FILE);
+    METASCHEMA metaschema = context.newDeserializer(Format.XML, METASCHEMA.class).deserialize(METASCHEMA_FILE);
 
-    ISerializer<METASCHEMA> serializer = context.newSerializer(Format.YAML, METASCHEMA.class);
-    serializer.serialize(metaschema, Paths.get("target/metaschema.yml"));
+    {
+      ISerializer<METASCHEMA> serializer = context.newSerializer(Format.XML, METASCHEMA.class);
+      serializer.serialize(metaschema, Paths.get("target/metaschema.xml"));
+    }
+
+    {
+      ISerializer<METASCHEMA> serializer = context.newSerializer(Format.JSON, METASCHEMA.class);
+      serializer.serialize(metaschema, Paths.get("target/metaschema.json"));
+    }
+
+    {
+      ISerializer<METASCHEMA> serializer = context.newSerializer(Format.YAML, METASCHEMA.class);
+      serializer.serialize(metaschema, Paths.get("target/metaschema.yaml"));
+    }
+
+    {
+      IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.XML, METASCHEMA.class);
+      METASCHEMA readMetaschema = deserializer.deserialize(Paths.get("target/metaschema.xml"));
+    }
+
+    {
+      IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.JSON, METASCHEMA.class);
+      METASCHEMA readMetaschema = deserializer.deserialize(Paths.get("target/metaschema.json"));
+    }
+
+    {
+      IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.YAML, METASCHEMA.class);
+      METASCHEMA readMetaschema = deserializer.deserialize(Paths.get("target/metaschema.yaml"));
+    }
   }
 }
