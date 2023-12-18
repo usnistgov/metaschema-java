@@ -89,7 +89,8 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-document-uri
     registerFunction(FnDocumentUri.SIGNATURE_NO_ARG);
     registerFunction(FnDocumentUri.SIGNATURE_ONE_ARG);
-    // P1: https://www.w3.org/TR/xpath-functions-31/#func-empty
+    // https://www.w3.org/TR/xpath-functions-31/#func-empty
+    registerFunction(FnEmpty.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-encode-for-uri
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-ends-with
     // P2: https://www.w3.org/TR/xpath-functions-31/#func-exactly-one
@@ -107,6 +108,7 @@ public class DefaultFunctionLibrary
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-generate-id
     // P2: https://www.w3.org/TR/xpath-functions-31/#func-has-children
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-head
+    registerFunction(FnHead.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-dateTime
     // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-duration
     // https://www.w3.org/TR/xpath-functions-31/#func-hours-from-time
@@ -114,6 +116,7 @@ public class DefaultFunctionLibrary
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-index-of
     // https://www.w3.org/TR/xpath-functions-31/#func-innermost
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-insert-before
+    registerFunction(FnInsertBefore.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-iri-to-uri
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-last
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-lower-case
@@ -141,11 +144,13 @@ public class DefaultFunctionLibrary
     registerFunction(FnPath.SIGNATURE_ONE_ARG);
     // P2: https://www.w3.org/TR/xpath-functions-31/#func-position
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-remove
+    registerFunction(FnRemove.SIGNATURE);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-replace
     // https://www.w3.org/TR/xpath-functions-31/#func-resolve-uri
     registerFunction(FnResolveUri.SIGNATURE_ONE_ARG);
     registerFunction(FnResolveUri.SIGNATURE_TWO_ARG);
-    // P1: https://www.w3.org/TR/xpath-functions-31/#func-reverse
+    // https://www.w3.org/TR/xpath-functions-31/#func-reverse
+    registerFunction(FnReverse.SIGNATURE_ONE_ARG);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-root
     // https://www.w3.org/TR/xpath-functions-31/#func-round
     registerFunction(FnRound.SIGNATURE);
@@ -168,6 +173,7 @@ public class DefaultFunctionLibrary
     registerFunction(FnSum.SIGNATURE_ONE_ARG);
     registerFunction(FnSum.SIGNATURE_TWO_ARG);
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-tail
+    registerFunction(FnTail.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-date
     // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-dateTime
     // https://www.w3.org/TR/xpath-functions-31/#func-timezone-from-time
