@@ -74,7 +74,7 @@ public class MetaschemaJsonReader
   private static final Logger LOGGER = LogManager.getLogger(MetaschemaJsonReader.class);
 
   @NonNull
-  private final JsonParser parser;
+  private final JsonParser rootParser;
   @NonNull
   private final IJsonProblemHandler problemHandler;
   @NonNull
@@ -103,14 +103,14 @@ public class MetaschemaJsonReader
   public MetaschemaJsonReader(
       @NonNull JsonParser parser,
       @NonNull IJsonProblemHandler problemHandler) {
-    this.parser = parser;
+    this.rootParser = parser;
     this.problemHandler = problemHandler;
     this.objectMapper = ObjectUtils.notNull(Lazy.lazy(() -> new ObjectMapper()));
   }
 
   @Override
   public JsonParser getReader() {
-    return parser;
+    return rootParser;
   }
 
   @Override
@@ -214,10 +214,10 @@ public class MetaschemaJsonReader
 
   private class ItemReader implements IJsonParsingContext.ItemReader {
     @NonNull
-    private final JsonParser parser;
+    private final JsonParser itemParser;
 
     protected ItemReader(@NonNull JsonParser parser) {
-      this.parser = parser;
+      this.itemParser = parser;
     }
 
     /**
@@ -226,7 +226,7 @@ public class MetaschemaJsonReader
     @Override
     @NonNull
     public JsonParser getJsonParser() {
-      return parser;
+      return itemParser;
     }
 
     @Override
@@ -351,32 +351,27 @@ public class MetaschemaJsonReader
           getProblemHandler());
     }
 
-    @SuppressWarnings("resource")
     @NonNull
     private Object readScalarItem(@NonNull IFeatureScalarItemValueHandler handler)
         throws IOException {
-      return handler.getJavaTypeAdapter().parse(getJsonParser());
+      return handler.getJavaTypeAdapter().parse(itemParser);
     }
 
     @Override
     public Object readChoiceGroupItem(Object parentItem, IBoundInstanceModelChoiceGroup instance) throws IOException {
-      ObjectMapper mapper = getObjectMapper();
-      @SuppressWarnings("resource")
-      JsonNode node = mapper.readTree(getJsonParser());
-      if (!node.isObject()) {
-        throw new IllegalStateException();
-      }
+      ObjectNode node = itemParser.readValueAsTree();
 
-      ObjectNode object = (ObjectNode) node;
-      JsonNode descriminatorNode = object.get(instance.getJsonDiscriminatorProperty());
+      JsonNode descriminatorNode = node.get(instance.getJsonDiscriminatorProperty());
       String discriminator = descriminatorNode.asText();
 
       IBoundInstanceModelGroupedNamed actualInstance = instance.getGroupedModelInstance(discriminator);
       assert actualInstance != null;
-      try (JsonParser parser = node.traverse()) {
+      try (JsonParser newParser = node.traverse(itemParser.getCodec())) {
         // get initial token
-        parser.nextToken();
-        return actualInstance.readItem(parentItem, new ItemReader(parser));
+        newParser.nextToken();
+        Object retval = actualInstance.readItem(parentItem, new ItemReader(newParser));
+        assert newParser.currentToken() == null;
+        return retval;
       }
     }
 
@@ -396,15 +391,15 @@ public class MetaschemaJsonReader
       @Override
       public void accept(IBoundDefinitionModelComplex definition, Object parentItem, IJsonProblemHandler problemHandler)
           throws IOException {
-        JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
+        JsonUtil.assertCurrent(itemParser, JsonToken.FIELD_NAME);
 
         // the field will be the JSON key
-        String key = ObjectUtils.notNull(parser.currentName());
+        String key = ObjectUtils.notNull(itemParser.currentName());
         Object value = jsonKey.getDefinition().getJavaTypeAdapter().parse(key);
         jsonKey.setValue(parentItem, ObjectUtils.notNull(value.toString()));
 
         // skip to the next token
-        parser.nextToken();
+        itemParser.nextToken();
         // JsonUtil.assertCurrent(parser, JsonToken.START_OBJECT);
 
         // // advance past the JSON key's start object
@@ -430,18 +425,16 @@ public class MetaschemaJsonReader
       public void accept(IBoundDefinitionModelComplex definition, Object parentItem, IJsonProblemHandler problemHandler)
           throws IOException {
         // advance past the start object
-        JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+        JsonUtil.assertAndAdvance(itemParser, JsonToken.START_OBJECT);
 
         // make a copy, since we use the remaining values to initialize default values
         Map<String, IBoundProperty> remainingInstances = new HashMap<>(jsonProperties); // NOPMD not concurrent
 
         // handle each property
-        while (!JsonToken.END_OBJECT.equals(parser.currentToken())) {
+        while (JsonToken.FIELD_NAME.equals(itemParser.currentToken())) {
 
           // the parser's current token should be the JSON field name
-          JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
-
-          String propertyName = ObjectUtils.notNull(parser.currentName());
+          String propertyName = ObjectUtils.notNull(itemParser.currentName());
           if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("reading property {}", propertyName);
           }
@@ -451,7 +444,7 @@ public class MetaschemaJsonReader
           boolean handled = false;
           if (property != null) {
             // advance past the field name
-            parser.nextToken();
+            itemParser.nextToken();
 
             Object value = property.readItem(parentItem, new InstanceReader(ItemReader.this));
             property.setValue(parentItem, value);
@@ -468,14 +461,14 @@ public class MetaschemaJsonReader
                 propertyName,
                 new InstanceReader(ItemReader.this))) {
               LOGGER.warn("Skipping unhandled JSON field '{}'.", propertyName);
-              JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
-              JsonUtil.skipNextValue(parser);
+              JsonUtil.assertAndAdvance(itemParser, JsonToken.FIELD_NAME);
+              JsonUtil.skipNextValue(itemParser);
             }
           }
 
           // the current token will be either the next instance field name or the end of
           // the parent object
-          JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
+          JsonUtil.assertCurrent(itemParser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
         }
 
         problemHandler.handleMissingInstances(
@@ -484,7 +477,7 @@ public class MetaschemaJsonReader
             ObjectUtils.notNull(remainingInstances.values()));
 
         // advance past the end object
-        JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+        JsonUtil.assertAndAdvance(itemParser, JsonToken.END_OBJECT);
       }
     }
 
@@ -624,26 +617,26 @@ public class MetaschemaJsonReader
     @SuppressWarnings("resource") // no need to close parser
     @Override
     public List<?> readList() throws IOException {
-      JsonParser parser = getItemReader().getJsonParser();
+      JsonParser itemParser = getItemReader().getJsonParser();
 
       List<Object> items = new LinkedList<>();
-      switch (parser.currentToken()) {
+      switch (itemParser.currentToken()) {
       case START_ARRAY: {
         // this is an array, we need to parse the array wrapper then each item
-        JsonUtil.assertAndAdvance(parser, JsonToken.START_ARRAY);
+        JsonUtil.assertAndAdvance(itemParser, JsonToken.START_ARRAY);
 
         // parse items
         JsonToken token;
-        while (!JsonToken.END_ARRAY.equals(token = parser.currentToken())) {
+        while (!JsonToken.END_ARRAY.equals(token = itemParser.currentToken())) {
           items.add(readItem());
         }
 
         // this is the other side of the array wrapper, advance past it
-        JsonUtil.assertAndAdvance(parser, JsonToken.END_ARRAY);
+        JsonUtil.assertAndAdvance(itemParser, JsonToken.END_ARRAY);
         break;
       }
       case VALUE_NULL: {
-        JsonUtil.assertAndAdvance(parser, JsonToken.VALUE_NULL);
+        JsonUtil.assertAndAdvance(itemParser, JsonToken.VALUE_NULL);
         break;
       }
       default:
@@ -656,7 +649,7 @@ public class MetaschemaJsonReader
     @SuppressWarnings("resource") // no need to close parser
     @Override
     public Map<String, ?> readMap() throws IOException {
-      JsonParser parser = getReader();
+      JsonParser itemParser = getItemReader().getJsonParser();
 
       IBoundInstanceModel instance = getCollectionInfo().getInstance();
 
@@ -664,14 +657,14 @@ public class MetaschemaJsonReader
 
       // A map value is always wrapped in a START_OBJECT, since fields are used for
       // the keys
-      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+      JsonUtil.assertAndAdvance(itemParser, JsonToken.START_OBJECT);
 
       // process all map items
       JsonToken token;
-      while (!JsonToken.END_OBJECT.equals(token = parser.currentToken())) {
+      while (!JsonToken.END_OBJECT.equals(token = itemParser.currentToken())) {
 
         // a map item will always start with a FIELD_NAME, since this represents the key
-        JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
+        JsonUtil.assertCurrent(itemParser, JsonToken.FIELD_NAME);
 
         Object item = readItem();
 
@@ -685,11 +678,11 @@ public class MetaschemaJsonReader
         // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all
         // items have been
         // read
-        JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
+        JsonUtil.assertCurrent(itemParser, JsonToken.FIELD_NAME, JsonToken.END_OBJECT);
       }
 
       // A map value will always end with an end object, which needs to be consumed
-      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+      JsonUtil.assertAndAdvance(itemParser, JsonToken.END_OBJECT);
 
       return items;
     }
@@ -706,7 +699,7 @@ public class MetaschemaJsonReader
   @SuppressWarnings("unchecked")
   @NonNull
   public <T> T readObject(@NonNull IBoundDefinitionModelComplex definition) throws IOException {
-    return (T) definition.readItem(null, new InstanceReader(new ItemReader(parser)));
+    return (T) definition.readItem(null, new InstanceReader(new ItemReader(rootParser)));
   }
 
   @SuppressWarnings("unchecked")
@@ -715,30 +708,30 @@ public class MetaschemaJsonReader
       @NonNull IBoundDefinitionModelComplex definition,
       @NonNull String expectedFieldName) throws IOException {
     // check if at the start of parsing a document
-    if (parser.currentToken() == null) {
-      parser.nextToken();
+    if (rootParser.currentToken() == null) {
+      rootParser.nextToken();
     }
 
-    boolean hasStartObject = JsonToken.START_OBJECT.equals(parser.currentToken());
+    boolean hasStartObject = JsonToken.START_OBJECT.equals(rootParser.currentToken());
     if (hasStartObject) {
       // advance past the start object
-      JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
+      JsonUtil.assertAndAdvance(rootParser, JsonToken.START_OBJECT);
     }
 
     T retval = null;
     JsonToken token;
-    while (!(JsonToken.END_OBJECT.equals(token = parser.currentToken()) || token == null)) {
+    while (!(JsonToken.END_OBJECT.equals(token = rootParser.currentToken()) || token == null)) {
       if (!JsonToken.FIELD_NAME.equals(token)) {
         throw new IOException(String.format("Expected FIELD_NAME token, found '%s'", token.toString()));
       }
 
-      String fieldName = parser.currentName();
+      String fieldName = rootParser.currentName();
       if (expectedFieldName.equals(fieldName)) {
         // process the object value, bound to the requested class
-        JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
+        JsonUtil.assertAndAdvance(rootParser, JsonToken.FIELD_NAME);
 
         // stop now, since we found the field
-        retval = (T) definition.readItem(null, new InstanceReader(new ItemReader(parser)));
+        retval = (T) definition.readItem(null, new InstanceReader(new ItemReader(rootParser)));
         break;
       }
 
@@ -746,20 +739,20 @@ public class MetaschemaJsonReader
           definition,
           null,
           fieldName,
-          new InstanceReader(new ItemReader(parser)))) {
+          new InstanceReader(new ItemReader(rootParser)))) {
         LOGGER.warn("Skipping unhandled JSON field '{}'.", fieldName);
-        JsonUtil.skipNextValue(parser);
+        JsonUtil.skipNextValue(rootParser);
       }
     }
     if (hasStartObject) {
       // advance past the end object
-      JsonUtil.assertAndAdvance(parser, JsonToken.END_OBJECT);
+      JsonUtil.assertAndAdvance(rootParser, JsonToken.END_OBJECT);
     }
 
     if (retval == null) {
       throw new IOException(String.format("Failed to find property with name '%s'%s.",
           expectedFieldName,
-          JsonUtil.generateLocationMessage(parser)));
+          JsonUtil.generateLocationMessage(rootParser)));
     }
     return retval;
   }
