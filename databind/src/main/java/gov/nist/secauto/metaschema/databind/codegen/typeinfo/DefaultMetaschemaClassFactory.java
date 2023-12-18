@@ -737,7 +737,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
           .addStatement("$1T key = $2T.requireNonNull($3N.$4N(),\"$3N key cannot be null\")",
               String.class, ObjectUtils.class, valueParam, "get" + jsonKeyTypeInfo.getPropertyName())
           .beginControlFlow("if ($N == null)", valueField)
-          .addStatement("$N = new $T<>()", valueField, LinkedHashMap.class)
+          .addStatement("$N = new $T<>()", valueField, LinkedHashMap.class) // NOPMD required
           .endControlFlow()
           .addStatement("return $N.put(key, value)", valueField);
 

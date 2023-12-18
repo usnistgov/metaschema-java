@@ -201,7 +201,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       writeModelObject(
           instance,
           item,
-          ((ObjectWriter<IBoundInstanceModelFieldComplex>) this::writeObjectProperties));
+          this::writeObjectProperties);
     }
 
     @Override

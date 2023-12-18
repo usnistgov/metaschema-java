@@ -152,7 +152,7 @@ public class DefaultBindingContext implements IBindingContext {
       return registerBindingMatcher(ObjectUtils.requireNonNull(assemblyDefinition));
     } catch (ClassCastException ex) {
       throw new IllegalArgumentException(
-          String.format("The provided class '%s' is not a root assembly.", clazz.getName()));
+          String.format("The provided class '%s' is not a root assembly.", clazz.getName()), ex);
     }
   }
 

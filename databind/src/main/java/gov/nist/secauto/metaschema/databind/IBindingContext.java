@@ -457,6 +457,7 @@ public interface IBindingContext {
    * name.
    */
   interface IBindingMatcher {
+    @SuppressWarnings("PMD.ShortMethodName")
     @NonNull
     static IBindingMatcher of(IBoundDefinitionAssembly assembly) {
       if (!assembly.isRoot()) {

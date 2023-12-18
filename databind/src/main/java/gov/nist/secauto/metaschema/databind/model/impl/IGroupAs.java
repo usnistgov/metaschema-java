@@ -62,6 +62,7 @@ public interface IGroupAs {
     }
   };
 
+  @SuppressWarnings("PMD.ShortMethodName")
   @NonNull
   static IGroupAs of(@NonNull GroupAs groupAs, @NonNull IBoundDefinitionAssembly parentClassBinding) {
     return Constants.NULL_VALUE.equals(groupAs.name())

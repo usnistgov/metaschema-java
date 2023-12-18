@@ -129,12 +129,10 @@ public abstract class AbstractSchemaGeneratorTestSuite
     }
 
     @SuppressWarnings("null")
-    @NonNull
-    Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
+    @NonNull Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
       try {
         URL schemaResource = path.toUri().toURL();
-        @SuppressWarnings("resource")
-        StreamSource source
+        @SuppressWarnings("resource") StreamSource source
             = new StreamSource(schemaResource.openStream(), schemaResource.toString());
         List<? extends Source> schemaSources = Collections.singletonList(source);
         return new XmlSchemaContentValidator(schemaSources);
@@ -144,8 +142,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     };
     XML_CONTENT_VALIDATOR_PROVIDER = xmlContentValidatorProvider;
 
-    @NonNull
-    Function<Path, JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
+    @NonNull Function<Path, JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
       try (InputStream is = Files.newInputStream(path, StandardOpenOption.READ)) {
         assert is != null;
         return new JsonSchemaContentValidator(is);

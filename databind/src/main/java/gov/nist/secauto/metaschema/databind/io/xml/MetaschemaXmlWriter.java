@@ -244,7 +244,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
         Object value = modelInstance.getValue(parentItem);
         if (value != null) {
-          modelInstance.writeItem(value, new InstanceWriter(getParentQName()));
+          modelInstance.writeItem(value, new InstanceWriter(getParentQName())); // NOPMD needed
         }
       }
     }

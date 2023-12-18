@@ -108,7 +108,7 @@ public class ChoiceGroupTypeInfoImpl
       ClassName className = typeResolver.getClassName(modelInstance.getDefinition());
       List<IGroupedNamedModelInstance> instances = referencedDefinitions.get(className);
       if (instances == null) {
-        instances = new LinkedList<>();
+        instances = new LinkedList<>(); // NOPMD needed
         referencedDefinitions.put(className, instances);
       }
       instances.add(modelInstance);

@@ -63,7 +63,7 @@ public abstract class AbstractBoundInstanceField
       @NonNull IBoundDefinitionAssembly containingDefinition) {
     super(javaField, BoundField.class, containingDefinition);
     this.groupAs = IGroupAs.of(getAnnotation().groupAs(), containingDefinition);
-    if ((getMaxOccurs() == -1 || getMaxOccurs() > 1)) {
+    if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
       if (IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
         throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
             javaField.getName(),

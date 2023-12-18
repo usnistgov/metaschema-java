@@ -47,7 +47,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * Implements <a href=
  * "https://www.w3.org/TR/xpath-functions-31/#func-concat">fn:concat</a>.
-*/
+ */
 public final class FnConcat {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()

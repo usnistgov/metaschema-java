@@ -27,5 +27,5 @@
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 public interface IGroupedAssemblyInstanceTypeInfo extends IGroupedNamedModelInstanceTypeInfo {
-
+  // no additional methods
 }

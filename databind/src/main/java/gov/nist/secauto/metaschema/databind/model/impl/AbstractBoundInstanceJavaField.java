@@ -57,9 +57,4 @@ public abstract class AbstractBoundInstanceJavaField<A extends Annotation, P ext
   public P getParentContainer() {
     return containingDefinition;
   }
-
-  @Override
-  public Object getValue(Object parentItem) {
-    return super.getValue(parentItem);
-  }
 }

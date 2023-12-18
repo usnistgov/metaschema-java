@@ -105,14 +105,20 @@ public class CloseDetectingInputStream
     closed = true;
   }
 
+  @SuppressWarnings("sync-override")
   @Override
-  public synchronized void mark(int readlimit) {
-    delegate.mark(readlimit);
+  public void mark(int readlimit) {
+    synchronized (delegate) {
+      delegate.mark(readlimit);
+    }
   }
 
+  @SuppressWarnings("sync-override")
   @Override
-  public synchronized void reset() throws IOException {
-    delegate.reset();
+  public void reset() throws IOException {
+    synchronized (delegate) {
+      delegate.reset();
+    }
   }
 
   @Override

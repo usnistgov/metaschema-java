@@ -114,11 +114,11 @@ class ModelTest
       IBindingContext context = new DefaultBindingContext();
 
       String json = new StringBuilder()
-          .append("{")
-          .append("  \"root-assembly-with-flags\": {")
-          .append("    \"id\": \"id\"")
-          .append("  }")
-          .append("}")
+          .append("{\n")
+          .append("  \"root-assembly-with-flags\": {\n")
+          .append("    \"id\": \"id\"\n")
+          .append("  }\n")
+          .append("}\n")
           .toString();
 
       try (InputStream is = new ByteArrayInputStream(json.getBytes())) {

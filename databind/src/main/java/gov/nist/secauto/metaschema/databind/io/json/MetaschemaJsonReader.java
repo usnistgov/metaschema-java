@@ -157,7 +157,7 @@ public class MetaschemaJsonReader
   // }
 
   @SuppressWarnings("resource")
-  public void push(JsonParser parser) throws IOException {
+  public final void push(JsonParser parser) throws IOException {
     assert !parser.equals(parserStack.peek());
     if (parser.getCurrentToken() == null) {
       parser.nextToken();
@@ -167,7 +167,7 @@ public class MetaschemaJsonReader
 
   @SuppressWarnings("resource")
   @NonNull
-  public JsonParser pop(@NonNull JsonParser parser) throws IOException {
+  public final JsonParser pop(@NonNull JsonParser parser) {
     JsonParser old = parserStack.pop();
     assert parser.equals(old);
     return ObjectUtils.notNull(parserStack.peek());
@@ -268,42 +268,6 @@ public class MetaschemaJsonReader
       return readScalarItem(instance);
     }
 
-    @NonNull
-    private Object readFieldObject(
-        @Nullable Object parentItem,
-        @NonNull IBoundDefinitionFieldComplex definition,
-        @NonNull Map<String, IBoundProperty> jsonProperties,
-        @Nullable IBoundInstanceFlag jsonKey,
-        @NonNull IJsonProblemHandler problemHandler) throws IOException {
-      IBoundInstanceFlag jsonValueKey = definition.getJsonValueKeyFlagInstance();
-      IJsonProblemHandler actualProblemHandler = jsonValueKey == null
-          ? problemHandler
-          : new JsomValueKeyProblemHandler(problemHandler, jsonValueKey);
-
-      Object retval;
-      if (jsonProperties.isEmpty() && jsonValueKey == null) {
-        retval = readComplexDefinitionObject(
-            parentItem,
-            definition,
-            jsonKey,
-            (def, parent, problem) -> {
-              IBoundFieldValue fieldValue = definition.getFieldValue();
-              Object item = readItemFieldValue(parent, fieldValue);
-              fieldValue.setValue(parent, item);
-            },
-            actualProblemHandler);
-
-      } else {
-        retval = readComplexDefinitionObject(
-            parentItem,
-            definition,
-            jsonKey,
-            new PropertyBodyHandler(jsonProperties),
-            actualProblemHandler);
-      }
-      return retval;
-    }
-
     @Override
     public Object readItemField(Object parentItem, IBoundInstanceModelFieldComplex instance) throws IOException {
       return readFieldObject(
@@ -387,6 +351,42 @@ public class MetaschemaJsonReader
       return handler.getJavaTypeAdapter().parse(getReader());
     }
 
+    @NonNull
+    private Object readFieldObject(
+        @Nullable Object parentItem,
+        @NonNull IBoundDefinitionFieldComplex definition,
+        @NonNull Map<String, IBoundProperty> jsonProperties,
+        @Nullable IBoundInstanceFlag jsonKey,
+        @NonNull IJsonProblemHandler problemHandler) throws IOException {
+      IBoundInstanceFlag jsonValueKey = definition.getJsonValueKeyFlagInstance();
+      IJsonProblemHandler actualProblemHandler = jsonValueKey == null
+          ? problemHandler
+          : new JsomValueKeyProblemHandler(problemHandler, jsonValueKey);
+
+      Object retval;
+      if (jsonProperties.isEmpty() && jsonValueKey == null) {
+        retval = readComplexDefinitionObject(
+            parentItem,
+            definition,
+            jsonKey,
+            (def, parent, problem) -> {
+              IBoundFieldValue fieldValue = definition.getFieldValue();
+              Object item = readItemFieldValue(parent, fieldValue);
+              fieldValue.setValue(parent, item);
+            },
+            actualProblemHandler);
+
+      } else {
+        retval = readComplexDefinitionObject(
+            parentItem,
+            definition,
+            jsonKey,
+            new PropertyBodyHandler(jsonProperties),
+            actualProblemHandler);
+      }
+      return retval;
+    }
+
     @SuppressWarnings("resource")
     @Override
     public Object readChoiceGroupItem(Object parentItem, IBoundInstanceModelChoiceGroup instance) throws IOException {
@@ -431,8 +431,7 @@ public class MetaschemaJsonReader
       @Override
       public void accept(IBoundDefinitionModelComplex definition, Object parentItem, IJsonProblemHandler problemHandler)
           throws IOException {
-        @SuppressWarnings("resource")
-        JsonParser parser = getReader();
+        @SuppressWarnings("resource") JsonParser parser = getReader();
         JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
 
         // the field will be the JSON key
@@ -466,8 +465,7 @@ public class MetaschemaJsonReader
       @Override
       public void accept(IBoundDefinitionModelComplex definition, Object parentItem, IJsonProblemHandler problemHandler)
           throws IOException {
-        @SuppressWarnings("resource")
-        JsonParser parser = getReader();
+        @SuppressWarnings("resource") JsonParser parser = getReader();
 
         // advance past the start object
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
@@ -545,15 +543,17 @@ public class MetaschemaJsonReader
         delegate.handleMissingInstances(parentDefinition, targetObject, unhandledInstances);
       }
 
+      @SuppressWarnings("resource")
       @Override
       public boolean handleUnknownProperty(
           IBoundDefinitionModelComplex definition,
           Object parentItem,
           String fieldName,
           IInstanceReader reader) throws IOException {
+        JsonParser parser = reader.getJsonParser();
         boolean retval;
         if (instance.getParentContainer().getJsonDiscriminatorProperty().equals(fieldName)) {
-          JsonUtil.skipNextValue(getReader());
+          JsonUtil.skipNextValue(parser);
           retval = true;
         } else {
           retval = delegate.handleUnknownProperty(definition, parentItem, fieldName, reader);

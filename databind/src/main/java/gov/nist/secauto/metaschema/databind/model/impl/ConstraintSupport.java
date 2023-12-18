@@ -39,6 +39,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class ConstraintSupport {
+  private ConstraintSupport() {
+    // disable construction
+  }
+
   /**
    * Generate constraints from a {@link ValueConstraints} annotation on a valued
    * object (i.e., fields and flags).

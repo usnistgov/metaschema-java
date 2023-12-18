@@ -36,12 +36,12 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface IJsonParsingContext extends IParsingContext<JsonParser, IJsonProblemHandler> {
   // no additional methods
 
-  public interface IInstanceReader extends IItemReadHandler {
+  interface IInstanceReader extends IItemReadHandler {
     @NonNull
     JsonParser getJsonParser();
   }
 
-  public interface ItemReader extends IItemReadHandler {
+  interface ItemReader extends IItemReadHandler {
     // no additional methods
   }
 

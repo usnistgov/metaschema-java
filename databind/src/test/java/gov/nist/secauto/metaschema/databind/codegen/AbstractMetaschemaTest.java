@@ -151,22 +151,30 @@ abstract class AbstractMetaschemaTest {
 
     if (examplePath != null && Files.exists(examplePath)) {
       IBindingContext context = new DefaultBindingContext();
-      LOGGER.info("Testing XML file: {}", examplePath.toString());
+      if (LOGGER.isInfoEnabled()) {
+        LOGGER.info("Testing XML file: {}", examplePath.toString());
+      }
       String xml;
       {
 
         Object root = read(Format.XML, examplePath, rootClass, context);
-        LOGGER.atDebug().log("Read XML: Object: {}", root.toString());
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.atDebug().log("Read XML: Object: {}", root.toString());
+        }
         if (assertions != null) {
           assertAll("Deserialize XML", () -> {
             assertions.accept(root);
           });
         }
 
-        LOGGER.atDebug().log("Write XML:");
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.atDebug().log("Write XML:");
+        }
         write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.xml")), root, context);
 
-        LOGGER.atDebug().log("Write JSON:");
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.atDebug().log("Write JSON:");
+        }
         write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.json")), root, context);
       }
 

@@ -45,6 +45,7 @@ import java.util.Optional;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class ModelTestBase {
   public static void assertAssemblyDefinition(
       @NonNull Class<?> assemblyClass,

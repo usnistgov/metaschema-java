@@ -124,13 +124,13 @@ class DefaultTypeResolver implements ITypeResolver {
     return retval;
   }
 
-  private IGroupedAssemblyInstanceTypeInfo getTypeInfo(
+  private static IGroupedAssemblyInstanceTypeInfo getTypeInfo(
       @NonNull IGroupedAssemblyInstance modelInstance,
       @NonNull IChoiceGroupTypeInfo choiceGroupTypeInfo) {
     return new GroupedAssemblyInstanceTypeInfo(modelInstance, choiceGroupTypeInfo);
   }
 
-  private IGroupedFieldInstanceTypeInfo getTypeInfo(
+  private static IGroupedFieldInstanceTypeInfo getTypeInfo(
       @NonNull IGroupedFieldInstance modelInstance,
       @NonNull IChoiceGroupTypeInfo choiceGroupTypeInfo) {
     return new GroupedFieldInstanceTypeInfo(modelInstance, choiceGroupTypeInfo);

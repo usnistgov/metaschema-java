@@ -57,9 +57,9 @@ public abstract class AbstractBoundModule
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
-  private Lazy<Map<String, IBoundDefinitionAssembly>> assemblyDefinitions;
+  private final Lazy<Map<String, IBoundDefinitionAssembly>> assemblyDefinitions;
   @NonNull
-  private Lazy<Map<String, IBoundDefinitionField>> fieldDefinitions;
+  private final Lazy<Map<String, IBoundDefinitionField>> fieldDefinitions;
 
   /**
    * Create a new Module instance for a given class annotated by the

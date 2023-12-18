@@ -53,7 +53,7 @@ public abstract class AbstractBoundDefinitionFlagContainer<A extends Annotation>
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
-  private Lazy<IBoundModule> module;
+  private final Lazy<IBoundModule> module;
   @Nullable
   private final Method beforeDeserializeMethod;
   @Nullable

@@ -71,32 +71,35 @@ class MetaschemaModuleMetaschemaTest
 
     {
       ISerializer<METASCHEMA> serializer = context.newSerializer(Format.XML, METASCHEMA.class);
-      serializer.serialize(metaschema, Paths.get("target/metaschema.xml"));
+      serializer.serialize(metaschema, ObjectUtils.notNull(Paths.get("target/metaschema.xml")));
     }
 
     {
       ISerializer<METASCHEMA> serializer = context.newSerializer(Format.JSON, METASCHEMA.class);
-      serializer.serialize(metaschema, Paths.get("target/metaschema.json"));
+      serializer.serialize(metaschema, ObjectUtils.notNull(Paths.get("target/metaschema.json")));
     }
 
     {
       ISerializer<METASCHEMA> serializer = context.newSerializer(Format.YAML, METASCHEMA.class);
-      serializer.serialize(metaschema, Paths.get("target/metaschema.yaml"));
+      serializer.serialize(metaschema, ObjectUtils.notNull(Paths.get("target/metaschema.yaml")));
     }
 
     {
       IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.XML, METASCHEMA.class);
-      METASCHEMA readMetaschema = deserializer.deserialize(Paths.get("target/metaschema.xml"));
+      @SuppressWarnings("unused") METASCHEMA readMetaschema
+          = deserializer.deserialize(ObjectUtils.notNull(Paths.get("target/metaschema.xml")));
     }
 
     {
       IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.JSON, METASCHEMA.class);
-      METASCHEMA readMetaschema = deserializer.deserialize(Paths.get("target/metaschema.json"));
+      @SuppressWarnings("unused") METASCHEMA readMetaschema
+          = deserializer.deserialize(ObjectUtils.notNull(Paths.get("target/metaschema.json")));
     }
 
     {
       IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.YAML, METASCHEMA.class);
-      METASCHEMA readMetaschema = deserializer.deserialize(Paths.get("target/metaschema.yaml"));
+      @SuppressWarnings("unused") METASCHEMA readMetaschema
+          = deserializer.deserialize(ObjectUtils.notNull(Paths.get("target/metaschema.yaml")));
     }
   }
 }

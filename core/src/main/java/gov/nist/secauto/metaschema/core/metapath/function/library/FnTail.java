@@ -40,8 +40,8 @@ import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 /**
- * Implements <a href=
- * "https://www.w3.org/TR/xpath-functions-31/#func-tail">fn:tail</a>.
+ * Implements
+ * <a href= "https://www.w3.org/TR/xpath-functions-31/#func-tail">fn:tail</a>.
  */
 public final class FnTail {
   @NonNull

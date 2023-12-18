@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -68,9 +69,9 @@ class BasicMetaschemaTest
         ObjectUtils.notNull(generationDir),
         (obj) -> {
           try {
-            Assertions.assertEquals("5de455cf-2f8d-4da2-9182-323d433e1065", reflectMethod(obj, "getUuid").toString());
+            assertEquals("5de455cf-2f8d-4da2-9182-323d433e1065", reflectMethod(obj, "getUuid").toString());
           } catch (NoSuchMethodException | SecurityException e) {
-            Assertions.fail(e);
+            fail(e);
           }
         });
   }

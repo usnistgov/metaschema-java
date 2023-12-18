@@ -43,6 +43,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IModelInstanceCollectionInfo {
 
+  @SuppressWarnings("PMD.ShortMethodName")
   @NonNull
   static IModelInstanceCollectionInfo of(
       @NonNull IBoundInstanceModel instance) {
