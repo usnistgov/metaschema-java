@@ -43,7 +43,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Implements <a href=
- * "https://www.w3.org/TR/xpath-functions-31/#func-exists">fn:exists</a>.
+ * "https://www.w3.org/TR/xpath-functions-31/#func-insert-before">fn:insert-before</a>.
  */
 public final class FnInsertBefore {
   @NonNull
@@ -92,7 +92,7 @@ public final class FnInsertBefore {
 
   /**
    * An implementation of XPath 3.1 <a href=
-   * "https://www.w3.org/TR/xpath-functions-31/#insert-before">fn:insert-before</a>.
+   * "https://www.w3.org/TR/xpath-functions-31/#func-insert-before">fn:insert-before</a>.
    *
    * @param <T>
    *          the type for the given Metapath sequence
