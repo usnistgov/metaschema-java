@@ -70,7 +70,7 @@ public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXm
    *          the Java object that data parsed by this method will be stored in
    * @param parseGrouping
    *          if {@code true} parse the instance's grouping element or
-   *          {@false} otherwise
+   *          {@code false} otherwise
    * @return {@code true} if the instance was parsed, or {@code false} if the data
    *         did not contain information for this instance
    * @throws IOException
