@@ -39,13 +39,10 @@ public interface IJsonParsingContext extends IParsingContext<JsonParser, IJsonPr
   public interface IInstanceReader extends IItemReadHandler {
     @NonNull
     JsonParser getJsonParser();
-
-    @NonNull
-    ItemReader getItemReader();
   }
 
   public interface ItemReader extends IItemReadHandler {
-    @NonNull
-    JsonParser getJsonParser();
+    // no additional methods
   }
+
 }
