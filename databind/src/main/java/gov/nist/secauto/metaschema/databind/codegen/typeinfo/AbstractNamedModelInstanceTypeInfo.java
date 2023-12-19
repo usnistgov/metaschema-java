@@ -199,7 +199,7 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
                   itemType, ObjectUtils.class, valueParam)
               .addStatement("$1T key = $2T.requireNonNull($3N.$4N(),\"$3N key cannot be null\")",
                   String.class, ObjectUtils.class, valueParam, "get" + jsonKeyTypeInfo.getPropertyName())
-              .addStatement("return $1N == null ? false : $1N.remove(key, value)", valueField);
+              .addStatement("return $1N != null && $1N.remove(key, value)", valueField);
           builder.addMethod(method.build());
         }
       } else {
@@ -233,7 +233,7 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
               .addJavadoc("@return {@code true} if the item was removed or {@code false} otherwise\n")
               .addStatement("$T value = $T.requireNonNull($N,\"$N cannot be null\")",
                   itemType, ObjectUtils.class, valueParam, valueParam)
-              .addStatement("return $1N == null ? false : $1N.remove(value)", valueField);
+              .addStatement("return $1N != null && $1N.remove(value)", valueField);
           builder.addMethod(method.build());
         }
       }

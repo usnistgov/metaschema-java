@@ -24,47 +24,71 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultilineAdapter;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
+import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValues;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Override;
-import java.lang.String;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
+import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * Used in JSON (and similar formats) to identify a flag that will be used as
- * the property name in an object hold a collection of sibling objects. Requires
- * that siblings must never share <code>json-key</code> values.
+ * Any explanatory or helpful information to be provided about the remarks
+ * parent.
  */
-@MetaschemaAssembly(
-    formalName = "JSON Key",
-    description = "Used in JSON (and similar formats) to identify a flag that will be used as the property name in an object hold a collection of sibling objects. Requires that siblings must never share `json-key` values.",
-    name = "json-key",
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
+@MetaschemaField(
+    formalName = "Remarks",
+    description = "Any explanatory or helpful information to be provided about the remarks parent.",
+    name = "remarks",
     moduleClass = MetaschemaModule.class)
-public class JsonKey {
+public class Remarks {
+  @BoundFieldValue(
+      valueKeyName = "remark",
+      typeAdapter = MarkupMultilineAdapter.class)
+  private MarkupMultiline _remark;
+
   /**
-   * "References the flag that will serve as the JSON key."
+   * "Mark as &lsquo;XML&rsquo; for XML-only or &lsquo;JSON&rsquo; for JSON-only
+   * remarks."
    */
   @BoundFlag(
-      formalName = "JSON Key Flag Reference",
-      description = "References the flag that will serve as the JSON key.",
-      useName = "flag-ref",
-      required = true,
-      typeAdapter = TokenAdapter.class)
-  private String _flagRef;
+      formalName = "Remark Class",
+      description = "Mark as 'XML' for XML-only or 'JSON' for JSON-only remarks.",
+      useName = "class",
+      defaultValue = "ALL",
+      typeAdapter = TokenAdapter.class,
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
+          values = { @AllowedValue(value = "XML", description = "The remark applies to only XML representations."),
+              @AllowedValue(value = "JSON", description = "The remark applies to only JSON and YAML representations."),
+              @AllowedValue(value = "ALL", description = "The remark applies to all representations.") })))
+  private String _clazz;
 
-  public JsonKey() {
+  public MarkupMultiline getRemark() {
+    return _remark;
   }
 
-  public String getFlagRef() {
-    return _flagRef;
+  public void setRemark(MarkupMultiline value) {
+    _remark = value;
   }
 
-  public void setFlagRef(String value) {
-    _flagRef = value;
+  public String getClazz() {
+    return _clazz;
+  }
+
+  public void setClazz(String value) {
+    _clazz = value;
   }
 
   @Override

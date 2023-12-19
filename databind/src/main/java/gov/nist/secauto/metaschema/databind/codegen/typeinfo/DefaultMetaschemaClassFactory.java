@@ -548,8 +548,8 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
 
     Set<IFlagContainer> additionalChildClasses = new HashSet<>();
 
-    // generate a no-arg constructor
-    builder.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC).build());
+    // // generate a no-arg constructor
+    // builder.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC).build());
 
     // // generate a copy constructor
     // MethodSpec.Builder copyBuilder =
@@ -610,23 +610,23 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       @NonNull FieldSpec.Builder builder) {
     IFieldDefinition definition = typeInfo.getParentDefinitionTypeInfo().getDefinition();
     AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(BoundFieldValue.class);
-
+  
     IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
-
+  
     // a field object always has a single value
     if (!definition.hasJsonValueKeyFlagInstance()) {
       fieldValue.addMember("valueKeyName", "$S", definition.getJsonValueKeyName());
     } // else do nothing, the annotation will be on the flag
-
+  
     if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {
       fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getClass());
     }
-
+  
     Object defaultValue = definition.getDefaultValue();
     if (defaultValue != null) {
       fieldValue.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
     }
-
+  
     builder.addAnnotation(fieldValue.build());
   }
   */
@@ -692,7 +692,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
               .addJavadoc("@return {@code true} if the item was removed or {@code false} otherwise\n")
               .addStatement("$T value = $T.requireNonNull($N,\"$N cannot be null\")",
                   itemType, ObjectUtils.class, valueParam, valueParam)
-              .addStatement("return $1N == null ? false : $1N.remove(value)", valueField);
+              .addStatement("return $1N != null && $1N.remove(value)", valueField);
           builder.addMethod(method.build());
         }
       }
@@ -756,7 +756,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
               itemType, ObjectUtils.class, valueParam)
           .addStatement("$1T key = $2T.requireNonNull($3N.$4N(),\"$3N key cannot be null\")",
               String.class, ObjectUtils.class, valueParam, "get" + jsonKeyTypeInfo.getPropertyName())
-          .addStatement("return $1N == null ? false : $1N.remove(key, value)", valueField);
+          .addStatement("return $1N != null && $1N.remove(key, value)", valueField);
       builder.addMethod(method.build());
     }
 

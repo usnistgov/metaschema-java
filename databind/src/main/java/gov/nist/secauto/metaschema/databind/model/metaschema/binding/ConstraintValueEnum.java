@@ -24,68 +24,67 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
-import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLineAdapter;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Override;
-import java.lang.String;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-@MetaschemaAssembly(
-    formalName = "Constraint Let Expression",
-    name = "constraint-let-expression",
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
+@MetaschemaField(
+    formalName = "Allowed Value Enumeration",
+    name = "constraint-value-enum",
     moduleClass = MetaschemaModule.class)
-public class ConstraintLetExpression {
-  @BoundFlag(
-      formalName = "Let Variable Name",
-      useName = "var",
-      required = true,
-      typeAdapter = TokenAdapter.class)
-  private String _var;
+public class ConstraintValueEnum {
+  @BoundFieldValue(
+      valueKeyName = "remark",
+      typeAdapter = MarkupLineAdapter.class)
+  private MarkupLine _remark;
 
   @BoundFlag(
-      formalName = "Let Value Metapath Expression",
-      useName = "expression",
+      formalName = "Allowed Value Enumeration Value",
+      useName = "value",
       required = true,
       typeAdapter = StringAdapter.class)
-  private String _expression;
+  private String _value;
 
-  @BoundField(
-      formalName = "Remarks",
-      description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks")
-  private Remarks _remarks;
+  @BoundFlag(
+      formalName = "Allowed Value Deprecation Version",
+      useName = "deprecated",
+      typeAdapter = StringAdapter.class)
+  private String _deprecated;
 
-  public ConstraintLetExpression() {
+  public MarkupLine getRemark() {
+    return _remark;
   }
 
-  public String getVar() {
-    return _var;
+  public void setRemark(MarkupLine value) {
+    _remark = value;
   }
 
-  public void setVar(String value) {
-    _var = value;
+  public String getValue() {
+    return _value;
   }
 
-  public String getExpression() {
-    return _expression;
+  public void setValue(String value) {
+    _value = value;
   }
 
-  public void setExpression(String value) {
-    _expression = value;
+  public String getDeprecated() {
+    return _deprecated;
   }
 
-  public Remarks getRemarks() {
-    return _remarks;
-  }
-
-  public void setRemarks(Remarks value) {
-    _remarks = value;
+  public void setDeprecated(String value) {
+    _deprecated = value;
   }
 
   @Override

@@ -24,51 +24,62 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
-import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLineAdapter;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
+import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
+import gov.nist.secauto.metaschema.core.datatype.adapter.UriAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import java.lang.Override;
-import java.lang.String;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-@MetaschemaField(
-    formalName = "Allowed Value Enumeration",
-    name = "constraint-value-enum",
+import java.net.URI;
+
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
+@MetaschemaAssembly(
+    formalName = "Property",
+    name = "property",
     moduleClass = MetaschemaModule.class)
-public class ConstraintValueEnum {
-  @BoundFieldValue(
-      valueKeyName = "remark",
-      typeAdapter = MarkupLineAdapter.class)
-  private MarkupLine _remark;
+public class Property {
+  @BoundFlag(
+      formalName = "Property Name",
+      useName = "name",
+      required = true,
+      typeAdapter = TokenAdapter.class)
+  private String _name;
 
   @BoundFlag(
-      formalName = "Allowed Value Enumeration Value",
+      formalName = "Property Namespace",
+      useName = "namespace",
+      defaultValue = "http://csrc.nist.gov/ns/oscal/metaschema/1.0",
+      typeAdapter = UriAdapter.class)
+  private URI _namespace;
+
+  @BoundFlag(
+      formalName = "Property Value",
       useName = "value",
       required = true,
-      typeAdapter = StringAdapter.class)
+      typeAdapter = TokenAdapter.class)
   private String _value;
 
-  @BoundFlag(
-      formalName = "Allowed Value Deprecation Version",
-      useName = "deprecated",
-      typeAdapter = StringAdapter.class)
-  private String _deprecated;
-
-  public ConstraintValueEnum() {
+  public String getName() {
+    return _name;
   }
 
-  public MarkupLine getRemark() {
-    return _remark;
+  public void setName(String value) {
+    _name = value;
   }
 
-  public void setRemark(MarkupLine value) {
-    _remark = value;
+  public URI getNamespace() {
+    return _namespace;
+  }
+
+  public void setNamespace(URI value) {
+    _namespace = value;
   }
 
   public String getValue() {
@@ -77,14 +88,6 @@ public class ConstraintValueEnum {
 
   public void setValue(String value) {
     _value = value;
-  }
-
-  public String getDeprecated() {
-    return _deprecated;
-  }
-
-  public void setDeprecated(String value) {
-    _deprecated = value;
   }
 
   @Override

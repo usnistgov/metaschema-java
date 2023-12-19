@@ -24,71 +24,61 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
+import gov.nist.secauto.metaschema.core.datatype.adapter.NonNegativeIntegerAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultilineAdapter;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
-import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValue;
-import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValues;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Override;
-import java.lang.String;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.math.BigInteger;
+
 /**
- * Any explanatory or helpful information to be provided about the remarks
- * parent.
+ * Allows the name of the definition to be overridden.
  */
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
 @MetaschemaField(
-    formalName = "Remarks",
-    description = "Any explanatory or helpful information to be provided about the remarks parent.",
-    name = "remarks",
+    formalName = "Use Name",
+    description = "Allows the name of the definition to be overridden.",
+    name = "use-name",
     moduleClass = MetaschemaModule.class)
-public class Remarks {
+public class UseName {
   @BoundFieldValue(
-      valueKeyName = "remark",
-      typeAdapter = MarkupMultilineAdapter.class)
-  private MarkupMultiline _remark;
+      valueKeyName = "name",
+      typeAdapter = TokenAdapter.class)
+  private String _name;
 
   /**
-   * "Mark as &lsquo;XML&rsquo; for XML-only or &lsquo;JSON&rsquo; for JSON-only
-   * remarks."
+   * "Used for binary formats instead of the textual name."
    */
   @BoundFlag(
-      formalName = "Remark Class",
-      description = "Mark as 'XML' for XML-only or 'JSON' for JSON-only remarks.",
-      useName = "class",
-      defaultValue = "ALL",
-      typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
-          values = { @AllowedValue(value = "XML", description = "The remark applies to only XML representations."),
-              @AllowedValue(value = "JSON", description = "The remark applies to only JSON and YAML representations."),
-              @AllowedValue(value = "ALL", description = "The remark applies to all representations.") })))
-  private String _clazz;
+      formalName = "Numeric Index",
+      description = "Used for binary formats instead of the textual name.",
+      useName = "index",
+      typeAdapter = NonNegativeIntegerAdapter.class)
+  private BigInteger _index;
 
-  public Remarks() {
+  public String getName() {
+    return _name;
   }
 
-  public MarkupMultiline getRemark() {
-    return _remark;
+  public void setName(String value) {
+    _name = value;
   }
 
-  public void setRemark(MarkupMultiline value) {
-    _remark = value;
+  public BigInteger getIndex() {
+    return _index;
   }
 
-  public String getClazz() {
-    return _clazz;
-  }
-
-  public void setClazz(String value) {
-    _clazz = value;
+  public void setIndex(BigInteger value) {
+    _index = value;
   }
 
   @Override

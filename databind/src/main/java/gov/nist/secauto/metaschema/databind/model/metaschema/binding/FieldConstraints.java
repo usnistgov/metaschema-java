@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -33,14 +33,17 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Object;
-import java.lang.Override;
-import java.lang.String;
-import java.util.LinkedList;
-import java.util.List;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.LinkedList;
+import java.util.List;
+
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
 @MetaschemaAssembly(
     name = "field-constraints",
     moduleClass = MetaschemaModule.class)
@@ -67,9 +70,6 @@ public class FieldConstraints {
       },
       groupAs = @GroupAs(name = "rules", inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _rules;
-
-  public FieldConstraints() {
-  }
 
   public List<ConstraintLetExpression> getLets() {
     return _lets;
@@ -104,7 +104,7 @@ public class FieldConstraints {
    */
   public boolean removeLet(ConstraintLetExpression item) {
     ConstraintLetExpression value = ObjectUtils.requireNonNull(item, "item cannot be null");
-    return _lets == null ? false : _lets.remove(value);
+    return _lets != null && _lets.remove(value);
   }
 
   public List<Object> getRules() {

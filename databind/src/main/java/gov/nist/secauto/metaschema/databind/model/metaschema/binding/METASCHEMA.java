@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.NonNegativeIntegerAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.PositiveIntegerAdapter;
@@ -49,19 +49,25 @@ import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Object;
-import java.lang.Override;
-import java.lang.String;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * A declaration of the Metaschema module.
  */
+@SuppressWarnings({
+    "PMD.CouplingBetweenObjects",
+    "PMD.DataClass",
+    "PMD.ExcessivePublicCount",
+    "PMD.FieldNamingConventions",
+    "PMD.TooManyFields"
+})
 @MetaschemaAssembly(
     formalName = "Metaschema Module",
     description = "A declaration of the Metaschema module.",
@@ -148,9 +154,6 @@ public class METASCHEMA {
       },
       groupAs = @GroupAs(name = "definitions", inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _definitions;
-
-  public METASCHEMA() {
-  }
 
   public String getAbstract() {
     return _abstract;
@@ -240,7 +243,7 @@ public class METASCHEMA {
    */
   public boolean removeImport(Import item) {
     Import value = ObjectUtils.requireNonNull(item, "item cannot be null");
-    return _imports == null ? false : _imports.remove(value);
+    return _imports != null && _imports.remove(value);
   }
 
   public List<Object> getDefinitions() {
@@ -368,9 +371,6 @@ public class METASCHEMA {
         groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
     private List<Example> _examples;
 
-    public DefineAssembly() {
-    }
-
     public String getName() {
       return _name;
     }
@@ -452,7 +452,7 @@ public class METASCHEMA {
      */
     public boolean removeProp(Property item) {
       Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-      return _props == null ? false : _props.remove(value);
+      return _props != null && _props.remove(value);
     }
 
     public UseName getUseName() {
@@ -544,7 +544,7 @@ public class METASCHEMA {
      */
     public boolean removeExample(Example item) {
       Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
-      return _examples == null ? false : _examples.remove(value);
+      return _examples != null && _examples.remove(value);
     }
 
     @Override
@@ -576,9 +576,6 @@ public class METASCHEMA {
           useName = "index",
           typeAdapter = NonNegativeIntegerAdapter.class)
       private BigInteger _index;
-
-      public RootName() {
-      }
 
       public String getName() {
         return _name;
@@ -713,9 +710,6 @@ public class METASCHEMA {
         groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
     private List<Example> _examples;
 
-    public DefineFlag() {
-    }
-
     public String getName() {
       return _name;
     }
@@ -813,7 +807,7 @@ public class METASCHEMA {
      */
     public boolean removeProp(Property item) {
       Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-      return _props == null ? false : _props.remove(value);
+      return _props != null && _props.remove(value);
     }
 
     public UseName getUseName() {
@@ -873,7 +867,7 @@ public class METASCHEMA {
      */
     public boolean removeExample(Example item) {
       Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
-      return _examples == null ? false : _examples.remove(value);
+      return _examples != null && _examples.remove(value);
     }
 
     @Override
@@ -1019,9 +1013,6 @@ public class METASCHEMA {
         groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
     private List<Example> _examples;
 
-    public DefineField() {
-    }
-
     public String getName() {
       return _name;
     }
@@ -1119,7 +1110,7 @@ public class METASCHEMA {
      */
     public boolean removeProp(Property item) {
       Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-      return _props == null ? false : _props.remove(value);
+      return _props != null && _props.remove(value);
     }
 
     public UseName getUseName() {
@@ -1211,7 +1202,7 @@ public class METASCHEMA {
      */
     public boolean removeExample(Example item) {
       Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
-      return _examples == null ? false : _examples.remove(value);
+      return _examples != null && _examples.remove(value);
     }
 
     @Override
@@ -1241,9 +1232,6 @@ public class METASCHEMA {
         required = true,
         typeAdapter = UriReferenceAdapter.class)
     private URI _href;
-
-    public Import() {
-    }
 
     public URI getHref() {
       return _href;

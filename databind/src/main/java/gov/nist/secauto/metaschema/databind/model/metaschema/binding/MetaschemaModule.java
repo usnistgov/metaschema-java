@@ -23,8 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
@@ -67,9 +66,9 @@ import java.util.List;
         TargetedExpectConstraint.class,
         TargetedIndexHasKeyConstraint.class,
         KeyConstraintField.class
-    })
-public final class MetaschemaModule
-    extends AbstractBoundModule {
+    }
+)
+public final class MetaschemaModule extends AbstractBoundModule {
   private static final MarkupLine NAME = MarkupLine.fromMarkdown("Metaschema Model");
 
   private static final String SHORT_NAME = "metaschema";

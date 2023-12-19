@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.NonNegativeIntegerAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.PositiveIntegerAdapter;
@@ -35,36 +35,38 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLineAdapter;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValue;
-import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValues;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.Matches;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Override;
-import java.lang.String;
-import java.math.BigInteger;
-import java.util.LinkedList;
-import java.util.List;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.math.BigInteger;
+import java.util.LinkedList;
+import java.util.List;
+
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
 @MetaschemaAssembly(
-    formalName = "Field Reference",
-    name = "field-reference",
+    formalName = "Assembly Reference",
+    name = "assembly-reference",
     moduleClass = MetaschemaModule.class)
-public class FieldReference {
+public class AssemblyReference {
   @BoundFlag(
-      formalName = "Global Field Reference",
+      formalName = "Global Assembly Reference",
       useName = "ref",
       required = true,
       typeAdapter = TokenAdapter.class)
   private String _ref;
 
   @BoundFlag(
-      formalName = "Field Reference Binary Name",
+      formalName = "Assembly Reference Binary Name",
       useName = "index",
       typeAdapter = PositiveIntegerAdapter.class)
   private BigInteger _index;
@@ -74,12 +76,6 @@ public class FieldReference {
       useName = "deprecated",
       typeAdapter = StringAdapter.class)
   private String _deprecated;
-
-  @BoundFlag(
-      formalName = "Default Field Value",
-      useName = "default",
-      typeAdapter = StringAdapter.class)
-  private String _default;
 
   @BoundFlag(
       formalName = "Minimum Occurrence",
@@ -96,18 +92,6 @@ public class FieldReference {
       valueConstraints = @ValueConstraints(
           matches = @Matches(level = IConstraint.Level.ERROR, pattern = "^[1-9][0-9]*|unbounded$")))
   private String _maxOccurs;
-
-  @BoundFlag(
-      formalName = "Field In XML",
-      useName = "in-xml",
-      typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
-          @AllowedValue(value = "WRAPPED",
-              description = "Block contents of a markup-multiline field will be represented with a containing (wrapper) element in the XML."),
-          @AllowedValue(value = "UNWRAPPED",
-              description = "Block contents of a markup-multiline will be represented in the XML with no wrapper, making the field implicit. Among sibling fields in a given model, only one of them may be designated as UNWRAPPED."),
-          @AllowedValue(value = "WITH_WRAPPER", description = "Alias for WRAPPED.") })))
-  private String _inXml;
 
   @BoundField(
       formalName = "Formal Name",
@@ -147,9 +131,6 @@ public class FieldReference {
       useName = "remarks")
   private Remarks _remarks;
 
-  public FieldReference() {
-  }
-
   public String getRef() {
     return _ref;
   }
@@ -174,14 +155,6 @@ public class FieldReference {
     _deprecated = value;
   }
 
-  public String getDefault() {
-    return _default;
-  }
-
-  public void setDefault(String value) {
-    _default = value;
-  }
-
   public BigInteger getMinOccurs() {
     return _minOccurs;
   }
@@ -196,14 +169,6 @@ public class FieldReference {
 
   public void setMaxOccurs(String value) {
     _maxOccurs = value;
-  }
-
-  public String getInXml() {
-    return _inXml;
-  }
-
-  public void setInXml(String value) {
-    _inXml = value;
   }
 
   public String getFormalName() {
@@ -255,7 +220,7 @@ public class FieldReference {
    */
   public boolean removeProp(Property item) {
     Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-    return _props == null ? false : _props.remove(value);
+    return _props != null && _props.remove(value);
   }
 
   public UseName getUseName() {

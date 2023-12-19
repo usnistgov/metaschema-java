@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
@@ -41,18 +41,22 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Override;
-import java.lang.String;
-import java.util.LinkedList;
-import java.util.List;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.LinkedList;
+import java.util.List;
+
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
 @MetaschemaAssembly(
-    formalName = "Value Matches Constraint",
-    name = "targeted-matches-constraint",
+    formalName = "Expect Condition Constraint",
+    name = "targeted-expect-constraint",
     moduleClass = MetaschemaModule.class)
-public class TargetedMatchesConstraint {
+public class TargetedExpectConstraint {
   @BoundFlag(
       formalName = "Constraint Identifier",
       useName = "id",
@@ -75,34 +79,11 @@ public class TargetedMatchesConstraint {
   private String _level;
 
   @BoundFlag(
-      formalName = "Matches Regular Expression",
-      useName = "regex",
+      formalName = "Expect Test Condition",
+      useName = "test",
+      required = true,
       typeAdapter = StringAdapter.class)
-  private String _regex;
-
-  @BoundFlag(
-      formalName = "Matches Data Type",
-      useName = "datatype",
-      typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
-          allowOthers = true,
-          values = { @AllowedValue(value = "base64", description = ""),
-              @AllowedValue(value = "boolean", description = ""), @AllowedValue(value = "date", description = ""),
-              @AllowedValue(value = "date-time", description = ""),
-              @AllowedValue(value = "date-time-with-timezone", description = ""),
-              @AllowedValue(value = "date-with-timezone", description = ""),
-              @AllowedValue(value = "day-time-duration", description = ""),
-              @AllowedValue(value = "decimal", description = ""),
-              @AllowedValue(value = "email-address", description = ""),
-              @AllowedValue(value = "hostname", description = ""), @AllowedValue(value = "integer", description = ""),
-              @AllowedValue(value = "ip-v4-address", description = ""),
-              @AllowedValue(value = "ip-v6-address", description = ""),
-              @AllowedValue(value = "non-negative-integer", description = ""),
-              @AllowedValue(value = "positive-integer", description = ""),
-              @AllowedValue(value = "string", description = ""), @AllowedValue(value = "token", description = ""),
-              @AllowedValue(value = "uri", description = ""), @AllowedValue(value = "uri-reference", description = ""),
-              @AllowedValue(value = "uuid", description = "") })))
-  private String _datatype;
+  private String _test;
 
   @BoundFlag(
       formalName = "Constraint Target Metapath Expression",
@@ -132,13 +113,15 @@ public class TargetedMatchesConstraint {
   private List<Property> _props;
 
   @BoundField(
+      formalName = "Expect Condition Violation Message",
+      useName = "message")
+  private String _message;
+
+  @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
       useName = "remarks")
   private Remarks _remarks;
-
-  public TargetedMatchesConstraint() {
-  }
 
   public String getId() {
     return _id;
@@ -156,20 +139,12 @@ public class TargetedMatchesConstraint {
     _level = value;
   }
 
-  public String getRegex() {
-    return _regex;
+  public String getTest() {
+    return _test;
   }
 
-  public void setRegex(String value) {
-    _regex = value;
-  }
-
-  public String getDatatype() {
-    return _datatype;
-  }
-
-  public void setDatatype(String value) {
-    _datatype = value;
+  public void setTest(String value) {
+    _test = value;
   }
 
   public String getTarget() {
@@ -229,7 +204,15 @@ public class TargetedMatchesConstraint {
    */
   public boolean removeProp(Property item) {
     Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-    return _props == null ? false : _props.remove(value);
+    return _props != null && _props.remove(value);
+  }
+
+  public String getMessage() {
+    return _message;
+  }
+
+  public void setMessage(String value) {
+    _message = value;
   }
 
   public Remarks getRemarks() {

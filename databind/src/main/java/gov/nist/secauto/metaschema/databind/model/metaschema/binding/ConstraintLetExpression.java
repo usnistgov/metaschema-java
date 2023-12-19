@@ -24,34 +24,39 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
+import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Override;
-import java.lang.String;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
 @MetaschemaAssembly(
-    formalName = "Key Constraint",
-    name = "key-constraint-field",
+    formalName = "Constraint Let Expression",
+    name = "constraint-let-expression",
     moduleClass = MetaschemaModule.class)
-public class KeyConstraintField {
+public class ConstraintLetExpression {
   @BoundFlag(
-      formalName = "Key Field Value Target",
-      useName = "target",
+      formalName = "Let Variable Name",
+      useName = "var",
       required = true,
-      typeAdapter = StringAdapter.class)
-  private String _target;
+      typeAdapter = TokenAdapter.class)
+  private String _var;
 
   @BoundFlag(
-      formalName = "Key Field Value Pattern",
-      useName = "pattern",
+      formalName = "Let Value Metapath Expression",
+      useName = "expression",
+      required = true,
       typeAdapter = StringAdapter.class)
-  private String _pattern;
+  private String _expression;
 
   @BoundField(
       formalName = "Remarks",
@@ -59,23 +64,20 @@ public class KeyConstraintField {
       useName = "remarks")
   private Remarks _remarks;
 
-  public KeyConstraintField() {
+  public String getVar() {
+    return _var;
   }
 
-  public String getTarget() {
-    return _target;
+  public void setVar(String value) {
+    _var = value;
   }
 
-  public void setTarget(String value) {
-    _target = value;
+  public String getExpression() {
+    return _expression;
   }
 
-  public String getPattern() {
-    return _pattern;
-  }
-
-  public void setPattern(String value) {
-    _pattern = value;
+  public void setExpression(String value) {
+    _expression = value;
   }
 
   public Remarks getRemarks() {

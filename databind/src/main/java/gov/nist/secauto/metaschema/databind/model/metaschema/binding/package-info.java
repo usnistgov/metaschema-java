@@ -24,11 +24,16 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-@gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaPackage(moduleClass = {
-    gov.nist.secauto.metaschema.databind.model.metaschema.MetaschemaModule.class })
-@gov.nist.secauto.metaschema.databind.model.annotations.XmlSchema(
+@MetaschemaPackage(moduleClass = {
+    MetaschemaModule.class })
+@XmlSchema(
     namespace = "http://csrc.nist.gov/ns/oscal/metaschema/1.0",
-    xmlns = { @gov.nist.secauto.metaschema.databind.model.annotations.XmlNs(prefix = "",
+    xmlns = { @XmlNs(prefix = "",
         namespace = "http://csrc.nist.gov/ns/oscal/metaschema/1.0") },
-    xmlElementFormDefault = gov.nist.secauto.metaschema.databind.model.annotations.XmlNsForm.QUALIFIED)
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+    xmlElementFormDefault = XmlNsForm.QUALIFIED)
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
+
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaPackage;
+import gov.nist.secauto.metaschema.databind.model.annotations.XmlNs;
+import gov.nist.secauto.metaschema.databind.model.annotations.XmlNsForm;
+import gov.nist.secauto.metaschema.databind.model.annotations.XmlSchema;

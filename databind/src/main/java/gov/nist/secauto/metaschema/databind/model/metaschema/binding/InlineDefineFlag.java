@@ -24,9 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
-import gov.nist.secauto.metaschema.core.datatype.adapter.NonNegativeIntegerAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.PositiveIntegerAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
@@ -38,36 +37,37 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValues;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.annotations.Matches;
+import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Object;
-import java.lang.Override;
-import java.lang.String;
-import java.math.BigInteger;
-import java.util.LinkedList;
-import java.util.List;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.math.BigInteger;
+import java.util.LinkedList;
+import java.util.List;
+
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
 @MetaschemaAssembly(
-    formalName = "Inline Field Definition",
-    name = "inline-define-field",
+    formalName = "Inline Flag Definition",
+    name = "inline-define-flag",
     moduleClass = MetaschemaModule.class)
-public class InlineDefineField {
+public class InlineDefineFlag {
   @BoundFlag(
-      formalName = "Inline Field Name",
+      formalName = "Inline Flag Name",
       useName = "name",
       required = true,
       typeAdapter = TokenAdapter.class)
   private String _name;
 
   @BoundFlag(
-      formalName = "Inline Field Binary Name",
+      formalName = "Inline Flag Binary Name",
       useName = "index",
       typeAdapter = PositiveIntegerAdapter.class)
   private BigInteger _index;
@@ -79,15 +79,15 @@ public class InlineDefineField {
   private String _deprecated;
 
   @BoundFlag(
-      formalName = "Field Value Data Type",
+      formalName = "Flag Value Data Type",
       useName = "as-type",
+      defaultValue = "string",
       typeAdapter = TokenAdapter.class,
       valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
           allowOthers = true,
-          values = { @AllowedValue(value = "markup-line", description = ""),
-              @AllowedValue(value = "markup-multiline", description = ""),
-              @AllowedValue(value = "base64", description = ""), @AllowedValue(value = "boolean", description = ""),
-              @AllowedValue(value = "date", description = ""), @AllowedValue(value = "date-time", description = ""),
+          values = { @AllowedValue(value = "base64", description = ""),
+              @AllowedValue(value = "boolean", description = ""), @AllowedValue(value = "date", description = ""),
+              @AllowedValue(value = "date-time", description = ""),
               @AllowedValue(value = "date-time-with-timezone", description = ""),
               @AllowedValue(value = "date-with-timezone", description = ""),
               @AllowedValue(value = "day-time-duration", description = ""),
@@ -104,38 +104,18 @@ public class InlineDefineField {
   private String _asType;
 
   @BoundFlag(
-      formalName = "Default Field Value",
+      formalName = "Default Flag Value",
       useName = "default",
       typeAdapter = StringAdapter.class)
   private String _default;
 
   @BoundFlag(
-      formalName = "Minimum Occurrence",
-      useName = "min-occurs",
-      defaultValue = "0",
-      typeAdapter = NonNegativeIntegerAdapter.class)
-  private BigInteger _minOccurs;
-
-  @BoundFlag(
-      formalName = "Maximum Occurrence",
-      useName = "max-occurs",
-      defaultValue = "1",
-      typeAdapter = StringAdapter.class,
-      valueConstraints = @ValueConstraints(
-          matches = @Matches(level = IConstraint.Level.ERROR, pattern = "^[1-9][0-9]*|unbounded$")))
-  private String _maxOccurs;
-
-  @BoundFlag(
-      formalName = "Field In XML",
-      useName = "in-xml",
+      formalName = "Is Flag Required?",
+      useName = "required",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
-          @AllowedValue(value = "WRAPPED",
-              description = "Block contents of a markup-multiline field will be represented with a containing (wrapper) element in the XML."),
-          @AllowedValue(value = "UNWRAPPED",
-              description = "Block contents of a markup-multiline will be represented in the XML with no wrapper, making the field implicit. Among sibling fields in a given model, only one of them may be designated as UNWRAPPED."),
-          @AllowedValue(value = "WITH_WRAPPER", description = "Alias for WRAPPED.") })))
-  private String _inXml;
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
+          values = { @AllowedValue(value = "yes", description = ""), @AllowedValue(value = "no", description = "") })))
+  private String _required;
 
   @BoundField(
       formalName = "Formal Name",
@@ -154,46 +134,12 @@ public class InlineDefineField {
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
-          inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
   @BoundAssembly(
-      formalName = "JSON Key",
-      description = "Used in JSON (and similar formats) to identify a flag that will be used as the property name in an object hold a collection of sibling objects. Requires that siblings must never share `json-key` values.",
-      useName = "json-key")
-  private JsonKey _jsonKey;
-
-  @BoundField(
-      formalName = "Field Value JSON Property Name",
-      useName = "json-value-key",
-      typeAdapter = TokenAdapter.class)
-  private String _jsonValueKey;
-
-  @BoundAssembly(
-      formalName = "Flag Used as the Field Value's JSON Property Name",
-      useName = "json-value-key-flag")
-  private JsonValueKeyFlag _jsonValueKeyFlag;
-
-  @BoundAssembly(
-      formalName = "Group As",
-      useName = "group-as")
-  private GroupAs _groupAs;
-
-  @BoundChoiceGroup(
-      maxOccurs = -1,
-      assemblies = {
-          @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag",
-              binding = InlineDefineFlag.class),
-          @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
-      },
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "flags",
-          inJson = JsonGroupAsBehavior.LIST))
-  private List<Object> _flags;
-
-  @BoundAssembly(
       useName = "constraint")
-  private FieldConstraints _constraint;
+  private FlagConstraints _constraint;
 
   @BoundField(
       formalName = "Remarks",
@@ -205,12 +151,8 @@ public class InlineDefineField {
       formalName = "Example",
       useName = "example",
       maxOccurs = -1,
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "examples",
-          inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
   private List<Example> _examples;
-
-  public InlineDefineField() {
-  }
 
   public String getName() {
     return _name;
@@ -252,28 +194,12 @@ public class InlineDefineField {
     _default = value;
   }
 
-  public BigInteger getMinOccurs() {
-    return _minOccurs;
+  public String getRequired() {
+    return _required;
   }
 
-  public void setMinOccurs(BigInteger value) {
-    _minOccurs = value;
-  }
-
-  public String getMaxOccurs() {
-    return _maxOccurs;
-  }
-
-  public void setMaxOccurs(String value) {
-    _maxOccurs = value;
-  }
-
-  public String getInXml() {
-    return _inXml;
-  }
-
-  public void setInXml(String value) {
-    _inXml = value;
+  public void setRequired(String value) {
+    _required = value;
   }
 
   public String getFormalName() {
@@ -325,54 +251,14 @@ public class InlineDefineField {
    */
   public boolean removeProp(Property item) {
     Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-    return _props == null ? false : _props.remove(value);
+    return _props != null && _props.remove(value);
   }
 
-  public JsonKey getJsonKey() {
-    return _jsonKey;
-  }
-
-  public void setJsonKey(JsonKey value) {
-    _jsonKey = value;
-  }
-
-  public String getJsonValueKey() {
-    return _jsonValueKey;
-  }
-
-  public void setJsonValueKey(String value) {
-    _jsonValueKey = value;
-  }
-
-  public JsonValueKeyFlag getJsonValueKeyFlag() {
-    return _jsonValueKeyFlag;
-  }
-
-  public void setJsonValueKeyFlag(JsonValueKeyFlag value) {
-    _jsonValueKeyFlag = value;
-  }
-
-  public GroupAs getGroupAs() {
-    return _groupAs;
-  }
-
-  public void setGroupAs(GroupAs value) {
-    _groupAs = value;
-  }
-
-  public List<Object> getFlags() {
-    return _flags;
-  }
-
-  public void setFlags(List<Object> value) {
-    _flags = value;
-  }
-
-  public FieldConstraints getConstraint() {
+  public FlagConstraints getConstraint() {
     return _constraint;
   }
 
-  public void setConstraint(FieldConstraints value) {
+  public void setConstraint(FlagConstraints value) {
     _constraint = value;
   }
 
@@ -417,7 +303,7 @@ public class InlineDefineField {
    */
   public boolean removeExample(Example item) {
     Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
-    return _examples == null ? false : _examples.remove(value);
+    return _examples != null && _examples.remove(value);
   }
 
   @Override

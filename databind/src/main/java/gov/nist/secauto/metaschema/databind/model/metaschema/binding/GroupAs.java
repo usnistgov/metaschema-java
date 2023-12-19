@@ -24,37 +24,80 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
+import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValues;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Override;
-import java.lang.String;
+import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
 @MetaschemaAssembly(
-    formalName = "Flag Used as the Field Value's JSON Property Name",
-    name = "json-value-key-flag",
+    formalName = "Group As",
+    name = "group-as",
     moduleClass = MetaschemaModule.class)
-public class JsonValueKeyFlag {
+public class GroupAs {
   @BoundFlag(
-      formalName = "Flag Reference",
-      useName = "flag-ref",
+      formalName = "Grouping Name",
+      useName = "name",
       required = true,
       typeAdapter = TokenAdapter.class)
-  private String _flagRef;
+  private String _name;
 
-  public JsonValueKeyFlag() {
+  @BoundFlag(
+      formalName = "In JSON Grouping Syntax",
+      useName = "in-json",
+      defaultValue = "SINGLETON_OR_ARRAY",
+      typeAdapter = TokenAdapter.class,
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
+          @AllowedValue(value = "ARRAY", description = "Always use an array."),
+          @AllowedValue(value = "SINGLETON_OR_ARRAY",
+              description = "Produce a singleton for a single member or an array for multiple members."),
+          @AllowedValue(value = "BY_KEY",
+              description = "For any group of one or more members, produce an object with properties for each member, using a designated flag for their property name values, which must be distinct.") })))
+  private String _inJson;
+
+  @BoundFlag(
+      formalName = "In XML Grouping Syntax",
+      useName = "in-xml",
+      defaultValue = "UNGROUPED",
+      typeAdapter = TokenAdapter.class,
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
+          values = { @AllowedValue(value = "GROUPED", description = "Use a wrapper element."),
+              @AllowedValue(value = "UNGROUPED", description = "Do not use a wrapper element.") })))
+  private String _inXml;
+
+  public String getName() {
+    return _name;
   }
 
-  public String getFlagRef() {
-    return _flagRef;
+  public void setName(String value) {
+    _name = value;
   }
 
-  public void setFlagRef(String value) {
-    _flagRef = value;
+  public String getInJson() {
+    return _inJson;
+  }
+
+  public void setInJson(String value) {
+    _inJson = value;
+  }
+
+  public String getInXml() {
+    return _inXml;
+  }
+
+  public void setInXml(String value) {
+    _inXml = value;
   }
 
   @Override

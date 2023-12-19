@@ -24,82 +24,37 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
-import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
-import gov.nist.secauto.metaschema.core.datatype.adapter.UriReferenceAdapter;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLineAdapter;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
+import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Override;
-import java.lang.String;
-import java.net.URI;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
 @MetaschemaAssembly(
-    formalName = "Example",
-    name = "example",
+    formalName = "Flag Used as the Field Value's JSON Property Name",
+    name = "json-value-key-flag",
     moduleClass = MetaschemaModule.class)
-public class Example {
+public class JsonValueKeyFlag {
   @BoundFlag(
-      formalName = "Example Reference",
-      useName = "ref",
-      typeAdapter = UriReferenceAdapter.class)
-  private URI _ref;
+      formalName = "Flag Reference",
+      useName = "flag-ref",
+      required = true,
+      typeAdapter = TokenAdapter.class)
+  private String _flagRef;
 
-  @BoundFlag(
-      useName = "path",
-      typeAdapter = StringAdapter.class)
-  private String _path;
-
-  @BoundField(
-      formalName = "Example Description",
-      useName = "description",
-      typeAdapter = MarkupLineAdapter.class)
-  private MarkupLine _description;
-
-  @BoundField(
-      formalName = "Remarks",
-      description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks")
-  private Remarks _remarks;
-
-  public Example() {
+  public String getFlagRef() {
+    return _flagRef;
   }
 
-  public URI getRef() {
-    return _ref;
-  }
-
-  public void setRef(URI value) {
-    _ref = value;
-  }
-
-  public String getPath() {
-    return _path;
-  }
-
-  public void setPath(String value) {
-    _path = value;
-  }
-
-  public MarkupLine getDescription() {
-    return _description;
-  }
-
-  public void setDescription(MarkupLine value) {
-    _description = value;
-  }
-
-  public Remarks getRemarks() {
-    return _remarks;
-  }
-
-  public void setRemarks(Remarks value) {
-    _remarks = value;
+  public void setFlagRef(String value) {
+    _flagRef = value;
   }
 
   @Override

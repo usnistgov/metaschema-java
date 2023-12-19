@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
@@ -41,13 +41,17 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Override;
-import java.lang.String;
-import java.util.LinkedList;
-import java.util.List;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.LinkedList;
+import java.util.List;
+
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
 @MetaschemaAssembly(
     formalName = "Targeted Index Has Key Constraint",
     name = "targeted-index-has-key-constraint",
@@ -121,9 +125,6 @@ public class TargetedIndexHasKeyConstraint {
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
       useName = "remarks")
   private Remarks _remarks;
-
-  public TargetedIndexHasKeyConstraint() {
-  }
 
   public String getId() {
     return _id;
@@ -206,7 +207,7 @@ public class TargetedIndexHasKeyConstraint {
    */
   public boolean removeProp(Property item) {
     Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-    return _props == null ? false : _props.remove(value);
+    return _props != null && _props.remove(value);
   }
 
   public List<KeyConstraintField> getKeyFields() {
@@ -242,7 +243,7 @@ public class TargetedIndexHasKeyConstraint {
    */
   public boolean removeKeyField(KeyConstraintField item) {
     KeyConstraintField value = ObjectUtils.requireNonNull(item, "item cannot be null");
-    return _keyFields == null ? false : _keyFields.remove(value);
+    return _keyFields != null && _keyFields.remove(value);
   }
 
   public Remarks getRemarks() {

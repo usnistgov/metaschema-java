@@ -24,60 +24,83 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
-import gov.nist.secauto.metaschema.core.datatype.adapter.NonNegativeIntegerAdapter;
-import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
+import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
+import gov.nist.secauto.metaschema.core.datatype.adapter.UriReferenceAdapter;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLineAdapter;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import java.lang.Override;
-import java.lang.String;
-import java.math.BigInteger;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-/**
- * Allows the name of the definition to be overridden.
- */
-@MetaschemaField(
-    formalName = "Use Name",
-    description = "Allows the name of the definition to be overridden.",
-    name = "use-name",
+import java.net.URI;
+
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
+@MetaschemaAssembly(
+    formalName = "Example",
+    name = "example",
     moduleClass = MetaschemaModule.class)
-public class UseName {
-  @BoundFieldValue(
-      valueKeyName = "name",
-      typeAdapter = TokenAdapter.class)
-  private String _name;
-
-  /**
-   * "Used for binary formats instead of the textual name."
-   */
+public class Example {
   @BoundFlag(
-      formalName = "Numeric Index",
-      description = "Used for binary formats instead of the textual name.",
-      useName = "index",
-      typeAdapter = NonNegativeIntegerAdapter.class)
-  private BigInteger _index;
+      formalName = "Example Reference",
+      useName = "ref",
+      typeAdapter = UriReferenceAdapter.class)
+  private URI _ref;
 
-  public UseName() {
+  @BoundFlag(
+      useName = "path",
+      typeAdapter = StringAdapter.class)
+  private String _path;
+
+  @BoundField(
+      formalName = "Example Description",
+      useName = "description",
+      typeAdapter = MarkupLineAdapter.class)
+  private MarkupLine _description;
+
+  @BoundField(
+      formalName = "Remarks",
+      description = "Any explanatory or helpful information to be provided about the remarks parent.",
+      useName = "remarks")
+  private Remarks _remarks;
+
+  public URI getRef() {
+    return _ref;
   }
 
-  public String getName() {
-    return _name;
+  public void setRef(URI value) {
+    _ref = value;
   }
 
-  public void setName(String value) {
-    _name = value;
+  public String getPath() {
+    return _path;
   }
 
-  public BigInteger getIndex() {
-    return _index;
+  public void setPath(String value) {
+    _path = value;
   }
 
-  public void setIndex(BigInteger value) {
-    _index = value;
+  public MarkupLine getDescription() {
+    return _description;
+  }
+
+  public void setDescription(MarkupLine value) {
+    _description = value;
+  }
+
+  public Remarks getRemarks() {
+    return _remarks;
+  }
+
+  public void setRemarks(Remarks value) {
+    _remarks = value;
   }
 
   @Override

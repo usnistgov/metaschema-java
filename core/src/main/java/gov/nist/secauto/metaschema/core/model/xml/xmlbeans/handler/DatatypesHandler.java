@@ -95,7 +95,7 @@ public final class DatatypesHandler {
     String name = ObjectUtils.requireNonNull(target.getStringValue());
     IDataTypeAdapter<?> retval = DataTypeService.getInstance().getJavaTypeAdapterByName(name);
     if (retval == null) {
-      throw new IllegalStateException("Unable to find data type: " + name);
+      throw new IllegalStateException("Unrecognized data type: " + name);
     }
     return retval;
   }

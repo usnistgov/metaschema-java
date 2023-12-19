@@ -24,54 +24,66 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
-import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
-import gov.nist.secauto.metaschema.core.datatype.adapter.UriAdapter;
+import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Override;
-import java.lang.String;
-import java.net.URI;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
 @MetaschemaAssembly(
-    formalName = "Property",
-    name = "property",
+    formalName = "Key Constraint",
+    name = "key-constraint-field",
     moduleClass = MetaschemaModule.class)
-public class Property {
+public class KeyConstraintField {
   @BoundFlag(
-      formalName = "Property Namespace",
-      useName = "name",
-      defaultValue = "http://csrc.nist.gov/ns/oscal/metaschema/1.0",
-      typeAdapter = UriAdapter.class)
-  private URI _name;
-
-  @BoundFlag(
-      formalName = "Property Value",
-      useName = "value",
+      formalName = "Key Field Value Target",
+      useName = "target",
       required = true,
-      typeAdapter = TokenAdapter.class)
-  private String _value;
+      typeAdapter = StringAdapter.class)
+  private String _target;
 
-  public Property() {
+  @BoundFlag(
+      formalName = "Key Field Value Pattern",
+      useName = "pattern",
+      typeAdapter = StringAdapter.class)
+  private String _pattern;
+
+  @BoundField(
+      formalName = "Remarks",
+      description = "Any explanatory or helpful information to be provided about the remarks parent.",
+      useName = "remarks")
+  private Remarks _remarks;
+
+  public String getTarget() {
+    return _target;
   }
 
-  public URI getName() {
-    return _name;
+  public void setTarget(String value) {
+    _target = value;
   }
 
-  public void setName(URI value) {
-    _name = value;
+  public String getPattern() {
+    return _pattern;
   }
 
-  public String getValue() {
-    return _value;
+  public void setPattern(String value) {
+    _pattern = value;
   }
 
-  public void setValue(String value) {
-    _value = value;
+  public Remarks getRemarks() {
+    return _remarks;
+  }
+
+  public void setRemarks(Remarks value) {
+    _remarks = value;
   }
 
   @Override

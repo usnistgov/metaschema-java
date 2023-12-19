@@ -24,22 +24,19 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Override;
-import java.lang.String;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+@SuppressWarnings("PMD.ShortClassName")
 @MetaschemaAssembly(
     formalName = "Any Additional Content",
     name = "any",
     moduleClass = MetaschemaModule.class)
 public class Any {
-  public Any() {
-  }
-
   @Override
   public String toString() {
     return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();

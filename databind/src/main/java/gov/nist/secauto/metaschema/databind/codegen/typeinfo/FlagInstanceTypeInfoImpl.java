@@ -108,7 +108,7 @@ public class FlagInstanceTypeInfoImpl
     IFlagDefinition definition = instance.getDefinition();
 
     IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
-    Object defaultValue = instance.getDefaultValue();
+    Object defaultValue = instance.getEffectiveDefaultValue();
     if (defaultValue != null) {
       annotation.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
     }

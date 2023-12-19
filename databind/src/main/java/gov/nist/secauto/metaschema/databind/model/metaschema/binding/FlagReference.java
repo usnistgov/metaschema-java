@@ -24,9 +24,8 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
-import gov.nist.secauto.metaschema.core.datatype.adapter.NonNegativeIntegerAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.PositiveIntegerAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
@@ -35,37 +34,40 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLineAdapter;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValues;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.annotations.Matches;
+import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Object;
-import java.lang.Override;
-import java.lang.String;
-import java.math.BigInteger;
-import java.util.LinkedList;
-import java.util.List;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.math.BigInteger;
+import java.util.LinkedList;
+import java.util.List;
+
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions"
+})
 @MetaschemaAssembly(
-    formalName = "Inline Assembly Definition",
-    name = "inline-define-assembly",
+    formalName = "Flag Reference",
+    name = "flag-reference",
     moduleClass = MetaschemaModule.class)
-public class InlineDefineAssembly {
+public class FlagReference {
   @BoundFlag(
-      formalName = "Inline Assembly Name",
-      useName = "name",
+      formalName = "Global Flag Reference",
+      useName = "ref",
       required = true,
       typeAdapter = TokenAdapter.class)
-  private String _name;
+  private String _ref;
 
   @BoundFlag(
-      formalName = "Inline Assembly Binary Name",
+      formalName = "Flag Reference Binary Name",
       useName = "index",
       typeAdapter = PositiveIntegerAdapter.class)
   private BigInteger _index;
@@ -77,20 +79,18 @@ public class InlineDefineAssembly {
   private String _deprecated;
 
   @BoundFlag(
-      formalName = "Minimum Occurrence",
-      useName = "min-occurs",
-      defaultValue = "0",
-      typeAdapter = NonNegativeIntegerAdapter.class)
-  private BigInteger _minOccurs;
+      formalName = "Default Flag Value",
+      useName = "default",
+      typeAdapter = StringAdapter.class)
+  private String _default;
 
   @BoundFlag(
-      formalName = "Maximum Occurrence",
-      useName = "max-occurs",
-      defaultValue = "1",
-      typeAdapter = StringAdapter.class,
-      valueConstraints = @ValueConstraints(
-          matches = @Matches(level = IConstraint.Level.ERROR, pattern = "^[1-9][0-9]*|unbounded$")))
-  private String _maxOccurs;
+      formalName = "Is Flag Required?",
+      useName = "required",
+      typeAdapter = TokenAdapter.class,
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
+          values = { @AllowedValue(value = "yes", description = ""), @AllowedValue(value = "no", description = "") })))
+  private String _required;
 
   @BoundField(
       formalName = "Formal Name",
@@ -109,39 +109,14 @@ public class InlineDefineAssembly {
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
-          inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
-  @BoundAssembly(
-      formalName = "JSON Key",
-      description = "Used in JSON (and similar formats) to identify a flag that will be used as the property name in an object hold a collection of sibling objects. Requires that siblings must never share `json-key` values.",
-      useName = "json-key")
-  private JsonKey _jsonKey;
-
-  @BoundAssembly(
-      formalName = "Group As",
-      useName = "group-as")
-  private GroupAs _groupAs;
-
-  @BoundChoiceGroup(
-      maxOccurs = -1,
-      assemblies = {
-          @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag",
-              binding = InlineDefineFlag.class),
-          @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
-      },
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "flags",
-          inJson = JsonGroupAsBehavior.LIST))
-  private List<Object> _flags;
-
-  @BoundAssembly(
-      useName = "model")
-  private AssemblyModel _model;
-
-  @BoundAssembly(
-      useName = "constraint")
-  private AssemblyConstraints _constraint;
+  @BoundField(
+      formalName = "Use Name",
+      description = "Allows the name of the definition to be overridden.",
+      useName = "use-name")
+  private UseName _useName;
 
   @BoundField(
       formalName = "Remarks",
@@ -149,23 +124,12 @@ public class InlineDefineAssembly {
       useName = "remarks")
   private Remarks _remarks;
 
-  @BoundAssembly(
-      formalName = "Example",
-      useName = "example",
-      maxOccurs = -1,
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "examples",
-          inJson = JsonGroupAsBehavior.LIST))
-  private List<Example> _examples;
-
-  public InlineDefineAssembly() {
+  public String getRef() {
+    return _ref;
   }
 
-  public String getName() {
-    return _name;
-  }
-
-  public void setName(String value) {
-    _name = value;
+  public void setRef(String value) {
+    _ref = value;
   }
 
   public BigInteger getIndex() {
@@ -184,20 +148,20 @@ public class InlineDefineAssembly {
     _deprecated = value;
   }
 
-  public BigInteger getMinOccurs() {
-    return _minOccurs;
+  public String getDefault() {
+    return _default;
   }
 
-  public void setMinOccurs(BigInteger value) {
-    _minOccurs = value;
+  public void setDefault(String value) {
+    _default = value;
   }
 
-  public String getMaxOccurs() {
-    return _maxOccurs;
+  public String getRequired() {
+    return _required;
   }
 
-  public void setMaxOccurs(String value) {
-    _maxOccurs = value;
+  public void setRequired(String value) {
+    _required = value;
   }
 
   public String getFormalName() {
@@ -249,47 +213,15 @@ public class InlineDefineAssembly {
    */
   public boolean removeProp(Property item) {
     Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-    return _props == null ? false : _props.remove(value);
+    return _props != null && _props.remove(value);
   }
 
-  public JsonKey getJsonKey() {
-    return _jsonKey;
+  public UseName getUseName() {
+    return _useName;
   }
 
-  public void setJsonKey(JsonKey value) {
-    _jsonKey = value;
-  }
-
-  public GroupAs getGroupAs() {
-    return _groupAs;
-  }
-
-  public void setGroupAs(GroupAs value) {
-    _groupAs = value;
-  }
-
-  public List<Object> getFlags() {
-    return _flags;
-  }
-
-  public void setFlags(List<Object> value) {
-    _flags = value;
-  }
-
-  public AssemblyModel getModel() {
-    return _model;
-  }
-
-  public void setModel(AssemblyModel value) {
-    _model = value;
-  }
-
-  public AssemblyConstraints getConstraint() {
-    return _constraint;
-  }
-
-  public void setConstraint(AssemblyConstraints value) {
-    _constraint = value;
+  public void setUseName(UseName value) {
+    _useName = value;
   }
 
   public Remarks getRemarks() {
@@ -298,42 +230,6 @@ public class InlineDefineAssembly {
 
   public void setRemarks(Remarks value) {
     _remarks = value;
-  }
-
-  public List<Example> getExamples() {
-    return _examples;
-  }
-
-  public void setExamples(List<Example> value) {
-    _examples = value;
-  }
-
-  /**
-   * Add a new {@link Example} item to the underlying collection.
-   *
-   * @param item
-   *          the item to add
-   * @return {@code true}
-   */
-  public boolean addExample(Example item) {
-    Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
-    if (_examples == null) {
-      _examples = new LinkedList<>();
-    }
-    return _examples.add(value);
-  }
-
-  /**
-   * Remove the first matching {@link Example} item from the underlying
-   * collection.
-   *
-   * @param item
-   *          the item to remove
-   * @return {@code true} if the item was removed or {@code false} otherwise
-   */
-  public boolean removeExample(Example item) {
-    Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
-    return _examples == null ? false : _examples.remove(value);
   }
 
   @Override
