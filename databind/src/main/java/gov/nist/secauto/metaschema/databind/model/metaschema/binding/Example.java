@@ -23,7 +23,6 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
@@ -33,11 +32,11 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLineAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-
+import java.lang.Override;
+import java.lang.String;
+import java.net.URI;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import java.net.URI;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -46,29 +45,34 @@ import java.net.URI;
 @MetaschemaAssembly(
     formalName = "Example",
     name = "example",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModule.class
+)
 public class Example {
   @BoundFlag(
       formalName = "Example Reference",
       useName = "ref",
-      typeAdapter = UriReferenceAdapter.class)
+      typeAdapter = UriReferenceAdapter.class
+  )
   private URI _ref;
 
   @BoundFlag(
       useName = "path",
-      typeAdapter = StringAdapter.class)
+      typeAdapter = StringAdapter.class
+  )
   private String _path;
 
   @BoundField(
       formalName = "Example Description",
       useName = "description",
-      typeAdapter = MarkupLineAdapter.class)
+      typeAdapter = MarkupLineAdapter.class
+  )
   private MarkupLine _description;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks")
+      useName = "remarks"
+  )
   private Remarks _remarks;
 
   public URI getRef() {

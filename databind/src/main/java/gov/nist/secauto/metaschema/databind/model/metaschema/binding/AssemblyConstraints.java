@@ -23,7 +23,6 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.NonNegativeIntegerAdapter;
@@ -45,13 +44,14 @@ import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.Matches;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
+import java.lang.Object;
+import java.lang.Override;
+import java.lang.String;
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -60,33 +60,31 @@ import java.util.List;
 })
 @MetaschemaAssembly(
     name = "assembly-constraints",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModule.class
+)
 public class AssemblyConstraints {
   @BoundAssembly(
       formalName = "Constraint Let Expression",
       useName = "let",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "lets", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "lets", inJson = JsonGroupAsBehavior.LIST)
+  )
   private List<ConstraintLetExpression> _lets;
 
   @BoundChoiceGroup(
       minOccurs = 1,
       maxOccurs = -1,
       assemblies = {
-          @BoundGroupedAssembly(formalName = "Allowed Values Constraint", useName = "allowed-values",
-              binding = TargetedAllowedValuesConstraint.class),
-          @BoundGroupedAssembly(formalName = "Expect Condition Constraint", useName = "expect",
-              binding = TargetedExpectConstraint.class),
-          @BoundGroupedAssembly(formalName = "Targeted Index Has Key Constraint", useName = "index-has-key",
-              binding = TargetedIndexHasKeyConstraint.class),
-          @BoundGroupedAssembly(formalName = "Value Matches Constraint", useName = "matches",
-              binding = TargetedMatchesConstraint.class),
+          @BoundGroupedAssembly(formalName = "Allowed Values Constraint", useName = "allowed-values", binding = TargetedAllowedValuesConstraint.class),
+          @BoundGroupedAssembly(formalName = "Expect Condition Constraint", useName = "expect", binding = TargetedExpectConstraint.class),
+          @BoundGroupedAssembly(formalName = "Targeted Index Has Key Constraint", useName = "index-has-key", binding = TargetedIndexHasKeyConstraint.class),
+          @BoundGroupedAssembly(formalName = "Value Matches Constraint", useName = "matches", binding = TargetedMatchesConstraint.class),
           @BoundGroupedAssembly(formalName = "Targeted Unique Constraint", useName = "unique", binding = Unique.class),
           @BoundGroupedAssembly(formalName = "Targeted Index Constraint", useName = "index", binding = Index.class),
-          @BoundGroupedAssembly(formalName = "Targeted Cardinality Constraint", useName = "has-cardinality",
-              binding = HasCardinality.class)
+          @BoundGroupedAssembly(formalName = "Targeted Cardinality Constraint", useName = "has-cardinality", binding = HasCardinality.class)
       },
-      groupAs = @GroupAs(name = "rules", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "rules", inJson = JsonGroupAsBehavior.LIST)
+  )
   private List<Object> _rules;
 
   public List<ConstraintLetExpression> getLets() {
@@ -99,13 +97,11 @@ public class AssemblyConstraints {
 
   /**
    * Add a new {@link ConstraintLetExpression} item to the underlying collection.
-   *
-   * @param item
-   *          the item to add
+   * @param item the item to add
    * @return {@code true}
    */
   public boolean addLet(ConstraintLetExpression item) {
-    ConstraintLetExpression value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    ConstraintLetExpression value = ObjectUtils.requireNonNull(item,"item cannot be null");
     if (_lets == null) {
       _lets = new LinkedList<>();
     }
@@ -113,15 +109,12 @@ public class AssemblyConstraints {
   }
 
   /**
-   * Remove the first matching {@link ConstraintLetExpression} item from the
-   * underlying collection.
-   *
-   * @param item
-   *          the item to remove
+   * Remove the first matching {@link ConstraintLetExpression} item from the underlying collection.
+   * @param item the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeLet(ConstraintLetExpression item) {
-    ConstraintLetExpression value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    ConstraintLetExpression value = ObjectUtils.requireNonNull(item,"item cannot be null");
     return _lets != null && _lets.remove(value);
   }
 
@@ -141,74 +134,76 @@ public class AssemblyConstraints {
   @MetaschemaAssembly(
       formalName = "Targeted Cardinality Constraint",
       name = "has-cardinality",
-      moduleClass = MetaschemaModule.class)
+      moduleClass = MetaschemaModule.class
+  )
   public static class HasCardinality {
     @BoundFlag(
         formalName = "Constraint Identifier",
         useName = "id",
-        typeAdapter = TokenAdapter.class)
+        typeAdapter = TokenAdapter.class
+    )
     private String _id;
 
     @BoundFlag(
         formalName = "Constraint Severity Level",
         useName = "level",
+        defaultValue = "ERROR",
         typeAdapter = TokenAdapter.class,
-        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
-            @AllowedValue(value = "CRITICAL",
-                description = "A violation of the constraint represents a serious fault in the content that will prevent typical use of the content."),
-            @AllowedValue(value = "ERROR",
-                description = "A violation of the constraint represents a fault in the content. This may include issues around compatibility, integrity, consistency, etc."),
-            @AllowedValue(value = "WARNING",
-                description = "A violation of the constraint represents a potential issue with the content."),
-            @AllowedValue(value = "INFORMATIONAL",
-                description = "A violation of the constraint represents a point of interest.") })))
+        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "CRITICAL", description = "A violation of the constraint represents a serious fault in the content that will prevent typical use of the content."), @AllowedValue(value = "ERROR", description = "A violation of the constraint represents a fault in the content. This may include issues around compatibility, integrity, consistency, etc."), @AllowedValue(value = "WARNING", description = "A violation of the constraint represents a potential issue with the content."), @AllowedValue(value = "INFORMATIONAL", description = "A violation of the constraint represents a point of interest.")}))
+    )
     private String _level;
 
     @BoundFlag(
         formalName = "Minimum Occurrence",
         useName = "min-occurs",
-        typeAdapter = NonNegativeIntegerAdapter.class)
+        typeAdapter = NonNegativeIntegerAdapter.class
+    )
     private BigInteger _minOccurs;
 
     @BoundFlag(
         formalName = "Maximum Occurrence",
         useName = "max-occurs",
         typeAdapter = StringAdapter.class,
-        valueConstraints = @ValueConstraints(
-            matches = @Matches(level = IConstraint.Level.ERROR, pattern = "^[1-9][0-9]*|unbounded$")))
+        valueConstraints = @ValueConstraints(matches = @Matches(level = IConstraint.Level.ERROR, pattern = "^[1-9][0-9]*|unbounded$"))
+    )
     private String _maxOccurs;
 
     @BoundFlag(
         formalName = "Constraint Target Metapath Expression",
         useName = "target",
         required = true,
-        typeAdapter = StringAdapter.class)
+        typeAdapter = StringAdapter.class
+    )
     private String _target;
 
     @BoundField(
         formalName = "Formal Name",
         description = "A formal name for the data construct, to be presented in documentation.",
-        useName = "formal-name")
+        useName = "formal-name"
+    )
     private String _formalName;
 
     @BoundField(
         formalName = "Description",
         description = "A short description of the data construct's purpose, describing the constructs semantics.",
         useName = "description",
-        typeAdapter = MarkupLineAdapter.class)
+        typeAdapter = MarkupLineAdapter.class
+    )
     private MarkupLine _description;
 
     @BoundAssembly(
         formalName = "Property",
         useName = "prop",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
+        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
+    )
     private List<Property> _props;
 
     @BoundField(
         formalName = "Remarks",
         description = "Any explanatory or helpful information to be provided about the remarks parent.",
-        useName = "remarks")
+        useName = "remarks"
+    )
     private Remarks _remarks;
 
     public String getId() {
@@ -277,13 +272,11 @@ public class AssemblyConstraints {
 
     /**
      * Add a new {@link Property} item to the underlying collection.
-     *
-     * @param item
-     *          the item to add
+     * @param item the item to add
      * @return {@code true}
      */
     public boolean addProp(Property item) {
-      Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+      Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
       if (_props == null) {
         _props = new LinkedList<>();
       }
@@ -291,209 +284,13 @@ public class AssemblyConstraints {
     }
 
     /**
-     * Remove the first matching {@link Property} item from the underlying
-     * collection.
-     *
-     * @param item
-     *          the item to remove
+     * Remove the first matching {@link Property} item from the underlying collection.
+     * @param item the item to remove
      * @return {@code true} if the item was removed or {@code false} otherwise
      */
     public boolean removeProp(Property item) {
-      Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+      Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
       return _props != null && _props.remove(value);
-    }
-
-    public Remarks getRemarks() {
-      return _remarks;
-    }
-
-    public void setRemarks(Remarks value) {
-      _remarks = value;
-    }
-
-    @Override
-    public String toString() {
-      return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
-    }
-  }
-
-  @MetaschemaAssembly(
-      formalName = "Targeted Unique Constraint",
-      name = "unique",
-      moduleClass = MetaschemaModule.class)
-  public static class Unique {
-    @BoundFlag(
-        formalName = "Constraint Identifier",
-        useName = "id",
-        typeAdapter = TokenAdapter.class)
-    private String _id;
-
-    @BoundFlag(
-        formalName = "Constraint Severity Level",
-        useName = "level",
-        typeAdapter = TokenAdapter.class,
-        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
-            @AllowedValue(value = "CRITICAL",
-                description = "A violation of the constraint represents a serious fault in the content that will prevent typical use of the content."),
-            @AllowedValue(value = "ERROR",
-                description = "A violation of the constraint represents a fault in the content. This may include issues around compatibility, integrity, consistency, etc."),
-            @AllowedValue(value = "WARNING",
-                description = "A violation of the constraint represents a potential issue with the content."),
-            @AllowedValue(value = "INFORMATIONAL",
-                description = "A violation of the constraint represents a point of interest.") })))
-    private String _level;
-
-    @BoundFlag(
-        formalName = "Constraint Target Metapath Expression",
-        useName = "target",
-        required = true,
-        typeAdapter = StringAdapter.class)
-    private String _target;
-
-    @BoundField(
-        formalName = "Formal Name",
-        description = "A formal name for the data construct, to be presented in documentation.",
-        useName = "formal-name")
-    private String _formalName;
-
-    @BoundField(
-        formalName = "Description",
-        description = "A short description of the data construct's purpose, describing the constructs semantics.",
-        useName = "description",
-        typeAdapter = MarkupLineAdapter.class)
-    private MarkupLine _description;
-
-    @BoundAssembly(
-        formalName = "Property",
-        useName = "prop",
-        maxOccurs = -1,
-        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
-    private List<Property> _props;
-
-    @BoundAssembly(
-        formalName = "Key Constraint Field",
-        useName = "key-field",
-        minOccurs = 1,
-        maxOccurs = -1,
-        groupAs = @GroupAs(name = "key-fields", inJson = JsonGroupAsBehavior.LIST))
-    private List<KeyConstraintField> _keyFields;
-
-    @BoundField(
-        formalName = "Remarks",
-        description = "Any explanatory or helpful information to be provided about the remarks parent.",
-        useName = "remarks")
-    private Remarks _remarks;
-
-    public String getId() {
-      return _id;
-    }
-
-    public void setId(String value) {
-      _id = value;
-    }
-
-    public String getLevel() {
-      return _level;
-    }
-
-    public void setLevel(String value) {
-      _level = value;
-    }
-
-    public String getTarget() {
-      return _target;
-    }
-
-    public void setTarget(String value) {
-      _target = value;
-    }
-
-    public String getFormalName() {
-      return _formalName;
-    }
-
-    public void setFormalName(String value) {
-      _formalName = value;
-    }
-
-    public MarkupLine getDescription() {
-      return _description;
-    }
-
-    public void setDescription(MarkupLine value) {
-      _description = value;
-    }
-
-    public List<Property> getProps() {
-      return _props;
-    }
-
-    public void setProps(List<Property> value) {
-      _props = value;
-    }
-
-    /**
-     * Add a new {@link Property} item to the underlying collection.
-     *
-     * @param item
-     *          the item to add
-     * @return {@code true}
-     */
-    public boolean addProp(Property item) {
-      Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-      if (_props == null) {
-        _props = new LinkedList<>();
-      }
-      return _props.add(value);
-    }
-
-    /**
-     * Remove the first matching {@link Property} item from the underlying
-     * collection.
-     *
-     * @param item
-     *          the item to remove
-     * @return {@code true} if the item was removed or {@code false} otherwise
-     */
-    public boolean removeProp(Property item) {
-      Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
-      return _props != null && _props.remove(value);
-    }
-
-    public List<KeyConstraintField> getKeyFields() {
-      return _keyFields;
-    }
-
-    public void setKeyFields(List<KeyConstraintField> value) {
-      _keyFields = value;
-    }
-
-    /**
-     * Add a new {@link KeyConstraintField} item to the underlying collection.
-     *
-     * @param item
-     *          the item to add
-     * @return {@code true}
-     */
-    public boolean addKeyField(KeyConstraintField item) {
-      KeyConstraintField value = ObjectUtils.requireNonNull(item, "item cannot be null");
-      if (_keyFields == null) {
-        _keyFields = new LinkedList<>();
-      }
-      return _keyFields.add(value);
-    }
-
-    /**
-     * Remove the first matching {@link KeyConstraintField} item from the underlying
-     * collection.
-     *
-     * @param item
-     *          the item to remove
-     * @return {@code true} if the item was removed or {@code false} otherwise
-     */
-    public boolean removeKeyField(KeyConstraintField item) {
-      KeyConstraintField value = ObjectUtils.requireNonNull(item, "item cannot be null");
-      return _keyFields != null && _keyFields.remove(value);
     }
 
     public Remarks getRemarks() {
@@ -513,61 +310,62 @@ public class AssemblyConstraints {
   @MetaschemaAssembly(
       formalName = "Targeted Index Constraint",
       name = "index",
-      moduleClass = MetaschemaModule.class)
+      moduleClass = MetaschemaModule.class
+  )
   public static class Index {
     @BoundFlag(
         formalName = "Constraint Identifier",
         useName = "id",
-        typeAdapter = TokenAdapter.class)
+        typeAdapter = TokenAdapter.class
+    )
     private String _id;
 
     @BoundFlag(
         formalName = "Constraint Severity Level",
         useName = "level",
+        defaultValue = "ERROR",
         typeAdapter = TokenAdapter.class,
-        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
-            @AllowedValue(value = "CRITICAL",
-                description = "A violation of the constraint represents a serious fault in the content that will prevent typical use of the content."),
-            @AllowedValue(value = "ERROR",
-                description = "A violation of the constraint represents a fault in the content. This may include issues around compatibility, integrity, consistency, etc."),
-            @AllowedValue(value = "WARNING",
-                description = "A violation of the constraint represents a potential issue with the content."),
-            @AllowedValue(value = "INFORMATIONAL",
-                description = "A violation of the constraint represents a point of interest.") })))
+        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "CRITICAL", description = "A violation of the constraint represents a serious fault in the content that will prevent typical use of the content."), @AllowedValue(value = "ERROR", description = "A violation of the constraint represents a fault in the content. This may include issues around compatibility, integrity, consistency, etc."), @AllowedValue(value = "WARNING", description = "A violation of the constraint represents a potential issue with the content."), @AllowedValue(value = "INFORMATIONAL", description = "A violation of the constraint represents a point of interest.")}))
+    )
     private String _level;
 
     @BoundFlag(
         formalName = "Index Name",
         useName = "name",
         required = true,
-        typeAdapter = TokenAdapter.class)
+        typeAdapter = TokenAdapter.class
+    )
     private String _name;
 
     @BoundFlag(
         formalName = "Constraint Target Metapath Expression",
         useName = "target",
         required = true,
-        typeAdapter = StringAdapter.class)
+        typeAdapter = StringAdapter.class
+    )
     private String _target;
 
     @BoundField(
         formalName = "Formal Name",
         description = "A formal name for the data construct, to be presented in documentation.",
-        useName = "formal-name")
+        useName = "formal-name"
+    )
     private String _formalName;
 
     @BoundField(
         formalName = "Description",
         description = "A short description of the data construct's purpose, describing the constructs semantics.",
         useName = "description",
-        typeAdapter = MarkupLineAdapter.class)
+        typeAdapter = MarkupLineAdapter.class
+    )
     private MarkupLine _description;
 
     @BoundAssembly(
         formalName = "Property",
         useName = "prop",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
+        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
+    )
     private List<Property> _props;
 
     @BoundAssembly(
@@ -575,13 +373,15 @@ public class AssemblyConstraints {
         useName = "key-field",
         minOccurs = 1,
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "key-fields", inJson = JsonGroupAsBehavior.LIST))
+        groupAs = @GroupAs(name = "key-fields", inJson = JsonGroupAsBehavior.LIST)
+    )
     private List<KeyConstraintField> _keyFields;
 
     @BoundField(
         formalName = "Remarks",
         description = "Any explanatory or helpful information to be provided about the remarks parent.",
-        useName = "remarks")
+        useName = "remarks"
+    )
     private Remarks _remarks;
 
     public String getId() {
@@ -642,13 +442,11 @@ public class AssemblyConstraints {
 
     /**
      * Add a new {@link Property} item to the underlying collection.
-     *
-     * @param item
-     *          the item to add
+     * @param item the item to add
      * @return {@code true}
      */
     public boolean addProp(Property item) {
-      Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+      Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
       if (_props == null) {
         _props = new LinkedList<>();
       }
@@ -656,15 +454,12 @@ public class AssemblyConstraints {
     }
 
     /**
-     * Remove the first matching {@link Property} item from the underlying
-     * collection.
-     *
-     * @param item
-     *          the item to remove
+     * Remove the first matching {@link Property} item from the underlying collection.
+     * @param item the item to remove
      * @return {@code true} if the item was removed or {@code false} otherwise
      */
     public boolean removeProp(Property item) {
-      Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+      Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
       return _props != null && _props.remove(value);
     }
 
@@ -678,13 +473,11 @@ public class AssemblyConstraints {
 
     /**
      * Add a new {@link KeyConstraintField} item to the underlying collection.
-     *
-     * @param item
-     *          the item to add
+     * @param item the item to add
      * @return {@code true}
      */
     public boolean addKeyField(KeyConstraintField item) {
-      KeyConstraintField value = ObjectUtils.requireNonNull(item, "item cannot be null");
+      KeyConstraintField value = ObjectUtils.requireNonNull(item,"item cannot be null");
       if (_keyFields == null) {
         _keyFields = new LinkedList<>();
       }
@@ -692,15 +485,197 @@ public class AssemblyConstraints {
     }
 
     /**
-     * Remove the first matching {@link KeyConstraintField} item from the underlying
-     * collection.
-     *
-     * @param item
-     *          the item to remove
+     * Remove the first matching {@link KeyConstraintField} item from the underlying collection.
+     * @param item the item to remove
      * @return {@code true} if the item was removed or {@code false} otherwise
      */
     public boolean removeKeyField(KeyConstraintField item) {
-      KeyConstraintField value = ObjectUtils.requireNonNull(item, "item cannot be null");
+      KeyConstraintField value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      return _keyFields != null && _keyFields.remove(value);
+    }
+
+    public Remarks getRemarks() {
+      return _remarks;
+    }
+
+    public void setRemarks(Remarks value) {
+      _remarks = value;
+    }
+
+    @Override
+    public String toString() {
+      return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
+    }
+  }
+
+  @MetaschemaAssembly(
+      formalName = "Targeted Unique Constraint",
+      name = "unique",
+      moduleClass = MetaschemaModule.class
+  )
+  public static class Unique {
+    @BoundFlag(
+        formalName = "Constraint Identifier",
+        useName = "id",
+        typeAdapter = TokenAdapter.class
+    )
+    private String _id;
+
+    @BoundFlag(
+        formalName = "Constraint Severity Level",
+        useName = "level",
+        defaultValue = "ERROR",
+        typeAdapter = TokenAdapter.class,
+        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "CRITICAL", description = "A violation of the constraint represents a serious fault in the content that will prevent typical use of the content."), @AllowedValue(value = "ERROR", description = "A violation of the constraint represents a fault in the content. This may include issues around compatibility, integrity, consistency, etc."), @AllowedValue(value = "WARNING", description = "A violation of the constraint represents a potential issue with the content."), @AllowedValue(value = "INFORMATIONAL", description = "A violation of the constraint represents a point of interest.")}))
+    )
+    private String _level;
+
+    @BoundFlag(
+        formalName = "Constraint Target Metapath Expression",
+        useName = "target",
+        required = true,
+        typeAdapter = StringAdapter.class
+    )
+    private String _target;
+
+    @BoundField(
+        formalName = "Formal Name",
+        description = "A formal name for the data construct, to be presented in documentation.",
+        useName = "formal-name"
+    )
+    private String _formalName;
+
+    @BoundField(
+        formalName = "Description",
+        description = "A short description of the data construct's purpose, describing the constructs semantics.",
+        useName = "description",
+        typeAdapter = MarkupLineAdapter.class
+    )
+    private MarkupLine _description;
+
+    @BoundAssembly(
+        formalName = "Property",
+        useName = "prop",
+        maxOccurs = -1,
+        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
+    )
+    private List<Property> _props;
+
+    @BoundAssembly(
+        formalName = "Key Constraint Field",
+        useName = "key-field",
+        minOccurs = 1,
+        maxOccurs = -1,
+        groupAs = @GroupAs(name = "key-fields", inJson = JsonGroupAsBehavior.LIST)
+    )
+    private List<KeyConstraintField> _keyFields;
+
+    @BoundField(
+        formalName = "Remarks",
+        description = "Any explanatory or helpful information to be provided about the remarks parent.",
+        useName = "remarks"
+    )
+    private Remarks _remarks;
+
+    public String getId() {
+      return _id;
+    }
+
+    public void setId(String value) {
+      _id = value;
+    }
+
+    public String getLevel() {
+      return _level;
+    }
+
+    public void setLevel(String value) {
+      _level = value;
+    }
+
+    public String getTarget() {
+      return _target;
+    }
+
+    public void setTarget(String value) {
+      _target = value;
+    }
+
+    public String getFormalName() {
+      return _formalName;
+    }
+
+    public void setFormalName(String value) {
+      _formalName = value;
+    }
+
+    public MarkupLine getDescription() {
+      return _description;
+    }
+
+    public void setDescription(MarkupLine value) {
+      _description = value;
+    }
+
+    public List<Property> getProps() {
+      return _props;
+    }
+
+    public void setProps(List<Property> value) {
+      _props = value;
+    }
+
+    /**
+     * Add a new {@link Property} item to the underlying collection.
+     * @param item the item to add
+     * @return {@code true}
+     */
+    public boolean addProp(Property item) {
+      Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      if (_props == null) {
+        _props = new LinkedList<>();
+      }
+      return _props.add(value);
+    }
+
+    /**
+     * Remove the first matching {@link Property} item from the underlying collection.
+     * @param item the item to remove
+     * @return {@code true} if the item was removed or {@code false} otherwise
+     */
+    public boolean removeProp(Property item) {
+      Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      return _props != null && _props.remove(value);
+    }
+
+    public List<KeyConstraintField> getKeyFields() {
+      return _keyFields;
+    }
+
+    public void setKeyFields(List<KeyConstraintField> value) {
+      _keyFields = value;
+    }
+
+    /**
+     * Add a new {@link KeyConstraintField} item to the underlying collection.
+     * @param item the item to add
+     * @return {@code true}
+     */
+    public boolean addKeyField(KeyConstraintField item) {
+      KeyConstraintField value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      if (_keyFields == null) {
+        _keyFields = new LinkedList<>();
+      }
+      return _keyFields.add(value);
+    }
+
+    /**
+     * Remove the first matching {@link KeyConstraintField} item from the underlying collection.
+     * @param item the item to remove
+     * @return {@code true} if the item was removed or {@code false} otherwise
+     */
+    public boolean removeKeyField(KeyConstraintField item) {
+      KeyConstraintField value = ObjectUtils.requireNonNull(item,"item cannot be null");
       return _keyFields != null && _keyFields.remove(value);
     }
 

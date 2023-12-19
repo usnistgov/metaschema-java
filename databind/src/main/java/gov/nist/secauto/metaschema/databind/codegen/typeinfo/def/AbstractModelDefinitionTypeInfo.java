@@ -30,34 +30,68 @@ import com.squareup.javapoet.ClassName;
 
 import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IInstance;
+import gov.nist.secauto.metaschema.core.util.CustomCollectors;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.FlagInstanceTypeInfoImpl;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFlagInstanceTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IInstanceTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IPropertyTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
-class AbstractModelDefinitionTypeInfo<DEF extends IFlagContainer>
-    extends AbstractDefinitionTypeInfo<DEF>
+public abstract class AbstractModelDefinitionTypeInfo<DEF extends IFlagContainer>
     implements IModelDefinitionTypeInfo {
+  private static final Logger LOGGER = LogManager.getLogger(AbstractModelDefinitionTypeInfo.class);
+  @NonNull
+  private final DEF definition;
+  @NonNull
+  private final ITypeResolver typeResolver;
   @NonNull
   private final ClassName className;
   @Nullable
   private final ClassName baseClassName;
-  private Map<String, IFlagInstanceTypeInfo> flagTypeInfos;
+  private Lazy<Map<String, IFlagInstanceTypeInfo>> flagTypeInfos;
 
-  public AbstractModelDefinitionTypeInfo(@NonNull DEF definition,
+  public AbstractModelDefinitionTypeInfo(
+      @NonNull DEF definition,
       @NonNull ITypeResolver typeResolver) {
-    super(definition, typeResolver);
+    this.definition = definition;
+    this.typeResolver = typeResolver;
     this.className = typeResolver.getClassName(definition);
     this.baseClassName = typeResolver.getBaseClassName(definition);
+    this.flagTypeInfos = ObjectUtils.notNull(Lazy.lazy(() -> flags()
+        .collect(CustomCollectors.toMap(
+            (typeInfo) -> typeInfo.getPropertyName(),
+            (typeInfo) -> typeInfo,
+            (key, v1, v2) -> {
+              if (LOGGER.isErrorEnabled()) {
+                LOGGER.error(String.format("Unexpected duplicate flag property name '%s'", key));
+              }
+              return ObjectUtils.notNull(v2);
+            },
+            LinkedHashMap::new))));
+  }
+
+  @Override
+  public DEF getDefinition() {
+    return definition;
+  }
+
+  @Override
+  public ITypeResolver getTypeResolver() {
+    return typeResolver;
   }
 
   @Override
@@ -70,46 +104,56 @@ class AbstractModelDefinitionTypeInfo<DEF extends IFlagContainer>
     return baseClassName;
   }
 
+  private Stream<IFlagInstanceTypeInfo> flags() {
+    return getDefinition().getFlagInstances().stream()
+        .map(instance -> {
+          assert instance != null;
+          return new FlagInstanceTypeInfoImpl(instance, this);
+        });
+  }
+
+  @NonNull
+  protected abstract Map<String, IPropertyTypeInfo> getPropertyTypeInfoMap();
+
+  @NonNull
+  protected abstract Map<IInstance, IInstanceTypeInfo> getInstanceTypeInfoMap();
+
+  @NonNull
+  protected Map<String, IFlagInstanceTypeInfo> getFlagInstanceTypeInfoMap() {
+    return ObjectUtils.notNull(flagTypeInfos.get());
+  }
+
   @Override
-  protected boolean initInstanceTypeInfos() {
-    synchronized (this) {
-      boolean retval;
-      if (flagTypeInfos == null) {
-        // create Java properties for the definition's flags
-        flagTypeInfos = Collections.unmodifiableMap(getDefinition().getFlagInstances().stream()
-            .map(instance -> {
-              assert instance != null;
-              return newFlagTypeInfo(instance);
-            })
-            .collect(Collectors.toMap(
-                IFlagInstanceTypeInfo::getPropertyName,
-                Function.identity(),
-                (v1, v2) -> v2,
-                LinkedHashMap::new)));
-        retval = true;
-      } else {
-        retval = false;
-      }
-      return retval;
-    }
+  public boolean hasPropertyWithName(@NonNull String propertyName) {
+    return getPropertyTypeInfoMap().containsKey(propertyName);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Collection<IPropertyTypeInfo> getPropertyTypeInfos() {
+    return getPropertyTypeInfoMap().values();
+  }
+
+  @Override
+  @Nullable
+  public IInstanceTypeInfo getInstanceTypeInfo(@NonNull IInstance instance) {
+    return getInstanceTypeInfoMap().get(instance);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public Collection<IInstanceTypeInfo> getInstanceTypeInfos() {
+    return getInstanceTypeInfoMap().values();
   }
 
   @Override
   public IFlagInstanceTypeInfo getFlagInstanceTypeInfo(@NonNull IFlagInstance instance) {
-    initInstanceTypeInfos();
     return (IFlagInstanceTypeInfo) getInstanceTypeInfo(instance);
   }
 
   @SuppressWarnings("null")
   @Override
   public Collection<IFlagInstanceTypeInfo> getFlagInstanceTypeInfos() {
-    initInstanceTypeInfos();
-    return flagTypeInfos.values();
-  }
-
-  protected IFlagInstanceTypeInfo newFlagTypeInfo(@NonNull IFlagInstance instance) {
-    IFlagInstanceTypeInfo retval = new FlagInstanceTypeInfoImpl(instance, this);
-    addPropertyTypeInfo(retval);
-    return retval;
+    return getFlagInstanceTypeInfoMap().values();
   }
 }

@@ -39,6 +39,7 @@ import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
 
@@ -215,4 +216,7 @@ public interface ITypeResolver {
    */
   @NonNull
   String getPackageName(@NonNull IModule<?, ?, ?, ?, ?> module);
+
+  @NonNull
+  String getPropertyName(@NonNull IDefinitionTypeInfo parent, @NonNull String name);
 }

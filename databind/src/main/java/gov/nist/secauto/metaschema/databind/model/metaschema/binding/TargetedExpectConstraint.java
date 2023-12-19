@@ -23,7 +23,6 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
@@ -41,12 +40,12 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
+import java.lang.Override;
+import java.lang.String;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -55,72 +54,75 @@ import java.util.List;
 @MetaschemaAssembly(
     formalName = "Expect Condition Constraint",
     name = "targeted-expect-constraint",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModule.class
+)
 public class TargetedExpectConstraint {
   @BoundFlag(
       formalName = "Constraint Identifier",
       useName = "id",
-      typeAdapter = TokenAdapter.class)
+      typeAdapter = TokenAdapter.class
+  )
   private String _id;
 
   @BoundFlag(
       formalName = "Constraint Severity Level",
       useName = "level",
+      defaultValue = "ERROR",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
-          @AllowedValue(value = "CRITICAL",
-              description = "A violation of the constraint represents a serious fault in the content that will prevent typical use of the content."),
-          @AllowedValue(value = "ERROR",
-              description = "A violation of the constraint represents a fault in the content. This may include issues around compatibility, integrity, consistency, etc."),
-          @AllowedValue(value = "WARNING",
-              description = "A violation of the constraint represents a potential issue with the content."),
-          @AllowedValue(value = "INFORMATIONAL",
-              description = "A violation of the constraint represents a point of interest.") })))
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "CRITICAL", description = "A violation of the constraint represents a serious fault in the content that will prevent typical use of the content."), @AllowedValue(value = "ERROR", description = "A violation of the constraint represents a fault in the content. This may include issues around compatibility, integrity, consistency, etc."), @AllowedValue(value = "WARNING", description = "A violation of the constraint represents a potential issue with the content."), @AllowedValue(value = "INFORMATIONAL", description = "A violation of the constraint represents a point of interest.")}))
+  )
   private String _level;
 
   @BoundFlag(
       formalName = "Expect Test Condition",
       useName = "test",
       required = true,
-      typeAdapter = StringAdapter.class)
+      typeAdapter = StringAdapter.class
+  )
   private String _test;
 
   @BoundFlag(
       formalName = "Constraint Target Metapath Expression",
       useName = "target",
       required = true,
-      typeAdapter = StringAdapter.class)
+      typeAdapter = StringAdapter.class
+  )
   private String _target;
 
   @BoundField(
       formalName = "Formal Name",
       description = "A formal name for the data construct, to be presented in documentation.",
-      useName = "formal-name")
+      useName = "formal-name"
+  )
   private String _formalName;
 
   @BoundField(
       formalName = "Description",
       description = "A short description of the data construct's purpose, describing the constructs semantics.",
       useName = "description",
-      typeAdapter = MarkupLineAdapter.class)
+      typeAdapter = MarkupLineAdapter.class
+  )
   private MarkupLine _description;
 
   @BoundAssembly(
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
+  )
   private List<Property> _props;
 
   @BoundField(
       formalName = "Expect Condition Violation Message",
-      useName = "message")
+      useName = "message"
+  )
   private String _message;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks")
+      useName = "remarks"
+  )
   private Remarks _remarks;
 
   public String getId() {
@@ -181,13 +183,11 @@ public class TargetedExpectConstraint {
 
   /**
    * Add a new {@link Property} item to the underlying collection.
-   *
-   * @param item
-   *          the item to add
+   * @param item the item to add
    * @return {@code true}
    */
   public boolean addProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
     if (_props == null) {
       _props = new LinkedList<>();
     }
@@ -195,15 +195,12 @@ public class TargetedExpectConstraint {
   }
 
   /**
-   * Remove the first matching {@link Property} item from the underlying
-   * collection.
-   *
-   * @param item
-   *          the item to remove
+   * Remove the first matching {@link Property} item from the underlying collection.
+   * @param item the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
     return _props != null && _props.remove(value);
   }
 

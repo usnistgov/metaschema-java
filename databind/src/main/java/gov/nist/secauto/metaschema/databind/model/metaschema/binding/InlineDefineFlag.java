@@ -23,7 +23,6 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.PositiveIntegerAdapter;
@@ -42,13 +41,13 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
+import java.lang.Override;
+import java.lang.String;
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -57,25 +56,29 @@ import java.util.List;
 @MetaschemaAssembly(
     formalName = "Inline Flag Definition",
     name = "inline-define-flag",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModule.class
+)
 public class InlineDefineFlag {
   @BoundFlag(
       formalName = "Inline Flag Name",
       useName = "name",
       required = true,
-      typeAdapter = TokenAdapter.class)
+      typeAdapter = TokenAdapter.class
+  )
   private String _name;
 
   @BoundFlag(
       formalName = "Inline Flag Binary Name",
       useName = "index",
-      typeAdapter = PositiveIntegerAdapter.class)
+      typeAdapter = PositiveIntegerAdapter.class
+  )
   private BigInteger _index;
 
   @BoundFlag(
       formalName = "Deprecated Version",
       useName = "deprecated",
-      typeAdapter = StringAdapter.class)
+      typeAdapter = StringAdapter.class
+  )
   private String _deprecated;
 
   @BoundFlag(
@@ -83,75 +86,67 @@ public class InlineDefineFlag {
       useName = "as-type",
       defaultValue = "string",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
-          allowOthers = true,
-          values = { @AllowedValue(value = "base64", description = ""),
-              @AllowedValue(value = "boolean", description = ""), @AllowedValue(value = "date", description = ""),
-              @AllowedValue(value = "date-time", description = ""),
-              @AllowedValue(value = "date-time-with-timezone", description = ""),
-              @AllowedValue(value = "date-with-timezone", description = ""),
-              @AllowedValue(value = "day-time-duration", description = ""),
-              @AllowedValue(value = "decimal", description = ""),
-              @AllowedValue(value = "email-address", description = ""),
-              @AllowedValue(value = "hostname", description = ""), @AllowedValue(value = "integer", description = ""),
-              @AllowedValue(value = "ip-v4-address", description = ""),
-              @AllowedValue(value = "ip-v6-address", description = ""),
-              @AllowedValue(value = "non-negative-integer", description = ""),
-              @AllowedValue(value = "positive-integer", description = ""),
-              @AllowedValue(value = "string", description = ""), @AllowedValue(value = "token", description = ""),
-              @AllowedValue(value = "uri", description = ""), @AllowedValue(value = "uri-reference", description = ""),
-              @AllowedValue(value = "uuid", description = "") })))
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, allowOthers = true, values = {@AllowedValue(value = "base64", description = ""), @AllowedValue(value = "boolean", description = ""), @AllowedValue(value = "date", description = ""), @AllowedValue(value = "date-time", description = ""), @AllowedValue(value = "date-time-with-timezone", description = ""), @AllowedValue(value = "date-with-timezone", description = ""), @AllowedValue(value = "day-time-duration", description = ""), @AllowedValue(value = "decimal", description = ""), @AllowedValue(value = "email-address", description = ""), @AllowedValue(value = "hostname", description = ""), @AllowedValue(value = "integer", description = ""), @AllowedValue(value = "ip-v4-address", description = ""), @AllowedValue(value = "ip-v6-address", description = ""), @AllowedValue(value = "non-negative-integer", description = ""), @AllowedValue(value = "positive-integer", description = ""), @AllowedValue(value = "string", description = ""), @AllowedValue(value = "token", description = ""), @AllowedValue(value = "uri", description = ""), @AllowedValue(value = "uri-reference", description = ""), @AllowedValue(value = "uuid", description = "")}))
+  )
   private String _asType;
 
   @BoundFlag(
       formalName = "Default Flag Value",
       useName = "default",
-      typeAdapter = StringAdapter.class)
+      typeAdapter = StringAdapter.class
+  )
   private String _default;
 
   @BoundFlag(
       formalName = "Is Flag Required?",
       useName = "required",
+      defaultValue = "no",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
-          values = { @AllowedValue(value = "yes", description = ""), @AllowedValue(value = "no", description = "") })))
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "yes", description = ""), @AllowedValue(value = "no", description = "")}))
+  )
   private String _required;
 
   @BoundField(
       formalName = "Formal Name",
       description = "A formal name for the data construct, to be presented in documentation.",
-      useName = "formal-name")
+      useName = "formal-name"
+  )
   private String _formalName;
 
   @BoundField(
       formalName = "Description",
       description = "A short description of the data construct's purpose, describing the constructs semantics.",
       useName = "description",
-      typeAdapter = MarkupLineAdapter.class)
+      typeAdapter = MarkupLineAdapter.class
+  )
   private MarkupLine _description;
 
   @BoundAssembly(
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
+  )
   private List<Property> _props;
 
   @BoundAssembly(
-      useName = "constraint")
+      useName = "constraint"
+  )
   private FlagConstraints _constraint;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks")
+      useName = "remarks"
+  )
   private Remarks _remarks;
 
   @BoundAssembly(
       formalName = "Example",
       useName = "example",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST)
+  )
   private List<Example> _examples;
 
   public String getName() {
@@ -228,13 +223,11 @@ public class InlineDefineFlag {
 
   /**
    * Add a new {@link Property} item to the underlying collection.
-   *
-   * @param item
-   *          the item to add
+   * @param item the item to add
    * @return {@code true}
    */
   public boolean addProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
     if (_props == null) {
       _props = new LinkedList<>();
     }
@@ -242,15 +235,12 @@ public class InlineDefineFlag {
   }
 
   /**
-   * Remove the first matching {@link Property} item from the underlying
-   * collection.
-   *
-   * @param item
-   *          the item to remove
+   * Remove the first matching {@link Property} item from the underlying collection.
+   * @param item the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
     return _props != null && _props.remove(value);
   }
 
@@ -280,13 +270,11 @@ public class InlineDefineFlag {
 
   /**
    * Add a new {@link Example} item to the underlying collection.
-   *
-   * @param item
-   *          the item to add
+   * @param item the item to add
    * @return {@code true}
    */
   public boolean addExample(Example item) {
-    Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
     if (_examples == null) {
       _examples = new LinkedList<>();
     }
@@ -294,15 +282,12 @@ public class InlineDefineFlag {
   }
 
   /**
-   * Remove the first matching {@link Example} item from the underlying
-   * collection.
-   *
-   * @param item
-   *          the item to remove
+   * Remove the first matching {@link Example} item from the underlying collection.
+   * @param item the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeExample(Example item) {
-    Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
     return _examples != null && _examples.remove(value);
   }
 

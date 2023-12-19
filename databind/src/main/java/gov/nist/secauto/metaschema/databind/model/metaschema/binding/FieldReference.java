@@ -23,7 +23,6 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.NonNegativeIntegerAdapter;
@@ -43,13 +42,13 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.Matches;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
+import java.lang.Override;
+import java.lang.String;
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -58,38 +57,44 @@ import java.util.List;
 @MetaschemaAssembly(
     formalName = "Field Reference",
     name = "field-reference",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModule.class
+)
 public class FieldReference {
   @BoundFlag(
       formalName = "Global Field Reference",
       useName = "ref",
       required = true,
-      typeAdapter = TokenAdapter.class)
+      typeAdapter = TokenAdapter.class
+  )
   private String _ref;
 
   @BoundFlag(
       formalName = "Field Reference Binary Name",
       useName = "index",
-      typeAdapter = PositiveIntegerAdapter.class)
+      typeAdapter = PositiveIntegerAdapter.class
+  )
   private BigInteger _index;
 
   @BoundFlag(
       formalName = "Deprecated Version",
       useName = "deprecated",
-      typeAdapter = StringAdapter.class)
+      typeAdapter = StringAdapter.class
+  )
   private String _deprecated;
 
   @BoundFlag(
       formalName = "Default Field Value",
       useName = "default",
-      typeAdapter = StringAdapter.class)
+      typeAdapter = StringAdapter.class
+  )
   private String _default;
 
   @BoundFlag(
       formalName = "Minimum Occurrence",
       useName = "min-occurs",
       defaultValue = "0",
-      typeAdapter = NonNegativeIntegerAdapter.class)
+      typeAdapter = NonNegativeIntegerAdapter.class
+  )
   private BigInteger _minOccurs;
 
   @BoundFlag(
@@ -97,58 +102,60 @@ public class FieldReference {
       useName = "max-occurs",
       defaultValue = "1",
       typeAdapter = StringAdapter.class,
-      valueConstraints = @ValueConstraints(
-          matches = @Matches(level = IConstraint.Level.ERROR, pattern = "^[1-9][0-9]*|unbounded$")))
+      valueConstraints = @ValueConstraints(matches = @Matches(level = IConstraint.Level.ERROR, pattern = "^[1-9][0-9]*|unbounded$"))
+  )
   private String _maxOccurs;
 
   @BoundFlag(
       formalName = "Field In XML",
       useName = "in-xml",
+      defaultValue = "WRAPPED",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
-          @AllowedValue(value = "WRAPPED",
-              description = "Block contents of a markup-multiline field will be represented with a containing (wrapper) element in the XML."),
-          @AllowedValue(value = "UNWRAPPED",
-              description = "Block contents of a markup-multiline will be represented in the XML with no wrapper, making the field implicit. Among sibling fields in a given model, only one of them may be designated as UNWRAPPED."),
-          @AllowedValue(value = "WITH_WRAPPER", description = "Alias for WRAPPED.") })))
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "WRAPPED", description = "Block contents of a markup-multiline field will be represented with a containing (wrapper) element in the XML."), @AllowedValue(value = "UNWRAPPED", description = "Block contents of a markup-multiline will be represented in the XML with no wrapper, making the field implicit. Among sibling fields in a given model, only one of them may be designated as UNWRAPPED."), @AllowedValue(value = "WITH_WRAPPER", description = "Alias for WRAPPED.")}))
+  )
   private String _inXml;
 
   @BoundField(
       formalName = "Formal Name",
       description = "A formal name for the data construct, to be presented in documentation.",
-      useName = "formal-name")
+      useName = "formal-name"
+  )
   private String _formalName;
 
   @BoundField(
       formalName = "Description",
       description = "A short description of the data construct's purpose, describing the constructs semantics.",
       useName = "description",
-      typeAdapter = MarkupLineAdapter.class)
+      typeAdapter = MarkupLineAdapter.class
+  )
   private MarkupLine _description;
 
   @BoundAssembly(
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
-          inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
+  )
   private List<Property> _props;
 
   @BoundField(
       formalName = "Use Name",
       description = "Allows the name of the definition to be overridden.",
-      useName = "use-name")
+      useName = "use-name"
+  )
   private UseName _useName;
 
   @BoundAssembly(
       formalName = "Group As",
-      useName = "group-as")
+      useName = "group-as"
+  )
   private GroupAs _groupAs;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks")
+      useName = "remarks"
+  )
   private Remarks _remarks;
 
   public String getRef() {
@@ -233,13 +240,11 @@ public class FieldReference {
 
   /**
    * Add a new {@link Property} item to the underlying collection.
-   *
-   * @param item
-   *          the item to add
+   * @param item the item to add
    * @return {@code true}
    */
   public boolean addProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
     if (_props == null) {
       _props = new LinkedList<>();
     }
@@ -247,15 +252,12 @@ public class FieldReference {
   }
 
   /**
-   * Remove the first matching {@link Property} item from the underlying
-   * collection.
-   *
-   * @param item
-   *          the item to remove
+   * Remove the first matching {@link Property} item from the underlying collection.
+   * @param item the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
     return _props != null && _props.remove(value);
   }
 

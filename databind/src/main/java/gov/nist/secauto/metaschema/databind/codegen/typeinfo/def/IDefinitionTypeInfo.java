@@ -55,16 +55,17 @@ public interface IDefinitionTypeInfo {
   @NonNull
   ITypeResolver getTypeResolver();
 
-  /**
-   * Check's if the Java class to be generated will have a property with the given
-   * name.
-   *
-   * @param propertyName
-   *          the property name to look for
-   * @return {@code true} if there is an associated property with the name or
-   *         {@code false} otherwise
-   */
-  boolean hasPropertyWithName(@NonNull String propertyName);
+  // /**
+  // * Check's if the Java class to be generated will have a property with the
+  // given
+  // * name.
+  // *
+  // * @param propertyName
+  // * the property name to look for
+  // * @return {@code true} if there is an associated property with the name or
+  // * {@code false} otherwise
+  // */
+  // boolean hasPropertyWithName(@NonNull String propertyName);
 
   /**
    * Get the type information for the provided {@code instance} value.

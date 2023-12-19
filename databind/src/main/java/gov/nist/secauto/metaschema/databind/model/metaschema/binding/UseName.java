@@ -23,7 +23,6 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.NonNegativeIntegerAdapter;
@@ -31,11 +30,11 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-
+import java.lang.Override;
+import java.lang.String;
+import java.math.BigInteger;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import java.math.BigInteger;
 
 /**
  * Allows the name of the definition to be overridden.
@@ -48,13 +47,9 @@ import java.math.BigInteger;
     formalName = "Use Name",
     description = "Allows the name of the definition to be overridden.",
     name = "use-name",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModule.class
+)
 public class UseName {
-  @BoundFieldValue(
-      valueKeyName = "name",
-      typeAdapter = TokenAdapter.class)
-  private String _name;
-
   /**
    * "Used for binary formats instead of the textual name."
    */
@@ -62,16 +57,15 @@ public class UseName {
       formalName = "Numeric Index",
       description = "Used for binary formats instead of the textual name.",
       useName = "index",
-      typeAdapter = NonNegativeIntegerAdapter.class)
+      typeAdapter = NonNegativeIntegerAdapter.class
+  )
   private BigInteger _index;
 
-  public String getName() {
-    return _name;
-  }
-
-  public void setName(String value) {
-    _name = value;
-  }
+  @BoundFieldValue(
+      valueKeyName = "name",
+      typeAdapter = TokenAdapter.class
+  )
+  private String _name;
 
   public BigInteger getIndex() {
     return _index;
@@ -79,6 +73,14 @@ public class UseName {
 
   public void setIndex(BigInteger value) {
     _index = value;
+  }
+
+  public String getName() {
+    return _name;
+  }
+
+  public void setName(String value) {
+    _name = value;
   }
 
   @Override

@@ -41,6 +41,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
 
@@ -66,6 +67,7 @@ class DefaultTypeResolver implements ITypeResolver {
       = new ConcurrentHashMap<>();
   private final Map<IFieldDefinition, IFieldDefinitionTypeInfo> fieldDefinitionToTypeInfoMap
       = new ConcurrentHashMap<>();
+  private final Map<IDefinitionTypeInfo, Set<String>> typeInfoToPropertyNameMap = new ConcurrentHashMap<>();
 
   @NonNull
   private final IBindingConfiguration bindingConfiguration;
@@ -227,7 +229,8 @@ class DefaultTypeResolver implements ITypeResolver {
       @NonNull String packageOrTypeName,
       @NonNull String suggestedClassName,
       @NonNull IFlagContainer definition) {
-    @NonNull String retval = suggestedClassName;
+    @NonNull
+    String retval = suggestedClassName;
     Set<String> classNames = getClassNamesFor(packageOrTypeName);
     synchronized (classNames) {
       boolean clash = false;
@@ -271,4 +274,25 @@ class DefaultTypeResolver implements ITypeResolver {
   public String getPackageName(@NonNull IModule<?, ?, ?, ?, ?> module) {
     return bindingConfiguration.getPackageNameForModule(module);
   }
+
+  @Override
+  @NonNull
+  public String getPropertyName(IDefinitionTypeInfo parent, String name) {
+    synchronized (typeInfoToPropertyNameMap) {
+      Set<String> propertyNames = typeInfoToPropertyNameMap.get(parent);
+      if (propertyNames == null) {
+        propertyNames = new HashSet<>();
+      }
+
+      String retval = name;
+      int index = 0;
+      while (propertyNames.contains(retval)) {
+        // append an integer value to make the name unique
+        retval = ClassUtils.toPropertyName(name + Integer.toString(++index));
+      }
+      propertyNames.add(retval);
+      return retval;
+    }
+  }
+
 }

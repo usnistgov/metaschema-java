@@ -23,7 +23,6 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
@@ -36,13 +35,13 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-
+import java.lang.Override;
+import java.lang.String;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * Any explanatory or helpful information to be provided about the remarks
- * parent.
+ * Any explanatory or helpful information to be provided about the remarks parent.
  */
 @SuppressWarnings({
     "PMD.DataClass",
@@ -52,16 +51,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
     formalName = "Remarks",
     description = "Any explanatory or helpful information to be provided about the remarks parent.",
     name = "remarks",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModule.class
+)
 public class Remarks {
-  @BoundFieldValue(
-      valueKeyName = "remark",
-      typeAdapter = MarkupMultilineAdapter.class)
-  private MarkupMultiline _remark;
-
   /**
-   * "Mark as &lsquo;XML&rsquo; for XML-only or &lsquo;JSON&rsquo; for JSON-only
-   * remarks."
+   * "Mark as &lsquo;XML&rsquo; for XML-only or &lsquo;JSON&rsquo; for JSON-only remarks."
    */
   @BoundFlag(
       formalName = "Remark Class",
@@ -69,19 +63,15 @@ public class Remarks {
       useName = "class",
       defaultValue = "ALL",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
-          values = { @AllowedValue(value = "XML", description = "The remark applies to only XML representations."),
-              @AllowedValue(value = "JSON", description = "The remark applies to only JSON and YAML representations."),
-              @AllowedValue(value = "ALL", description = "The remark applies to all representations.") })))
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "XML", description = "The remark applies to only XML representations."), @AllowedValue(value = "JSON", description = "The remark applies to only JSON and YAML representations."), @AllowedValue(value = "ALL", description = "The remark applies to all representations.")}))
+  )
   private String _clazz;
 
-  public MarkupMultiline getRemark() {
-    return _remark;
-  }
-
-  public void setRemark(MarkupMultiline value) {
-    _remark = value;
-  }
+  @BoundFieldValue(
+      valueKeyName = "remark",
+      typeAdapter = MarkupMultilineAdapter.class
+  )
+  private MarkupMultiline _remark;
 
   public String getClazz() {
     return _clazz;
@@ -89,6 +79,14 @@ public class Remarks {
 
   public void setClazz(String value) {
     _clazz = value;
+  }
+
+  public MarkupMultiline getRemark() {
+    return _remark;
+  }
+
+  public void setRemark(MarkupMultiline value) {
+    _remark = value;
   }
 
   @Override

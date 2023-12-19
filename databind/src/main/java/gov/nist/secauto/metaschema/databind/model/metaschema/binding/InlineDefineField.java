@@ -23,7 +23,6 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.NonNegativeIntegerAdapter;
@@ -45,13 +44,14 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssemb
 import gov.nist.secauto.metaschema.databind.model.annotations.Matches;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
+import java.lang.Object;
+import java.lang.Override;
+import java.lang.String;
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -61,63 +61,53 @@ import java.util.List;
 @MetaschemaAssembly(
     formalName = "Inline Field Definition",
     name = "inline-define-field",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModule.class
+)
 public class InlineDefineField {
   @BoundFlag(
       formalName = "Inline Field Name",
       useName = "name",
       required = true,
-      typeAdapter = TokenAdapter.class)
+      typeAdapter = TokenAdapter.class
+  )
   private String _name;
 
   @BoundFlag(
       formalName = "Inline Field Binary Name",
       useName = "index",
-      typeAdapter = PositiveIntegerAdapter.class)
+      typeAdapter = PositiveIntegerAdapter.class
+  )
   private BigInteger _index;
 
   @BoundFlag(
       formalName = "Deprecated Version",
       useName = "deprecated",
-      typeAdapter = StringAdapter.class)
+      typeAdapter = StringAdapter.class
+  )
   private String _deprecated;
 
   @BoundFlag(
       formalName = "Field Value Data Type",
       useName = "as-type",
+      defaultValue = "string",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
-          allowOthers = true,
-          values = { @AllowedValue(value = "markup-line", description = ""),
-              @AllowedValue(value = "markup-multiline", description = ""),
-              @AllowedValue(value = "base64", description = ""), @AllowedValue(value = "boolean", description = ""),
-              @AllowedValue(value = "date", description = ""), @AllowedValue(value = "date-time", description = ""),
-              @AllowedValue(value = "date-time-with-timezone", description = ""),
-              @AllowedValue(value = "date-with-timezone", description = ""),
-              @AllowedValue(value = "day-time-duration", description = ""),
-              @AllowedValue(value = "decimal", description = ""),
-              @AllowedValue(value = "email-address", description = ""),
-              @AllowedValue(value = "hostname", description = ""), @AllowedValue(value = "integer", description = ""),
-              @AllowedValue(value = "ip-v4-address", description = ""),
-              @AllowedValue(value = "ip-v6-address", description = ""),
-              @AllowedValue(value = "non-negative-integer", description = ""),
-              @AllowedValue(value = "positive-integer", description = ""),
-              @AllowedValue(value = "string", description = ""), @AllowedValue(value = "token", description = ""),
-              @AllowedValue(value = "uri", description = ""), @AllowedValue(value = "uri-reference", description = ""),
-              @AllowedValue(value = "uuid", description = "") })))
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, allowOthers = true, values = {@AllowedValue(value = "markup-line", description = ""), @AllowedValue(value = "markup-multiline", description = ""), @AllowedValue(value = "base64", description = ""), @AllowedValue(value = "boolean", description = ""), @AllowedValue(value = "date", description = ""), @AllowedValue(value = "date-time", description = ""), @AllowedValue(value = "date-time-with-timezone", description = ""), @AllowedValue(value = "date-with-timezone", description = ""), @AllowedValue(value = "day-time-duration", description = ""), @AllowedValue(value = "decimal", description = ""), @AllowedValue(value = "email-address", description = ""), @AllowedValue(value = "hostname", description = ""), @AllowedValue(value = "integer", description = ""), @AllowedValue(value = "ip-v4-address", description = ""), @AllowedValue(value = "ip-v6-address", description = ""), @AllowedValue(value = "non-negative-integer", description = ""), @AllowedValue(value = "positive-integer", description = ""), @AllowedValue(value = "string", description = ""), @AllowedValue(value = "token", description = ""), @AllowedValue(value = "uri", description = ""), @AllowedValue(value = "uri-reference", description = ""), @AllowedValue(value = "uuid", description = "")}))
+  )
   private String _asType;
 
   @BoundFlag(
       formalName = "Default Field Value",
       useName = "default",
-      typeAdapter = StringAdapter.class)
+      typeAdapter = StringAdapter.class
+  )
   private String _default;
 
   @BoundFlag(
       formalName = "Minimum Occurrence",
       useName = "min-occurs",
       defaultValue = "0",
-      typeAdapter = NonNegativeIntegerAdapter.class)
+      typeAdapter = NonNegativeIntegerAdapter.class
+  )
   private BigInteger _minOccurs;
 
   @BoundFlag(
@@ -125,92 +115,96 @@ public class InlineDefineField {
       useName = "max-occurs",
       defaultValue = "1",
       typeAdapter = StringAdapter.class,
-      valueConstraints = @ValueConstraints(
-          matches = @Matches(level = IConstraint.Level.ERROR, pattern = "^[1-9][0-9]*|unbounded$")))
+      valueConstraints = @ValueConstraints(matches = @Matches(level = IConstraint.Level.ERROR, pattern = "^[1-9][0-9]*|unbounded$"))
+  )
   private String _maxOccurs;
 
   @BoundFlag(
       formalName = "Field In XML",
       useName = "in-xml",
+      defaultValue = "WRAPPED",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
-          @AllowedValue(value = "WRAPPED",
-              description = "Block contents of a markup-multiline field will be represented with a containing (wrapper) element in the XML."),
-          @AllowedValue(value = "UNWRAPPED",
-              description = "Block contents of a markup-multiline will be represented in the XML with no wrapper, making the field implicit. Among sibling fields in a given model, only one of them may be designated as UNWRAPPED."),
-          @AllowedValue(value = "WITH_WRAPPER", description = "Alias for WRAPPED.") })))
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "WRAPPED", description = "Block contents of a markup-multiline field will be represented with a containing (wrapper) element in the XML."), @AllowedValue(value = "UNWRAPPED", description = "Block contents of a markup-multiline will be represented in the XML with no wrapper, making the field implicit. Among sibling fields in a given model, only one of them may be designated as UNWRAPPED."), @AllowedValue(value = "WITH_WRAPPER", description = "Alias for WRAPPED.")}))
+  )
   private String _inXml;
 
   @BoundField(
       formalName = "Formal Name",
       description = "A formal name for the data construct, to be presented in documentation.",
-      useName = "formal-name")
+      useName = "formal-name"
+  )
   private String _formalName;
 
   @BoundField(
       formalName = "Description",
       description = "A short description of the data construct's purpose, describing the constructs semantics.",
       useName = "description",
-      typeAdapter = MarkupLineAdapter.class)
+      typeAdapter = MarkupLineAdapter.class
+  )
   private MarkupLine _description;
 
   @BoundAssembly(
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
-          inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
+  )
   private List<Property> _props;
 
   @BoundAssembly(
       formalName = "JSON Key",
       description = "Used in JSON (and similar formats) to identify a flag that will be used as the property name in an object hold a collection of sibling objects. Requires that siblings must never share `json-key` values.",
-      useName = "json-key")
+      useName = "json-key"
+  )
   private JsonKey _jsonKey;
 
   @BoundField(
       formalName = "Field Value JSON Property Name",
       useName = "json-value-key",
-      typeAdapter = TokenAdapter.class)
+      typeAdapter = TokenAdapter.class
+  )
   private String _jsonValueKey;
 
   @BoundAssembly(
       formalName = "Flag Used as the Field Value's JSON Property Name",
-      useName = "json-value-key-flag")
+      useName = "json-value-key-flag"
+  )
   private JsonValueKeyFlag _jsonValueKeyFlag;
 
   @BoundAssembly(
       formalName = "Group As",
-      useName = "group-as")
+      useName = "group-as"
+  )
   private GroupAs _groupAs;
 
   @BoundChoiceGroup(
       maxOccurs = -1,
       assemblies = {
-          @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag",
-              binding = InlineDefineFlag.class),
+          @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag", binding = InlineDefineFlag.class),
           @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
       },
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "flags",
-          inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "flags", inJson = JsonGroupAsBehavior.LIST)
+  )
   private List<Object> _flags;
 
   @BoundAssembly(
-      useName = "constraint")
+      useName = "constraint"
+  )
   private FieldConstraints _constraint;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks")
+      useName = "remarks"
+  )
   private Remarks _remarks;
 
   @BoundAssembly(
       formalName = "Example",
       useName = "example",
       maxOccurs = -1,
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "examples",
-          inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST)
+  )
   private List<Example> _examples;
 
   public String getName() {
@@ -303,13 +297,11 @@ public class InlineDefineField {
 
   /**
    * Add a new {@link Property} item to the underlying collection.
-   *
-   * @param item
-   *          the item to add
+   * @param item the item to add
    * @return {@code true}
    */
   public boolean addProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
     if (_props == null) {
       _props = new LinkedList<>();
     }
@@ -317,15 +309,12 @@ public class InlineDefineField {
   }
 
   /**
-   * Remove the first matching {@link Property} item from the underlying
-   * collection.
-   *
-   * @param item
-   *          the item to remove
+   * Remove the first matching {@link Property} item from the underlying collection.
+   * @param item the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeProp(Property item) {
-    Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
     return _props != null && _props.remove(value);
   }
 
@@ -395,13 +384,11 @@ public class InlineDefineField {
 
   /**
    * Add a new {@link Example} item to the underlying collection.
-   *
-   * @param item
-   *          the item to add
+   * @param item the item to add
    * @return {@code true}
    */
   public boolean addExample(Example item) {
-    Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
     if (_examples == null) {
       _examples = new LinkedList<>();
     }
@@ -409,15 +396,12 @@ public class InlineDefineField {
   }
 
   /**
-   * Remove the first matching {@link Example} item from the underlying
-   * collection.
-   *
-   * @param item
-   *          the item to remove
+   * Remove the first matching {@link Example} item from the underlying collection.
+   * @param item the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeExample(Example item) {
-    Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
     return _examples != null && _examples.remove(value);
   }
 

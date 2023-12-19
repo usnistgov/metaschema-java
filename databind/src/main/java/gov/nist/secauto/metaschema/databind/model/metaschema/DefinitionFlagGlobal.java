@@ -39,7 +39,10 @@ import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA.DefineFlag;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Remarks;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.UseName;
 
+import java.math.BigInteger;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -107,42 +110,52 @@ public class DefinitionFlagGlobal implements IFlagDefinition {
 
   @Override
   public ModuleScopeEnum getModuleScope() {
-    return ModuleScopeEnum.valueOf(getBinding().getScope());
+    ModuleScopeEnum retval;
+    switch (getBinding().getScope()) {
+    case "local":
+      retval = ModuleScopeEnum.LOCAL;
+      break;
+    case "global":
+    default:
+      retval = ModuleScopeEnum.INHERITED;
+    }
+    return retval;
   }
 
   @Override
   public boolean isInline() {
-    // TODO Auto-generated method stub
-    return IFlagDefinition.super.isInline();
+    // global definitions are never inline
+    return false;
   }
 
   @Override
   public Object getDefaultValue() {
-    // TODO Auto-generated method stub
-    return IFlagDefinition.super.getDefaultValue();
+    return getBinding().getDefault();
   }
 
   @Override
   public Integer getIndex() {
-    // TODO Auto-generated method stub
-    return IFlagDefinition.super.getIndex();
+    BigInteger index = getBinding().getIndex();
+    return index == null ? null : index.intValueExact();
   }
 
   @Override
   public String getUseName() {
-    // TODO Auto-generated method stub
-    return IFlagDefinition.super.getUseName();
+    UseName useName = getBinding().getUseName();
+    return useName == null ? null : useName.getName();
   }
 
   @Override
   public Integer getUseIndex() {
-    // TODO Auto-generated method stub
-    return IFlagDefinition.super.getUseIndex();
+    UseName useName = getBinding().getUseName();
+    BigInteger index = useName == null ? null : useName.getIndex();
+    return index == null ? null : index.intValueExact();
   }
 
   @Override
   public MarkupMultiline getRemarks() {
-    return getBinding().getRemarks().getRemark();
+    Remarks remarks = getBinding().getRemarks();
+    return remarks == null ? null : remarks.getRemark();
   }
 
   @Override
