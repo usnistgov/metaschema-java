@@ -28,8 +28,10 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractModelInstance;
+import gov.nist.secauto.metaschema.core.model.GroupedModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureGroupedModelContainer;
 import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
@@ -38,9 +40,6 @@ import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedChoiceType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
@@ -55,7 +54,7 @@ class XmlChoiceGroupInstance
   @NonNull
   private final GroupedChoiceType xmlObject;
   @NonNull
-  private final Lazy<ModelContainerSupport> modelContainer;
+  private final Lazy<GroupedModelContainerSupport> modelContainer;
 
   /**
    * Constructs a mutually exclusive choice between two possible objects.
@@ -71,14 +70,14 @@ class XmlChoiceGroupInstance
     super(parent);
     this.xmlObject = xmlObject;
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      ModelContainerSupport retval = new ModelContainerSupport();
+      GroupedModelContainerSupport retval = new GroupedModelContainerSupport();
       XmlModelParser.parseChoiceGroup(xmlObject, this, retval);
       return retval;
     }));
   }
 
   @Override
-  public ModelContainerSupport getModelContainer() {
+  public GroupedModelContainerSupport getModelContainer() {
     return ObjectUtils.notNull(modelContainer.get());
   }
 
@@ -152,50 +151,4 @@ class XmlChoiceGroupInstance
   // -------------------------------------
   // - End XmlBeans driven code - CPD-ON -
   // -------------------------------------
-  private static class ModelContainerSupport
-      implements IStandardGroupedModelContainerSupport {
-
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
-    @NonNull
-    private final Map<String, IGroupedNamedModelInstance> namedModelInstances = new LinkedHashMap<>();
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
-    @NonNull
-    private final Map<String, IGroupedFieldInstance> fieldInstances = new LinkedHashMap<>();
-    @SuppressWarnings("PMD.UseConcurrentHashMap")
-    @NonNull
-    private final Map<String, IGroupedAssemblyInstance> assemblyInstances = new LinkedHashMap<>();
-
-    /**
-     * Get a mapping of all named model instances, mapped from their effective name
-     * to the instance.
-     *
-     * @return the mapping
-     */
-    @Override
-    public Map<String, IGroupedNamedModelInstance> getNamedModelInstanceMap() {
-      return namedModelInstances;
-    }
-
-    /**
-     * Get a mapping of all field instances, mapped from their effective name to the
-     * instance.
-     *
-     * @return the mapping
-     */
-    @Override
-    public Map<String, IGroupedFieldInstance> getFieldInstanceMap() {
-      return fieldInstances;
-    }
-
-    /**
-     * Get a mapping of all assembly instances, mapped from their effective name to
-     * the instance.
-     *
-     * @return the mapping
-     */
-    @Override
-    public Map<String, IGroupedAssemblyInstance> getAssemblyInstanceMap() {
-      return assemblyInstances;
-    }
-  }
 }

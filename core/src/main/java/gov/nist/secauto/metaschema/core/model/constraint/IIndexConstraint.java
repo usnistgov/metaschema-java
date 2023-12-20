@@ -71,6 +71,7 @@ public interface IIndexConstraint extends IKeyConstraint {
       // disable construction
     }
 
+    @NonNull
     public Builder name(@NonNull String name) {
       this.name = name;
       return this;

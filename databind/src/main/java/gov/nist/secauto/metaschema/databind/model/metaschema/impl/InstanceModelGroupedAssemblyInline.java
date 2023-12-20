@@ -24,27 +24,25 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml.impl;
+package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractGroupedNamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.AssemblyModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
-import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IStandardModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedInlineAssemblyDefinitionType;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyConstraints;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel;
 
 import java.util.Map;
 import java.util.Set;
@@ -54,53 +52,57 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-public class XmlGroupedInlineAssemblyDefinition
-    extends AbstractGroupedNamedModelInstance
+public class InstanceModelGroupedAssemblyInline
+    extends AbstractInstanceModelGrouped<AssemblyModel.ChoiceGroup.DefineAssembly>
     implements IGroupedAssemblyInstance, IAssemblyDefinition,
+    IFeatureInlinedDefinition<IAssemblyDefinition, IGroupedAssemblyInstance>,
     IFeatureStandardModelContainer,
-    IFeatureFlagContainer<IFlagInstance>,
-    IFeatureInlinedDefinition<IAssemblyDefinition, IGroupedAssemblyInstance> {
-
+    IFeatureFlagContainer<IFlagInstance> {
   @NonNull
-  private final GroupedInlineAssemblyDefinitionType xmlObject;
+  private final Map<QName, Set<String>> properties;
   @NonNull
-  private final Lazy<XmlFlagContainerSupport> flagContainer;
+  private final Lazy<FlagContainerSupport> flagContainer;
   @NonNull
   private final Lazy<IStandardModelContainerSupport> modelContainer;
   @NonNull
-  private final Lazy<IModelConstrained> constraints;
+  private final Lazy<IModelConstrained> modelConstraints;
 
-  /**
-   * Constructs a new Metaschema field definition from an XML representation bound
-   * to Java objects.
-   *
-   * @param xmlObject
-   *          the XML representation bound to Java objects
-   * @param parent
-   *          the parent container, either a choice or assembly
-   */
-  @SuppressWarnings("PMD.NullAssignment")
-  public XmlGroupedInlineAssemblyDefinition(
-      @NonNull GroupedInlineAssemblyDefinitionType xmlObject,
+  public InstanceModelGroupedAssemblyInline(
+      @NonNull AssemblyModel.ChoiceGroup.DefineAssembly binding,
       @NonNull IChoiceGroupInstance parent) {
-    super(parent);
-    this.xmlObject = xmlObject;
-    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
+    super(binding, parent);
+    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(binding.getFlags(), this)));
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      IStandardModelContainerSupport retval = new AssemblyModelContainerSupport();
-      if (xmlObject.isSetModel()) {
-        XmlModelParser.parseModel(ObjectUtils.notNull(xmlObject.getModel()), this, retval);
-      }
-      return retval;
+      AssemblyModel model = binding.getModel();
+
+      return model == null
+          ? new AssemblyModelContainerSupport()
+          : new BindingModelContainerSupport(model, this);
     }));
-    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
+    this.modelConstraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IModelConstrained retval = new AssemblyConstraintSet();
-      if (getXmlObject().isSetConstraint()) {
-        ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlObject().getConstraint()),
-            ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
+      AssemblyConstraints constraints = getBinding().getConstraint();
+      if (constraints != null) {
+        ConstraintBindingSupport.parse(retval, constraints, ISource.modelSource());
       }
       return retval;
     }));
+  }
+
+  @Override
+  public FlagContainerSupport getFlagContainer() {
+    return ObjectUtils.notNull(flagContainer.get());
+  }
+
+  @Override
+  public IStandardModelContainerSupport getModelContainer() {
+    return ObjectUtils.notNull(modelContainer.get());
+  }
+
+  @Override
+  public IModelConstrained getConstraintSupport() {
+    return ObjectUtils.notNull(modelConstraints.get());
   }
 
   @Override
@@ -114,24 +116,34 @@ public class XmlGroupedInlineAssemblyDefinition
   }
 
   @Override
-  public IFlagContainerSupport<IFlagInstance> getFlagContainer() {
-    return ObjectUtils.notNull(flagContainer.get());
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public IStandardModelContainerSupport getModelContainer() {
-    return modelContainer.get();
+  public Map<QName, Set<String>> getProperties() {
+    return properties;
   }
 
   @Override
-  public IModelConstrained getConstraintSupport() {
-    return ObjectUtils.notNull(constraints.get());
+  public String getName() {
+    return ObjectUtils.notNull(getBinding().getName());
   }
 
-  // ----------------------------------------
-  // - Start XmlBeans driven code - CPD-OFF -
-  // ----------------------------------------
+  @Override
+  public Integer getIndex() {
+    return ModelSupport.index(getBinding().getIndex());
+  }
+
+  @Override
+  public String getFormalName() {
+    return getBinding().getFormalName();
+  }
+
+  @Override
+  public MarkupLine getDescription() {
+    return getBinding().getDescription();
+  }
+
+  @Override
+  public MarkupMultiline getRemarks() {
+    return ModelSupport.remarks(getBinding().getRemarks());
+  }
 
   @Override
   public boolean isRoot() {
@@ -151,55 +163,8 @@ public class XmlGroupedInlineAssemblyDefinition
     return null;
   }
 
-  /**
-   * Get the underlying XML model.
-   *
-   * @return the XML model
-   */
-  protected GroupedInlineAssemblyDefinitionType getXmlObject() {
-    return xmlObject;
-  }
-
-  @Override
-  public String getFormalName() {
-    return getXmlObject().isSetFormalName() ? getXmlObject().getFormalName() : null;
-  }
-
-  @Override
-  public MarkupLine getDescription() {
-    return getXmlObject().isSetDescription()
-        ? MarkupStringConverter.toMarkupString(ObjectUtils.notNull(getXmlObject().getDescription()))
-        : null;
-  }
-
-  @Override
-  public Map<QName, Set<String>> getProperties() {
-    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
-  }
-
-  @Override
-  public String getName() {
-    return ObjectUtils.notNull(getXmlObject().getName());
-  }
-
-  @Override
-  public Integer getIndex() {
-    return getXmlObject().isSetIndex() ? getXmlObject().getIndex().intValue() : null;
-  }
-
-  @Override
-  public MarkupMultiline getRemarks() {
-    return getXmlObject().isSetRemarks()
-        ? MarkupStringConverter.toMarkupString(ObjectUtils.notNull(getXmlObject().getRemarks()))
-        : null;
-  }
-
   @Override
   public String getDiscriminatorValue() {
-    return getXmlObject().getDiscriminatorValue();
+    return getBinding().getDiscriminatorValue();
   }
-
-  // -------------------------------------
-  // - End XmlBeans driven code - CPD-ON -
-  // -------------------------------------
 }

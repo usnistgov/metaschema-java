@@ -34,6 +34,8 @@ import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.IStandardGroupedModelContainerSupport;
+import gov.nist.secauto.metaschema.core.model.IStandardModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;

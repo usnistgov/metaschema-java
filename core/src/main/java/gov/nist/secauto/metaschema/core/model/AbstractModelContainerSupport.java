@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.model.xml.impl.IModelContainerSupport;
-
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;

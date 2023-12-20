@@ -129,21 +129,25 @@ public interface IAllowedValuesConstraint extends IConstraint {
       // disable construction
     }
 
+    @NonNull
     public Builder allowedValue(@NonNull IAllowedValue allowedValue) {
       this.allowedValues.put(allowedValue.getValue(), allowedValue);
       return this;
     }
 
+    @NonNull
     public Builder allowedValues(@NonNull Map<String, IAllowedValue> allowedValues) {
       this.allowedValues.putAll(allowedValues);
       return this;
     }
 
+    @NonNull
     public Builder allowedOther(boolean bool) {
       this.allowedOther = bool;
       return this;
     }
 
+    @NonNull
     public Builder extensible(@NonNull Extensible extensible) {
       this.extensible = extensible;
       return this;

@@ -24,27 +24,4 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml.impl;
-
-import gov.nist.secauto.metaschema.core.model.AbstractChoicesModelContainerSupport;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
-
-public class AssemblyModelContainerSupportImpl
-    extends AbstractChoicesModelContainerSupport<
-        IModelInstance,
-        INamedModelInstance,
-        IFieldInstance,
-        IAssemblyInstance,
-        IChoiceInstance,
-        IChoiceGroupInstance>
-    implements IStandardModelContainerSupport {
-
-  protected AssemblyModelContainerSupportImpl() {
-    super(IChoiceInstance.class, IChoiceGroupInstance.class);
-  }
-}
+package gov.nist.secauto.metaschema.databind.model.metaschema.impl;

@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
@@ -32,13 +33,14 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Object;
-import java.lang.Override;
-import java.lang.String;
-import java.util.LinkedList;
-import java.util.List;
+import gov.nist.secauto.metaschema.databind.model.metaschema.impl.IConstraintBase;
+import gov.nist.secauto.metaschema.databind.model.metaschema.impl.IValueConstraintsBase;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -46,30 +48,32 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 })
 @MetaschemaAssembly(
     name = "field-constraints",
-    moduleClass = MetaschemaModule.class
-)
-public class FieldConstraints {
+    moduleClass = MetaschemaModule.class)
+public class FieldConstraints implements IValueConstraintsBase {
   @BoundAssembly(
       formalName = "Constraint Let Expression",
       useName = "let",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "lets", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "lets", inJson = JsonGroupAsBehavior.LIST))
   private List<ConstraintLetExpression> _lets;
 
   @BoundChoiceGroup(
       minOccurs = 1,
       maxOccurs = -1,
       assemblies = {
-          @BoundGroupedAssembly(formalName = "Allowed Values Constraint", useName = "allowed-values", binding = TargetedAllowedValuesConstraint.class),
-          @BoundGroupedAssembly(formalName = "Expect Condition Constraint", useName = "expect", binding = TargetedExpectConstraint.class),
-          @BoundGroupedAssembly(formalName = "Targeted Index Has Key Constraint", useName = "index-has-key", binding = TargetedIndexHasKeyConstraint.class),
-          @BoundGroupedAssembly(formalName = "Value Matches Constraint", useName = "matches", binding = TargetedMatchesConstraint.class)
+          @BoundGroupedAssembly(formalName = "Allowed Values Constraint", useName = "allowed-values",
+              binding = TargetedAllowedValuesConstraint.class),
+          @BoundGroupedAssembly(formalName = "Expect Condition Constraint", useName = "expect",
+              binding = TargetedExpectConstraint.class),
+          @BoundGroupedAssembly(formalName = "Targeted Index Has Key Constraint", useName = "index-has-key",
+              binding = TargetedIndexHasKeyConstraint.class),
+          @BoundGroupedAssembly(formalName = "Value Matches Constraint", useName = "matches",
+              binding = TargetedMatchesConstraint.class)
       },
-      groupAs = @GroupAs(name = "rules", inJson = JsonGroupAsBehavior.LIST)
-  )
-  private List<Object> _rules;
+      groupAs = @GroupAs(name = "rules", inJson = JsonGroupAsBehavior.LIST))
+  private List<? extends IConstraintBase> _rules;
 
+  @Override
   public List<ConstraintLetExpression> getLets() {
     return _lets;
   }
@@ -80,11 +84,13 @@ public class FieldConstraints {
 
   /**
    * Add a new {@link ConstraintLetExpression} item to the underlying collection.
-   * @param item the item to add
+   *
+   * @param item
+   *          the item to add
    * @return {@code true}
    */
   public boolean addLet(ConstraintLetExpression item) {
-    ConstraintLetExpression value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    ConstraintLetExpression value = ObjectUtils.requireNonNull(item, "item cannot be null");
     if (_lets == null) {
       _lets = new LinkedList<>();
     }
@@ -92,20 +98,24 @@ public class FieldConstraints {
   }
 
   /**
-   * Remove the first matching {@link ConstraintLetExpression} item from the underlying collection.
-   * @param item the item to remove
+   * Remove the first matching {@link ConstraintLetExpression} item from the
+   * underlying collection.
+   *
+   * @param item
+   *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeLet(ConstraintLetExpression item) {
-    ConstraintLetExpression value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    ConstraintLetExpression value = ObjectUtils.requireNonNull(item, "item cannot be null");
     return _lets != null && _lets.remove(value);
   }
 
-  public List<Object> getRules() {
+  @Override
+  public List<? extends IConstraintBase> getRules() {
     return _rules;
   }
 
-  public void setRules(List<Object> value) {
+  public void setRules(List<? extends IConstraintBase> value) {
     _rules = value;
   }
 

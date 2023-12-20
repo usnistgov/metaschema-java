@@ -28,7 +28,10 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.AssemblyModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
+import gov.nist.secauto.metaschema.core.model.IStandardModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ChoiceType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -57,7 +60,7 @@ class XmlChoiceInstance
     super(parent);
     this.xmlChoice = xmlChoice;
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      IStandardModelContainerSupport retval = new AssemblyModelContainerSupportImpl();
+      IStandardModelContainerSupport retval = new AssemblyModelContainerSupport();
       XmlModelParser.parseChoice(xmlChoice, this, retval);
       return retval;
     }));

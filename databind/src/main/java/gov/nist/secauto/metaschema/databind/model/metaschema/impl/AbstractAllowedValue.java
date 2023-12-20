@@ -24,62 +24,33 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml.impl;
+package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.INamedInstanceBase;
+import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-/**
- * A trait indicating that the implementation is a localized definition that is
- * declared in-line as an instance.
- *
- * @param <DEFINITION>
- *          the associated definition Java type
- * @param <INSTANCE>
- *          the associated instance Java type
- */
-public interface IFeatureInlinedDefinition<DEFINITION extends IDefinition, INSTANCE extends INamedInstanceBase>
-    extends IDefinition, INamedInstanceBase {
+public abstract class AbstractAllowedValue implements IAllowedValue {
+
+  @Nullable
+  public abstract String getDeprecated();
+
+  @Nullable
+  public abstract MarkupLine getRemark();
+
   @Override
-  default boolean isInline() {
-    return true;
+  public abstract String getValue();
+
+  @Override
+  public String getDeprecatedVersion() {
+    return getDeprecated();
   }
 
   @Override
-  DEFINITION getDefinition();
-
-  @Override
-  @NonNull
-  INSTANCE getInlineInstance();
-
-  @Override
-  default String getEffectiveFormalName() {
-    return getFormalName();
-  }
-
-  @Override
-  default MarkupLine getEffectiveDescription() {
-    return getDescription();
-  }
-
-  @Override
-  default String getEffectiveName() {
-    // don't use use-name
-    return getName();
-  }
-
-  @Override
-  default Integer getEffectiveIndex() {
-    return getIndex();
-  }
-
-  @Override
-  default String toCoordinates() {
-    // Ensure classes that implement INamedInstance and IDefinition use this
-    return INamedInstanceBase.super.toCoordinates();
+  public MarkupLine getDescription() {
+    return ObjectUtils.requireNonNull(getRemark());
   }
 
 }

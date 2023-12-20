@@ -79,7 +79,6 @@ public interface IBoundInstanceModelAssembly
   @Override
   @NonNull
   IBoundDefinitionAssembly getDefinition();
-
   // @Override
   // default Object getValue(Object parent) {
   // return IBoundInstanceModelNamed.super.getValue(parent);
@@ -123,5 +122,10 @@ public interface IBoundInstanceModelAssembly
   @Override
   default void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
     getDefinition().callAfterDeserialize(targetObject, parentObject);
+  }
+
+  @Override
+  default String toCoordinates() {
+    return IBoundInstanceModelNamedComplex.super.toCoordinates();
   }
 }

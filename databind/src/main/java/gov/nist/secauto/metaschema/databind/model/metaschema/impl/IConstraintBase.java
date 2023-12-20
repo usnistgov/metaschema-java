@@ -24,17 +24,34 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml.impl;
+package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Property;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Remarks;
 
-public interface IFeatureStandardModelContainer
-    extends IFeatureModelContainer<
-        IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance, IChoiceGroupInstance> {
-  // no additional methods
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public interface IConstraintBase {
+
+  @Nullable
+  String getId();
+
+  @Nullable
+  String getFormalName();
+
+  @Nullable
+  MarkupLine getDescription();
+
+  @Nullable
+  List<Property> getProps();
+
+  @Nullable
+  Remarks getRemarks();
+
+  @Nullable
+  String getLevel();
+
 }

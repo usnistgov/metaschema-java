@@ -123,11 +123,6 @@ public abstract class AbstractModelDefinitionTypeInfo<DEF extends IFlagContainer
     return ObjectUtils.notNull(flagTypeInfos.get());
   }
 
-  @Override
-  public boolean hasPropertyWithName(@NonNull String propertyName) {
-    return getPropertyTypeInfoMap().containsKey(propertyName);
-  }
-
   @SuppressWarnings("null")
   @Override
   public Collection<IPropertyTypeInfo> getPropertyTypeInfos() {

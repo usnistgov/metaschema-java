@@ -24,68 +24,90 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema;
+package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundModule;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FieldConstraints;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.JsonValueKeyFlag;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA.DefineFlag;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Remarks;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.UseName;
 
-import java.math.BigInteger;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
-public class DefinitionFlagGlobal implements IFlagDefinition {
-  @NonNull
-  private final METASCHEMA.DefineFlag binding;
+public class DefinitionFieldGlobal
+    extends AbstractDefinition<METASCHEMA.DefineField>
+    implements IFieldDefinition,
+    IFeatureFlagContainer<IFlagInstance> {
   @NonNull
   private final Map<QName, Set<String>> properties;
+  @NonNull
+  private final IDataTypeAdapter<?> javaTypeAdapter;
+  @Nullable
+  private final Object defaultValue;
+  @NonNull
+  private final Lazy<FlagContainerSupport> flagContainer;
+  @NonNull
+  private final Lazy<IValueConstrained> valueConstraints;
 
-  public DefinitionFlagGlobal(@NonNull DefineFlag binding) {
-    this.binding = binding;
-    this.properties = ObjectUtils.notNull(binding.getProps().stream()
-        .collect(
-            Collectors.groupingBy(
-                (prop) -> new QName(prop.getNamespace().toASCIIString(), prop.getName()),
-                Collectors.mapping(
-                    (prop) -> prop.getValue(),
-                    Collectors.toUnmodifiableSet()))));
+  public DefinitionFieldGlobal(
+      @NonNull IBoundModule module,
+      @NonNull METASCHEMA.DefineField binding) {
+    super(module, binding);
+    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
+    this.javaTypeAdapter = ModelSupport.dataType(getBinding().getAsType());
+    this.defaultValue = ModelSupport.defaultValue(getBinding().getDefault(), this.javaTypeAdapter);
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(binding.getFlags(), this)));
+    this.valueConstraints = ObjectUtils.notNull(Lazy.lazy(() -> {
+      IValueConstrained retval = new ValueConstraintSet();
+      FieldConstraints constraints = getBinding().getConstraint();
+      if (constraints != null) {
+        ConstraintBindingSupport.parse(retval, constraints, ISource.modelSource());
+      }
+      return retval;
+    }));
   }
 
-  @NonNull
-  protected METASCHEMA.DefineFlag getBinding() {
-    return binding;
+  @Override
+  public FlagContainerSupport getFlagContainer() {
+    return ObjectUtils.notNull(flagContainer.get());
+  }
+
+  @Override
+  public IValueConstrained getConstraintSupport() {
+    return ObjectUtils.notNull(valueConstraints.get());
   }
 
   @Override
   public IDataTypeAdapter<?> getJavaTypeAdapter() {
-    String asType = getBinding().getAsType();
-    IDataTypeAdapter<?> retval;
-    if (asType == null) {
-      retval = MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
-    } else {
-      retval = DataTypeService.getInstance().getJavaTypeAdapterByName(asType);
-      if (retval == null) {
-        throw new IllegalStateException("Unrecognized data type: " + asType);
-      }
-    }
-    return retval;
+    return javaTypeAdapter;
+  }
+
+  @Override
+  public Map<QName, Set<String>> getProperties() {
+    return properties;
+  }
+
+  @Override
+  public Object getDefaultValue() {
+    return defaultValue;
   }
 
   @Override
@@ -99,27 +121,13 @@ public class DefinitionFlagGlobal implements IFlagDefinition {
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
-    return properties;
-  }
-
-  @Override
   public String getName() {
     return ObjectUtils.notNull(getBinding().getName());
   }
 
   @Override
   public ModuleScopeEnum getModuleScope() {
-    ModuleScopeEnum retval;
-    switch (getBinding().getScope()) {
-    case "local":
-      retval = ModuleScopeEnum.LOCAL;
-      break;
-    case "global":
-    default:
-      retval = ModuleScopeEnum.INHERITED;
-    }
-    return retval;
+    return ModelSupport.moduleScope(ObjectUtils.requireNonNull(getBinding().getScope()));
   }
 
   @Override
@@ -129,52 +137,40 @@ public class DefinitionFlagGlobal implements IFlagDefinition {
   }
 
   @Override
-  public Object getDefaultValue() {
-    return getBinding().getDefault();
+  public IFieldInstance getInlineInstance() {
+    // global definitions are never inline
+    return null;
   }
 
   @Override
   public Integer getIndex() {
-    BigInteger index = getBinding().getIndex();
-    return index == null ? null : index.intValueExact();
+    return ModelSupport.index(getBinding().getIndex());
   }
 
   @Override
   public String getUseName() {
-    UseName useName = getBinding().getUseName();
-    return useName == null ? null : useName.getName();
+    return ModelSupport.useName(getBinding().getUseName());
   }
 
   @Override
   public Integer getUseIndex() {
-    UseName useName = getBinding().getUseName();
-    BigInteger index = useName == null ? null : useName.getIndex();
-    return index == null ? null : index.intValueExact();
+    return ModelSupport.useIndex(getBinding().getUseName());
   }
 
   @Override
   public MarkupMultiline getRemarks() {
-    Remarks remarks = getBinding().getRemarks();
-    return remarks == null ? null : remarks.getRemark();
+    return ModelSupport.remarks(getBinding().getRemarks());
   }
 
   @Override
-  public IModule<?, ?, ?, ?, ?> getContainingModule() {
-    getBinding().
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("implement");
+  public IFlagInstance getJsonValueKeyFlagInstance() {
+    JsonValueKeyFlag obj = getBinding().getJsonValueKeyFlag();
+    String flagName = obj == null ? null : obj.getFlagRef();
+    return flagName == null ? null : getFlagInstanceByName(flagName);
   }
 
   @Override
-  public IValueConstrained getConstraintSupport() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("implement");
+  public String getJsonValueKeyName() {
+    return getBinding().getJsonValueKey();
   }
-
-  @Override
-  public IFlagInstance getInlineInstance() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("implement");
-  }
-
 }

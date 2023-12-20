@@ -24,60 +24,45 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml.impl;
+package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedModelContainer;
-import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IFeatureGroupedModelContainer<
-    NMI extends IGroupedNamedModelInstance,
-    FI extends IGroupedFieldInstance,
-    AI extends IGroupedAssemblyInstance>
-    extends IGroupedModelContainer {
+/**
+ * Represents a definition that may contain flags.
+ *
+ * @param <FI>
+ *          the flag instance Java type
+ */
+public interface IFeatureFlagContainer<FI extends IFlagInstance> extends IFlagContainer {
   /**
-   * Lazy initialize the model instances associated with this choice group.
+   * Lazy initialize the flag instances associated with this definition.
    *
-   * @return the model container
+   * @return the flag container
    */
   @NonNull
-  IGroupedModelContainerSupport<NMI, FI, AI> getModelContainer();
+  IFlagContainerSupport<FI> getFlagContainer();
 
   @Override
-  default NMI getNamedModelInstanceByName(String name) {
-    return getModelContainer().getNamedModelInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<NMI> getNamedModelInstances() {
-    return getModelContainer().getNamedModelInstanceMap().values();
+  @Nullable
+  default FI getFlagInstanceByName(String name) {
+    return getFlagContainer().getFlagInstanceMap().get(name);
   }
 
   @Override
-  default FI getFieldInstanceByName(String name) {
-    return getModelContainer().getFieldInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<FI> getFieldInstances() {
-    return getModelContainer().getFieldInstanceMap().values();
+  @NonNull
+  default Collection<? extends FI> getFlagInstances() {
+    return ObjectUtils.notNull(getFlagContainer().getFlagInstanceMap().values());
   }
 
   @Override
-  default AI getAssemblyInstanceByName(String name) {
-    return getModelContainer().getAssemblyInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<AI> getAssemblyInstances() {
-    return getModelContainer().getAssemblyInstanceMap().values();
+  @Nullable
+  default FI getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
   }
 }

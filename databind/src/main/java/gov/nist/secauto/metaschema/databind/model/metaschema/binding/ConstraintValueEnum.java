@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
@@ -31,42 +32,41 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLineAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import java.lang.Override;
-import java.lang.String;
+import gov.nist.secauto.metaschema.databind.model.metaschema.impl.AbstractAllowedValue;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 @SuppressWarnings({
     "PMD.DataClass",
-    "PMD.FieldNamingConventions"
+    "PMD.FieldNamingConventions",
+    "null"
 })
 @MetaschemaField(
     formalName = "Allowed Value Enumeration",
     name = "constraint-value-enum",
-    moduleClass = MetaschemaModule.class
-)
-public class ConstraintValueEnum {
+    moduleClass = MetaschemaModule.class)
+public class ConstraintValueEnum
+    extends AbstractAllowedValue {
   @BoundFlag(
       formalName = "Allowed Value Enumeration Value",
       useName = "value",
       required = true,
-      typeAdapter = StringAdapter.class
-  )
+      typeAdapter = StringAdapter.class)
   private String _value;
 
   @BoundFlag(
       formalName = "Allowed Value Deprecation Version",
       useName = "deprecated",
-      typeAdapter = StringAdapter.class
-  )
+      typeAdapter = StringAdapter.class)
   private String _deprecated;
 
   @BoundFieldValue(
       valueKeyName = "remark",
-      typeAdapter = MarkupLineAdapter.class
-  )
+      typeAdapter = MarkupLineAdapter.class)
   private MarkupLine _remark;
 
+  @Override
   public String getValue() {
     return _value;
   }
@@ -75,6 +75,7 @@ public class ConstraintValueEnum {
     _value = value;
   }
 
+  @Override
   public String getDeprecated() {
     return _deprecated;
   }
@@ -83,6 +84,7 @@ public class ConstraintValueEnum {
     _deprecated = value;
   }
 
+  @Override
   public MarkupLine getRemark() {
     return _remark;
   }

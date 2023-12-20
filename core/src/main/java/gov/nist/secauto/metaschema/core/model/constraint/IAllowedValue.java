@@ -64,6 +64,13 @@ public interface IAllowedValue {
   String getValue();
 
   /**
+   * If the value is deprecated, get the deprecated version.
+   *
+   * @return the deprecated version or {@code null} if the value is not deprecated
+   */
+  String getDeprecatedVersion();
+
+  /**
    * Retrieves the enumerated value's description associated with this allowed
    * value constraint entry.
    *

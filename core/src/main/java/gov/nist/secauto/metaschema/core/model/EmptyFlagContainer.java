@@ -59,9 +59,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml.impl;
+package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import java.util.Map;

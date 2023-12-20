@@ -24,75 +24,55 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint;
+package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.AssemblyModelContainerSupport;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
+import gov.nist.secauto.metaschema.core.model.IStandardModelContainerSupport;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel.Choice;
+
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
-/**
- * Represents a rule that checks that a key generated for a Metaschema data
- * object exists in a named index that was generated using an
- * {@link IIndexConstraint}.
- */
-public interface IIndexHasKeyConstraint extends IKeyConstraint {
+public class InstanceModelChoice
+    extends AbstractInstanceModel<Choice, IAssemblyDefinition>
+    implements IChoiceInstance,
+    IFeatureStandardModelContainer {
   @NonNull
-  String getIndexName();
+  private final Lazy<IStandardModelContainerSupport> modelContainer;
+
+  public InstanceModelChoice(
+      @NonNull Choice binding,
+      @NonNull IAssemblyDefinition parent) {
+    super(binding, parent);
+    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
+      List<Object> choices = binding.getChoices();
+
+      return choices == null || choices.isEmpty()
+          ? new AssemblyModelContainerSupport()
+          : new BindingModelContainerSupport(choices, this);
+    }));
+  }
 
   @Override
-  default <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
-    return visitor.visitIndexHasKeyConstraint(this, state);
+  public IStandardModelContainerSupport getModelContainer() {
+    return ObjectUtils.notNull(modelContainer.get());
   }
 
-  @NonNull
-  static Builder builder() {
-    return new Builder();
+  @Override
+  public String getJsonKeyFlagName() {
+    return null;
   }
 
-  class Builder
-      extends AbstractKeyConstraintBuilder<Builder, IIndexHasKeyConstraint> {
-    private String indexName;
-
-    private Builder() {
-      // disable construction
-    }
-
-    @NonNull
-    public Builder name(@NonNull String name) {
-      this.indexName = name;
-      return this;
-    }
-
-    @Override
-    protected Builder getThis() {
-      return this;
-    }
-
-    @Override
-    protected void validate() {
-      super.validate();
-
-      ObjectUtils.requireNonNull(indexName);
-    }
-
-    protected String getIndexName() {
-      return indexName;
-    }
-
-    @Override
-    protected IIndexHasKeyConstraint newInstance() {
-      return new DefaultIndexHasKeyConstraint(
-          getId(),
-          getFormalName(),
-          getDescription(),
-          ObjectUtils.notNull(getSource()),
-          getLevel(),
-          getTarget(),
-          getProperties(),
-          ObjectUtils.notNull(getIndexName()),
-          getKeyFields(),
-          getRemarks());
-    }
+  @Override
+  public MarkupMultiline getRemarks() {
+    // no remarks
+    return null;
   }
 }

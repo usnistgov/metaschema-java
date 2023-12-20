@@ -24,75 +24,42 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint;
+package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-/**
- * Represents a rule that checks that a key generated for a Metaschema data
- * object exists in a named index that was generated using an
- * {@link IIndexConstraint}.
- */
-public interface IIndexHasKeyConstraint extends IKeyConstraint {
+public interface IFlagContainerSupport<FI extends IFlagInstance> {
+  /**
+   * Provides an empty instance.
+   *
+   * @param <T>
+   *          the Java type of the flag instance
+   * @return an empty instance
+   */
+  @SuppressWarnings("unchecked")
   @NonNull
-  String getIndexName();
-
-  @Override
-  default <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
-    return visitor.visitIndexHasKeyConstraint(this, state);
+  static <T extends IFlagInstance> IFlagContainerSupport<T> empty() {
+    return (IFlagContainerSupport<T>) EmptyFlagContainer.EMPTY;
   }
 
+  /**
+   * Get a mapping of flag effective name to flag instance.
+   *
+   * @return the mapping of flag effective name to flag instance
+   */
   @NonNull
-  static Builder builder() {
-    return new Builder();
-  }
+  Map<String, FI> getFlagInstanceMap();
 
-  class Builder
-      extends AbstractKeyConstraintBuilder<Builder, IIndexHasKeyConstraint> {
-    private String indexName;
-
-    private Builder() {
-      // disable construction
-    }
-
-    @NonNull
-    public Builder name(@NonNull String name) {
-      this.indexName = name;
-      return this;
-    }
-
-    @Override
-    protected Builder getThis() {
-      return this;
-    }
-
-    @Override
-    protected void validate() {
-      super.validate();
-
-      ObjectUtils.requireNonNull(indexName);
-    }
-
-    protected String getIndexName() {
-      return indexName;
-    }
-
-    @Override
-    protected IIndexHasKeyConstraint newInstance() {
-      return new DefaultIndexHasKeyConstraint(
-          getId(),
-          getFormalName(),
-          getDescription(),
-          ObjectUtils.notNull(getSource()),
-          getLevel(),
-          getTarget(),
-          getProperties(),
-          ObjectUtils.notNull(getIndexName()),
-          getKeyFields(),
-          getRemarks());
-    }
-  }
+  /**
+   * Retrieves the flag instance to use as as the property name for the containing
+   * object in JSON who's value will be the object containing the flag.
+   *
+   * @return the flag instance if a JSON key is configured, or {@code null}
+   *         otherwise
+   */
+  @Nullable
+  FI getJsonKeyFlagInstance();
 }

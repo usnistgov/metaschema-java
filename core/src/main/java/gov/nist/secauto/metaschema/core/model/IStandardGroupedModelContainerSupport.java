@@ -24,11 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml.impl;
-
-import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
+package gov.nist.secauto.metaschema.core.model;
 
 public interface IStandardGroupedModelContainerSupport
     extends IGroupedModelContainerSupport<

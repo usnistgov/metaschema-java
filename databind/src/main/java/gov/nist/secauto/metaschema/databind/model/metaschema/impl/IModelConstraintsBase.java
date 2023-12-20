@@ -24,47 +24,11 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml.impl;
+package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import java.util.List;
 
-import java.util.Collection;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
-
-/**
- * Represents a definition that may contain flags.
- *
- * @param <FI>
- *          the flag instance Java type
- */
-public interface IFeatureFlagContainer<FI extends IFlagInstance> extends IFlagContainer {
-  /**
-   * Lazy initialize the flag instances associated with this definition.
-   *
-   * @return the flag container
-   */
-  @NonNull
-  IFlagContainerSupport<FI> getFlagContainer();
-
+public interface IModelConstraintsBase extends IValueConstraintsBase {
   @Override
-  @Nullable
-  default FI getFlagInstanceByName(String name) {
-    return getFlagContainer().getFlagInstanceMap().get(name);
-  }
-
-  @Override
-  @NonNull
-  default Collection<? extends FI> getFlagInstances() {
-    return ObjectUtils.notNull(getFlagContainer().getFlagInstanceMap().values());
-  }
-
-  @Override
-  @Nullable
-  default FI getJsonKeyFlagInstance() {
-    return getFlagContainer().getJsonKeyFlagInstance();
-  }
+  List<? extends ITargetedConstraintBase> getRules();
 }

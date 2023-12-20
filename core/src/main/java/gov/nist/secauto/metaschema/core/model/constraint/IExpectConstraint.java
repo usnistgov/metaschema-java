@@ -74,11 +74,13 @@ public interface IExpectConstraint extends IConstraint {
       // disable construction
     }
 
+    @NonNull
     public Builder test(@NonNull MetapathExpression test) {
       this.test = test;
       return this;
     }
 
+    @NonNull
     public Builder message(@NonNull String message) {
       this.message = message;
       return this;

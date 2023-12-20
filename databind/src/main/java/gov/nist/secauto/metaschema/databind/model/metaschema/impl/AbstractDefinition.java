@@ -24,75 +24,28 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint;
+package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * Represents a rule that checks that a key generated for a Metaschema data
- * object exists in a named index that was generated using an
- * {@link IIndexConstraint}.
- */
-public interface IIndexHasKeyConstraint extends IKeyConstraint {
+public abstract class AbstractDefinition<BINDING>
+    extends AbstractBinding<BINDING>
+    implements IDefinition {
   @NonNull
-  String getIndexName();
+  private final IBoundModule module;
+
+  protected AbstractDefinition(
+      @NonNull IBoundModule module,
+      @NonNull BINDING binding) {
+    super(binding);
+    this.module = module;
+  }
 
   @Override
-  default <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
-    return visitor.visitIndexHasKeyConstraint(this, state);
-  }
-
-  @NonNull
-  static Builder builder() {
-    return new Builder();
-  }
-
-  class Builder
-      extends AbstractKeyConstraintBuilder<Builder, IIndexHasKeyConstraint> {
-    private String indexName;
-
-    private Builder() {
-      // disable construction
-    }
-
-    @NonNull
-    public Builder name(@NonNull String name) {
-      this.indexName = name;
-      return this;
-    }
-
-    @Override
-    protected Builder getThis() {
-      return this;
-    }
-
-    @Override
-    protected void validate() {
-      super.validate();
-
-      ObjectUtils.requireNonNull(indexName);
-    }
-
-    protected String getIndexName() {
-      return indexName;
-    }
-
-    @Override
-    protected IIndexHasKeyConstraint newInstance() {
-      return new DefaultIndexHasKeyConstraint(
-          getId(),
-          getFormalName(),
-          getDescription(),
-          ObjectUtils.notNull(getSource()),
-          getLevel(),
-          getTarget(),
-          getProperties(),
-          ObjectUtils.notNull(getIndexName()),
-          getKeyFields(),
-          getRemarks());
-    }
+  public IBoundModule getContainingModule() {
+    return module;
   }
 }

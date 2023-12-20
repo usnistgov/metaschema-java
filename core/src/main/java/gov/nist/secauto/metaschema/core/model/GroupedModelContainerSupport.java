@@ -24,75 +24,56 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint;
+package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * Represents a rule that checks that a key generated for a Metaschema data
- * object exists in a named index that was generated using an
- * {@link IIndexConstraint}.
- */
-public interface IIndexHasKeyConstraint extends IKeyConstraint {
-  @NonNull
-  String getIndexName();
+public class GroupedModelContainerSupport
+    implements IStandardGroupedModelContainerSupport {
 
+  @SuppressWarnings("PMD.UseConcurrentHashMap")
+  @NonNull
+  private final Map<String, IGroupedNamedModelInstance> namedModelInstances = new LinkedHashMap<>();
+  @SuppressWarnings("PMD.UseConcurrentHashMap")
+  @NonNull
+  private final Map<String, IGroupedFieldInstance> fieldInstances = new LinkedHashMap<>();
+  @SuppressWarnings("PMD.UseConcurrentHashMap")
+  @NonNull
+  private final Map<String, IGroupedAssemblyInstance> assemblyInstances = new LinkedHashMap<>();
+
+  /**
+   * Get a mapping of all named model instances, mapped from their effective name
+   * to the instance.
+   *
+   * @return the mapping
+   */
   @Override
-  default <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
-    return visitor.visitIndexHasKeyConstraint(this, state);
+  public Map<String, IGroupedNamedModelInstance> getNamedModelInstanceMap() {
+    return namedModelInstances;
   }
 
-  @NonNull
-  static Builder builder() {
-    return new Builder();
+  /**
+   * Get a mapping of all field instances, mapped from their effective name to the
+   * instance.
+   *
+   * @return the mapping
+   */
+  @Override
+  public Map<String, IGroupedFieldInstance> getFieldInstanceMap() {
+    return fieldInstances;
   }
 
-  class Builder
-      extends AbstractKeyConstraintBuilder<Builder, IIndexHasKeyConstraint> {
-    private String indexName;
-
-    private Builder() {
-      // disable construction
-    }
-
-    @NonNull
-    public Builder name(@NonNull String name) {
-      this.indexName = name;
-      return this;
-    }
-
-    @Override
-    protected Builder getThis() {
-      return this;
-    }
-
-    @Override
-    protected void validate() {
-      super.validate();
-
-      ObjectUtils.requireNonNull(indexName);
-    }
-
-    protected String getIndexName() {
-      return indexName;
-    }
-
-    @Override
-    protected IIndexHasKeyConstraint newInstance() {
-      return new DefaultIndexHasKeyConstraint(
-          getId(),
-          getFormalName(),
-          getDescription(),
-          ObjectUtils.notNull(getSource()),
-          getLevel(),
-          getTarget(),
-          getProperties(),
-          ObjectUtils.notNull(getIndexName()),
-          getKeyFields(),
-          getRemarks());
-    }
+  /**
+   * Get a mapping of all assembly instances, mapped from their effective name to
+   * the instance.
+   *
+   * @return the mapping
+   */
+  @Override
+  public Map<String, IGroupedAssemblyInstance> getAssemblyInstanceMap() {
+    return assemblyInstances;
   }
 }

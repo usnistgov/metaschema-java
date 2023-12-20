@@ -24,75 +24,60 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint;
+package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Represents a rule that checks that a key generated for a Metaschema data
- * object exists in a named index that was generated using an
- * {@link IIndexConstraint}.
+ * A trait indicating that the implementation is a localized definition that is
+ * declared in-line as an instance.
+ *
+ * @param <DEFINITION>
+ *          the associated definition Java type
+ * @param <INSTANCE>
+ *          the associated instance Java type
  */
-public interface IIndexHasKeyConstraint extends IKeyConstraint {
-  @NonNull
-  String getIndexName();
+public interface IFeatureInlinedDefinition<DEFINITION extends IDefinition, INSTANCE extends INamedInstanceBase>
+    extends IDefinition, INamedInstanceBase {
+  @Override
+  default boolean isInline() {
+    return true;
+  }
 
   @Override
-  default <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
-    return visitor.visitIndexHasKeyConstraint(this, state);
-  }
+  DEFINITION getDefinition();
 
+  @Override
   @NonNull
-  static Builder builder() {
-    return new Builder();
+  INSTANCE getInlineInstance();
+
+  @Override
+  default String getEffectiveFormalName() {
+    return getFormalName();
   }
 
-  class Builder
-      extends AbstractKeyConstraintBuilder<Builder, IIndexHasKeyConstraint> {
-    private String indexName;
-
-    private Builder() {
-      // disable construction
-    }
-
-    @NonNull
-    public Builder name(@NonNull String name) {
-      this.indexName = name;
-      return this;
-    }
-
-    @Override
-    protected Builder getThis() {
-      return this;
-    }
-
-    @Override
-    protected void validate() {
-      super.validate();
-
-      ObjectUtils.requireNonNull(indexName);
-    }
-
-    protected String getIndexName() {
-      return indexName;
-    }
-
-    @Override
-    protected IIndexHasKeyConstraint newInstance() {
-      return new DefaultIndexHasKeyConstraint(
-          getId(),
-          getFormalName(),
-          getDescription(),
-          ObjectUtils.notNull(getSource()),
-          getLevel(),
-          getTarget(),
-          getProperties(),
-          ObjectUtils.notNull(getIndexName()),
-          getKeyFields(),
-          getRemarks());
-    }
+  @Override
+  default MarkupLine getEffectiveDescription() {
+    return getDescription();
   }
+
+  @Override
+  default String getEffectiveName() {
+    // don't use use-name
+    return getName();
+  }
+
+  @Override
+  default Integer getEffectiveIndex() {
+    return getIndex();
+  }
+
+  @Override
+  default String toCoordinates() {
+    // Ensure classes that implement INamedInstance and IDefinition use this
+    return INamedInstanceBase.super.toCoordinates();
+  }
+
 }

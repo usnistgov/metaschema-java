@@ -24,41 +24,24 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml.impl;
-
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+package gov.nist.secauto.metaschema.core.model;
 
 import java.util.Collection;
-import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFeatureModelContainer<
-    MI extends IModelInstance,
-    NMI extends INamedModelInstance,
-    FI extends IFieldInstance,
-    AI extends IAssemblyInstance,
-    CI extends IChoiceInstance,
-    CGI extends IChoiceGroupInstance>
-    extends IModelContainer {
+public interface IFeatureGroupedModelContainer<
+    NMI extends IGroupedNamedModelInstance,
+    FI extends IGroupedFieldInstance,
+    AI extends IGroupedAssemblyInstance>
+    extends IGroupedModelContainer {
   /**
-   * Lazy initialize the model instances associated with this definition.
+   * Lazy initialize the model instances associated with this choice group.
    *
    * @return the model container
    */
   @NonNull
-  IModelContainerSupport<MI, NMI, FI, AI, CI, CGI> getModelContainer();
-
-  @Override
-  default Collection<MI> getModelInstances() {
-    return getModelContainer().getModelInstances();
-  }
+  IGroupedModelContainerSupport<NMI, FI, AI> getModelContainer();
 
   @Override
   default NMI getNamedModelInstanceByName(String name) {
@@ -91,15 +74,5 @@ public interface IFeatureModelContainer<
   @Override
   default Collection<AI> getAssemblyInstances() {
     return getModelContainer().getAssemblyInstanceMap().values();
-  }
-
-  @Override
-  default List<CI> getChoiceInstances() {
-    return getModelContainer().getChoiceInstances();
-  }
-
-  @Override
-  default List<CGI> getChoiceGroupInstances() {
-    return getModelContainer().getChoiceGroupInstances();
   }
 }

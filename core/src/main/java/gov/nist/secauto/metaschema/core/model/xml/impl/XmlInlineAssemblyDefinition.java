@@ -29,10 +29,15 @@ package gov.nist.secauto.metaschema.core.model.xml.impl; // NOPMD - excessive pu
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.AssemblyModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IStandardModelContainerSupport;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
@@ -61,7 +66,6 @@ class XmlInlineAssemblyDefinition
     IFeatureInlinedDefinition<IAssemblyDefinition, IAssemblyInstance> {
   @NonNull
   private final InlineAssemblyDefinitionType xmlObject;
-
   @NonNull
   private final Lazy<XmlFlagContainerSupport> flagContainer;
   @NonNull
@@ -85,7 +89,7 @@ class XmlInlineAssemblyDefinition
     this.xmlObject = xmlObject;
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      IStandardModelContainerSupport retval = new AssemblyModelContainerSupportImpl();
+      IStandardModelContainerSupport retval = new AssemblyModelContainerSupport();
       if (xmlObject.isSetModel()) {
         XmlModelParser.parseModel(ObjectUtils.notNull(xmlObject.getModel()), this, retval);
       }

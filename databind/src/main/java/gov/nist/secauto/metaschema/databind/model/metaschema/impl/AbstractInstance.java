@@ -24,45 +24,32 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml.impl;
+package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
-
-import java.util.Map;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IGroupedModelContainerSupport<
-    NMI extends IGroupedNamedModelInstance,
-    FI extends IGroupedFieldInstance,
-    AI extends IGroupedAssemblyInstance> {
-
-  /**
-   * Get a mapping of all named model instances, mapped from their effective name
-   * to the instance.
-   *
-   * @return the mapping
-   */
+public abstract class AbstractInstance<BINDING>
+    extends AbstractBinding<BINDING>
+    implements IFeatureValueless {
   @NonNull
-  Map<String, NMI> getNamedModelInstanceMap();
+  private final IFlagContainer parent;
 
-  /**
-   * Get a mapping of all field instances, mapped from their effective name to the
-   * instance.
-   *
-   * @return the mapping
-   */
-  @NonNull
-  Map<String, FI> getFieldInstanceMap();
+  protected AbstractInstance(
+      @NonNull BINDING binding,
+      @NonNull IFlagContainer parent) {
+    super(binding);
+    this.parent = parent;
+  }
 
-  /**
-   * Get a mapping of all assembly instances, mapped from their effective name to
-   * the instance.
-   *
-   * @return the mapping
-   */
-  @NonNull
-  Map<String, AI> getAssemblyInstanceMap();
+  @Override
+  public IFlagContainer getParentContainer() {
+    return parent;
+  }
+
+  @Override
+  public IFlagContainer getContainingDefinition() {
+    return getParentContainer().getOwningDefinition();
+  }
 }

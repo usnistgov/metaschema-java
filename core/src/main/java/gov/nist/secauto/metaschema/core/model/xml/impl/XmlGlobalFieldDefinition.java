@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvi
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
@@ -63,7 +64,9 @@ class XmlGlobalFieldDefinition
   private final XmlModule module;
   @Nullable
   private final Object defaultValue;
+  @NonNull
   private final Lazy<XmlFlagContainerSupport> flagContainer;
+  @NonNull
   private final Lazy<IValueConstrained> constraints;
 
   /**
@@ -83,15 +86,15 @@ class XmlGlobalFieldDefinition
       defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlObject.getDefault()));
     }
     this.defaultValue = defaultValue;
-    this.flagContainer = Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this));
-    this.constraints = Lazy.lazy(() -> {
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
+    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
       if (getXmlObject().isSetConstraint()) {
         ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlObject().getConstraint()),
             ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
       }
       return retval;
-    });
+    }));
   }
 
   /**

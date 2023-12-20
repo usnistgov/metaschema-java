@@ -65,6 +65,7 @@ public abstract class AbstractConstraintBuilder<
    *
    * @return the builder instance
    */
+  @NonNull
   protected abstract T getThis();
 
   /**
@@ -74,6 +75,7 @@ public abstract class AbstractConstraintBuilder<
    *          the identifier to set
    * @return this builder
    */
+  @NonNull
   public T identifier(@NonNull String id) {
     this.id = id;
     return getThis();
@@ -86,6 +88,7 @@ public abstract class AbstractConstraintBuilder<
    *          the formal name to set
    * @return this builder
    */
+  @NonNull
   public T formalName(@NonNull String name) {
     this.formalName = name;
     return getThis();
@@ -98,6 +101,7 @@ public abstract class AbstractConstraintBuilder<
    *          the description to set
    * @return this builder
    */
+  @NonNull
   public T description(@NonNull MarkupLine description) {
     this.description = description;
     return getThis();
@@ -110,6 +114,7 @@ public abstract class AbstractConstraintBuilder<
    *          the source to set
    * @return this builder
    */
+  @NonNull
   public T source(@NonNull ISource source) {
     this.source = source;
     return getThis();
@@ -122,6 +127,7 @@ public abstract class AbstractConstraintBuilder<
    *          the level to set
    * @return this builder
    */
+  @NonNull
   public T level(@NonNull Level level) {
     this.level = level;
     return getThis();
@@ -135,6 +141,7 @@ public abstract class AbstractConstraintBuilder<
    *          definition it is declared on
    * @return this builder
    */
+  @NonNull
   public T target(@NonNull MetapathExpression target) {
     this.target = target;
     return getThis();
@@ -147,6 +154,7 @@ public abstract class AbstractConstraintBuilder<
    *          the properties to set
    * @return this builder
    */
+  @NonNull
   public T properties(@NonNull Map<QName, Set<String>> properties) {
     this.properties = properties;
     return getThis();
@@ -162,6 +170,7 @@ public abstract class AbstractConstraintBuilder<
    *          the value to set
    * @return this builder
    */
+  @NonNull
   public T property(@NonNull QName name, @NonNull String value) {
     return property(name, CollectionUtil.singleton(value));
   }
@@ -176,6 +185,7 @@ public abstract class AbstractConstraintBuilder<
    *          the values to set
    * @return this builder
    */
+  @NonNull
   public T property(@NonNull QName name, @NonNull Set<String> values) {
     properties.put(name, new LinkedHashSet<>(values));
     return getThis();
@@ -188,6 +198,7 @@ public abstract class AbstractConstraintBuilder<
    *          the remarks to set
    * @return this builder
    */
+  @NonNull
   public T remarks(@NonNull MarkupMultiline remarks) {
     this.remarks = remarks;
     return getThis();

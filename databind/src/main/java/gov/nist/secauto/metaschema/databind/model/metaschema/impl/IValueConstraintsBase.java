@@ -24,22 +24,14 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml.impl;
+package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.ConstraintLetExpression;
 
-public interface IStandardModelContainerSupport
-    extends IModelContainerSupport<
-        IModelInstance,
-        INamedModelInstance,
-        IFieldInstance,
-        IAssemblyInstance,
-        IChoiceInstance,
-        IChoiceGroupInstance> {
-  // no additional methods
+import java.util.List;
+
+public interface IValueConstraintsBase {
+  List<ConstraintLetExpression> getLets();
+
+  List<? extends IConstraintBase> getRules();
 }

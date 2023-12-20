@@ -24,75 +24,74 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint;
+package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import java.util.Collection;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * Represents a rule that checks that a key generated for a Metaschema data
- * object exists in a named index that was generated using an
- * {@link IIndexConstraint}.
- */
-public interface IIndexHasKeyConstraint extends IKeyConstraint {
+public interface IFeatureModelContainer<
+    MI extends IModelInstance,
+    NMI extends INamedModelInstance,
+    FI extends IFieldInstance,
+    AI extends IAssemblyInstance,
+    CI extends IChoiceInstance,
+    CGI extends IChoiceGroupInstance>
+    extends IModelContainer {
+  /**
+   * Lazy initialize the model instances associated with this definition.
+   *
+   * @return the model container
+   */
   @NonNull
-  String getIndexName();
+  IModelContainerSupport<MI, NMI, FI, AI, CI, CGI> getModelContainer();
 
   @Override
-  default <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
-    return visitor.visitIndexHasKeyConstraint(this, state);
+  default Collection<MI> getModelInstances() {
+    return getModelContainer().getModelInstances();
   }
 
-  @NonNull
-  static Builder builder() {
-    return new Builder();
+  @Override
+  default NMI getNamedModelInstanceByName(String name) {
+    return getModelContainer().getNamedModelInstanceMap().get(name);
   }
 
-  class Builder
-      extends AbstractKeyConstraintBuilder<Builder, IIndexHasKeyConstraint> {
-    private String indexName;
+  @SuppressWarnings("null")
+  @Override
+  default Collection<NMI> getNamedModelInstances() {
+    return getModelContainer().getNamedModelInstanceMap().values();
+  }
 
-    private Builder() {
-      // disable construction
-    }
+  @Override
+  default FI getFieldInstanceByName(String name) {
+    return getModelContainer().getFieldInstanceMap().get(name);
+  }
 
-    @NonNull
-    public Builder name(@NonNull String name) {
-      this.indexName = name;
-      return this;
-    }
+  @SuppressWarnings("null")
+  @Override
+  default Collection<FI> getFieldInstances() {
+    return getModelContainer().getFieldInstanceMap().values();
+  }
 
-    @Override
-    protected Builder getThis() {
-      return this;
-    }
+  @Override
+  default AI getAssemblyInstanceByName(String name) {
+    return getModelContainer().getAssemblyInstanceMap().get(name);
+  }
 
-    @Override
-    protected void validate() {
-      super.validate();
+  @SuppressWarnings("null")
+  @Override
+  default Collection<AI> getAssemblyInstances() {
+    return getModelContainer().getAssemblyInstanceMap().values();
+  }
 
-      ObjectUtils.requireNonNull(indexName);
-    }
+  @Override
+  default List<CI> getChoiceInstances() {
+    return getModelContainer().getChoiceInstances();
+  }
 
-    protected String getIndexName() {
-      return indexName;
-    }
-
-    @Override
-    protected IIndexHasKeyConstraint newInstance() {
-      return new DefaultIndexHasKeyConstraint(
-          getId(),
-          getFormalName(),
-          getDescription(),
-          ObjectUtils.notNull(getSource()),
-          getLevel(),
-          getTarget(),
-          getProperties(),
-          ObjectUtils.notNull(getIndexName()),
-          getKeyFields(),
-          getRemarks());
-    }
+  @Override
+  default List<CGI> getChoiceGroupInstances() {
+    return getModelContainer().getChoiceGroupInstances();
   }
 }

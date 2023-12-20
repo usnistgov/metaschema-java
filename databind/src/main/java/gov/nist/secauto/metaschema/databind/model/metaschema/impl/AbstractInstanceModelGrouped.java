@@ -24,44 +24,39 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.xml.impl;
+package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-
-import java.util.Map;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IFlagContainerSupport<FI extends IFlagInstance> {
-  /**
-   * Provides an empty instance.
-   *
-   * @param <T>
-   *          the Java type of the flag instance
-   * @return an empty instance
-   */
-  @SuppressWarnings("unchecked")
+public abstract class AbstractInstanceModelGrouped<BINDING>
+    extends AbstractBinding<BINDING>
+    implements IGroupedNamedModelInstance {
   @NonNull
-  static <T extends IFlagInstance> IFlagContainerSupport<T> empty() {
-    return (IFlagContainerSupport<T>) EmptyFlagContainer.EMPTY;
+  private final IChoiceGroupInstance parent;
+
+  protected AbstractInstanceModelGrouped(
+      @NonNull BINDING binding,
+      @NonNull IChoiceGroupInstance parent) {
+    super(binding);
+    this.parent = parent;
   }
 
-  /**
-   * Get a mapping of flag effective name to flag instance.
-   *
-   * @return the mapping of flag effective name to flag instance
-   */
-  @NonNull
-  Map<String, FI> getFlagInstanceMap();
+  @Override
+  public IChoiceGroupInstance getParentContainer() {
+    return parent;
+  }
 
-  /**
-   * Retrieves the flag instance to use as as the property name for the containing
-   * object in JSON who's value will be the object containing the flag.
-   *
-   * @return the flag instance if a JSON key is configured, or {@code null}
-   *         otherwise
-   */
-  @Nullable
-  FI getJsonKeyFlagInstance();
+  @Override
+  public IAssemblyDefinition getContainingDefinition() {
+    return getParentContainer().getOwningDefinition();
+  }
+
+  @Override
+  public String getJsonKeyFlagName() {
+    return getParentContainer().getJsonKeyFlagName();
+  }
 }

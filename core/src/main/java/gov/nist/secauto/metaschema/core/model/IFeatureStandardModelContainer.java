@@ -26,50 +26,8 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-public interface IChoiceGroupInstance
-    extends IModelInstance, IGroupedModelContainer {
-
-  @Override
-  IAssemblyDefinition getOwningDefinition();
-
-  /**
-   * Provides the Metaschema model type of "CHOICE".
-   *
-   * @return the model type
-   */
-  @Override
-  default ModelType getModelType() {
-    return ModelType.CHOICE_GROUP;
-  }
-
-  /**
-   * Get the JSON property to use to discriminate between JSON objects.
-   *
-   * @return the discriminator property
-   */
-  @NonNull
-  String getJsonDiscriminatorProperty();
-
-  /**
-   * Get the name of the JSON key flag associated with each item object.
-   *
-   * @return the JSON key flag name or {@code null} if no JSON key is configured
-   */
-  @Override
-  String getJsonKeyFlagName();
-
-  @Override
-  default boolean isValueWrappedInXml() {
-    return true;
-  }
-
-  @Override
-  default MarkupMultiline getRemarks() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+public interface IFeatureStandardModelContainer
+    extends IFeatureModelContainer<
+        IModelInstance, INamedModelInstance, IFieldInstance, IAssemblyInstance, IChoiceInstance, IChoiceGroupInstance> {
+  // no additional methods
 }
