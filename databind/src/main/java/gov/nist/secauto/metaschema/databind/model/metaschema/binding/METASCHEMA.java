@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.NonNegativeIntegerAdapter;
@@ -48,15 +49,14 @@ import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Object;
-import java.lang.Override;
-import java.lang.String;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * A declaration of the Metaschema module.
@@ -73,11 +73,11 @@ import org.apache.commons.lang3.builder.ToStringStyle;
     description = "A declaration of the Metaschema module.",
     name = "METASCHEMA",
     moduleClass = MetaschemaModule.class,
-    rootName = "METASCHEMA"
-)
+    rootName = "METASCHEMA")
 public class METASCHEMA {
   /**
-   * "Determines if the Metaschema module is abstract (&lsquo;yes&rsquo;) or not (&lsquo;no&rsquo;)."
+   * "Determines if the Metaschema module is abstract (&lsquo;yes&rsquo;) or not
+   * (&lsquo;no&rsquo;)."
    */
   @BoundFlag(
       formalName = "Is Abstract?",
@@ -85,8 +85,8 @@ public class METASCHEMA {
       useName = "abstract",
       defaultValue = "no",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "yes", description = ""), @AllowedValue(value = "no", description = "")}))
-  )
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
+          values = { @AllowedValue(value = "yes", description = ""), @AllowedValue(value = "no", description = "") })))
   private String _abstract;
 
   @BoundField(
@@ -94,15 +94,13 @@ public class METASCHEMA {
       description = "The name of the information model represented by this Metaschema definition.",
       useName = "schema-name",
       minOccurs = 1,
-      typeAdapter = MarkupLineAdapter.class
-  )
+      typeAdapter = MarkupLineAdapter.class)
   private MarkupLine _schemaName;
 
   @BoundField(
       description = "A version string used to distinguish between multiple revisions of the same Metaschema module.",
       useName = "schema-version",
-      minOccurs = 1
-  )
+      minOccurs = 1)
   private String _schemaVersion;
 
   @BoundField(
@@ -110,17 +108,15 @@ public class METASCHEMA {
       description = "A short (code) name to be used for the Metaschema module. This name may be used as a constituent of names assigned to derived artifacts, such as schemas and conversion utilities.",
       useName = "short-name",
       minOccurs = 1,
-      typeAdapter = MarkupLineAdapter.class
-  )
-  private MarkupLine _shortName;
+      typeAdapter = TokenAdapter.class)
+  private String _shortName;
 
   @BoundField(
       formalName = "Module Collection Namespace",
       description = "The namespace for the collection of Metaschema module this Metaschema module belongs to. This value is also used as the XML namespace governing the names of elements in XML documents. By using this namespace, documents and document fragments used in mixed-format environments may be distinguished from neighbor XML formats using another namespaces. This value is not reflected in Metaschema JSON.",
       useName = "namespace",
       minOccurs = 1,
-      typeAdapter = UriAdapter.class
-  )
+      typeAdapter = UriAdapter.class)
   private URI _namespace;
 
   @BoundField(
@@ -128,15 +124,13 @@ public class METASCHEMA {
       description = "The JSON Base URI is the nominal base URI assigned to a JSON Schema instance expressing the model defined by this Metaschema module.",
       useName = "json-base-uri",
       minOccurs = 1,
-      typeAdapter = UriAdapter.class
-  )
+      typeAdapter = UriAdapter.class)
   private URI _jsonBaseUri;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks"
-  )
+      useName = "remarks")
   private Remarks _remarks;
 
   @BoundAssembly(
@@ -144,19 +138,21 @@ public class METASCHEMA {
       description = "Imports a set of Metaschema modules contained in another resource. Imports support the reuse of common information structures.",
       useName = "import",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "imports", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "imports", inJson = JsonGroupAsBehavior.LIST))
   private List<Import> _imports;
 
   @BoundChoiceGroup(
       maxOccurs = -1,
       assemblies = {
-          @BoundGroupedAssembly(formalName = "Global Assembly Definition", description = "In XML, an element with structured element content. In JSON, an object with properties. Defined globally, an assembly can be assigned to appear in the `model` of any assembly (another assembly type, or itself), by `assembly` reference.", useName = "define-assembly", binding = DefineAssembly.class),
-          @BoundGroupedAssembly(formalName = "Global Field Definition", useName = "define-field", binding = DefineField.class),
-          @BoundGroupedAssembly(formalName = "Global Flag Definition", useName = "define-flag", binding = DefineFlag.class)
+          @BoundGroupedAssembly(formalName = "Global Assembly Definition",
+              description = "In XML, an element with structured element content. In JSON, an object with properties. Defined globally, an assembly can be assigned to appear in the `model` of any assembly (another assembly type, or itself), by `assembly` reference.",
+              useName = "define-assembly", binding = DefineAssembly.class),
+          @BoundGroupedAssembly(formalName = "Global Field Definition", useName = "define-field",
+              binding = DefineField.class),
+          @BoundGroupedAssembly(formalName = "Global Flag Definition", useName = "define-flag",
+              binding = DefineFlag.class)
       },
-      groupAs = @GroupAs(name = "definitions", inJson = JsonGroupAsBehavior.LIST)
-  )
+      groupAs = @GroupAs(name = "definitions", inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _definitions;
 
   public String getAbstract() {
@@ -183,11 +179,11 @@ public class METASCHEMA {
     _schemaVersion = value;
   }
 
-  public MarkupLine getShortName() {
+  public String getShortName() {
     return _shortName;
   }
 
-  public void setShortName(MarkupLine value) {
+  public void setShortName(String value) {
     _shortName = value;
   }
 
@@ -225,11 +221,13 @@ public class METASCHEMA {
 
   /**
    * Add a new {@link Import} item to the underlying collection.
-   * @param item the item to add
+   *
+   * @param item
+   *          the item to add
    * @return {@code true}
    */
   public boolean addImport(Import item) {
-    Import value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Import value = ObjectUtils.requireNonNull(item, "item cannot be null");
     if (_imports == null) {
       _imports = new LinkedList<>();
     }
@@ -238,11 +236,13 @@ public class METASCHEMA {
 
   /**
    * Remove the first matching {@link Import} item from the underlying collection.
-   * @param item the item to remove
+   *
+   * @param item
+   *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
   public boolean removeImport(Import item) {
-    Import value = ObjectUtils.requireNonNull(item,"item cannot be null");
+    Import value = ObjectUtils.requireNonNull(item, "item cannot be null");
     return _imports != null && _imports.remove(value);
   }
 
@@ -260,28 +260,28 @@ public class METASCHEMA {
   }
 
   /**
-   * In XML, an element with structured element content. In JSON, an object with properties. Defined globally, an assembly can be assigned to appear in the <code>model</code> of any assembly (another assembly type, or itself), by <code>assembly</code> reference.
+   * In XML, an element with structured element content. In JSON, an object with
+   * properties. Defined globally, an assembly can be assigned to appear in the
+   * <code>model</code> of any assembly (another assembly type, or itself), by
+   * <code>assembly</code> reference.
    */
   @MetaschemaAssembly(
       formalName = "Global Assembly Definition",
       description = "In XML, an element with structured element content. In JSON, an object with properties. Defined globally, an assembly can be assigned to appear in the `model` of any assembly (another assembly type, or itself), by `assembly` reference.",
       name = "define-assembly",
-      moduleClass = MetaschemaModule.class
-  )
+      moduleClass = MetaschemaModule.class)
   public static class DefineAssembly {
     @BoundFlag(
         formalName = "Global Assembly Name",
         useName = "name",
         required = true,
-        typeAdapter = TokenAdapter.class
-    )
+        typeAdapter = TokenAdapter.class)
     private String _name;
 
     @BoundFlag(
         formalName = "Global Assembly Binary Name",
         useName = "index",
-        typeAdapter = PositiveIntegerAdapter.class
-    )
+        typeAdapter = PositiveIntegerAdapter.class)
     private BigInteger _index;
 
     @BoundFlag(
@@ -289,95 +289,87 @@ public class METASCHEMA {
         useName = "scope",
         defaultValue = "global",
         typeAdapter = TokenAdapter.class,
-        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "local", description = "This definition is only available in the context of the current Metaschema module."), @AllowedValue(value = "global", description = "This definition will be made available to any Metaschema module that includes this one either directly or indirectly through a chain of imported Metaschemas.")}))
-    )
+        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
+            @AllowedValue(value = "local",
+                description = "This definition is only available in the context of the current Metaschema module."),
+            @AllowedValue(value = "global",
+                description = "This definition will be made available to any Metaschema module that includes this one either directly or indirectly through a chain of imported Metaschemas.") })))
     private String _scope;
 
     @BoundFlag(
         formalName = "Deprecated Version",
         useName = "deprecated",
-        typeAdapter = StringAdapter.class
-    )
+        typeAdapter = StringAdapter.class)
     private String _deprecated;
 
     @BoundField(
         formalName = "Formal Name",
         description = "A formal name for the data construct, to be presented in documentation.",
-        useName = "formal-name"
-    )
+        useName = "formal-name")
     private String _formalName;
 
     @BoundField(
         formalName = "Description",
         description = "A short description of the data construct's purpose, describing the constructs semantics.",
         useName = "description",
-        typeAdapter = MarkupLineAdapter.class
-    )
+        typeAdapter = MarkupLineAdapter.class)
     private MarkupLine _description;
 
     @BoundAssembly(
         formalName = "Property",
         useName = "prop",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
-    )
+        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
     private List<Property> _props;
 
     @BoundField(
         formalName = "Use Name",
         description = "Allows the name of the definition to be overridden.",
-        useName = "use-name"
-    )
+        useName = "use-name")
     private UseName _useName;
 
     @BoundField(
         formalName = "Root Name",
         description = "Provides a root name, for when the definition is used as the root of a node hierarchy.",
         useName = "root-name",
-        minOccurs = 1
-    )
+        minOccurs = 1)
     private RootName _rootName;
 
     @BoundAssembly(
         formalName = "JSON Key",
         description = "Used in JSON (and similar formats) to identify a flag that will be used as the property name in an object hold a collection of sibling objects. Requires that siblings must never share `json-key` values.",
-        useName = "json-key"
-    )
+        useName = "json-key")
     private JsonKey _jsonKey;
 
     @BoundChoiceGroup(
         maxOccurs = -1,
         assemblies = {
-            @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag", binding = InlineDefineFlag.class),
+            @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag",
+                binding = InlineDefineFlag.class),
             @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
         },
-        groupAs = @GroupAs(name = "flags", inJson = JsonGroupAsBehavior.LIST)
-    )
+        groupAs = @GroupAs(name = "flags", inJson = JsonGroupAsBehavior.LIST))
     private List<Object> _flags;
 
     @BoundAssembly(
-        useName = "model"
-    )
+        useName = "model")
     private AssemblyModel _model;
 
     @BoundAssembly(
-        useName = "constraint"
-    )
+        useName = "constraint")
     private AssemblyConstraints _constraint;
 
     @BoundField(
         formalName = "Remarks",
         description = "Any explanatory or helpful information to be provided about the remarks parent.",
-        useName = "remarks"
-    )
+        useName = "remarks")
     private Remarks _remarks;
 
     @BoundAssembly(
         formalName = "Example",
         useName = "example",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST)
-    )
+        groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
     private List<Example> _examples;
 
     public String getName() {
@@ -438,11 +430,13 @@ public class METASCHEMA {
 
     /**
      * Add a new {@link Property} item to the underlying collection.
-     * @param item the item to add
+     *
+     * @param item
+     *          the item to add
      * @return {@code true}
      */
     public boolean addProp(Property item) {
-      Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
       if (_props == null) {
         _props = new LinkedList<>();
       }
@@ -450,12 +444,15 @@ public class METASCHEMA {
     }
 
     /**
-     * Remove the first matching {@link Property} item from the underlying collection.
-     * @param item the item to remove
+     * Remove the first matching {@link Property} item from the underlying
+     * collection.
+     *
+     * @param item
+     *          the item to remove
      * @return {@code true} if the item was removed or {@code false} otherwise
      */
     public boolean removeProp(Property item) {
-      Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
       return _props != null && _props.remove(value);
     }
 
@@ -525,11 +522,13 @@ public class METASCHEMA {
 
     /**
      * Add a new {@link Example} item to the underlying collection.
-     * @param item the item to add
+     *
+     * @param item
+     *          the item to add
      * @return {@code true}
      */
     public boolean addExample(Example item) {
-      Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
       if (_examples == null) {
         _examples = new LinkedList<>();
       }
@@ -537,12 +536,15 @@ public class METASCHEMA {
     }
 
     /**
-     * Remove the first matching {@link Example} item from the underlying collection.
-     * @param item the item to remove
+     * Remove the first matching {@link Example} item from the underlying
+     * collection.
+     *
+     * @param item
+     *          the item to remove
      * @return {@code true} if the item was removed or {@code false} otherwise
      */
     public boolean removeExample(Example item) {
-      Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
       return _examples != null && _examples.remove(value);
     }
 
@@ -552,14 +554,14 @@ public class METASCHEMA {
     }
 
     /**
-     * Provides a root name, for when the definition is used as the root of a node hierarchy.
+     * Provides a root name, for when the definition is used as the root of a node
+     * hierarchy.
      */
     @MetaschemaField(
         formalName = "Root Name",
         description = "Provides a root name, for when the definition is used as the root of a node hierarchy.",
         name = "root-name",
-        moduleClass = MetaschemaModule.class
-    )
+        moduleClass = MetaschemaModule.class)
     public static class RootName {
       /**
        * "Used for binary formats instead of the textual name."
@@ -568,14 +570,12 @@ public class METASCHEMA {
           formalName = "Numeric Index",
           description = "Used for binary formats instead of the textual name.",
           useName = "index",
-          typeAdapter = NonNegativeIntegerAdapter.class
-      )
+          typeAdapter = NonNegativeIntegerAdapter.class)
       private BigInteger _index;
 
       @BoundFieldValue(
           valueKeyName = "name",
-          typeAdapter = TokenAdapter.class
-      )
+          typeAdapter = TokenAdapter.class)
       private String _name;
 
       public BigInteger getIndex() {
@@ -604,22 +604,19 @@ public class METASCHEMA {
   @MetaschemaAssembly(
       formalName = "Global Flag Definition",
       name = "define-flag",
-      moduleClass = MetaschemaModule.class
-  )
+      moduleClass = MetaschemaModule.class)
   public static class DefineFlag {
     @BoundFlag(
         formalName = "Global Flag Name",
         useName = "name",
         required = true,
-        typeAdapter = TokenAdapter.class
-    )
+        typeAdapter = TokenAdapter.class)
     private String _name;
 
     @BoundFlag(
         formalName = "Global Flag Binary Name",
         useName = "index",
-        typeAdapter = PositiveIntegerAdapter.class
-    )
+        typeAdapter = PositiveIntegerAdapter.class)
     private BigInteger _index;
 
     @BoundFlag(
@@ -627,15 +624,17 @@ public class METASCHEMA {
         useName = "scope",
         defaultValue = "global",
         typeAdapter = TokenAdapter.class,
-        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "local", description = "This definition is only available in the context of the current Metaschema module."), @AllowedValue(value = "global", description = "This definition will be made available to any Metaschema module that includes this one either directly or indirectly through a chain of imported Metaschemas.")}))
-    )
+        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
+            @AllowedValue(value = "local",
+                description = "This definition is only available in the context of the current Metaschema module."),
+            @AllowedValue(value = "global",
+                description = "This definition will be made available to any Metaschema module that includes this one either directly or indirectly through a chain of imported Metaschemas.") })))
     private String _scope;
 
     @BoundFlag(
         formalName = "Deprecated Version",
         useName = "deprecated",
-        typeAdapter = StringAdapter.class
-    )
+        typeAdapter = StringAdapter.class)
     private String _deprecated;
 
     @BoundFlag(
@@ -643,65 +642,74 @@ public class METASCHEMA {
         useName = "as-type",
         defaultValue = "string",
         typeAdapter = TokenAdapter.class,
-        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, allowOthers = true, values = {@AllowedValue(value = "base64", description = ""), @AllowedValue(value = "boolean", description = ""), @AllowedValue(value = "date", description = ""), @AllowedValue(value = "date-time", description = ""), @AllowedValue(value = "date-time-with-timezone", description = ""), @AllowedValue(value = "date-with-timezone", description = ""), @AllowedValue(value = "day-time-duration", description = ""), @AllowedValue(value = "decimal", description = ""), @AllowedValue(value = "email-address", description = ""), @AllowedValue(value = "hostname", description = ""), @AllowedValue(value = "integer", description = ""), @AllowedValue(value = "ip-v4-address", description = ""), @AllowedValue(value = "ip-v6-address", description = ""), @AllowedValue(value = "non-negative-integer", description = ""), @AllowedValue(value = "positive-integer", description = ""), @AllowedValue(value = "string", description = ""), @AllowedValue(value = "token", description = ""), @AllowedValue(value = "uri", description = ""), @AllowedValue(value = "uri-reference", description = ""), @AllowedValue(value = "uuid", description = "")}))
-    )
+        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
+            allowOthers = true,
+            values = { @AllowedValue(value = "base64", description = ""),
+                @AllowedValue(value = "boolean", description = ""), @AllowedValue(value = "date", description = ""),
+                @AllowedValue(value = "date-time", description = ""),
+                @AllowedValue(value = "date-time-with-timezone", description = ""),
+                @AllowedValue(value = "date-with-timezone", description = ""),
+                @AllowedValue(value = "day-time-duration", description = ""),
+                @AllowedValue(value = "decimal", description = ""),
+                @AllowedValue(value = "email-address", description = ""),
+                @AllowedValue(value = "hostname", description = ""), @AllowedValue(value = "integer", description = ""),
+                @AllowedValue(value = "ip-v4-address", description = ""),
+                @AllowedValue(value = "ip-v6-address", description = ""),
+                @AllowedValue(value = "non-negative-integer", description = ""),
+                @AllowedValue(value = "positive-integer", description = ""),
+                @AllowedValue(value = "string", description = ""), @AllowedValue(value = "token", description = ""),
+                @AllowedValue(value = "uri", description = ""),
+                @AllowedValue(value = "uri-reference", description = ""),
+                @AllowedValue(value = "uuid", description = "") })))
     private String _asType;
 
     @BoundFlag(
         formalName = "Default Flag Value",
         useName = "default",
-        typeAdapter = StringAdapter.class
-    )
+        typeAdapter = StringAdapter.class)
     private String _default;
 
     @BoundField(
         formalName = "Formal Name",
         description = "A formal name for the data construct, to be presented in documentation.",
-        useName = "formal-name"
-    )
+        useName = "formal-name")
     private String _formalName;
 
     @BoundField(
         formalName = "Description",
         description = "A short description of the data construct's purpose, describing the constructs semantics.",
         useName = "description",
-        typeAdapter = MarkupLineAdapter.class
-    )
+        typeAdapter = MarkupLineAdapter.class)
     private MarkupLine _description;
 
     @BoundAssembly(
         formalName = "Property",
         useName = "prop",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
-    )
+        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
     private List<Property> _props;
 
     @BoundField(
         formalName = "Use Name",
         description = "Allows the name of the definition to be overridden.",
-        useName = "use-name"
-    )
+        useName = "use-name")
     private UseName _useName;
 
     @BoundAssembly(
-        useName = "constraint"
-    )
+        useName = "constraint")
     private FlagConstraints _constraint;
 
     @BoundField(
         formalName = "Remarks",
         description = "Any explanatory or helpful information to be provided about the remarks parent.",
-        useName = "remarks"
-    )
+        useName = "remarks")
     private Remarks _remarks;
 
     @BoundAssembly(
         formalName = "Example",
         useName = "example",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST)
-    )
+        groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
     private List<Example> _examples;
 
     public String getName() {
@@ -778,11 +786,13 @@ public class METASCHEMA {
 
     /**
      * Add a new {@link Property} item to the underlying collection.
-     * @param item the item to add
+     *
+     * @param item
+     *          the item to add
      * @return {@code true}
      */
     public boolean addProp(Property item) {
-      Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
       if (_props == null) {
         _props = new LinkedList<>();
       }
@@ -790,12 +800,15 @@ public class METASCHEMA {
     }
 
     /**
-     * Remove the first matching {@link Property} item from the underlying collection.
-     * @param item the item to remove
+     * Remove the first matching {@link Property} item from the underlying
+     * collection.
+     *
+     * @param item
+     *          the item to remove
      * @return {@code true} if the item was removed or {@code false} otherwise
      */
     public boolean removeProp(Property item) {
-      Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
       return _props != null && _props.remove(value);
     }
 
@@ -833,11 +846,13 @@ public class METASCHEMA {
 
     /**
      * Add a new {@link Example} item to the underlying collection.
-     * @param item the item to add
+     *
+     * @param item
+     *          the item to add
      * @return {@code true}
      */
     public boolean addExample(Example item) {
-      Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
       if (_examples == null) {
         _examples = new LinkedList<>();
       }
@@ -845,12 +860,15 @@ public class METASCHEMA {
     }
 
     /**
-     * Remove the first matching {@link Example} item from the underlying collection.
-     * @param item the item to remove
+     * Remove the first matching {@link Example} item from the underlying
+     * collection.
+     *
+     * @param item
+     *          the item to remove
      * @return {@code true} if the item was removed or {@code false} otherwise
      */
     public boolean removeExample(Example item) {
-      Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
       return _examples != null && _examples.remove(value);
     }
 
@@ -861,25 +879,25 @@ public class METASCHEMA {
   }
 
   /**
-   * Imports a set of Metaschema modules contained in another resource. Imports support the reuse of common information structures.
+   * Imports a set of Metaschema modules contained in another resource. Imports
+   * support the reuse of common information structures.
    */
   @MetaschemaAssembly(
       formalName = "Module Import",
       description = "Imports a set of Metaschema modules contained in another resource. Imports support the reuse of common information structures.",
       name = "import",
-      moduleClass = MetaschemaModule.class
-  )
+      moduleClass = MetaschemaModule.class)
   public static class Import {
     /**
-     * "A relative or absolute URI for retrieving an out-of-line Metaschema definition."
+     * "A relative or absolute URI for retrieving an out-of-line Metaschema
+     * definition."
      */
     @BoundFlag(
         formalName = "Import URI Reference",
         description = "A relative or absolute URI for retrieving an out-of-line Metaschema definition.",
         useName = "href",
         required = true,
-        typeAdapter = UriReferenceAdapter.class
-    )
+        typeAdapter = UriReferenceAdapter.class)
     private URI _href;
 
     public URI getHref() {
@@ -899,22 +917,19 @@ public class METASCHEMA {
   @MetaschemaAssembly(
       formalName = "Global Field Definition",
       name = "define-field",
-      moduleClass = MetaschemaModule.class
-  )
+      moduleClass = MetaschemaModule.class)
   public static class DefineField {
     @BoundFlag(
         formalName = "Global Field Name",
         useName = "name",
         required = true,
-        typeAdapter = TokenAdapter.class
-    )
+        typeAdapter = TokenAdapter.class)
     private String _name;
 
     @BoundFlag(
         formalName = "Global Field Binary Name",
         useName = "index",
-        typeAdapter = PositiveIntegerAdapter.class
-    )
+        typeAdapter = PositiveIntegerAdapter.class)
     private BigInteger _index;
 
     @BoundFlag(
@@ -922,15 +937,17 @@ public class METASCHEMA {
         useName = "scope",
         defaultValue = "global",
         typeAdapter = TokenAdapter.class,
-        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "local", description = "This definition is only available in the context of the current Metaschema module."), @AllowedValue(value = "global", description = "This definition will be made available to any Metaschema module that includes this one either directly or indirectly through a chain of imported Metaschemas.")}))
-    )
+        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
+            @AllowedValue(value = "local",
+                description = "This definition is only available in the context of the current Metaschema module."),
+            @AllowedValue(value = "global",
+                description = "This definition will be made available to any Metaschema module that includes this one either directly or indirectly through a chain of imported Metaschemas.") })))
     private String _scope;
 
     @BoundFlag(
         formalName = "Deprecated Version",
         useName = "deprecated",
-        typeAdapter = StringAdapter.class
-    )
+        typeAdapter = StringAdapter.class)
     private String _deprecated;
 
     @BoundFlag(
@@ -938,95 +955,102 @@ public class METASCHEMA {
         useName = "as-type",
         defaultValue = "string",
         typeAdapter = TokenAdapter.class,
-        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, allowOthers = true, values = {@AllowedValue(value = "markup-line", description = ""), @AllowedValue(value = "markup-multiline", description = ""), @AllowedValue(value = "base64", description = ""), @AllowedValue(value = "boolean", description = ""), @AllowedValue(value = "date", description = ""), @AllowedValue(value = "date-time", description = ""), @AllowedValue(value = "date-time-with-timezone", description = ""), @AllowedValue(value = "date-with-timezone", description = ""), @AllowedValue(value = "day-time-duration", description = ""), @AllowedValue(value = "decimal", description = ""), @AllowedValue(value = "email-address", description = ""), @AllowedValue(value = "hostname", description = ""), @AllowedValue(value = "integer", description = ""), @AllowedValue(value = "ip-v4-address", description = ""), @AllowedValue(value = "ip-v6-address", description = ""), @AllowedValue(value = "non-negative-integer", description = ""), @AllowedValue(value = "positive-integer", description = ""), @AllowedValue(value = "string", description = ""), @AllowedValue(value = "token", description = ""), @AllowedValue(value = "uri", description = ""), @AllowedValue(value = "uri-reference", description = ""), @AllowedValue(value = "uuid", description = "")}))
-    )
+        valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
+            allowOthers = true,
+            values = { @AllowedValue(value = "markup-line", description = ""),
+                @AllowedValue(value = "markup-multiline", description = ""),
+                @AllowedValue(value = "base64", description = ""), @AllowedValue(value = "boolean", description = ""),
+                @AllowedValue(value = "date", description = ""), @AllowedValue(value = "date-time", description = ""),
+                @AllowedValue(value = "date-time-with-timezone", description = ""),
+                @AllowedValue(value = "date-with-timezone", description = ""),
+                @AllowedValue(value = "day-time-duration", description = ""),
+                @AllowedValue(value = "decimal", description = ""),
+                @AllowedValue(value = "email-address", description = ""),
+                @AllowedValue(value = "hostname", description = ""), @AllowedValue(value = "integer", description = ""),
+                @AllowedValue(value = "ip-v4-address", description = ""),
+                @AllowedValue(value = "ip-v6-address", description = ""),
+                @AllowedValue(value = "non-negative-integer", description = ""),
+                @AllowedValue(value = "positive-integer", description = ""),
+                @AllowedValue(value = "string", description = ""), @AllowedValue(value = "token", description = ""),
+                @AllowedValue(value = "uri", description = ""),
+                @AllowedValue(value = "uri-reference", description = ""),
+                @AllowedValue(value = "uuid", description = "") })))
     private String _asType;
 
     @BoundFlag(
         formalName = "Default Field Value",
         useName = "default",
-        typeAdapter = StringAdapter.class
-    )
+        typeAdapter = StringAdapter.class)
     private String _default;
 
     @BoundField(
         formalName = "Formal Name",
         description = "A formal name for the data construct, to be presented in documentation.",
-        useName = "formal-name"
-    )
+        useName = "formal-name")
     private String _formalName;
 
     @BoundField(
         formalName = "Description",
         description = "A short description of the data construct's purpose, describing the constructs semantics.",
         useName = "description",
-        typeAdapter = MarkupLineAdapter.class
-    )
+        typeAdapter = MarkupLineAdapter.class)
     private MarkupLine _description;
 
     @BoundAssembly(
         formalName = "Property",
         useName = "prop",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST)
-    )
+        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
     private List<Property> _props;
 
     @BoundField(
         formalName = "Use Name",
         description = "Allows the name of the definition to be overridden.",
-        useName = "use-name"
-    )
+        useName = "use-name")
     private UseName _useName;
 
     @BoundAssembly(
         formalName = "JSON Key",
         description = "Used in JSON (and similar formats) to identify a flag that will be used as the property name in an object hold a collection of sibling objects. Requires that siblings must never share `json-key` values.",
-        useName = "json-key"
-    )
+        useName = "json-key")
     private JsonKey _jsonKey;
 
     @BoundField(
         formalName = "Field Value JSON Property Name",
         useName = "json-value-key",
-        typeAdapter = TokenAdapter.class
-    )
+        typeAdapter = TokenAdapter.class)
     private String _jsonValueKey;
 
     @BoundAssembly(
         formalName = "Flag Used as the Field Value's JSON Property Name",
-        useName = "json-value-key-flag"
-    )
+        useName = "json-value-key-flag")
     private JsonValueKeyFlag _jsonValueKeyFlag;
 
     @BoundChoiceGroup(
         maxOccurs = -1,
         assemblies = {
-            @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag", binding = InlineDefineFlag.class),
+            @BoundGroupedAssembly(formalName = "Inline Flag Definition", useName = "define-flag",
+                binding = InlineDefineFlag.class),
             @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
         },
-        groupAs = @GroupAs(name = "flags", inJson = JsonGroupAsBehavior.LIST)
-    )
+        groupAs = @GroupAs(name = "flags", inJson = JsonGroupAsBehavior.LIST))
     private List<Object> _flags;
 
     @BoundAssembly(
-        useName = "constraint"
-    )
+        useName = "constraint")
     private FieldConstraints _constraint;
 
     @BoundField(
         formalName = "Remarks",
         description = "Any explanatory or helpful information to be provided about the remarks parent.",
-        useName = "remarks"
-    )
+        useName = "remarks")
     private Remarks _remarks;
 
     @BoundAssembly(
         formalName = "Example",
         useName = "example",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST)
-    )
+        groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
     private List<Example> _examples;
 
     public String getName() {
@@ -1103,11 +1127,13 @@ public class METASCHEMA {
 
     /**
      * Add a new {@link Property} item to the underlying collection.
-     * @param item the item to add
+     *
+     * @param item
+     *          the item to add
      * @return {@code true}
      */
     public boolean addProp(Property item) {
-      Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
       if (_props == null) {
         _props = new LinkedList<>();
       }
@@ -1115,12 +1141,15 @@ public class METASCHEMA {
     }
 
     /**
-     * Remove the first matching {@link Property} item from the underlying collection.
-     * @param item the item to remove
+     * Remove the first matching {@link Property} item from the underlying
+     * collection.
+     *
+     * @param item
+     *          the item to remove
      * @return {@code true} if the item was removed or {@code false} otherwise
      */
     public boolean removeProp(Property item) {
-      Property value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      Property value = ObjectUtils.requireNonNull(item, "item cannot be null");
       return _props != null && _props.remove(value);
     }
 
@@ -1190,11 +1219,13 @@ public class METASCHEMA {
 
     /**
      * Add a new {@link Example} item to the underlying collection.
-     * @param item the item to add
+     *
+     * @param item
+     *          the item to add
      * @return {@code true}
      */
     public boolean addExample(Example item) {
-      Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
       if (_examples == null) {
         _examples = new LinkedList<>();
       }
@@ -1202,12 +1233,15 @@ public class METASCHEMA {
     }
 
     /**
-     * Remove the first matching {@link Example} item from the underlying collection.
-     * @param item the item to remove
+     * Remove the first matching {@link Example} item from the underlying
+     * collection.
+     *
+     * @param item
+     *          the item to remove
      * @return {@code true} if the item was removed or {@code false} otherwise
      */
     public boolean removeExample(Example item) {
-      Example value = ObjectUtils.requireNonNull(item,"item cannot be null");
+      Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
       return _examples != null && _examples.remove(value);
     }
 

@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.NonNegativeIntegerAdapter;
@@ -47,8 +48,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
     formalName = "Use Name",
     description = "Allows the name of the definition to be overridden.",
     name = "use-name",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class UseName {
   /**
    * "Used for binary formats instead of the textual name."
@@ -57,14 +57,12 @@ public class UseName {
       formalName = "Numeric Index",
       description = "Used for binary formats instead of the textual name.",
       useName = "index",
-      typeAdapter = NonNegativeIntegerAdapter.class
-  )
+      typeAdapter = NonNegativeIntegerAdapter.class)
   private BigInteger _index;
 
   @BoundFieldValue(
       valueKeyName = "name",
-      typeAdapter = TokenAdapter.class
-  )
+      typeAdapter = TokenAdapter.class)
   private String _name;
 
   public BigInteger getIndex() {

@@ -51,7 +51,8 @@ public interface IAllowedValue {
   static IAllowedValue of(
       @NonNull String value,
       @NonNull MarkupLine description) {
-    return new DefaultAllowedValue(value, description);
+    // TODO: add support for deprecated version
+    return new DefaultAllowedValue(value, description, null);
   }
 
   /**

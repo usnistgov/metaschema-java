@@ -36,7 +36,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundModule;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagConstraints;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
 
@@ -62,7 +62,7 @@ public class DefinitionFlagGlobal
   private final Lazy<IValueConstrained> valueConstraints;
 
   public DefinitionFlagGlobal(
-      @NonNull IBoundModule module,
+      @NonNull IBindingModule module,
       @NonNull METASCHEMA.DefineFlag binding) {
     super(module, binding);
     this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
@@ -72,7 +72,7 @@ public class DefinitionFlagGlobal
       IValueConstrained retval = new ValueConstraintSet();
       FlagConstraints constraints = getBinding().getConstraint();
       if (constraints != null) {
-        ConstraintBindingSupport.parse(retval, constraints, ISource.modelSource());
+        ConstraintBindingSupport.parse(retval, constraints, ISource.modelSource(module.getLocation()));
       }
       return retval;
     }));

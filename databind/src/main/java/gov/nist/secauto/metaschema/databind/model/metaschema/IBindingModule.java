@@ -24,28 +24,20 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
+package gov.nist.secauto.metaschema.databind.model.metaschema;
 
-import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IModule;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-public abstract class AbstractDefinition<BINDING>
-    extends AbstractBinding<BINDING>
-    implements IDefinition {
-  @NonNull
-  private final IBindingModule module;
-
-  protected AbstractDefinition(
-      @NonNull IBindingModule module,
-      @NonNull BINDING binding) {
-    super(binding);
-    this.module = module;
-  }
-
-  @Override
-  public IBindingModule getContainingModule() {
-    return module;
-  }
+public interface IBindingModule
+    extends IModule<
+        IBindingModule,
+        IFlagContainer,
+        IFlagDefinition,
+        IFieldDefinition,
+        IAssemblyDefinition> {
+  // no additional methods
 }

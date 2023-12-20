@@ -24,58 +24,67 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind;
+package gov.nist.secauto.metaschema.databind.model.metaschema;
 
+import gov.nist.secauto.metaschema.core.model.AbstractModuleLoader;
 import gov.nist.secauto.metaschema.core.model.IModulePostProcessor;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
-import gov.nist.secauto.metaschema.databind.model.IBoundModule;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.io.IOException;
+import java.net.URI;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class PostProcessingModuleLoaderStrategy
-    extends SimpleModuleLoaderStrategy {
+public class BindingModuleLoader
+    extends AbstractModuleLoader<METASCHEMA, IBindingModule> {
   @NonNull
-  private final List<IModulePostProcessor> modulePostProcessors;
-  private final Set<IBoundModule> resolvedModules = new HashSet<>();
+  private final IBoundLoader loader;
 
-  protected PostProcessingModuleLoaderStrategy(
-      @NonNull IBindingContext bindingContext,
-      @NonNull List<IModulePostProcessor> modulePostProcessors) {
-    super(bindingContext);
-    this.modulePostProcessors = CollectionUtil.unmodifiableList(new ArrayList<>(modulePostProcessors));
+  // @NonNull
+  // private final
+
+  /**
+   * Construct a new Metaschema loader.
+   */
+  public BindingModuleLoader() {
+    this(CollectionUtil.emptyList());
   }
 
-  @NonNull
-  protected List<IModulePostProcessor> getModulePostProcessors() {
-    return modulePostProcessors;
+  /**
+   * Construct a new Metaschema loader, which use the provided module post
+   * processors when loading a module.
+   *
+   * @param modulePostProcessors
+   *          post processors to perform additional module customization when
+   *          loading
+   */
+  public BindingModuleLoader(@NonNull List<IModulePostProcessor> modulePostProcessors) {
+    super(modulePostProcessors);
+    this.loader = IBindingContext.instance().newBoundLoader();
   }
 
   @Override
-  public IBoundDefinitionModelComplex getBoundDefinitionForClass(@NonNull Class<?> clazz) {
-    IBoundDefinitionModelComplex retval = super.getBoundDefinitionForClass(clazz);
-    if (retval != null) {
-      // force loading of metaschema information to apply constraints
-      IBoundModule module = retval.getContainingModule();
-      synchronized (resolvedModules) {
-        if (!resolvedModules.contains(module)) {
-          // add first, to avoid loops
-          resolvedModules.add(module);
-          handleModule(module);
-        }
-      }
-    }
-    return retval;
+  protected IBindingModule newModule(URI resource, METASCHEMA binding, List<IBindingModule> importedModules)
+      throws MetaschemaException {
+    return new BindingModule(resource, binding, importedModules);
   }
 
-  private void handleModule(@NonNull IBoundModule module) {
-    for (IModulePostProcessor postProcessor : getModulePostProcessors()) {
-      postProcessor.processModule(module);
-    }
+  @Override
+  protected List<URI> getImports(METASCHEMA binding) {
+    return ObjectUtils.notNull(binding.getImports().stream()
+        .map(imported -> imported.getHref())
+        .collect(Collectors.toUnmodifiableList()));
+  }
+
+  @Override
+  protected METASCHEMA parseModule(URI resource) throws IOException {
+    return loader.load(METASCHEMA.class, resource);
   }
 }

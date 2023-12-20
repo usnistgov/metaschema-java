@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
@@ -40,15 +41,13 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaAssembly(
     formalName = "Flag Used as the Field Value's JSON Property Name",
     name = "json-value-key-flag",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class JsonValueKeyFlag {
   @BoundFlag(
       formalName = "Flag Reference",
       useName = "flag-ref",
       required = true,
-      typeAdapter = TokenAdapter.class
-  )
+      typeAdapter = TokenAdapter.class)
   private String _flagRef;
 
   public String getFlagRef() {

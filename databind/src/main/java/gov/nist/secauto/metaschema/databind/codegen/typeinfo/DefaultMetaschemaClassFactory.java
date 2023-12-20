@@ -610,23 +610,23 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       @NonNull FieldSpec.Builder builder) {
     IFieldDefinition definition = typeInfo.getParentDefinitionTypeInfo().getDefinition();
     AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(BoundFieldValue.class);
-  
+
     IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
-  
+
     // a field object always has a single value
     if (!definition.hasJsonValueKeyFlagInstance()) {
       fieldValue.addMember("valueKeyName", "$S", definition.getJsonValueKeyName());
     } // else do nothing, the annotation will be on the flag
-  
+
     if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {
       fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getClass());
     }
-  
+
     Object defaultValue = definition.getDefaultValue();
     if (defaultValue != null) {
       fieldValue.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
     }
-  
+
     builder.addAnnotation(fieldValue.build());
   }
   */

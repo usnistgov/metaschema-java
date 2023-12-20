@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
@@ -44,15 +45,13 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaAssembly(
     formalName = "Group As",
     name = "group-as",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class GroupAs {
   @BoundFlag(
       formalName = "Grouping Name",
       useName = "name",
       required = true,
-      typeAdapter = TokenAdapter.class
-  )
+      typeAdapter = TokenAdapter.class)
   private String _name;
 
   @BoundFlag(
@@ -60,8 +59,12 @@ public class GroupAs {
       useName = "in-json",
       defaultValue = "SINGLETON_OR_ARRAY",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "ARRAY", description = "Always use an array."), @AllowedValue(value = "SINGLETON_OR_ARRAY", description = "Produce a singleton for a single member or an array for multiple members."), @AllowedValue(value = "BY_KEY", description = "For any group of one or more members, produce an object with properties for each member, using a designated flag for their property name values, which must be distinct.")}))
-  )
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
+          @AllowedValue(value = "ARRAY", description = "Always use an array."),
+          @AllowedValue(value = "SINGLETON_OR_ARRAY",
+              description = "Produce a singleton for a single member or an array for multiple members."),
+          @AllowedValue(value = "BY_KEY",
+              description = "For any group of one or more members, produce an object with properties for each member, using a designated flag for their property name values, which must be distinct.") })))
   private String _inJson;
 
   @BoundFlag(
@@ -69,8 +72,9 @@ public class GroupAs {
       useName = "in-xml",
       defaultValue = "UNGROUPED",
       typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {@AllowedValue(value = "GROUPED", description = "Use a wrapper element."), @AllowedValue(value = "UNGROUPED", description = "Do not use a wrapper element.")}))
-  )
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
+          values = { @AllowedValue(value = "GROUPED", description = "Use a wrapper element."),
+              @AllowedValue(value = "UNGROUPED", description = "Do not use a wrapper element.") })))
   private String _inXml;
 
   public String getName() {

@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind;
 import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.xml.IModulePostProcessor;
+import gov.nist.secauto.metaschema.core.model.IModulePostProcessor;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.IProduction;
 import gov.nist.secauto.metaschema.databind.codegen.ModuleCompilerHelper;

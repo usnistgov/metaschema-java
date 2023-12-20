@@ -38,7 +38,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundModule;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FieldConstraints;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.JsonValueKeyFlag;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
@@ -68,7 +68,7 @@ public class DefinitionFieldGlobal
   private final Lazy<IValueConstrained> valueConstraints;
 
   public DefinitionFieldGlobal(
-      @NonNull IBoundModule module,
+      @NonNull IBindingModule module,
       @NonNull METASCHEMA.DefineField binding) {
     super(module, binding);
     this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
@@ -79,7 +79,7 @@ public class DefinitionFieldGlobal
       IValueConstrained retval = new ValueConstraintSet();
       FieldConstraints constraints = getBinding().getConstraint();
       if (constraints != null) {
-        ConstraintBindingSupport.parse(retval, constraints, ISource.modelSource());
+        ConstraintBindingSupport.parse(retval, constraints, ISource.modelSource(module.getLocation()));
       }
       return retval;
     }));

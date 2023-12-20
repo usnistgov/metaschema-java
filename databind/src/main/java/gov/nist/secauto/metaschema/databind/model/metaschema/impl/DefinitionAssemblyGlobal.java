@@ -40,7 +40,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundModule;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyConstraints;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
@@ -68,7 +68,7 @@ public class DefinitionAssemblyGlobal
   private final Lazy<IModelConstrained> modelConstraints;
 
   public DefinitionAssemblyGlobal(
-      @NonNull IBoundModule module,
+      @NonNull IBindingModule module,
       @NonNull METASCHEMA.DefineAssembly binding) {
     super(module, binding);
     this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
@@ -84,7 +84,7 @@ public class DefinitionAssemblyGlobal
       IModelConstrained retval = new AssemblyConstraintSet();
       AssemblyConstraints constraints = getBinding().getConstraint();
       if (constraints != null) {
-        ConstraintBindingSupport.parse(retval, constraints, ISource.modelSource());
+        ConstraintBindingSupport.parse(retval, constraints, ISource.modelSource(module.getLocation()));
       }
       return retval;
     }));

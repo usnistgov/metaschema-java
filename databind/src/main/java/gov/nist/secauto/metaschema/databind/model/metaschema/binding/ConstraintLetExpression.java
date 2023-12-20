@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
@@ -42,30 +43,26 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaAssembly(
     formalName = "Constraint Let Expression",
     name = "constraint-let-expression",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class ConstraintLetExpression {
   @BoundFlag(
       formalName = "Let Variable Name",
       useName = "var",
       required = true,
-      typeAdapter = TokenAdapter.class
-  )
+      typeAdapter = TokenAdapter.class)
   private String _var;
 
   @BoundFlag(
       formalName = "Let Value Metapath Expression",
       useName = "expression",
       required = true,
-      typeAdapter = StringAdapter.class
-  )
+      typeAdapter = StringAdapter.class)
   private String _expression;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks"
-  )
+      useName = "remarks")
   private Remarks _remarks;
 
   public String getVar() {

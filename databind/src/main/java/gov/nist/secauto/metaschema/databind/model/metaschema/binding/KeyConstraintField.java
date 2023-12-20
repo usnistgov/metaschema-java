@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
@@ -41,29 +42,25 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaAssembly(
     formalName = "Key Constraint",
     name = "key-constraint-field",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class KeyConstraintField {
   @BoundFlag(
       formalName = "Key Field Value Target",
       useName = "target",
       required = true,
-      typeAdapter = StringAdapter.class
-  )
+      typeAdapter = StringAdapter.class)
   private String _target;
 
   @BoundFlag(
       formalName = "Key Field Value Pattern",
       useName = "pattern",
-      typeAdapter = StringAdapter.class
-  )
+      typeAdapter = StringAdapter.class)
   private String _pattern;
 
   @BoundField(
       formalName = "Remarks",
       description = "Any explanatory or helpful information to be provided about the remarks parent.",
-      useName = "remarks"
-  )
+      useName = "remarks")
   private Remarks _remarks;
 
   public String getTarget() {

@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.codegen;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
@@ -33,6 +35,9 @@ import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.databind.io.IDeserializer;
 import gov.nist.secauto.metaschema.databind.io.ISerializer;
+import gov.nist.secauto.metaschema.databind.model.metaschema.BindingModuleLoader;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
 
 import org.junit.jupiter.api.Test;
 
@@ -64,42 +69,49 @@ class MetaschemaModuleMetaschemaTest
   void testReadMetaschemaAsXml() throws IOException {
     IBindingContext context = IBindingContext.instance();
 
-    Object metaschema = context.newDeserializer(Format.XML, Object.class).deserialize(METASCHEMA_FILE);
+    METASCHEMA metaschema = context.newDeserializer(Format.XML, METASCHEMA.class).deserialize(METASCHEMA_FILE);
 
     {
-      ISerializer<Object> serializer = context.newSerializer(Format.XML, Object.class);
+      ISerializer<METASCHEMA> serializer = context.newSerializer(Format.XML, METASCHEMA.class);
       serializer.serialize(metaschema, ObjectUtils.notNull(Paths.get("target/metaschema.xml")));
     }
 
     {
-      ISerializer<Object> serializer = context.newSerializer(Format.JSON, Object.class);
+      ISerializer<METASCHEMA> serializer = context.newSerializer(Format.JSON, METASCHEMA.class);
       serializer.serialize(metaschema, ObjectUtils.notNull(Paths.get("target/metaschema.json")));
     }
 
     {
-      ISerializer<Object> serializer = context.newSerializer(Format.YAML, Object.class);
+      ISerializer<METASCHEMA> serializer = context.newSerializer(Format.YAML, METASCHEMA.class);
       serializer.serialize(metaschema, ObjectUtils.notNull(Paths.get("target/metaschema.yaml")));
     }
 
     {
-      IDeserializer<Object> deserializer = context.newDeserializer(Format.XML, Object.class);
+      IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.XML, METASCHEMA.class);
       @SuppressWarnings("unused")
-      Object readMetaschema
-          = deserializer.deserialize(ObjectUtils.notNull(Paths.get("target/metaschema.xml")));
+      METASCHEMA readMetaschema = deserializer.deserialize(
+          ObjectUtils.notNull(Paths.get("target/metaschema.xml")));
     }
 
     {
-      IDeserializer<Object> deserializer = context.newDeserializer(Format.JSON, Object.class);
+      IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.JSON, METASCHEMA.class);
       @SuppressWarnings("unused")
-      Object readMetaschema
-          = deserializer.deserialize(ObjectUtils.notNull(Paths.get("target/metaschema.json")));
+      METASCHEMA readMetaschema = deserializer.deserialize(
+          ObjectUtils.notNull(Paths.get("target/metaschema.json")));
     }
 
     {
-      IDeserializer<Object> deserializer = context.newDeserializer(Format.YAML, Object.class);
+      IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.YAML, METASCHEMA.class);
       @SuppressWarnings("unused")
-      Object readMetaschema
-          = deserializer.deserialize(ObjectUtils.notNull(Paths.get("target/metaschema.yaml")));
+      METASCHEMA readMetaschema = deserializer.deserialize(
+          ObjectUtils.notNull(Paths.get("target/metaschema.yaml")));
     }
+  }
+
+  @Test
+  void testModuleLoader() throws MetaschemaException, IOException {
+    BindingModuleLoader loader = new BindingModuleLoader();
+    IBindingModule module = loader.load(METASCHEMA_FILE);
+    assertNotNull(module);
   }
 }

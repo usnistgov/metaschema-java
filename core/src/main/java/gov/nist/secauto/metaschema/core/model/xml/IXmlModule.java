@@ -39,5 +39,5 @@ public interface IXmlModule
         IFlagDefinition,
         IFieldDefinition,
         IAssemblyDefinition> {
-
+  // no additional methods
 }

@@ -84,7 +84,10 @@ public class InstanceModelGroupedAssemblyInline
       IModelConstrained retval = new AssemblyConstraintSet();
       AssemblyConstraints constraints = getBinding().getConstraint();
       if (constraints != null) {
-        ConstraintBindingSupport.parse(retval, constraints, ISource.modelSource());
+        ConstraintBindingSupport.parse(
+            retval,
+            constraints,
+            ISource.modelSource(parent.getOwningDefinition().getContainingModule().getLocation()));
       }
       return retval;
     }));

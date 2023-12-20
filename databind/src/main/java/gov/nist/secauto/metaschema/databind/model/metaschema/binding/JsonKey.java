@@ -23,6 +23,7 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
@@ -34,7 +35,9 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * Used in JSON (and similar formats) to identify a flag that will be used as the property name in an object hold a collection of sibling objects. Requires that siblings must never share <code>json-key</code> values.
+ * Used in JSON (and similar formats) to identify a flag that will be used as
+ * the property name in an object hold a collection of sibling objects. Requires
+ * that siblings must never share <code>json-key</code> values.
  */
 @SuppressWarnings({
     "PMD.DataClass",
@@ -44,8 +47,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
     formalName = "JSON Key",
     description = "Used in JSON (and similar formats) to identify a flag that will be used as the property name in an object hold a collection of sibling objects. Requires that siblings must never share `json-key` values.",
     name = "json-key",
-    moduleClass = MetaschemaModule.class
-)
+    moduleClass = MetaschemaModule.class)
 public class JsonKey {
   /**
    * "References the flag that will serve as the JSON key."
@@ -55,8 +57,7 @@ public class JsonKey {
       description = "References the flag that will serve as the JSON key.",
       useName = "flag-ref",
       required = true,
-      typeAdapter = TokenAdapter.class
-  )
+      typeAdapter = TokenAdapter.class)
   private String _flagRef;
 
   public String getFlagRef() {
