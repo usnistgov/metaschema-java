@@ -26,24 +26,29 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
+import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.model.AbstractModuleLoader;
 import gov.nist.secauto.metaschema.core.model.IModulePostProcessor;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class BindingModuleLoader
-    extends AbstractModuleLoader<METASCHEMA, IBindingModule> {
+    extends AbstractModuleLoader<METASCHEMA, IBindingModule>
+    implements IMutableConfiguration<DeserializationFeature<?>> {
   @NonNull
   private final IBoundLoader loader;
 
@@ -85,6 +90,31 @@ public class BindingModuleLoader
 
   @Override
   protected METASCHEMA parseModule(URI resource) throws IOException {
-    return loader.load(METASCHEMA.class, resource);
+    return getLoader().load(METASCHEMA.class, resource);
+  }
+
+  protected IBoundLoader getLoader() {
+    return loader;
+  }
+
+  @Override
+  public boolean isFeatureEnabled(DeserializationFeature<?> feature) {
+    return getLoader().isFeatureEnabled(feature);
+  }
+
+  @Override
+  public Map<DeserializationFeature<?>, Object> getFeatureValues() {
+    return getLoader().getFeatureValues();
+  }
+
+  @Override
+  public IMutableConfiguration<DeserializationFeature<?>>
+      applyConfiguration(IConfiguration<DeserializationFeature<?>> other) {
+    return getLoader().applyConfiguration(other);
+  }
+
+  @Override
+  public IMutableConfiguration<DeserializationFeature<?>> set(DeserializationFeature<?> feature, Object value) {
+    return getLoader().set(feature, value);
   }
 }

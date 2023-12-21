@@ -44,6 +44,13 @@ public final class DeserializationFeature<V>
       = new DeserializationFeature<>(Boolean.class, true);
 
   /**
+   * If enabled, perform constraint validation on the deserialized bound objects.
+   */
+  @NonNull
+  public static final DeserializationFeature<Boolean> DESERIALIZE_XML_ALLOW_ENTITY_RESOLUTION
+      = new DeserializationFeature<>(Boolean.class, false);
+
+  /**
    * If enabled, process the next JSON node as a field, whose name must match the
    * {@link IAssemblyDefinition#getRootJsonName()}. If not enabled, the next JSON
    * node is expected to be an object containing the data of the

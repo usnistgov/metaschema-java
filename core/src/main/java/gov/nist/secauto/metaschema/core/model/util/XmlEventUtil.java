@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.core.model.util;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamReader2;
 
@@ -52,8 +54,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class XmlEventUtil { // NOPMD this is a set of utility methods
-  // private static final Logger LOGGER =
-  // LogManager.getLogger(XmlEventUtil.class);
+  private static final Logger LOGGER = LogManager.getLogger(XmlEventUtil.class);
 
   private static final Pattern WHITESPACE_ONLY = Pattern.compile("^\\s+$");
 
@@ -120,7 +121,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
       retval = "EOF";
     } else {
       @SuppressWarnings("null")
-      @NonNull StringBuilder builder = new StringBuilder()
+      @NonNull
+      StringBuilder builder = new StringBuilder()
           .append(toEventName(xmlEvent));
       QName name = toQName(xmlEvent);
       if (name != null) {
@@ -171,7 +173,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     int type = reader.getEventType();
 
     @SuppressWarnings("null")
-    @NonNull StringBuilder builder = new StringBuilder().append(toEventName(type));
+    @NonNull
+    StringBuilder builder = new StringBuilder().append(toEventName(type));
     QName name = reader.getName();
     if (name != null) {
       builder.append(": ").append(name.toString());
@@ -297,6 +300,30 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     return xmlEvent;
   }
 
+  public static XMLEvent skipElement(@NonNull XMLEventReader2 reader) throws XMLStreamException {
+    XMLEvent xmlEvent = reader.peek();
+    if (!xmlEvent.isStartElement()) {
+      return xmlEvent;
+    }
+    if (LOGGER.isInfoEnabled()) {
+      LOGGER.atInfo().log(String.format("At location %s", toString(xmlEvent)));
+    }
+
+    int depth = 0;
+    do {
+      xmlEvent = reader.nextEvent();
+      if (LOGGER.isInfoEnabled()) {
+        LOGGER.atInfo().log(String.format("Skipping %s", toString(xmlEvent)));
+      }
+      if (xmlEvent.isStartElement()) {
+        depth++;
+      } else if (xmlEvent.isEndElement()) {
+        depth--;
+      }
+    } while (depth > 0 && reader.hasNext());
+    return reader.peek();
+  }
+
   /**
    * Skip over any processing instructions.
    *
@@ -329,7 +356,8 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   @SuppressWarnings("null")
   @NonNull
   public static XMLEvent skipWhitespace(@NonNull XMLEventReader2 reader) throws XMLStreamException {
-    @NonNull XMLEvent nextEvent;
+    @NonNull
+    XMLEvent nextEvent;
     while ((nextEvent = reader.peek()).isCharacters()) {
       Characters characters = nextEvent.asCharacters();
       String data = characters.getData();

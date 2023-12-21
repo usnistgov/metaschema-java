@@ -53,6 +53,7 @@ import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionI
 import org.codehaus.stax2.XMLEventReader2;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -147,12 +148,14 @@ public class MetaschemaXmlReader
       }
 
       // advance past any other info to get to next start element
-      XmlEventUtil.skipEvents(reader, XMLStreamConstants.CHARACTERS, XMLStreamConstants.PROCESSING_INSTRUCTION);
+      XmlEventUtil.skipEvents(reader, XMLStreamConstants.CHARACTERS, XMLStreamConstants.PROCESSING_INSTRUCTION,
+          XMLStreamConstants.DTD);
 
       XMLEvent event = ObjectUtils.requireNonNull(reader.peek());
       if (!event.isStartElement()) {
         throw new IOException(
-            String.format("Not an XML element%s.",
+            String.format("The token '%s' is not an XML element%s.",
+                XmlEventUtil.toEventName(event),
                 XmlEventUtil.generateLocationMessage(event)));
       }
 
@@ -231,8 +234,9 @@ public class MetaschemaXmlReader
       @NonNull IBoundDefinitionAssembly targetDefinition,
       @NonNull Object targetObject)
       throws IOException {
+    Collection<? extends IBoundInstanceModel> instances = targetDefinition.getModelInstances();
     Set<IBoundInstanceModel> unhandledProperties = new HashSet<>();
-    for (IBoundInstanceModel modelInstance : targetDefinition.getModelInstances()) {
+    for (IBoundInstanceModel modelInstance : instances) {
       assert modelInstance != null;
       if (!readItems(modelInstance, targetObject, true)) {
         unhandledProperties.add(modelInstance);
@@ -241,6 +245,20 @@ public class MetaschemaXmlReader
 
     // process all properties that did not get a value
     getProblemHandler().handleMissingModelInstances(targetDefinition, targetObject, unhandledProperties);
+
+    // handle any
+    try {
+      if (!getReader().peek().isEndElement()) {
+        // handle any
+        XmlEventUtil.skipWhitespace(getReader());
+        XmlEventUtil.skipElement(getReader());
+        XmlEventUtil.skipWhitespace(getReader());
+      }
+
+      XmlEventUtil.assertNext(getReader(), XMLStreamConstants.END_ELEMENT);
+    } catch (XMLStreamException ex) {
+      throw new IOException(ex);
+    }
   }
 
   /**

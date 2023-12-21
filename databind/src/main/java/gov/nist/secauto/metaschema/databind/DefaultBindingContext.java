@@ -36,7 +36,6 @@ import gov.nist.secauto.metaschema.databind.codegen.ModuleCompilerHelper;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.DefaultBoundLoader;
 import gov.nist.secauto.metaschema.databind.io.Format;
-import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
 import gov.nist.secauto.metaschema.databind.io.IDeserializer;
 import gov.nist.secauto.metaschema.databind.io.ISerializer;
 import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonDeserializer;
@@ -306,7 +305,7 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public IBoundLoader newBoundLoader() {
+  public DefaultBoundLoader newBoundLoader() {
     return new DefaultBoundLoader(this);
   }
 
@@ -316,7 +315,8 @@ public class DefaultBindingContext implements IBindingContext {
     if (definition == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", other.getClass().getName()));
     }
-    @SuppressWarnings("unchecked") CLASS retval = (CLASS) definition.deepCopyItem(other, parentInstance);
+    @SuppressWarnings("unchecked")
+    CLASS retval = (CLASS) definition.deepCopyItem(other, parentInstance);
     return retval;
   }
 }

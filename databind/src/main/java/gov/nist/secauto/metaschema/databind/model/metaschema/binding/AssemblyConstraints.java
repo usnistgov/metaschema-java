@@ -83,7 +83,8 @@ public class AssemblyConstraints implements IModelConstraintsBase {
               binding = TargetedIndexHasKeyConstraint.class),
           @BoundGroupedAssembly(formalName = "Value Matches Constraint", useName = "matches",
               binding = TargetedMatchesConstraint.class),
-          @BoundGroupedAssembly(formalName = "Targeted Unique Constraint", useName = "unique", binding = Unique.class),
+          @BoundGroupedAssembly(formalName = "Targeted Unique Constraint", useName = "is-unique",
+              binding = Unique.class),
           @BoundGroupedAssembly(formalName = "Targeted Index Constraint", useName = "index", binding = Index.class),
           @BoundGroupedAssembly(formalName = "Targeted Cardinality Constraint", useName = "has-cardinality",
               binding = HasCardinality.class)

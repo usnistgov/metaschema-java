@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.databind.io.IDeserializer;
 import gov.nist.secauto.metaschema.databind.io.ISerializer;
@@ -42,6 +43,7 @@ import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -112,6 +114,15 @@ class MetaschemaModuleMetaschemaTest
   void testModuleLoader() throws MetaschemaException, IOException {
     BindingModuleLoader loader = new BindingModuleLoader();
     IBindingModule module = loader.load(METASCHEMA_FILE);
+    assertNotNull(module);
+  }
+
+  @Test
+  void testOSCALModuleLoader() throws MetaschemaException, IOException {
+    BindingModuleLoader loader = new BindingModuleLoader();
+    loader.set(DeserializationFeature.DESERIALIZE_XML_ALLOW_ENTITY_RESOLUTION, true);
+    IBindingModule module = loader.load(URI
+        .create("https://raw.githubusercontent.com/usnistgov/OSCAL/main/src/metaschema/oscal_complete_metaschema.xml"));
     assertNotNull(module);
   }
 }
