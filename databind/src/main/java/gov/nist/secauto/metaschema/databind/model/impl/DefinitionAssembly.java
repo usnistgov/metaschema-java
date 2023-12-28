@@ -35,7 +35,8 @@ import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
@@ -58,9 +59,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class DefinitionAssembly
-    extends AbstractBoundDefinitionFlagContainer<MetaschemaAssembly>
-    implements IBoundDefinitionAssembly,
-    IFeatureBoundDefinitionModelContainer<
+    extends AbstractBoundDefinitionModelComplex<MetaschemaAssembly>
+    implements IBoundDefinitionModelAssembly,
+    IFeatureBoundContainerModelAssembly<
         IBoundInstanceModel,
         IBoundInstanceModelNamed,
         IBoundInstanceModelField,
@@ -72,8 +73,8 @@ public class DefinitionAssembly
   private final Lazy<AssemblyModelContainerSupport> modelContainer;
   @NonNull
   private final Lazy<IModelConstrained> constraints;
-  @Nullable
-  private final QName xmlRootQName;
+  @NonNull
+  private final Lazy<QName> xmlRootQName;
   @NonNull
   private final Lazy<Map<String, IBoundProperty>> jsonProperties;
 
@@ -82,11 +83,22 @@ public class DefinitionAssembly
       @NonNull IBindingContext bindingContext) {
     super(clazz, MetaschemaAssembly.class, bindingContext);
 
-    String namespace = ObjectUtils.notNull(ModelUtil.resolveNamespace(getAnnotation().rootNamespace(), this));
-    String localName = ModelUtil.resolveNoneOrDefault(getAnnotation().rootName(), null);
-
-    this.xmlRootQName = localName == null ? null : new QName(namespace, localName);
-
+    String rootLocalName = ModelUtil.resolveNoneOrDefault(getAnnotation().rootName(), null);
+    this.xmlRootQName = ObjectUtils.notNull(Lazy.lazy(() -> {
+      QName retval;
+      if (rootLocalName == null) {
+        retval = null;
+      } else {
+        String namespace = ModelUtil.resolveOptionalNamespace(getAnnotation().rootNamespace());
+        if (namespace == null) {
+          namespace = getContainingModule().getXmlNamespace().toASCIIString();
+        }
+        retval = new QName(
+            namespace,
+            rootLocalName);
+      }
+      return retval;
+    }));
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(this, null)));
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new AssemblyModelContainerSupport(this)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
@@ -100,7 +112,7 @@ public class DefinitionAssembly
     }));
     this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> getJsonProperties(null)));
 
-    if (this.xmlRootQName != null) {
+    if (rootLocalName != null) {
       bindingContext.registerBindingMatcher(this);
     }
   }
@@ -124,6 +136,11 @@ public class DefinitionAssembly
   @NonNull
   public FlagContainerSupport getFlagContainer() {
     return flagContainer.get();
+  }
+
+  @Override
+  public IBoundInstanceFlag getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
   }
 
   @Override
@@ -191,7 +208,7 @@ public class DefinitionAssembly
   @Nullable
   public QName getRootXmlQName() {
     // Overriding this is more efficient, since it is already built
-    return xmlRootQName;
+    return xmlRootQName.get();
   }
 
   @Override

@@ -27,10 +27,10 @@
 package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
@@ -135,7 +135,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     }
 
     @Override
-    public void writeItemField(Object item, IBoundDefinitionFieldComplex definition) throws IOException {
+    public void writeItemField(Object item, IBoundDefinitionModelFieldComplex definition) throws IOException {
       definition.writeItem(item, new ItemWriter(getParentQName()));
     }
 
@@ -155,7 +155,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     }
 
     @Override
-    public void writeItemAssembly(Object item, IBoundDefinitionAssembly definition) throws IOException {
+    public void writeItemAssembly(Object item, IBoundDefinitionModelAssembly definition) throws IOException {
       definition.writeItem(item, new ItemWriter(getParentQName()));
     }
 
@@ -170,7 +170,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
       IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
       if (!collectionInfo.isEmpty(value)) {
         QName currentQName = getParentQName();
-        QName groupAsQName = instance.getXmlGroupAsQName();
+        QName groupAsQName = instance.getEffectiveXmlGroupAsQName();
         try {
           if (groupAsQName != null) {
             // write the grouping element
@@ -238,7 +238,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
     private void writeAssemblyModel(
         @NonNull Object parentItem,
-        @NonNull IBoundDefinitionAssembly definition) throws IOException {
+        @NonNull IBoundDefinitionModelAssembly definition) throws IOException {
       for (IBoundInstanceModel modelInstance : definition.getModelInstances()) {
         assert modelInstance != null;
 
@@ -263,7 +263,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
 
     private void writeFieldValue(
         @NonNull Object parentItem,
-        @NonNull IBoundDefinitionFieldComplex definition) throws IOException {
+        @NonNull IBoundDefinitionModelFieldComplex definition) throws IOException {
       definition.getFieldValue().writeItem(parentItem, this);
     }
 
@@ -340,7 +340,7 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     @Override
     public void writeItemField(Object item, IBoundInstanceModelFieldScalar instance) throws IOException {
       try {
-        if (instance.isValueWrappedInXml()) {
+        if (instance.isEffectiveValueWrappedInXml()) {
           QName wrapperQName = instance.getXmlQName();
           writer.writeStartElement(wrapperQName.getNamespaceURI(), wrapperQName.getLocalPart());
           instance.getJavaTypeAdapter().writeXmlValue(item, wrapperQName, writer);
@@ -374,12 +374,12 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     }
 
     @Override
-    public void writeItemField(Object item, IBoundDefinitionFieldComplex definition) throws IOException {
+    public void writeItemField(Object item, IBoundDefinitionModelFieldComplex definition) throws IOException {
       ItemWriter itemWriter = new ItemWriter(definition.getXmlQName());
       writeDefinitionObject(
           definition,
           item,
-          ((ObjectWriter<IBoundDefinitionFieldComplex>) this::writeFlags)
+          ((ObjectWriter<IBoundDefinitionModelFieldComplex>) this::writeFlags)
               .andThen(itemWriter::writeFieldValue));
     }
 
@@ -416,12 +416,12 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     }
 
     @Override
-    public void writeItemAssembly(Object item, IBoundDefinitionAssembly definition) throws IOException {
+    public void writeItemAssembly(Object item, IBoundDefinitionModelAssembly definition) throws IOException {
       ItemWriter itemWriter = new ItemWriter(definition.getXmlQName());
       writeDefinitionObject(
           definition,
           item,
-          ((ObjectWriter<IBoundDefinitionAssembly>) this::writeFlags)
+          ((ObjectWriter<IBoundDefinitionModelAssembly>) this::writeFlags)
               .andThen(itemWriter::writeAssemblyModel));
     }
 

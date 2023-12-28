@@ -49,10 +49,10 @@ class DefaultAssemblyClassBindingTest
     try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
       assert reader != null;
 
-      IBoundDefinitionAssembly classBinding = getRootAssemblyClassBinding();
+      IBoundDefinitionModelAssembly classBinding = getRootAssemblyClassBinding();
 
       try (JsonParser parser = newJsonParser(reader)) {
-        Object value = new MetaschemaJsonReader(parser).readField(classBinding, classBinding.getRootJsonName());
+        Object value = new MetaschemaJsonReader(parser).readProperty(classBinding, classBinding.getRootJsonName());
         assertNotNull(value, "root was null");
       }
     }
@@ -60,7 +60,7 @@ class DefaultAssemblyClassBindingTest
 
   @Test
   void testModule() {
-    IBoundDefinitionAssembly definition = getRootAssemblyClassBinding();
+    IBoundDefinitionModelAssembly definition = getRootAssemblyClassBinding();
     IBoundModule module = definition.getContainingModule();
     assertNotNull(module, "metaschema was null");
   }

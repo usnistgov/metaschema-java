@@ -26,21 +26,26 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
+import gov.nist.secauto.metaschema.core.model.IContainerModelSupport;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
+import gov.nist.secauto.metaschema.databind.model.IGroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
+import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -82,9 +87,9 @@ public class InstanceModelChoiceGroup
    */
   public InstanceModelChoiceGroup(
       @NonNull Field javaField,
-      @NonNull IBoundDefinitionAssembly containingDefinition) {
+      @NonNull IBoundDefinitionModelAssembly containingDefinition) {
     super(javaField, BoundChoiceGroup.class, containingDefinition);
-    this.groupAs = IGroupAs.of(getAnnotation().groupAs(), containingDefinition);
+    this.groupAs = ModelUtil.groupAs(getAnnotation().groupAs());
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
       if (IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
         throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
@@ -191,7 +196,7 @@ public class InstanceModelChoiceGroup
   }
 
   @Override
-  public IBoundDefinitionAssembly getOwningDefinition() {
+  public IBoundDefinitionModelAssembly getOwningDefinition() {
     return getContainingDefinition();
   }
 
@@ -230,7 +235,11 @@ public class InstanceModelChoiceGroup
   }
 
   private static class ChoiceGroupModelContainerSupport
-      implements IBoundInstanceModelChoiceGroupModelContainerSupport {
+      implements IContainerModelSupport<
+          IBoundInstanceModelGroupedNamed,
+          IBoundInstanceModelGroupedNamed,
+          IBoundInstanceModelGroupedField,
+          IBoundInstanceModelGroupedAssembly> {
 
     @NonNull
     private final Map<String, IBoundInstanceModelGroupedNamed> namedModelInstances;
@@ -243,7 +252,7 @@ public class InstanceModelChoiceGroup
         @NonNull BoundGroupedAssembly[] assemblies,
         @NonNull BoundGroupedField[] fields,
         @NonNull IBoundInstanceModelChoiceGroup container) {
-      this.assemblyInstances = ObjectUtils.notNull(Arrays.stream(assemblies)
+      this.assemblyInstances = CollectionUtil.unmodifiableMap(ObjectUtils.notNull(Arrays.stream(assemblies)
           .map(instance -> {
             assert instance != null;
             return IBoundInstanceModelGroupedAssembly.newInstance(instance,
@@ -253,8 +262,8 @@ public class InstanceModelChoiceGroup
               instance -> instance.getEffectiveName(),
               Function.identity(),
               CustomCollectors.useLastMapper(),
-              LinkedHashMap::new)));
-      this.fieldInstances = ObjectUtils.notNull(Arrays.stream(fields)
+              LinkedHashMap::new))));
+      this.fieldInstances = CollectionUtil.unmodifiableMap(ObjectUtils.notNull(Arrays.stream(fields)
           .map(instance -> {
             assert instance != null;
             return IBoundInstanceModelGroupedField.newInstance(instance, container);
@@ -263,15 +272,21 @@ public class InstanceModelChoiceGroup
               instance -> instance.getEffectiveName(),
               Function.identity(),
               CustomCollectors.useLastMapper(),
-              LinkedHashMap::new)));
-      this.namedModelInstances = ObjectUtils.notNull(Stream.concat(
+              LinkedHashMap::new))));
+      this.namedModelInstances = CollectionUtil.unmodifiableMap(ObjectUtils.notNull(Stream.concat(
           this.assemblyInstances.entrySet().stream(),
           this.fieldInstances.entrySet().stream())
           .collect(Collectors.toMap(
               entry -> entry.getKey(),
               entry -> entry.getValue(),
               CustomCollectors.useLastMapper(),
-              LinkedHashMap::new)));
+              LinkedHashMap::new))));
+    }
+
+    @SuppressWarnings("null")
+    @Override
+    public Collection<IBoundInstanceModelGroupedNamed> getModelInstances() {
+      return namedModelInstances.values();
     }
 
     @Override

@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.AnnotationSpec;
 
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
@@ -36,11 +36,11 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class AssemblyInstanceTypeInfoImpl
-    extends AbstractNamedModelInstanceTypeInfo<IAssemblyInstance>
+    extends AbstractNamedModelInstanceTypeInfo<IAssemblyInstanceAbsolute>
     implements IAssemblyInstanceTypeInfo {
 
   public AssemblyInstanceTypeInfoImpl(
-      @NonNull IAssemblyInstance instance,
+      @NonNull IAssemblyInstanceAbsolute instance,
       @NonNull IAssemblyDefinitionTypeInfo parentDefinition) {
     super(instance, parentDefinition);
   }

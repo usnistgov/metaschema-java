@@ -139,13 +139,13 @@ public class FlagConstraints implements IValueConstraintsBase {
   public static class Expect implements IConstraintBase {
     @BoundFlag(
         formalName = "Constraint Identifier",
-        useName = "id",
+        name = "id",
         typeAdapter = TokenAdapter.class)
     private String _id;
 
     @BoundFlag(
         formalName = "Constraint Severity Level",
-        useName = "level",
+        name = "level",
         defaultValue = "ERROR",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(
@@ -163,7 +163,7 @@ public class FlagConstraints implements IValueConstraintsBase {
 
     @BoundFlag(
         formalName = "Expect Test Condition",
-        useName = "test",
+        name = "test",
         required = true,
         typeAdapter = StringAdapter.class)
     private String _test;
@@ -310,13 +310,13 @@ public class FlagConstraints implements IValueConstraintsBase {
   public static class Matches implements IConstraintBase {
     @BoundFlag(
         formalName = "Constraint Identifier",
-        useName = "id",
+        name = "id",
         typeAdapter = TokenAdapter.class)
     private String _id;
 
     @BoundFlag(
         formalName = "Constraint Severity Level",
-        useName = "level",
+        name = "level",
         defaultValue = "ERROR",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(
@@ -334,13 +334,13 @@ public class FlagConstraints implements IValueConstraintsBase {
 
     @BoundFlag(
         formalName = "Matches Regular Expression",
-        useName = "regex",
+        name = "regex",
         typeAdapter = StringAdapter.class)
     private String _regex;
 
     @BoundFlag(
         formalName = "Matches Data Type",
-        useName = "datatype",
+        name = "datatype",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(
             allowedValues = @gov.nist.secauto.metaschema.databind.model.annotations.AllowedValues(
@@ -502,13 +502,13 @@ public class FlagConstraints implements IValueConstraintsBase {
   public static class AllowedValues implements IConstraintBase {
     @BoundFlag(
         formalName = "Constraint Identifier",
-        useName = "id",
+        name = "id",
         typeAdapter = TokenAdapter.class)
     private String _id;
 
     @BoundFlag(
         formalName = "Constraint Severity Level",
-        useName = "level",
+        name = "level",
         defaultValue = "ERROR",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(
@@ -526,7 +526,7 @@ public class FlagConstraints implements IValueConstraintsBase {
 
     @BoundFlag(
         formalName = "Allow Non-Enumerated Values?",
-        useName = "allow-other",
+        name = "allow-other",
         defaultValue = "no",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(
@@ -542,7 +542,7 @@ public class FlagConstraints implements IValueConstraintsBase {
     @BoundFlag(
         formalName = "Allow Extension?",
         description = "Determines if the given enumerated values may be extended by other allowed value constraints.",
-        useName = "extensible",
+        name = "extensible",
         defaultValue = "external",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(
@@ -736,13 +736,13 @@ public class FlagConstraints implements IValueConstraintsBase {
   public static class IndexHasKey implements IConstraintBase {
     @BoundFlag(
         formalName = "Constraint Identifier",
-        useName = "id",
+        name = "id",
         typeAdapter = TokenAdapter.class)
     private String _id;
 
     @BoundFlag(
         formalName = "Constraint Severity Level",
-        useName = "level",
+        name = "level",
         defaultValue = "ERROR",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(
@@ -760,7 +760,7 @@ public class FlagConstraints implements IValueConstraintsBase {
 
     @BoundFlag(
         formalName = "Index Name",
-        useName = "name",
+        name = "name",
         required = true,
         typeAdapter = TokenAdapter.class)
     private String _name;

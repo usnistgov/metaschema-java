@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -37,7 +37,7 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundInstanceModelNamed extends IBoundInstanceModel, INamedModelInstance {
+public interface IBoundInstanceModelNamed extends IBoundInstanceModel, INamedModelInstanceAbsolute {
 
   @Override
   @NonNull
@@ -57,7 +57,7 @@ public interface IBoundInstanceModelNamed extends IBoundInstanceModel, INamedMod
 
   @Override
   default String getJsonName() {
-    return INamedModelInstance.super.getJsonName();
+    return INamedModelInstanceAbsolute.super.getJsonName();
   }
 
   @Override

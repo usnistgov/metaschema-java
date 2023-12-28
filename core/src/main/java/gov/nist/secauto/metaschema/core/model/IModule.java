@@ -79,7 +79,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  */
 public interface IModule<
     M extends IModule<M, C, FL, FI, A>,
-    C extends IFlagContainer,
+    C extends IContainerFlag,
     FL extends IFlagDefinition,
     FI extends IFieldDefinition,
     A extends IAssemblyDefinition> {

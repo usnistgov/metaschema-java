@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
 
@@ -65,7 +65,7 @@ public abstract class AbstractBoundInstanceModelGroupedNamed<
   }
 
   @Override
-  public IBoundDefinitionAssembly getContainingDefinition() {
+  public IBoundDefinitionModelAssembly getContainingDefinition() {
     return getParentContainer().getContainingDefinition();
   }
 

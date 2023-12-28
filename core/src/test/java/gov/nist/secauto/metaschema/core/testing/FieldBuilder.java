@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
@@ -87,19 +87,19 @@ public final class FieldBuilder
 
   @Override
   @NonNull
-  public IFieldInstance toInstance(
+  public IFieldInstanceAbsolute toInstance(
       @NonNull IAssemblyDefinition parent) {
     IFieldDefinition def = toDefinition();
     return toInstance(parent, def);
   }
 
   @NonNull
-  public IFieldInstance toInstance(
+  public IFieldInstanceAbsolute toInstance(
       @NonNull IAssemblyDefinition parent,
       @NonNull IFieldDefinition definition) {
     validate();
 
-    IFieldInstance retval = mock(IFieldInstance.class);
+    IFieldInstanceAbsolute retval = mock(IFieldInstanceAbsolute.class);
     applyNamedInstance(retval, definition, parent);
     return retval;
   }

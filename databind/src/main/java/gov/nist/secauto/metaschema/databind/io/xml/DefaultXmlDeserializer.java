@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.core.util.AutoCloser;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -55,7 +55,7 @@ public class DefaultXmlDeserializer<CLASS>
   private XMLInputFactory2 xmlInputFactory;
 
   @NonNull
-  private final IBoundDefinitionAssembly rootDefinition;
+  private final IBoundDefinitionModelAssembly rootDefinition;
 
   /**
    * Construct a new Module binding-based deserializer that reads XML-based Module
@@ -65,7 +65,7 @@ public class DefaultXmlDeserializer<CLASS>
    *          the assembly class binding describing the Java objects this
    *          deserializer parses data into
    */
-  public DefaultXmlDeserializer(@NonNull IBoundDefinitionAssembly definition) {
+  public DefaultXmlDeserializer(@NonNull IBoundDefinitionModelAssembly definition) {
     super(definition);
     if (!definition.isRoot()) {
       throw new UnsupportedOperationException(

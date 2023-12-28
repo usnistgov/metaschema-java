@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultCardinalityConstraint;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -41,8 +41,8 @@ public interface ICardinalityConstraint extends IConstraint {
   /**
    * Retrieve the required minimum occurrence of the target instance. If
    * specified, this value must be less than or equal to the value of
-   * {@link IModelInstance#getMaxOccurs()} and greater than
-   * {@link IModelInstance#getMinOccurs()}.
+   * {@link IModelInstanceAbsolute#getMaxOccurs()} and greater than
+   * {@link IModelInstanceAbsolute#getMinOccurs()}.
    *
    * @return a non-negative integer or {@code null} if not defined
    */
@@ -52,8 +52,8 @@ public interface ICardinalityConstraint extends IConstraint {
   /**
    * Retrieve the required maximum occurrence of the target instance. If
    * specified, this value must be less than the value of
-   * {@link IModelInstance#getMaxOccurs()} and greater than or equal to
-   * {@link IModelInstance#getMinOccurs()}.
+   * {@link IModelInstanceAbsolute#getMaxOccurs()} and greater than or equal to
+   * {@link IModelInstanceAbsolute#getMinOccurs()}.
    *
    * @return a non-negative integer or {@code null} if not defined
    */

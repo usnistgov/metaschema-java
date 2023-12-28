@@ -38,7 +38,7 @@ import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.databind.io.IDeserializer;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelField;
@@ -73,10 +73,10 @@ class ModelTest
 
       assertAll(
           "root assembly",
-          () -> assertInstanceOf(IBoundDefinitionAssembly.class, definition),
+          () -> assertInstanceOf(IBoundDefinitionModelAssembly.class, definition),
           () -> assertAssemblyDefinition(
               RootAssemblyWithFlags.class,
-              (IBoundDefinitionAssembly) definition),
+              (IBoundDefinitionModelAssembly) definition),
           () -> assertFlagInstance(RootAssemblyWithFlags.class, "id", idFlag, context),
           () -> assertFlagInstance(RootAssemblyWithFlags.class, "defaultFlag", defaultFlag, context),
           () -> assertFlagInstance(RootAssemblyWithFlags.class, "number", numberFlag, context));
@@ -148,8 +148,8 @@ class ModelTest
     void testRootAssemblyWithFields() {
       IBindingContext context = new DefaultBindingContext();
 
-      IBoundDefinitionAssembly definition = ObjectUtils.requireNonNull(
-          (IBoundDefinitionAssembly) context.getBoundDefinitionForClass(RootAssemblyWithFields.class));
+      IBoundDefinitionModelAssembly definition = ObjectUtils.requireNonNull(
+          (IBoundDefinitionModelAssembly) context.getBoundDefinitionForClass(RootAssemblyWithFields.class));
 
       IBoundInstanceModelField defaultField = ObjectUtils.requireNonNull(
           definition.getFieldInstanceByName("defaultField"));
@@ -166,7 +166,7 @@ class ModelTest
 
       assertAll(
           "root assembly",
-          () -> assertInstanceOf(IBoundDefinitionAssembly.class, definition),
+          () -> assertInstanceOf(IBoundDefinitionModelAssembly.class, definition),
           () -> assertAssemblyDefinition(
               RootAssemblyWithFields.class,
               definition),

@@ -38,7 +38,7 @@ import java.math.BigInteger;
     moduleClass = MetaschemaModule.class)
 public class RootAssemblyWithFlags {
 
-  @BoundFlag(useName = "id", required = true)
+  @BoundFlag(name = "id", required = true)
   private String id;
 
   @BoundFlag
@@ -47,7 +47,7 @@ public class RootAssemblyWithFlags {
   @BoundFlag(
       description = "a number",
       formalName = "number flag",
-      useName = "number",
+      name = "number",
       typeAdapter = IntegerAdapter.class,
       defaultValue = "1",
       remarks = "a remark")

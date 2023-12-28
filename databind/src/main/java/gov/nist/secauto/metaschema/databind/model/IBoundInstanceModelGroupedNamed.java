@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
@@ -37,17 +37,12 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * Represents a model instance that is a member of a choice group instance.
  */
 public interface IBoundInstanceModelGroupedNamed
-    extends IGroupedNamedModelInstance, IFeatureComplexItemValueHandler {
+    extends INamedModelInstanceGrouped, IFeatureComplexItemValueHandler {
   @Override
   IBoundInstanceModelChoiceGroup getParentContainer();
 
   @Override
   IBoundDefinitionModelComplex getDefinition();
-
-  @Override
-  default boolean isValueWrappedInXml() {
-    return true;
-  }
 
   @Nullable
   default IBoundInstanceFlag getJsonKey() {

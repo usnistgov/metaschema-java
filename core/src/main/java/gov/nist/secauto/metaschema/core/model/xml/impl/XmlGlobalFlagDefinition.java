@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -51,7 +50,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-class XmlGlobalFlagDefinition implements IFlagDefinition, IFeatureGlobalDefinition<IFlagInstance> {
+class XmlGlobalFlagDefinition implements IFlagDefinition {
   @NonNull
   private final GlobalFlagDefinitionType xmlFlag;
   @NonNull
@@ -110,11 +109,6 @@ class XmlGlobalFlagDefinition implements IFlagDefinition, IFeatureGlobalDefiniti
   @Override
   public Object getDefaultValue() {
     return defaultValue;
-  }
-
-  @Override
-  public IFlagInstance getInlineInstance() {
-    return IFeatureGlobalDefinition.super.getInlineInstance();
   }
 
   // ----------------------------------------

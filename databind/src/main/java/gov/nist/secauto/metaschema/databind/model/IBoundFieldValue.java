@@ -62,7 +62,7 @@ public interface IBoundFieldValue extends IFeatureScalarItemValueHandler, IBound
    * @return the parent field definition
    */
   @NonNull
-  IBoundDefinitionFieldComplex getParentFieldDefinition();
+  IBoundDefinitionModelFieldComplex getParentFieldDefinition();
 
   /**
    * Get the name of the JSON value key flag.

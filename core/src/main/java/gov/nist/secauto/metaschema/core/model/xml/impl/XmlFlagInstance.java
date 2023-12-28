@@ -28,9 +28,10 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.AbstractInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FlagReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
@@ -46,7 +47,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlFlagInstance
-    extends AbstractFlagInstance {
+    extends AbstractInstance<IModelDefinition>
+    implements IFlagInstance {
   @NonNull
   private final FlagReferenceType xmlFlag;
   @Nullable
@@ -61,7 +63,7 @@ class XmlFlagInstance
    * @param parent
    *          the field definition this object is an instance of
    */
-  public XmlFlagInstance(@NonNull FlagReferenceType xmlFlag, @NonNull IFlagContainer parent) {
+  public XmlFlagInstance(@NonNull FlagReferenceType xmlFlag, @NonNull IModelDefinition parent) {
     super(parent);
     this.xmlFlag = xmlFlag;
     Object defaultValue = null;
@@ -83,8 +85,13 @@ class XmlFlagInstance
   @Override
   public IFlagDefinition getDefinition() {
     // this should always be not null
-    return ObjectUtils.requireNonNull(getContainingDefinition().getContainingModule()
-        .getScopedFlagDefinitionByName(getName()));
+    return ObjectUtils.requireNonNull(
+        getContainingDefinition().getContainingModule().getScopedFlagDefinitionByName(getName()));
+  }
+
+  @Override
+  public IModelDefinition getContainingDefinition() {
+    return getParentContainer();
   }
 
   // ----------------------------------------

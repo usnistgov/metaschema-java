@@ -29,15 +29,12 @@ package gov.nist.secauto.metaschema.core.model;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IField {
-
+public interface IFieldDefinition extends IModelDefinition, IValuedDefinition, IField {
   @Override
-  default IFieldDefinition getOwningDefinition() {
-    return this;
+  default IFieldInstance getInlineInstance() {
+    // not inline by default
+    return null;
   }
-
-  @Override
-  IFieldInstanceBase getInlineInstance();
 
   /**
    * Retrieves the key to use as the field name for this field's value in JSON.

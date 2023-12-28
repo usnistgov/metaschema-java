@@ -26,20 +26,23 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.IModelElement;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModelElement;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractBinding<BINDING> implements IModelElement {
+public abstract class AbstractBinding<BINDING> implements IBindingModelElement {
   @NonNull
   private final BINDING binding;
 
-  protected AbstractBinding(@NonNull BINDING binding) {
+  protected AbstractBinding(
+      @NonNull BINDING binding) {
     this.binding = binding;
   }
 
+  @Override
   @NonNull
-  protected BINDING getBinding() {
+  public BINDING getBinding() {
     return binding;
   }
+
 }

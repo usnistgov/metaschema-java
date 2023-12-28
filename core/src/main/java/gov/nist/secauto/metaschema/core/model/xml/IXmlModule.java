@@ -28,14 +28,14 @@ package gov.nist.secauto.metaschema.core.model.xml;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IContainerFlag;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
 
 public interface IXmlModule
     extends IModule<
         IXmlModule,
-        IFlagContainer,
+        IContainerFlag,
         IFlagDefinition,
         IFieldDefinition,
         IAssemblyDefinition> {

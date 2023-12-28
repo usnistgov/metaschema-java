@@ -78,7 +78,7 @@ public @interface BoundFlag {
    * @return the name
    */
   @NonNull
-  String useName() default Constants.NO_STRING_VALUE;
+  String name() default Constants.NO_STRING_VALUE;
 
   /**
    * The binary use name of the flag.

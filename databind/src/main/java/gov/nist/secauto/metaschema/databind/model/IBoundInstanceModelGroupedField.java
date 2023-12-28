@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
@@ -38,8 +38,6 @@ import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
@@ -47,7 +45,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * instance.
  */
 public interface IBoundInstanceModelGroupedField
-    extends IBoundInstanceModelGroupedNamed, IGroupedFieldInstance {
+    extends IBoundInstanceModelGroupedNamed, IFieldInstanceGrouped {
 
   /**
    * Create a new field model instance instance that is a member of a choice group
@@ -83,13 +81,7 @@ public interface IBoundInstanceModelGroupedField
   }
 
   @Override
-  IBoundDefinitionFieldComplex getDefinition();
-
-  @Override
-  @NonNull
-  default QName getXmlQName() {
-    return ObjectUtils.notNull(IBoundInstanceModelGroupedNamed.super.getXmlQName());
-  }
+  IBoundDefinitionModelFieldComplex getDefinition();
 
   @Override
   default Object readItem(Object parent, @NonNull IItemReadHandler handler) throws IOException {

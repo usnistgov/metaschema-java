@@ -30,13 +30,13 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.IContainerModel;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
 import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -56,10 +56,10 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlInlineFieldDefinition
-    extends AbstractFieldInstance
-    implements IFieldDefinition,
-    IFeatureFlagContainer<IFlagInstance>,
-    IFeatureInlinedDefinition<IFieldDefinition, IFieldInstance> {
+    extends AbstractInstance<IContainerModel>
+    implements IFieldInstanceAbsolute, IFieldDefinition,
+    IFeatureContainerFlag<IFlagInstance>,
+    IFeatureInlinedDefinition<IFieldDefinition, IFieldInstanceAbsolute> {
   @NonNull
   private final InlineFieldDefinitionType xmlObject;
   @Nullable
@@ -81,7 +81,7 @@ class XmlInlineFieldDefinition
   @SuppressWarnings("PMD.NullAssignment")
   public XmlInlineFieldDefinition(
       @NonNull InlineFieldDefinitionType xmlObject,
-      @NonNull IModelContainer parent) {
+      @NonNull IContainerModel parent) {
     super(parent);
     this.xmlObject = xmlObject;
     this.defaultValue = xmlObject.isSetDefault()
@@ -119,7 +119,7 @@ class XmlInlineFieldDefinition
 
   @Override
   @NonNull
-  public IFieldInstance getInlineInstance() {
+  public IFieldInstanceAbsolute getInlineInstance() {
     return this;
   }
 
@@ -127,6 +127,11 @@ class XmlInlineFieldDefinition
   @Override
   public XmlFlagContainerSupport getFlagContainer() {
     return flagContainer.get();
+  }
+
+  @Override
+  public IFlagInstance getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
   }
 
   /**

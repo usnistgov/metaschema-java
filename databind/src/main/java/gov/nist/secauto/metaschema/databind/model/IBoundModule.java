@@ -39,8 +39,8 @@ public interface IBoundModule
         IBoundModule,
         IBoundDefinitionModelComplex,
         IBoundDefinitionFlag,
-        IBoundDefinitionField,
-        IBoundDefinitionAssembly> {
+        IBoundDefinitionModelField,
+        IBoundDefinitionModelAssembly> {
 
   /**
    * Get the Module binding context.
@@ -57,14 +57,14 @@ public interface IBoundModule
   }
 
   @Override
-  Collection<? extends IBoundDefinitionAssembly> getAssemblyDefinitions();
+  Collection<? extends IBoundDefinitionModelAssembly> getAssemblyDefinitions();
 
   @Override
-  IBoundDefinitionAssembly getAssemblyDefinitionByName(@NonNull String name);
+  IBoundDefinitionModelAssembly getAssemblyDefinitionByName(@NonNull String name);
 
   @Override
-  Collection<? extends IBoundDefinitionField> getFieldDefinitions();
+  Collection<? extends IBoundDefinitionModelField> getFieldDefinitions();
 
   @Override
-  IBoundDefinitionField getFieldDefinitionByName(@NonNull String name);
+  IBoundDefinitionModelField getFieldDefinitionByName(@NonNull String name);
 }

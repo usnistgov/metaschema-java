@@ -34,7 +34,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * Represents a Metaschema module definition bound to Java data.
  */
-public interface IBoundDefinition extends IDefinition, IBinding {
+public interface IBoundDefinition extends IDefinition, IBoundModuleElement {
   /**
    * Get the binding context used for the definition.
    *

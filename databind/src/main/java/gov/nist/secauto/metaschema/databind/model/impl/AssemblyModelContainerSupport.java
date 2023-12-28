@@ -26,9 +26,11 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
@@ -41,7 +43,10 @@ import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,34 +54,69 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class AssemblyModelContainerSupport
-    extends AbstractModelContainerSupport<
+    implements IContainerModelAssemblySupport<
         IBoundInstanceModel,
         IBoundInstanceModelNamed,
         IBoundInstanceModelField,
         IBoundInstanceModelAssembly,
+        IChoiceInstance,
         IBoundInstanceModelChoiceGroup> {
   @NonNull
-  private final List<IBoundInstanceModelChoiceGroup> choiceGroupInstances;
+  private final List<IBoundInstanceModel> modelInstances;
+  @NonNull
+  private final Map<String, IBoundInstanceModelNamed> namedModelInstances;
+  @NonNull
+  private final Map<String, IBoundInstanceModelField> fieldInstances;
+  @NonNull
+  private final Map<String, IBoundInstanceModelAssembly> assemblyInstances;
+  @NonNull
+  private final Map<String, IBoundInstanceModelChoiceGroup> choiceGroupInstances;
 
   public AssemblyModelContainerSupport(
       @NonNull DefinitionAssembly containingDefinition) {
-    super(
-        getModelInstanceStream(containingDefinition, containingDefinition.getBoundClass()),
-        IBoundInstanceModelNamed.class,
-        IBoundInstanceModelField.class,
-        IBoundInstanceModelAssembly.class);
-
-    this.choiceGroupInstances = CollectionUtil.unmodifiableList(ObjectUtils.notNull(
-        getModelInstances().stream()
-            .filter(instance -> instance instanceof IBoundInstanceModelChoiceGroup)
-            .map(instance -> (IBoundInstanceModelChoiceGroup) instance)
-            .map(ObjectUtils::notNull)
+    this.modelInstances = CollectionUtil.unmodifiableList(ObjectUtils.notNull(
+        getModelInstanceStream(containingDefinition, containingDefinition.getBoundClass())
             .collect(Collectors.toUnmodifiableList())));
+
+    Map<String, IBoundInstanceModelNamed> namedModelInstances = new LinkedHashMap<>();
+    Map<String, IBoundInstanceModelField> fieldInstances = new LinkedHashMap<>();
+    Map<String, IBoundInstanceModelAssembly> assemblyInstances = new LinkedHashMap<>();
+    Map<String, IBoundInstanceModelChoiceGroup> choiceGroupInstances = new LinkedHashMap<>();
+    for (IBoundInstanceModel instance : this.modelInstances) {
+      if (instance instanceof IBoundInstanceModelNamed) {
+        IBoundInstanceModelNamed named = (IBoundInstanceModelNamed) instance;
+        String key = named.getEffectiveName();
+        namedModelInstances.put(key, named);
+
+        if (instance instanceof IBoundInstanceModelField) {
+          fieldInstances.put(key, (IBoundInstanceModelField) named);
+        } else if (instance instanceof IBoundInstanceModelAssembly) {
+          assemblyInstances.put(key, (IBoundInstanceModelAssembly) named);
+        }
+      } else if (instance instanceof IBoundInstanceModelChoiceGroup) {
+        IBoundInstanceModelChoiceGroup choiceGroup = (IBoundInstanceModelChoiceGroup) instance;
+        String key = ObjectUtils.requireNonNull(choiceGroup.getGroupAsName());
+        choiceGroupInstances.put(key, choiceGroup);
+      }
+    }
+
+    this.namedModelInstances = namedModelInstances.isEmpty()
+        ? CollectionUtil.emptyMap()
+        : CollectionUtil.unmodifiableMap(namedModelInstances);
+    this.fieldInstances = fieldInstances.isEmpty()
+        ? CollectionUtil.emptyMap()
+        : CollectionUtil.unmodifiableMap(fieldInstances);
+    this.assemblyInstances = assemblyInstances.isEmpty()
+        ? CollectionUtil.emptyMap()
+        : CollectionUtil.unmodifiableMap(assemblyInstances);
+    this.choiceGroupInstances = choiceGroupInstances.isEmpty()
+        ? CollectionUtil.emptyMap()
+        : CollectionUtil.unmodifiableMap(choiceGroupInstances);
   }
 
   protected static IBoundInstanceModel newBoundModelInstance(
       @NonNull Field field,
-      @NonNull IBoundDefinitionAssembly definition) {
+      @NonNull IBoundDefinitionModelAssembly definition) {
     IBoundInstanceModel retval = null;
     if (field.isAnnotationPresent(BoundAssembly.class)) {
       retval = IBoundInstanceModelAssembly.newInstance(field, definition);
@@ -90,7 +130,7 @@ class AssemblyModelContainerSupport
 
   @NonNull
   protected static Stream<IBoundInstanceModel> getModelInstanceStream(
-      @NonNull IBoundDefinitionAssembly definition,
+      @NonNull IBoundDefinitionModelAssembly definition,
       @NonNull Class<?> clazz) {
 
     Stream<IBoundInstanceModel> superInstances;
@@ -123,7 +163,33 @@ class AssemblyModelContainerSupport
   }
 
   @Override
-  public List<IBoundInstanceModelChoiceGroup> getChoiceGroupInstances() {
+  public Collection<IBoundInstanceModel> getModelInstances() {
+    return modelInstances;
+  }
+
+  @Override
+  public Map<String, IBoundInstanceModelNamed> getNamedModelInstanceMap() {
+    return namedModelInstances;
+  }
+
+  @Override
+  public Map<String, IBoundInstanceModelField> getFieldInstanceMap() {
+    return fieldInstances;
+  }
+
+  @Override
+  public Map<String, IBoundInstanceModelAssembly> getAssemblyInstanceMap() {
+    return assemblyInstances;
+  }
+
+  @Override
+  public List<IChoiceInstance> getChoiceInstances() {
+    // not supported
+    return CollectionUtil.emptyList();
+  }
+
+  @Override
+  public Map<String, IBoundInstanceModelChoiceGroup> getChoiceGroupInstanceMap() {
     return choiceGroupInstances;
   }
 }

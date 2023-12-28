@@ -26,19 +26,14 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-
-import java.util.Collection;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 
 /**
  * Represents a field or assembly instance bound to Java data.
  */
 // REFACTOR: rename to IBoundDefinitionModelNamed
 public interface IBoundDefinitionModel
-    extends IBoundDefinition, IFlagContainer {
+    extends IBoundDefinition, IBoundContainerFlag, IModelDefinition {
   // @NonNull
   // Class<?> getBoundClass();
 
@@ -46,15 +41,5 @@ public interface IBoundDefinitionModel
   IBoundInstanceModelNamed getInlineInstance();
 
   @Override
-  @Nullable
-  IBoundInstanceFlag getFlagInstanceByName(@NonNull String name);
-
-  @Override
-  @NonNull
-  Collection<? extends IBoundInstanceFlag> getFlagInstances();
-
-  // TODO: remove once moved to the instance side
-  @Override
-  @Nullable
   IBoundInstanceFlag getJsonKeyFlagInstance();
 }

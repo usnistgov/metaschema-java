@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import java.lang.annotation.Annotation;
@@ -38,7 +38,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public abstract class AbstractBoundInstanceModelJavaField<A extends Annotation>
-    extends AbstractBoundInstanceJavaField<A, IBoundDefinitionAssembly>
+    extends AbstractBoundInstanceJavaField<A, IBoundDefinitionModelAssembly>
     implements IFeatureInstanceModelGroupAs {
 
   @NonNull
@@ -47,7 +47,7 @@ public abstract class AbstractBoundInstanceModelJavaField<A extends Annotation>
   public AbstractBoundInstanceModelJavaField(
       @NonNull Field javaField,
       @NonNull Class<A> annotationClass,
-      @NonNull IBoundDefinitionAssembly containingDefinition) {
+      @NonNull IBoundDefinitionModelAssembly containingDefinition) {
     super(javaField, annotationClass, containingDefinition);
     this.collectionInfo = ObjectUtils.notNull(Lazy.lazy(() -> IModelInstanceCollectionInfo.of(this)));
   }

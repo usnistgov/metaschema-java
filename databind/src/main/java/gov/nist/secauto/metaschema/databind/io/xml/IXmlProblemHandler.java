@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.databind.io.IProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
@@ -83,7 +83,7 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *           if an error occurred while handling the unrecognized data
    */
   default boolean handleUnknownElement(
-      @NonNull IBoundDefinitionAssembly parentDefinition,
+      @NonNull IBoundDefinitionModelAssembly parentDefinition,
       @NonNull Object targetObject,
       @NonNull StartElement start,
       @NonNull IXmlParsingContext parsingContext) throws IOException {
@@ -131,7 +131,7 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *           if an error occurred while handling the missing instances
    */
   default void handleMissingModelInstances(
-      @NonNull IBoundDefinitionAssembly parentDefinition,
+      @NonNull IBoundDefinitionModelAssembly parentDefinition,
       @NonNull Object targetObject,
       @NonNull Collection<? extends IBoundInstanceModel> unhandledInstances)
       throws IOException {

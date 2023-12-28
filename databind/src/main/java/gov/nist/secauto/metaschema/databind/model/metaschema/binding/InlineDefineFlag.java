@@ -42,13 +42,13 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Override;
-import java.lang.String;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -61,26 +61,26 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class InlineDefineFlag {
   @BoundFlag(
       formalName = "Inline Flag Name",
-      useName = "name",
+      name = "name",
       required = true,
       typeAdapter = TokenAdapter.class)
   private String _name;
 
   @BoundFlag(
       formalName = "Inline Flag Binary Name",
-      useName = "index",
+      name = "index",
       typeAdapter = PositiveIntegerAdapter.class)
   private BigInteger _index;
 
   @BoundFlag(
       formalName = "Deprecated Version",
-      useName = "deprecated",
+      name = "deprecated",
       typeAdapter = StringAdapter.class)
   private String _deprecated;
 
   @BoundFlag(
       formalName = "Flag Value Data Type",
-      useName = "as-type",
+      name = "as-type",
       defaultValue = "string",
       typeAdapter = TokenAdapter.class,
       valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
@@ -105,13 +105,13 @@ public class InlineDefineFlag {
 
   @BoundFlag(
       formalName = "Default Flag Value",
-      useName = "default",
+      name = "default",
       typeAdapter = StringAdapter.class)
   private String _default;
 
   @BoundFlag(
       formalName = "Is Flag Required?",
-      useName = "required",
+      name = "required",
       defaultValue = "no",
       typeAdapter = TokenAdapter.class,
       valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,

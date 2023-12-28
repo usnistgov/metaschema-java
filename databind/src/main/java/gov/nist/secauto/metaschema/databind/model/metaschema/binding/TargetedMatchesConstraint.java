@@ -60,13 +60,13 @@ import java.util.List;
 public class TargetedMatchesConstraint implements ITargetedConstraintBase {
   @BoundFlag(
       formalName = "Constraint Identifier",
-      useName = "id",
+      name = "id",
       typeAdapter = TokenAdapter.class)
   private String _id;
 
   @BoundFlag(
       formalName = "Constraint Severity Level",
-      useName = "level",
+      name = "level",
       defaultValue = "ERROR",
       typeAdapter = TokenAdapter.class,
       valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
@@ -82,13 +82,13 @@ public class TargetedMatchesConstraint implements ITargetedConstraintBase {
 
   @BoundFlag(
       formalName = "Matches Regular Expression",
-      useName = "regex",
+      name = "regex",
       typeAdapter = StringAdapter.class)
   private String _regex;
 
   @BoundFlag(
       formalName = "Matches Data Type",
-      useName = "datatype",
+      name = "datatype",
       typeAdapter = TokenAdapter.class,
       valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
           allowOthers = true,
@@ -112,7 +112,7 @@ public class TargetedMatchesConstraint implements ITargetedConstraintBase {
 
   @BoundFlag(
       formalName = "Constraint Target Metapath Expression",
-      useName = "target",
+      name = "target",
       required = true,
       typeAdapter = StringAdapter.class)
   private String _target;

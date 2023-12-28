@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.IModulePostProcessor;
+import gov.nist.secauto.metaschema.core.model.IModuleLoader;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstaints;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.ConstraintComposingVisitor;
@@ -50,7 +50,7 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class ExternalConstraintsModulePostProcessor implements IModulePostProcessor {
+public class ExternalConstraintsModulePostProcessor implements IModuleLoader.IModulePostProcessor {
   private static final Logger LOGGER = LogManager.getLogger(ExternalConstraintsModulePostProcessor.class);
   @NonNull
   private final List<IConstraintSet> registeredConstraintSets;

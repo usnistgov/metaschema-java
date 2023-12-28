@@ -30,7 +30,7 @@ import com.squareup.javapoet.AnnotationSpec;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstanceBase;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.databind.model.annotations.Constants;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -40,8 +40,8 @@ public final class TypeInfoUtils {
     // disable construction
   }
 
-  public static void buildConnonBindingAnnotationValues(
-      @NonNull INamedModelInstanceBase instance,
+  public static void buildCommonBindingAnnotationValues(
+      @NonNull INamedModelInstance instance,
       @NonNull AnnotationSpec.Builder annotation) {
 
     String formalName = instance.getEffectiveFormalName();

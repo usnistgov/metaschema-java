@@ -33,11 +33,11 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLineAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Override;
-import java.lang.String;
-import java.net.URI;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.net.URI;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -50,12 +50,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class Example {
   @BoundFlag(
       formalName = "Example Reference",
-      useName = "ref",
+      name = "ref",
       typeAdapter = UriReferenceAdapter.class)
   private URI _ref;
 
   @BoundFlag(
-      useName = "path",
+      name = "path",
       typeAdapter = StringAdapter.class)
   private String _path;
 

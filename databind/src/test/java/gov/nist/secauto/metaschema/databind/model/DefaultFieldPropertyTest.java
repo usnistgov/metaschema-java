@@ -58,7 +58,7 @@ class DefaultFieldPropertyTest {
   @Mock
   private IModule<?, ?, ?, ?, ?> module; // NOPMD - it's injected
   @Mock
-  private IBoundDefinitionAssembly classBinding; // NOPMD - it's injected
+  private IBoundDefinitionModelAssembly classBinding; // NOPMD - it's injected
   @Mock
   private IBindingContext bindingContext; // NOPMD - it's injected
 
@@ -71,13 +71,13 @@ class DefaultFieldPropertyTest {
       assert jsonParser != null;
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IBoundDefinitionAssembly classBinding
-          = (IBoundDefinitionAssembly) bindingContext.getBoundDefinitionForClass(SimpleAssembly.class);
+      IBoundDefinitionModelAssembly classBinding
+          = (IBoundDefinitionModelAssembly) bindingContext.getBoundDefinitionForClass(SimpleAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
-      SimpleAssembly obj = parser.readField(classBinding, classBinding.getRootJsonName());
+      SimpleAssembly obj = parser.readProperty(classBinding, classBinding.getRootJsonName());
       assert obj != null;
 
       assertAll(

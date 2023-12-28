@@ -30,8 +30,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
@@ -102,7 +102,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
   }
 
   @Override
-  public void writeItemField(Object item, IBoundDefinitionFieldComplex definition) throws IOException {
+  public void writeItemField(Object item, IBoundDefinitionModelFieldComplex definition) throws IOException {
     definition.writeItem(item, getItemWriter());
   }
 
@@ -150,7 +150,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
   }
 
   @Override
-  public void writeItemAssembly(Object item, IBoundDefinitionAssembly definition) throws IOException {
+  public void writeItemAssembly(Object item, IBoundDefinitionModelAssembly definition) throws IOException {
     definition.writeItem(item, getItemWriter());
   }
 
@@ -214,11 +214,11 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     }
 
     @Override
-    public void writeItemField(Object item, IBoundDefinitionFieldComplex definition) throws IOException {
+    public void writeItemField(Object item, IBoundDefinitionModelFieldComplex definition) throws IOException {
       writeDefinitionObject(
           definition,
           item,
-          ((ObjectWriter<IBoundDefinitionFieldComplex>) this::writeObjectProperties));
+          ((ObjectWriter<IBoundDefinitionModelFieldComplex>) this::writeObjectProperties));
     }
 
     @Override
@@ -241,7 +241,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     }
 
     @Override
-    public void writeItemAssembly(Object item, IBoundDefinitionAssembly definition) throws IOException {
+    public void writeItemAssembly(Object item, IBoundDefinitionModelAssembly definition) throws IOException {
       writeDefinitionObject(definition, item, this::writeObjectProperties);
     }
 

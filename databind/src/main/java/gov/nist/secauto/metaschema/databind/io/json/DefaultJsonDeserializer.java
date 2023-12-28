@@ -35,7 +35,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -55,7 +55,7 @@ public class DefaultJsonDeserializer<CLASS>
    *          the bound class information for the Java type this deserializer is
    *          operating on
    */
-  public DefaultJsonDeserializer(@NonNull IBoundDefinitionAssembly definition) {
+  public DefaultJsonDeserializer(@NonNull IBoundDefinitionModelAssembly definition) {
     super(definition);
   }
 
@@ -110,13 +110,13 @@ public class DefaultJsonDeserializer<CLASS>
     INodeItem retval;
     try (JsonParser jsonParser = newJsonParser(reader)) {
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
-      IBoundDefinitionAssembly definition = getDefinition();
+      IBoundDefinitionModelAssembly definition = getDefinition();
       IConfiguration<DeserializationFeature<?>> configuration = getConfiguration();
 
       if (definition.isRoot()
           && configuration.isFeatureEnabled(DeserializationFeature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
         // now parse the root property
-        CLASS value = ObjectUtils.requireNonNull(parser.readField(definition, definition.getRootJsonName()));
+        CLASS value = ObjectUtils.requireNonNull(parser.readProperty(definition, definition.getRootJsonName()));
 
         retval = INodeItemFactory.instance().newDocumentNodeItem(definition, documentUri, value);
       } else {
@@ -133,7 +133,7 @@ public class DefaultJsonDeserializer<CLASS>
   public CLASS deserializeToValue(@NonNull Reader reader, @NonNull URI documentUri) throws IOException {
     try (JsonParser jsonParser = newJsonParser(reader)) {
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
-      IBoundDefinitionAssembly definition = getDefinition();
+      IBoundDefinitionModelAssembly definition = getDefinition();
       IConfiguration<DeserializationFeature<?>> configuration = getConfiguration();
 
       CLASS retval;
@@ -141,7 +141,7 @@ public class DefaultJsonDeserializer<CLASS>
           && configuration.isFeatureEnabled(DeserializationFeature.DESERIALIZE_JSON_ROOT_PROPERTY)) {
 
         // now parse the root property
-        retval = ObjectUtils.requireNonNull(parser.readField(definition, definition.getRootJsonName()));
+        retval = ObjectUtils.requireNonNull(parser.readProperty(definition, definition.getRootJsonName()));
       } else {
         // read the top-level definition
         retval = ObjectUtils.asType(ObjectUtils.requireNonNull(

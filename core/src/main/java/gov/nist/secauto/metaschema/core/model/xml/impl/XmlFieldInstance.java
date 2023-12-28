@@ -28,9 +28,11 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IContainerModel;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FieldReferenceType;
@@ -47,7 +49,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlFieldInstance
-    extends AbstractFieldInstance {
+    extends AbstractInstance<IContainerModel>
+    implements IFieldInstanceAbsolute {
   @NonNull
   private final FieldReferenceType xmlObject;
   @Nullable
@@ -65,7 +68,7 @@ class XmlFieldInstance
   @SuppressWarnings("PMD.NullAssignment")
   public XmlFieldInstance(
       @NonNull FieldReferenceType xmlObject,
-      @NonNull IModelContainer container) {
+      @NonNull IContainerModel container) {
     super(container);
     this.xmlObject = xmlObject;
     this.defaultValue = xmlObject.isSetDefault()
@@ -77,6 +80,11 @@ class XmlFieldInstance
   public IFieldDefinition getDefinition() {
     // this will always be not null
     return ObjectUtils.notNull(getContainingModule().getScopedFieldDefinitionByName(getName()));
+  }
+
+  @Override
+  public IAssemblyDefinition getContainingDefinition() {
+    return getParentContainer().getOwningDefinition();
   }
 
   // ----------------------------------------

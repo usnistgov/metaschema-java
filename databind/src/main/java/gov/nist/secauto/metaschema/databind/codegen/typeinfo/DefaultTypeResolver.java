@@ -31,12 +31,12 @@ import com.squareup.javapoet.ClassName;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstanceBase;
+import gov.nist.secauto.metaschema.core.model.INamedInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
@@ -61,7 +61,7 @@ class DefaultTypeResolver implements ITypeResolver {
   private static final Logger LOGGER = LogManager.getLogger(DefaultTypeResolver.class);
 
   private final Map<String, Set<String>> packageToClassNamesMap = new ConcurrentHashMap<>();
-  private final Map<IFlagContainer, ClassName> definitionToTypeMap = new ConcurrentHashMap<>();
+  private final Map<IModelDefinition, ClassName> definitionToTypeMap = new ConcurrentHashMap<>();
   private final Map<IModule<?, ?, ?, ?, ?>, ClassName> moduleToTypeMap = new ConcurrentHashMap<>();
   private final Map<IAssemblyDefinition, IAssemblyDefinitionTypeInfo> assemblyDefinitionToTypeInfoMap
       = new ConcurrentHashMap<>();
@@ -97,7 +97,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public IModelDefinitionTypeInfo getTypeInfo(@NonNull IFlagContainer definition) {
+  public IModelDefinitionTypeInfo getTypeInfo(@NonNull IModelDefinition definition) {
     IModelDefinitionTypeInfo retval;
     if (definition instanceof IAssemblyDefinition) {
       retval = getTypeInfo((IAssemblyDefinition) definition);
@@ -112,13 +112,13 @@ class DefaultTypeResolver implements ITypeResolver {
 
   @Override
   public IGroupedNamedModelInstanceTypeInfo getTypeInfo(
-      @NonNull IGroupedNamedModelInstance modelInstance,
+      @NonNull INamedModelInstanceGrouped modelInstance,
       @NonNull IChoiceGroupTypeInfo choiceGroupTypeInfo) {
     IGroupedNamedModelInstanceTypeInfo retval;
-    if (modelInstance instanceof IGroupedAssemblyInstance) {
-      retval = getTypeInfo((IGroupedAssemblyInstance) modelInstance, choiceGroupTypeInfo);
-    } else if (modelInstance instanceof IGroupedFieldInstance) {
-      retval = getTypeInfo((IGroupedFieldInstance) modelInstance, choiceGroupTypeInfo);
+    if (modelInstance instanceof IAssemblyInstanceGrouped) {
+      retval = getTypeInfo((IAssemblyInstanceGrouped) modelInstance, choiceGroupTypeInfo);
+    } else if (modelInstance instanceof IFieldInstanceGrouped) {
+      retval = getTypeInfo((IFieldInstanceGrouped) modelInstance, choiceGroupTypeInfo);
     } else {
       throw new IllegalStateException(String.format("Unknown type '%s'",
           modelInstance.getClass().getName()));
@@ -126,28 +126,30 @@ class DefaultTypeResolver implements ITypeResolver {
     return retval;
   }
 
+  @NonNull
   private static IGroupedAssemblyInstanceTypeInfo getTypeInfo(
-      @NonNull IGroupedAssemblyInstance modelInstance,
+      @NonNull IAssemblyInstanceGrouped modelInstance,
       @NonNull IChoiceGroupTypeInfo choiceGroupTypeInfo) {
     return new GroupedAssemblyInstanceTypeInfo(modelInstance, choiceGroupTypeInfo);
   }
 
+  @NonNull
   private static IGroupedFieldInstanceTypeInfo getTypeInfo(
-      @NonNull IGroupedFieldInstance modelInstance,
+      @NonNull IFieldInstanceGrouped modelInstance,
       @NonNull IChoiceGroupTypeInfo choiceGroupTypeInfo) {
     return new GroupedFieldInstanceTypeInfo(modelInstance, choiceGroupTypeInfo);
   }
 
   @NonNull
   private ClassName getFlagContainerClassName(
-      @NonNull IFlagContainer definition,
+      @NonNull IModelDefinition definition,
       @NonNull String packageName,
       @NonNull String suggestedClassName) {
     ClassName retval;
     if (definition.isInline()) {
       // this is a local definition, which means a child class needs to be generated
-      INamedModelInstanceBase inlineInstance = definition.getInlineInstance();
-      IFlagContainer parentDefinition = inlineInstance.getContainingDefinition();
+      INamedInstance inlineInstance = definition.getInlineInstance();
+      IModelDefinition parentDefinition = inlineInstance.getContainingDefinition();
       ClassName parentClassName = getClassName(parentDefinition);
       retval = getSubclassName(parentClassName, suggestedClassName, definition);
     } else {
@@ -161,7 +163,7 @@ class DefaultTypeResolver implements ITypeResolver {
   public ClassName getSubclassName(
       @NonNull ClassName parentClass,
       @NonNull String suggestedClassName,
-      @NonNull IFlagContainer definition) {
+      @NonNull IModelDefinition definition) {
     String name = generateClassName(
         ObjectUtils.notNull(parentClass.canonicalName()),
         ClassUtils.toClassName(suggestedClassName),
@@ -171,7 +173,7 @@ class DefaultTypeResolver implements ITypeResolver {
 
   @Override
   @NonNull
-  public ClassName getClassName(@NonNull IFlagContainer definition) {
+  public ClassName getClassName(@NonNull IModelDefinition definition) {
     return ObjectUtils.notNull(definitionToTypeMap.computeIfAbsent(
         definition,
         (def) -> {
@@ -228,8 +230,9 @@ class DefaultTypeResolver implements ITypeResolver {
   private String generateClassName(
       @NonNull String packageOrTypeName,
       @NonNull String suggestedClassName,
-      @NonNull IFlagContainer definition) {
-    @NonNull String retval = suggestedClassName;
+      @NonNull IModelDefinition definition) {
+    @NonNull
+    String retval = suggestedClassName;
     Set<String> classNames = getClassNamesFor(packageOrTypeName);
     synchronized (classNames) {
       boolean clash = false;
@@ -260,7 +263,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public ClassName getBaseClassName(IFlagContainer definition) {
+  public ClassName getBaseClassName(IModelDefinition definition) {
     String className = bindingConfiguration.getQualifiedBaseClassName(definition);
     ClassName retval = null;
     if (className != null) {

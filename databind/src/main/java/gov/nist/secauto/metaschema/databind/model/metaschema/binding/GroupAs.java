@@ -33,8 +33,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.AllowedValues;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Override;
-import java.lang.String;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -49,14 +48,14 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class GroupAs {
   @BoundFlag(
       formalName = "Grouping Name",
-      useName = "name",
+      name = "name",
       required = true,
       typeAdapter = TokenAdapter.class)
   private String _name;
 
   @BoundFlag(
       formalName = "In JSON Grouping Syntax",
-      useName = "in-json",
+      name = "in-json",
       defaultValue = "SINGLETON_OR_ARRAY",
       typeAdapter = TokenAdapter.class,
       valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
@@ -69,7 +68,7 @@ public class GroupAs {
 
   @BoundFlag(
       formalName = "In XML Grouping Syntax",
-      useName = "in-xml",
+      name = "in-xml",
       defaultValue = "UNGROUPED",
       typeAdapter = TokenAdapter.class,
       valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,

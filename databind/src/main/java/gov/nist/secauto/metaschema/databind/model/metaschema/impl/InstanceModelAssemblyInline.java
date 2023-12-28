@@ -28,61 +28,90 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AssemblyModelContainerSupport;
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
-import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
-import gov.nist.secauto.metaschema.core.model.IStandardModelContainerSupport;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
+import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingContainerModelAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelNamedAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceBinding;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceGroupBinding;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyConstraints;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.InlineDefineAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.JsonKey;
 
 import java.math.BigInteger;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelAssemblyInline
-    extends AbstractInstanceModel<InlineDefineAssembly, IModelContainer>
-    implements IAssemblyInstance, IAssemblyDefinition,
-    IFeatureInlinedDefinition<IAssemblyDefinition, IAssemblyInstance>,
-    IFeatureStandardModelContainer,
-    IFeatureFlagContainer<IFlagInstance> {
+    extends AbstractInstanceModelNamedInline<
+        InlineDefineAssembly,
+        IBindingDefinitionAssembly,
+        IBindingInstanceModelAssemblyAbsolute,
+        IBindingContainerModelAbsolute>
+    implements IBindingInstanceModelAssemblyAbsolute, IBindingDefinitionAssembly,
+    IFeatureBindingContainerModelAssembly {
   @NonNull
-  private final Map<QName, Set<String>> properties;
+  private final Lazy<IContainerFlagSupport<IBindingInstanceFlag>> flagContainer;
   @NonNull
-  private final Lazy<FlagContainerSupport> flagContainer;
-  @NonNull
-  private final Lazy<IStandardModelContainerSupport> modelContainer;
+  private final Lazy<IContainerModelAssemblySupport<
+      IBindingInstanceModelAbsolute,
+      IBindingInstanceModelNamedAbsolute,
+      IBindingInstanceModelFieldAbsolute,
+      IBindingInstanceModelAssemblyAbsolute,
+      IInstanceModelChoiceBinding,
+      IInstanceModelChoiceGroupBinding>> modelContainer;
   @NonNull
   private final Lazy<IModelConstrained> modelConstraints;
 
+  /**
+   * Construct a new assembly instance that defines the assembly inline.
+   *
+   * @param binding
+   *          the assembly reference instance object bound to a Java class
+   * @param bindingInstance
+   *          the Metaschema module instance for the bound object
+   * @param position
+   *          the zero-based position of this bound object relative to its bound
+   *          object siblings
+   * @param parent
+   *          the assembly definition containing this binding
+   * @param nodeItemFactory
+   *          the node item factory used to generate child nodes
+   */
   public InstanceModelAssemblyInline(
       @NonNull InlineDefineAssembly binding,
-      @NonNull IModelContainer parent) {
-    super(binding, parent);
-    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
-    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(binding.getFlags(), this)));
-    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      AssemblyModel model = binding.getModel();
-
-      return model == null
-          ? new AssemblyModelContainerSupport()
-          : new BindingModelContainerSupport(model, this);
-    }));
+      @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
+      int position,
+      @NonNull IBindingContainerModelAbsolute parent,
+      @NonNull INodeItemFactory nodeItemFactory) {
+    super(binding,
+        bindingInstance,
+        position,
+        parent,
+        ObjectUtils.requireNonNull(binding.getProps()),
+        binding.getGroupAs());
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> FlagContainerSupport.of(
+        binding.getFlags(),
+        bindingInstance,
+        this)));
+    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> AssemblyModelContainerSupport.of(
+        binding.getModel(),
+        ObjectUtils.requireNonNull(bindingInstance.getDefinition().getAssemblyInstanceByName("model")),
+        this,
+        nodeItemFactory)));
     this.modelConstraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IModelConstrained retval = new AssemblyConstraintSet();
       AssemblyConstraints constraints = getBinding().getConstraint();
@@ -96,13 +125,20 @@ public class InstanceModelAssemblyInline
     }));
   }
 
+  @SuppressWarnings("null")
   @Override
-  public FlagContainerSupport getFlagContainer() {
-    return ObjectUtils.notNull(flagContainer.get());
+  public IContainerFlagSupport<IBindingInstanceFlag> getFlagContainer() {
+    return flagContainer.get();
   }
 
   @Override
-  public IStandardModelContainerSupport getModelContainer() {
+  public IContainerModelAssemblySupport<
+      IBindingInstanceModelAbsolute,
+      IBindingInstanceModelNamedAbsolute,
+      IBindingInstanceModelFieldAbsolute,
+      IBindingInstanceModelAssemblyAbsolute,
+      IInstanceModelChoiceBinding,
+      IInstanceModelChoiceGroupBinding> getModelContainer() {
     return ObjectUtils.notNull(modelContainer.get());
   }
 
@@ -112,18 +148,13 @@ public class InstanceModelAssemblyInline
   }
 
   @Override
-  public IAssemblyDefinition getDefinition() {
+  public IBindingDefinitionAssembly getDefinition() {
     return this;
   }
 
   @Override
-  public IAssemblyInstance getInlineInstance() {
+  public IBindingInstanceModelAssemblyAbsolute getInlineInstance() {
     return this;
-  }
-
-  @Override
-  public Map<QName, Set<String>> getProperties() {
-    return properties;
   }
 
   @Override
@@ -152,6 +183,12 @@ public class InstanceModelAssemblyInline
   }
 
   @Override
+  public String getJsonKeyFlagName() {
+    JsonKey jsonKey = getBinding().getJsonKey();
+    return jsonKey == null ? null : jsonKey.getFlagRef();
+  }
+
+  @Override
   public int getMinOccurs() {
     BigInteger min = getBinding().getMinOccurs();
     return min == null ? MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
@@ -163,22 +200,5 @@ public class InstanceModelAssemblyInline
     return max == null
         ? MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS
         : ModelSupport.maxOccurs(max);
-  }
-
-  @Override
-  public boolean isRoot() {
-    return getRootName() != null || getRootIndex() != null;
-  }
-
-  @Override
-  public String getRootName() {
-    // inline assemblies are never a root
-    return null;
-  }
-
-  @Override
-  public Integer getRootIndex() {
-    // inline assemblies are never a root
-    return null;
   }
 }

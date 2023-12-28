@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.databind;
 
 import gov.nist.secauto.metaschema.databind.IBindingContext.IBindingMatcher;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 
 import javax.xml.namespace.QName;
 
@@ -35,14 +35,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 class RootAssemblyBindingMatcher implements IBindingMatcher {
   @NonNull
-  private final IBoundDefinitionAssembly definition;
+  private final IBoundDefinitionModelAssembly definition;
 
   public RootAssemblyBindingMatcher(
-      @NonNull IBoundDefinitionAssembly definition) {
+      @NonNull IBoundDefinitionModelAssembly definition) {
     this.definition = definition;
   }
 
-  protected IBoundDefinitionAssembly getDefinition() {
+  protected IBoundDefinitionModelAssembly getDefinition() {
     return definition;
   }
 

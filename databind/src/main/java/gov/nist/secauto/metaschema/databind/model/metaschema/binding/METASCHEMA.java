@@ -82,7 +82,7 @@ public class METASCHEMA {
   @BoundFlag(
       formalName = "Is Abstract?",
       description = "Determines if the Metaschema module is abstract ('yes') or not ('no').",
-      useName = "abstract",
+      name = "abstract",
       defaultValue = "no",
       typeAdapter = TokenAdapter.class,
       valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
@@ -273,20 +273,20 @@ public class METASCHEMA {
   public static class DefineAssembly {
     @BoundFlag(
         formalName = "Global Assembly Name",
-        useName = "name",
+        name = "name",
         required = true,
         typeAdapter = TokenAdapter.class)
     private String _name;
 
     @BoundFlag(
         formalName = "Global Assembly Binary Name",
-        useName = "index",
+        name = "index",
         typeAdapter = PositiveIntegerAdapter.class)
     private BigInteger _index;
 
     @BoundFlag(
         formalName = "Definition Scope",
-        useName = "scope",
+        name = "scope",
         defaultValue = "global",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
@@ -298,7 +298,7 @@ public class METASCHEMA {
 
     @BoundFlag(
         formalName = "Deprecated Version",
-        useName = "deprecated",
+        name = "deprecated",
         typeAdapter = StringAdapter.class)
     private String _deprecated;
 
@@ -569,7 +569,7 @@ public class METASCHEMA {
       @BoundFlag(
           formalName = "Numeric Index",
           description = "Used for binary formats instead of the textual name.",
-          useName = "index",
+          name = "index",
           typeAdapter = NonNegativeIntegerAdapter.class)
       private BigInteger _index;
 
@@ -608,20 +608,20 @@ public class METASCHEMA {
   public static class DefineFlag {
     @BoundFlag(
         formalName = "Global Flag Name",
-        useName = "name",
+        name = "name",
         required = true,
         typeAdapter = TokenAdapter.class)
     private String _name;
 
     @BoundFlag(
         formalName = "Global Flag Binary Name",
-        useName = "index",
+        name = "index",
         typeAdapter = PositiveIntegerAdapter.class)
     private BigInteger _index;
 
     @BoundFlag(
         formalName = "Definition Scope",
-        useName = "scope",
+        name = "scope",
         defaultValue = "global",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
@@ -633,13 +633,13 @@ public class METASCHEMA {
 
     @BoundFlag(
         formalName = "Deprecated Version",
-        useName = "deprecated",
+        name = "deprecated",
         typeAdapter = StringAdapter.class)
     private String _deprecated;
 
     @BoundFlag(
         formalName = "Flag Value Data Type",
-        useName = "as-type",
+        name = "as-type",
         defaultValue = "string",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
@@ -665,7 +665,7 @@ public class METASCHEMA {
 
     @BoundFlag(
         formalName = "Default Flag Value",
-        useName = "default",
+        name = "default",
         typeAdapter = StringAdapter.class)
     private String _default;
 
@@ -895,7 +895,7 @@ public class METASCHEMA {
     @BoundFlag(
         formalName = "Import URI Reference",
         description = "A relative or absolute URI for retrieving an out-of-line Metaschema definition.",
-        useName = "href",
+        name = "href",
         required = true,
         typeAdapter = UriReferenceAdapter.class)
     private URI _href;
@@ -921,20 +921,20 @@ public class METASCHEMA {
   public static class DefineField {
     @BoundFlag(
         formalName = "Global Field Name",
-        useName = "name",
+        name = "name",
         required = true,
         typeAdapter = TokenAdapter.class)
     private String _name;
 
     @BoundFlag(
         formalName = "Global Field Binary Name",
-        useName = "index",
+        name = "index",
         typeAdapter = PositiveIntegerAdapter.class)
     private BigInteger _index;
 
     @BoundFlag(
         formalName = "Definition Scope",
-        useName = "scope",
+        name = "scope",
         defaultValue = "global",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
@@ -946,13 +946,13 @@ public class METASCHEMA {
 
     @BoundFlag(
         formalName = "Deprecated Version",
-        useName = "deprecated",
+        name = "deprecated",
         typeAdapter = StringAdapter.class)
     private String _deprecated;
 
     @BoundFlag(
         formalName = "Field Value Data Type",
-        useName = "as-type",
+        name = "as-type",
         defaultValue = "string",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
@@ -979,7 +979,7 @@ public class METASCHEMA {
 
     @BoundFlag(
         formalName = "Default Field Value",
-        useName = "default",
+        name = "default",
         typeAdapter = StringAdapter.class)
     private String _default;
 

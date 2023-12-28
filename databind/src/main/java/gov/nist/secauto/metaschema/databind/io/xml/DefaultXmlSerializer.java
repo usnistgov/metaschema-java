@@ -32,7 +32,7 @@ import com.ctc.wstx.stax.WstxOutputFactory;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.databind.io.SerializationFeature;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 
 import org.codehaus.stax2.XMLOutputFactory2;
 import org.codehaus.stax2.XMLStreamWriter2;
@@ -57,7 +57,7 @@ public class DefaultXmlSerializer<CLASS>
    *          the bound Module assembly definition that describes the data to
    *          serialize
    */
-  public DefaultXmlSerializer(@NonNull IBoundDefinitionAssembly definition) {
+  public DefaultXmlSerializer(@NonNull IBoundDefinitionModelAssembly definition) {
     super(definition);
   }
 
@@ -117,7 +117,7 @@ public class DefaultXmlSerializer<CLASS>
   public void serialize(CLASS data, Writer writer) throws IOException {
     XMLStreamWriter2 streamWriter = newXMLStreamWriter(writer);
     IOException caughtException = null;
-    IBoundDefinitionAssembly definition = getDefinition();
+    IBoundDefinitionModelAssembly definition = getDefinition();
 
     MetaschemaXmlWriter xmlGenerator = new MetaschemaXmlWriter(streamWriter);
 

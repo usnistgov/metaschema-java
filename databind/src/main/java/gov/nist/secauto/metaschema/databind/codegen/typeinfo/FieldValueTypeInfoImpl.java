@@ -35,7 +35,7 @@ import com.squareup.javapoet.TypeSpec;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 
@@ -65,7 +65,7 @@ class FieldValueTypeInfoImpl
   }
 
   @Override
-  protected Set<IFlagContainer> buildField(
+  protected Set<IModelDefinition> buildField(
       TypeSpec.Builder typeBuilder,
       FieldSpec.Builder fieldBuilder) {
 
@@ -88,7 +88,7 @@ class FieldValueTypeInfoImpl
       fieldValue.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
     }
 
-    Set<IFlagContainer> retval = super.buildField(typeBuilder, fieldBuilder);
+    Set<IModelDefinition> retval = super.buildField(typeBuilder, fieldBuilder);
 
     fieldBuilder.addAnnotation(fieldValue.build());
     return retval;

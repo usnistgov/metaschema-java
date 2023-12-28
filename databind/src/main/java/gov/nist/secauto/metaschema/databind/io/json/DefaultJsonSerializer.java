@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.databind.io.SerializationFeature;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -53,7 +53,7 @@ public class DefaultJsonSerializer<CLASS>
    *          the assembly class binding describing the Java objects this
    *          deserializer parses data into
    */
-  public DefaultJsonSerializer(@NonNull IBoundDefinitionAssembly definition) {
+  public DefaultJsonSerializer(@NonNull IBoundDefinitionModelAssembly definition) {
     super(definition);
   }
 
@@ -100,7 +100,7 @@ public class DefaultJsonSerializer<CLASS>
   @Override
   public void serialize(CLASS data, Writer writer) throws IOException {
     try (JsonGenerator generator = newJsonGenerator(writer)) {
-      IBoundDefinitionAssembly definition = getDefinition();
+      IBoundDefinitionModelAssembly definition = getDefinition();
 
       boolean serializeRoot = get(SerializationFeature.SERIALIZE_ROOT);
       if (serializeRoot) {

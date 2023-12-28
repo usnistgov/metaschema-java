@@ -24,4 +24,11 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
+/**
+ * Provides an implementation of the Module model
+ * ({@link gov.nist.secauto.metaschema.core.model}) representing module
+ * constructs as bound Java class annotations
+ * ({@link gov.nist.secauto.metaschema.databind.model.annotations}).
+ */
+
 package gov.nist.secauto.metaschema.databind.model.impl;

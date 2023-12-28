@@ -45,6 +45,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
@@ -150,12 +151,8 @@ public class InstanceFlagInline
 
   @Override
   public String getName() {
-    return ObjectUtils.notNull(getField().getName());
-  }
-
-  @Override
-  public String getUseName() {
-    return ModelUtil.resolveNoneOrValue(getAnnotation().useName());
+    return ObjectUtils.notNull(
+        Optional.ofNullable(ModelUtil.resolveNoneOrValue(getAnnotation().name())).orElse(getField().getName()));
   }
 
   @Override
@@ -165,7 +162,7 @@ public class InstanceFlagInline
 
   @Override
   public String getXmlNamespace() {
-    return ModelUtil.resolveOptionalNamespace(getAnnotation().namespace(), getContainingDefinition());
+    return ModelUtil.resolveOptionalNamespace(getAnnotation().namespace());
   }
 
   @Override

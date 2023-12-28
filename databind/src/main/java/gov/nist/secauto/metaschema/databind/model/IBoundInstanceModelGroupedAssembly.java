@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * instance.
  */
 public interface IBoundInstanceModelGroupedAssembly
-    extends IBoundInstanceModelGroupedNamed, IGroupedAssemblyInstance {
+    extends IBoundInstanceModelGroupedNamed, IAssemblyInstanceGrouped {
 
   /**
    * Create a new assembly model instance instance that is a member of a choice
@@ -62,8 +62,8 @@ public interface IBoundInstanceModelGroupedAssembly
     Class<?> clazz = annotation.binding();
     IBindingContext bindingContext = container.getContainingDefinition().getBindingContext();
     IBoundDefinitionModel definition = bindingContext.getBoundDefinitionForClass(clazz);
-    if (definition instanceof IBoundDefinitionAssembly) {
-      return new InstanceModelGroupedAssembly(annotation, (IBoundDefinitionAssembly) definition, container);
+    if (definition instanceof IBoundDefinitionModelAssembly) {
+      return new InstanceModelGroupedAssembly(annotation, (IBoundDefinitionModelAssembly) definition, container);
     }
 
     Field field = container.getField();
@@ -76,7 +76,7 @@ public interface IBoundInstanceModelGroupedAssembly
   }
 
   @Override
-  IBoundDefinitionAssembly getDefinition();
+  IBoundDefinitionModelAssembly getDefinition();
 
   @Override
   default Object readItem(Object parent, @NonNull IItemReadHandler handler) throws IOException {

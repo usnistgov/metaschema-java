@@ -30,10 +30,15 @@ import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
+import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IGroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA.DefineAssembly.RootName;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Property;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Remarks;
@@ -98,8 +103,14 @@ public final class ModelSupport {
 
   @Nullable
   public static Integer useIndex(@Nullable UseName useName) {
-    BigInteger index = useName == null ? null : useName.getIndex();
-    return index == null ? null : index.intValueExact();
+    Integer retval = null;
+    if (useName != null) {
+      BigInteger index = useName.getIndex();
+      if (index != null) {
+        retval = index.intValueExact();
+      }
+    }
+    return retval;
   }
 
   @Nullable
@@ -137,7 +148,77 @@ public final class ModelSupport {
   }
 
   public static Integer rootIndex(@Nullable RootName rootName) {
-    BigInteger index = rootName == null ? null : rootName.getIndex();
-    return index == null ? null : index.intValueExact();
+    Integer retval = null;
+    if (rootName != null) {
+      BigInteger index = rootName.getIndex();
+      if (index != null) {
+        retval = index.intValueExact();
+      }
+    }
+    return retval;
+  }
+
+  public static boolean fieldInXml(@Nullable String inXml) {
+    boolean retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
+    if (inXml != null) {
+      switch (inXml) {
+      case "WRAPPED":
+      case "WITH_WRAPPER":
+        retval = true;
+        break;
+      default:
+        retval = false;
+        break;
+      }
+    }
+    return retval;
+  }
+
+  @NonNull
+  public static IGroupAs groupAs(@Nullable GroupAs groupAs) {
+    return groupAs == null
+        ? IGroupAs.SINGLETON_GROUP_AS
+        : new GroupAsImpl(groupAs);
+  }
+
+  @NonNull
+  public static JsonGroupAsBehavior groupAsJsonBehavior(@Nullable String inJson) {
+    JsonGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
+    if (inJson != null) {
+      switch (inJson) {
+      case "ARRAY":
+        retval = JsonGroupAsBehavior.LIST;
+        break;
+      case "SINGLETON_OR_ARRAY":
+        retval = JsonGroupAsBehavior.SINGLETON_OR_LIST;
+        break;
+      case "BY_KEY":
+        retval = JsonGroupAsBehavior.KEYED;
+        break;
+      default:
+        retval = MetaschemaModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
+        break;
+      }
+    }
+    return retval;
+  }
+
+  @NonNull
+  public static XmlGroupAsBehavior groupAsXmlBehavior(@Nullable String inXml) {
+    XmlGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR;
+    if (inXml != null) {
+      switch (inXml) {
+      case "GROUPED":
+        retval = XmlGroupAsBehavior.GROUPED;
+        break;
+      case "UNGROUPED":
+        retval = XmlGroupAsBehavior.UNGROUPED;
+        break;
+      default:
+        retval = MetaschemaModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR;
+        break;
+      }
+    }
+    return retval;
   }
 }

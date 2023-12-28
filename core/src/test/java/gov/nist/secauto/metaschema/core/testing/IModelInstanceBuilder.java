@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.core.testing;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -40,5 +40,5 @@ public interface IModelInstanceBuilder {
    * @return the new instance
    */
   @NonNull
-  INamedModelInstance toInstance(@NonNull IAssemblyDefinition parent);
+  INamedModelInstanceAbsolute toInstance(@NonNull IAssemblyDefinition parent);
 }

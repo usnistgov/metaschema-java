@@ -26,15 +26,16 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
-import gov.nist.secauto.metaschema.core.model.IModelInstanceBase;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingContainerModelAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractInstanceModel<BINDING, PARENT extends IModelContainer>
+public abstract class AbstractInstanceModel<BINDING, PARENT extends IBindingContainerModelAbsolute>
     extends AbstractBinding<BINDING>
-    implements IModelInstanceBase,
+    implements IBindingInstanceModelAbsolute,
     IFeatureValueless {
   @NonNull
   private final PARENT parent;
@@ -52,7 +53,12 @@ public abstract class AbstractInstanceModel<BINDING, PARENT extends IModelContai
   }
 
   @Override
-  public IAssemblyDefinition getContainingDefinition() {
+  public IBindingDefinitionAssembly getContainingDefinition() {
     return getParentContainer().getOwningDefinition();
+  }
+
+  @Override
+  public IBindingModule getContainingModule() {
+    return getContainingDefinition().getContainingModule();
   }
 }

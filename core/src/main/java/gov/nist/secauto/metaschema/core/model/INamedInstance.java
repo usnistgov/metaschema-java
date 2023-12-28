@@ -26,12 +26,124 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 /**
  * This marker interface indicates that the instance has a flag, field, or
  * assembly name associated with it which will be used in JSON/YAML or XML to
  * identify the data.
  *
  */
-public interface INamedInstance extends INamedInstanceBase, IInstance {
-  // no additional methods
+public interface INamedInstance extends IInstance, INamedModelElement {
+
+  /**
+   * Retrieve the definition of this instance.
+   *
+   * @return the corresponding definition
+   */
+  @NonNull
+  IDefinition getDefinition();
+
+  @Override
+  @NonNull
+  default String getEffectiveName() {
+    String result = getUseName();
+    if (result == null) {
+      // fall back to the definition
+      IDefinition def = getDefinition();
+      result = def.getEffectiveName();
+    }
+    return result;
+  }
+
+  @Override
+  @Nullable
+  default Integer getEffectiveIndex() {
+    Integer result = getUseIndex();
+    if (result == null) {
+      // fall back to the definition
+      IDefinition def = getDefinition();
+      result = def.getEffectiveIndex();
+    }
+    return result;
+  }
+
+  @Override
+  default String getEffectiveFormalName() {
+    String result = getFormalName();
+    return result == null ? getDefinition().getEffectiveFormalName() : result;
+  }
+
+  @Override
+  default MarkupLine getEffectiveDescription() {
+    MarkupLine result = getDescription();
+    return result == null ? getDefinition().getEffectiveDescription() : result;
+  }
+
+  /**
+   * The resolved default value, which allows an instance to override a
+   * definition's default value.
+   *
+   * @return the default value or {@code null} if not defined on either the
+   *         instance or definition
+   */
+  @Override
+  @Nullable
+  default Object getEffectiveDefaultValue() {
+    Object retval = getDefaultValue();
+    if (retval == null) {
+      retval = getDefinition().getDefaultValue();
+    }
+    return retval;
+  }
+
+  /**
+   * Get the XML qualified name to use in XML.
+   *
+   * @return the XML qualified name, or {@code null} if there isn't one
+   */
+  default QName getXmlQName() {
+    return new QName(getXmlNamespace(), getEffectiveName());
+  }
+
+  /**
+   * Retrieve the XML namespace for this instance.
+   *
+   * @return the XML namespace or {@code null} if no namespace is defined
+   */
+  default String getXmlNamespace() {
+    return getContainingModule().getXmlNamespace().toASCIIString();
+  }
+
+  /**
+   * Generates a "coordinate" string for the provided information element
+   * instance.
+   *
+   * A coordinate consists of the element's:
+   * <ul>
+   * <li>containing Metaschema module's short name</li>
+   * <li>model type</li>
+   * <li>name</li>
+   * <li>hash code</li>
+   * <li>the hash code of the definition</li>
+   * </ul>
+   *
+   * @return the coordinate
+   */
+  @SuppressWarnings("null")
+  @Override
+  default String toCoordinates() {
+    IDefinition definition = getDefinition();
+    return String.format("%s:%s:%s@%d(%d)",
+        getContainingDefinition().getContainingModule().getShortName(),
+        getModelType(),
+        definition.getName(),
+        hashCode(),
+        definition.isInline() ? 0 : definition.hashCode());
+  }
 }

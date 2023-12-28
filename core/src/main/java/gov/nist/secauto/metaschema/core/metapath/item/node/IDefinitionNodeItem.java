@@ -39,7 +39,7 @@ public interface IDefinitionNodeItem<D extends IDefinition, I extends INamedInst
    */
   @NonNull
   default String getName() {
-    INamedInstance instance = getInstance();
+    I instance = getInstance();
     return instance == null ? getDefinition().getEffectiveName() : instance.getEffectiveName();
   }
 

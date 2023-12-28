@@ -27,11 +27,12 @@
 package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
+import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -68,12 +69,12 @@ public class InstanceModelFieldComplex
   public InstanceModelFieldComplex(
       @NonNull Field javaField,
       @NonNull DefinitionField definition,
-      @NonNull IBoundDefinitionAssembly containingDefinition) {
+      @NonNull IBoundDefinitionModelAssembly containingDefinition) {
     super(javaField, containingDefinition);
     this.definition = definition;
 
-    if (!isValueWrappedInXml()) {
-      if (!definition.isSimple()) { // NOPMD efficiency
+    if (!isEffectiveValueWrappedInXml()) {
+      if (definition.hasChildren()) { // NOPMD efficiency
         throw new IllegalStateException(
             String.format("Field '%s' on class '%s' is requested to be unwrapped, but it has flags preventing this.",
                 javaField.getName(),
@@ -134,5 +135,10 @@ public class InstanceModelFieldComplex
   @Override
   public Map<String, IBoundProperty> getJsonProperties() {
     return ObjectUtils.notNull(jsonProperties.get());
+  }
+
+  @Override
+  public String getUseName() {
+    return ModelUtil.resolveNoneOrValue(getAnnotation().useName());
   }
 }

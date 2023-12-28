@@ -60,13 +60,13 @@ import java.util.List;
 public class TargetedAllowedValuesConstraint implements ITargetedConstraintBase {
   @BoundFlag(
       formalName = "Constraint Identifier",
-      useName = "id",
+      name = "id",
       typeAdapter = TokenAdapter.class)
   private String _id;
 
   @BoundFlag(
       formalName = "Constraint Severity Level",
-      useName = "level",
+      name = "level",
       defaultValue = "ERROR",
       typeAdapter = TokenAdapter.class,
       valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
@@ -82,7 +82,7 @@ public class TargetedAllowedValuesConstraint implements ITargetedConstraintBase 
 
   @BoundFlag(
       formalName = "Allow Non-Enumerated Values?",
-      useName = "allow-other",
+      name = "allow-other",
       defaultValue = "no",
       typeAdapter = TokenAdapter.class,
       valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
@@ -96,7 +96,7 @@ public class TargetedAllowedValuesConstraint implements ITargetedConstraintBase 
   @BoundFlag(
       formalName = "Allow Extension?",
       description = "Determines if the given enumerated values may be extended by other allowed value constraints.",
-      useName = "extensible",
+      name = "extensible",
       defaultValue = "external",
       typeAdapter = TokenAdapter.class,
       valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
@@ -108,7 +108,7 @@ public class TargetedAllowedValuesConstraint implements ITargetedConstraintBase 
 
   @BoundFlag(
       formalName = "Constraint Target Metapath Expression",
-      useName = "target",
+      name = "target",
       required = true,
       typeAdapter = StringAdapter.class)
   private String _target;

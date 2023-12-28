@@ -30,8 +30,7 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Override;
-import java.lang.String;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -46,14 +45,14 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class KeyConstraintField {
   @BoundFlag(
       formalName = "Key Field Value Target",
-      useName = "target",
+      name = "target",
       required = true,
       typeAdapter = StringAdapter.class)
   private String _target;
 
   @BoundFlag(
       formalName = "Key Field Value Pattern",
-      useName = "pattern",
+      name = "pattern",
       typeAdapter = StringAdapter.class)
   private String _pattern;
 

@@ -30,7 +30,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonDeserializer;
 import gov.nist.secauto.metaschema.databind.io.yaml.impl.YamlFactoryFactory;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -45,7 +45,7 @@ public class DefaultYamlDeserializer<CLASS>
    *          the bound class information for the Java type this deserializer is
    *          operating on
    */
-  public DefaultYamlDeserializer(@NonNull IBoundDefinitionAssembly definition) {
+  public DefaultYamlDeserializer(@NonNull IBoundDefinitionModelAssembly definition) {
     super(definition);
   }
 

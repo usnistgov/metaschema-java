@@ -32,7 +32,7 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
@@ -58,14 +58,14 @@ public abstract class AbstractPropertyTypeInfo<PARENT extends IDefinitionTypeInf
   }
 
   @Override
-  public Set<IFlagContainer> build(@NonNull TypeSpec.Builder builder) {
+  public Set<IModelDefinition> build(@NonNull TypeSpec.Builder builder) {
 
     TypeName javaFieldType = getJavaFieldType();
     FieldSpec.Builder field = FieldSpec.builder(javaFieldType, getJavaFieldName())
         .addModifiers(Modifier.PRIVATE);
     assert field != null;
 
-    final Set<IFlagContainer> retval = buildField(builder, field);
+    final Set<IModelDefinition> retval = buildField(builder, field);
 
     FieldSpec valueField = ObjectUtils.notNull(field.build());
     builder.addField(valueField);
@@ -109,7 +109,7 @@ public abstract class AbstractPropertyTypeInfo<PARENT extends IDefinitionTypeInf
    *          the field builder
    * @return the set of definitions used by this field
    */
-  protected Set<IFlagContainer> buildField(
+  protected Set<IModelDefinition> buildField(
       @NonNull TypeSpec.Builder typeBuilder,
       @NonNull FieldSpec.Builder fieldBuilder) {
     buildFieldJavadoc(fieldBuilder);

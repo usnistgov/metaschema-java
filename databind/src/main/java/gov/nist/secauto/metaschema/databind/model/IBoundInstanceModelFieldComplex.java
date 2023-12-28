@@ -46,10 +46,10 @@ public interface IBoundInstanceModelFieldComplex
   }
 
   @Override
-  IBoundDefinitionFieldComplex getDefinition();
+  IBoundDefinitionModelFieldComplex getDefinition();
 
   @Override
-  default boolean isValueWrappedInXml() {
+  default boolean isEffectiveValueWrappedInXml() {
     // always wrapped
     return true;
   }

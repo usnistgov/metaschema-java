@@ -47,21 +47,21 @@ import java.net.URI;
 public class Property {
   @BoundFlag(
       formalName = "Property Name",
-      useName = "name",
+      name = "name",
       required = true,
       typeAdapter = TokenAdapter.class)
   private String _name;
 
   @BoundFlag(
       formalName = "Property Namespace",
-      useName = "namespace",
+      name = "namespace",
       defaultValue = "http://csrc.nist.gov/ns/oscal/metaschema/1.0",
       typeAdapter = UriAdapter.class)
   private URI _namespace;
 
   @BoundFlag(
       formalName = "Property Value",
-      useName = "value",
+      name = "value",
       required = true,
       typeAdapter = TokenAdapter.class)
   private String _value;

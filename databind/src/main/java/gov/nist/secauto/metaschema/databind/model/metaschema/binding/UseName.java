@@ -31,11 +31,11 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import java.lang.Override;
-import java.lang.String;
-import java.math.BigInteger;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.math.BigInteger;
 
 /**
  * Allows the name of the definition to be overridden.
@@ -56,7 +56,7 @@ public class UseName {
   @BoundFlag(
       formalName = "Numeric Index",
       description = "Used for binary formats instead of the textual name.",
-      useName = "index",
+      name = "index",
       typeAdapter = NonNegativeIntegerAdapter.class)
   private BigInteger _index;
 

@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupDataTypeProvider;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IContainerFlag;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
@@ -119,7 +119,7 @@ public class XmlComplexTypeAssemblyDefinition
       break;
     case FIELD: {
       IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
-      if (fieldInstance.isValueWrappedInXml()) {
+      if (fieldInstance.isEffectiveValueWrappedInXml()) {
         generateNamedModelInstance(fieldInstance, grouped, state);
       } else {
         generateUnwrappedFieldInstance(fieldInstance, grouped, state);
@@ -160,7 +160,7 @@ public class XmlComplexTypeAssemblyDefinition
               : ObjectUtils.notNull(Integer.toString(modelInstance.getMaxOccurs())));
     }
 
-    IFlagContainer definition = modelInstance.getDefinition();
+    IContainerFlag definition = modelInstance.getDefinition();
     IXmlType type = state.getTypeForDefinition(definition);
 
     if (state.isInline(definition)) {

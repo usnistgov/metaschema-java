@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
@@ -44,7 +44,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * Represents an assembly or field instance bound to Java data.
  */
 public interface IBoundInstanceModel
-    extends IBoundInstance, IModelInstance {
+    extends IBoundInstance, IModelInstanceAbsolute {
   /**
    * Get the collection Java item type for the Java field associated with this
    * instance.
@@ -75,7 +75,7 @@ public interface IBoundInstanceModel
 
   @Override
   @NonNull
-  IBoundDefinitionAssembly getContainingDefinition();
+  IBoundDefinitionModelAssembly getContainingDefinition();
 
   @Override
   default Object getEffectiveDefaultValue() {

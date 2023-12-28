@@ -27,42 +27,72 @@
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AssemblyModelContainerSupport;
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
-import gov.nist.secauto.metaschema.core.model.IStandardModelContainerSupport;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
+import gov.nist.secauto.metaschema.core.model.IContainerModelSupport;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelNamedAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceBinding;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel.Choice;
-
-import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelChoice
-    extends AbstractInstanceModel<Choice, IAssemblyDefinition>
-    implements IChoiceInstance,
-    IFeatureStandardModelContainer {
+    extends AbstractInstanceModel<Choice, IBindingDefinitionAssembly>
+    implements IInstanceModelChoiceBinding,
+    IFeatureBindingContainerModel {
   @NonNull
-  private final Lazy<IStandardModelContainerSupport> modelContainer;
+  private final Lazy<IContainerModelSupport<
+      IBindingInstanceModelAbsolute,
+      IBindingInstanceModelNamedAbsolute,
+      IBindingInstanceModelFieldAbsolute,
+      IBindingInstanceModelAssemblyAbsolute>> modelContainer;
+  @NonNull
+  private final Lazy<IAssemblyNodeItem> boundNodeItem;
 
   public InstanceModelChoice(
       @NonNull Choice binding,
-      @NonNull IAssemblyDefinition parent) {
+      @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
+      int position,
+      @NonNull IBindingDefinitionAssembly parent,
+      @NonNull INodeItemFactory nodeItemFactory) {
     super(binding, parent);
-    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      List<Object> choices = binding.getChoices();
-
-      return choices == null || choices.isEmpty()
-          ? new AssemblyModelContainerSupport()
-          : new BindingModelContainerSupport(choices, this);
-    }));
+    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> ChoiceModelContainerSupport.of(
+        binding,
+        bindingInstance,
+        this,
+        nodeItemFactory)));
+    this.boundNodeItem = ObjectUtils.notNull(
+        Lazy.lazy(() -> (IAssemblyNodeItem) getContainingDefinition().getBoundNodeItem()
+            .getModelItemsByName(bindingInstance.getEffectiveName())
+            .get(position)));
   }
 
   @Override
-  public IStandardModelContainerSupport getModelContainer() {
+  public IContainerModelSupport<
+      IBindingInstanceModelAbsolute,
+      IBindingInstanceModelNamedAbsolute,
+      IBindingInstanceModelFieldAbsolute,
+      IBindingInstanceModelAssemblyAbsolute> getModelContainer() {
     return ObjectUtils.notNull(modelContainer.get());
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public INodeItem getBoundNodeItem() {
+    return boundNodeItem.get();
+  }
+
+  @Override
+  public IBindingDefinitionAssembly getOwningDefinition() {
+    return getContainingDefinition();
   }
 
   @Override

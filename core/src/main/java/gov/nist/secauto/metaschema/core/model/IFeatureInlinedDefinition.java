@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.model;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * A trait indicating that the implementation is a localized definition that is
@@ -39,10 +40,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @param <INSTANCE>
  *          the associated instance Java type
  */
-public interface IFeatureInlinedDefinition<DEFINITION extends IDefinition, INSTANCE extends INamedInstanceBase>
-    extends IDefinition, INamedInstanceBase {
+public interface IFeatureInlinedDefinition<DEFINITION extends IDefinition, INSTANCE extends INamedInstance>
+    extends IDefinition, INamedInstance {
   @Override
   default boolean isInline() {
+    // has to be inline
     return true;
   }
 
@@ -75,9 +77,16 @@ public interface IFeatureInlinedDefinition<DEFINITION extends IDefinition, INSTA
   }
 
   @Override
-  default String toCoordinates() {
-    // Ensure classes that implement INamedInstance and IDefinition use this
-    return INamedInstanceBase.super.toCoordinates();
+  @Nullable
+  default Object getEffectiveDefaultValue() {
+    // This is an inline instance that is both a definition and an instance. Don't
+    // delegate to the definition, since this would be redundant.
+    return getDefaultValue();
   }
 
+  @Override
+  default String toCoordinates() {
+    // Ensure classes that implement INamedInstance and IDefinition use this
+    return INamedInstance.super.toCoordinates();
+  }
 }

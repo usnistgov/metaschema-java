@@ -30,8 +30,8 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 
 import java.util.Set;
@@ -45,7 +45,7 @@ public interface IModelInstanceTypeInfo extends IInstanceTypeInfo {
   IAssemblyDefinitionTypeInfo getParentTypeInfo();
 
   @Override
-  IModelInstance getInstance();
+  IModelInstanceAbsolute getInstance();
 
   /**
    * Generate the Metaschema binding annotation for this instance.
@@ -62,7 +62,7 @@ public interface IModelInstanceTypeInfo extends IInstanceTypeInfo {
    * @return a builder for the annotation
    */
   @NonNull
-  Set<IFlagContainer> buildBindingAnnotation(
+  Set<IModelDefinition> buildBindingAnnotation(
       @NonNull TypeSpec.Builder typeBuilder,
       @NonNull FieldSpec.Builder fieldBuilder,
       @NonNull AnnotationSpec.Builder annotation);

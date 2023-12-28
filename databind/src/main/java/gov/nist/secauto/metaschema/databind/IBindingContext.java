@@ -48,8 +48,8 @@ import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
 import gov.nist.secauto.metaschema.databind.io.IDeserializer;
 import gov.nist.secauto.metaschema.databind.io.ISerializer;
 import gov.nist.secauto.metaschema.databind.io.yaml.YamlOperations;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
@@ -96,7 +96,7 @@ public interface IBindingContext {
    * @return the matcher
    */
   @NonNull
-  IBindingMatcher registerBindingMatcher(@NonNull IBoundDefinitionAssembly definition);
+  IBindingMatcher registerBindingMatcher(@NonNull IBoundDefinitionModelAssembly definition);
 
   /**
    * Register a matcher used to identify a bound class by the definition's root
@@ -459,7 +459,7 @@ public interface IBindingContext {
   interface IBindingMatcher {
     @SuppressWarnings("PMD.ShortMethodName")
     @NonNull
-    static IBindingMatcher of(IBoundDefinitionAssembly assembly) {
+    static IBindingMatcher of(IBoundDefinitionModelAssembly assembly) {
       if (!assembly.isRoot()) {
         throw new IllegalArgumentException(
             String.format("The provided class '%s' is not a root assembly.", assembly.getBoundClass().getName()));

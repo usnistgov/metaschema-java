@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
@@ -297,7 +298,29 @@ public interface INodeItemFactory {
    *          the parent node item
    * @param position
    *          the data item's position in the sequence of data items for the
-   *          instance
+   *          instance, which is {@code 0} based
+   * @param value
+   *          the data item's value
+   * @return the new assembly node item
+   */
+  @NonNull
+  IAssemblyNodeItem newAssemblyNodeItem(
+      @NonNull IAssemblyInstanceGrouped instance,
+      @NonNull IAssemblyNodeItem parent,
+      int position,
+      @NonNull Object value);
+
+  /**
+   * Create a new {@link IAssemblyNodeItem} that is based on a Metaschema instance
+   * with associated data.
+   *
+   * @param instance
+   *          the Metaschema assembly instance
+   * @param parent
+   *          the parent node item
+   * @param position
+   *          the data item's position in the sequence of data items for the
+   *          instance, which is {@code 0} based
    * @param value
    *          the data item's value
    * @return the new assembly node item

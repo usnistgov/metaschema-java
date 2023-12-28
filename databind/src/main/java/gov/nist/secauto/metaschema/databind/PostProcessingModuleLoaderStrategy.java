@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind;
 
-import gov.nist.secauto.metaschema.core.model.IModulePostProcessor;
+import gov.nist.secauto.metaschema.core.model.IModuleLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundModule;
@@ -41,18 +41,18 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 class PostProcessingModuleLoaderStrategy
     extends SimpleModuleLoaderStrategy {
   @NonNull
-  private final List<IModulePostProcessor> modulePostProcessors;
+  private final List<IModuleLoader.IModulePostProcessor> modulePostProcessors;
   private final Set<IBoundModule> resolvedModules = new HashSet<>();
 
   protected PostProcessingModuleLoaderStrategy(
       @NonNull IBindingContext bindingContext,
-      @NonNull List<IModulePostProcessor> modulePostProcessors) {
+      @NonNull List<IModuleLoader.IModulePostProcessor> modulePostProcessors) {
     super(bindingContext);
     this.modulePostProcessors = CollectionUtil.unmodifiableList(new ArrayList<>(modulePostProcessors));
   }
 
   @NonNull
-  protected List<IModulePostProcessor> getModulePostProcessors() {
+  protected List<IModuleLoader.IModulePostProcessor> getModulePostProcessors() {
     return modulePostProcessors;
   }
 
@@ -74,7 +74,7 @@ class PostProcessingModuleLoaderStrategy
   }
 
   private void handleModule(@NonNull IBoundModule module) {
-    for (IModulePostProcessor postProcessor : getModulePostProcessors()) {
+    for (IModuleLoader.IModulePostProcessor postProcessor : getModulePostProcessors()) {
       postProcessor.processModule(module);
     }
   }

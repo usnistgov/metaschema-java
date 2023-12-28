@@ -43,14 +43,13 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssemb
 import gov.nist.secauto.metaschema.databind.model.annotations.Matches;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Object;
-import java.lang.Override;
-import java.lang.String;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -63,33 +62,33 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class InlineDefineAssembly {
   @BoundFlag(
       formalName = "Inline Assembly Name",
-      useName = "name",
+      name = "name",
       required = true,
       typeAdapter = TokenAdapter.class)
   private String _name;
 
   @BoundFlag(
       formalName = "Inline Assembly Binary Name",
-      useName = "index",
+      name = "index",
       typeAdapter = PositiveIntegerAdapter.class)
   private BigInteger _index;
 
   @BoundFlag(
       formalName = "Deprecated Version",
-      useName = "deprecated",
+      name = "deprecated",
       typeAdapter = StringAdapter.class)
   private String _deprecated;
 
   @BoundFlag(
       formalName = "Minimum Occurrence",
-      useName = "min-occurs",
+      name = "min-occurs",
       defaultValue = "0",
       typeAdapter = NonNegativeIntegerAdapter.class)
   private BigInteger _minOccurs;
 
   @BoundFlag(
       formalName = "Maximum Occurrence",
-      useName = "max-occurs",
+      name = "max-occurs",
       defaultValue = "1",
       typeAdapter = StringAdapter.class,
       valueConstraints = @ValueConstraints(

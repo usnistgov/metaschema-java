@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
@@ -77,12 +77,12 @@ final class MetaschemaJsonUtil {
     int flagCount = flags.size() - (jsonKey == null ? 0 : 1);
 
     @SuppressWarnings("resource") Stream<? extends IBoundProperty> instanceStream;
-    if (targetDefinition instanceof IBoundDefinitionAssembly) {
+    if (targetDefinition instanceof IBoundDefinitionModelAssembly) {
       // use all child instances
-      instanceStream = ((IBoundDefinitionAssembly) targetDefinition).getModelInstances().stream()
+      instanceStream = ((IBoundDefinitionModelAssembly) targetDefinition).getModelInstances().stream()
           .map(instance -> (IBoundProperty) instance);
-    } else if (targetDefinition instanceof IBoundDefinitionFieldComplex) {
-      IBoundDefinitionFieldComplex targetFieldDefinition = (IBoundDefinitionFieldComplex) targetDefinition;
+    } else if (targetDefinition instanceof IBoundDefinitionModelFieldComplex) {
+      IBoundDefinitionModelFieldComplex targetFieldDefinition = (IBoundDefinitionModelFieldComplex) targetDefinition;
 
       IBoundInstanceFlag jsonValueKeyFlag = targetFieldDefinition.getJsonValueKeyFlagInstance();
       if (jsonValueKeyFlag == null && flagCount > 0) {

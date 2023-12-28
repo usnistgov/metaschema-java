@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
@@ -51,7 +51,7 @@ public class InstanceModelGroupedAssembly
     extends AbstractBoundInstanceModelGroupedNamed<BoundGroupedAssembly>
     implements IBoundInstanceModelGroupedAssembly {
   @NonNull
-  private final IBoundDefinitionAssembly definition;
+  private final IBoundDefinitionModelAssembly definition;
   @NonNull
   private final Lazy<Map<String, IBoundProperty>> jsonProperties;
 
@@ -68,7 +68,7 @@ public class InstanceModelGroupedAssembly
    */
   public InstanceModelGroupedAssembly(
       @NonNull BoundGroupedAssembly annotation,
-      @NonNull IBoundDefinitionAssembly definition,
+      @NonNull IBoundDefinitionModelAssembly definition,
       @NonNull IBoundInstanceModelChoiceGroup container) {
     super(annotation, container);
     this.definition = definition;
@@ -89,7 +89,7 @@ public class InstanceModelGroupedAssembly
   }
 
   @Override
-  public IBoundDefinitionAssembly getDefinition() {
+  public IBoundDefinitionModelAssembly getDefinition() {
     return definition;
   }
 

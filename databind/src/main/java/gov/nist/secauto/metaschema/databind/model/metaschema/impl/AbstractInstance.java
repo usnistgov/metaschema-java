@@ -26,30 +26,37 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstance;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractInstance<BINDING>
     extends AbstractBinding<BINDING>
-    implements IFeatureValueless {
+    implements IBindingInstance, IFeatureValueless {
   @NonNull
-  private final IFlagContainer parent;
+  private final IBindingDefinitionModel parent;
 
   protected AbstractInstance(
       @NonNull BINDING binding,
-      @NonNull IFlagContainer parent) {
+      @NonNull IBindingDefinitionModel parent) {
     super(binding);
     this.parent = parent;
   }
 
   @Override
-  public IFlagContainer getParentContainer() {
+  public IBindingDefinitionModel getParentContainer() {
     return parent;
   }
 
   @Override
-  public IFlagContainer getContainingDefinition() {
-    return getParentContainer().getOwningDefinition();
+  public IBindingDefinitionModel getContainingDefinition() {
+    return parent;
+  }
+
+  @Override
+  public IBindingModule getContainingModule() {
+    return getContainingDefinition().getContainingModule();
   }
 }

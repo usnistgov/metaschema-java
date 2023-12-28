@@ -49,8 +49,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * Represents a flag instance bound to Java data.
  */
 public interface IBoundInstanceFlag
-    extends IFlagInstance, IBoundDefinitionFlag, IBoundInstance,
-    IFeatureScalarItemValueHandler {
+    extends IFlagInstance, IBoundDefinitionFlag,
+    IFeatureScalarItemValueHandler,
+    IFeatureBoundDefinitionInline<IBoundDefinitionFlag, IBoundInstanceFlag> {
 
   /**
    * Create a new bound flag instance.
@@ -99,56 +100,10 @@ public interface IBoundInstanceFlag
   }
 
   @Override
-  default boolean isInline() {
-    return true;
-  }
-
-  @Override
   @NonNull
   default IBoundInstanceFlag getInlineInstance() {
+    // always inline
     return this;
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * This is an inline instance that is both a definition and an instance. Don't
-   * delegate to the definition, since this would be redundant.
-   */
-  @Override
-  @NonNull
-  default String getEffectiveName() {
-    String useName = getUseName();
-    return useName == null ? getName() : useName;
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Use the effective name of the instance.
-   */
-  @Override
-  @NonNull
-  default String getJsonName() {
-    return IFlagInstance.super.getJsonName();
-  }
-
-  @Override
-  @NonNull
-  default IBoundModule getContainingModule() {
-    return IBoundInstance.super.getContainingModule();
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * This is an inline instance that is both a definition and an instance. Don't
-   * delegate to the definition, since this would be redundant.
-   */
-  @Override
-  @Nullable
-  default Object getEffectiveDefaultValue() {
-    return getDefaultValue();
   }
 
   /**
@@ -186,7 +141,7 @@ public interface IBoundInstanceFlag
   @Override
   @Nullable
   default Object getValue(@NonNull Object parent) {
-    return IBoundInstance.super.getValue(parent);
+    return IFeatureBoundDefinitionInline.super.getValue(parent);
   }
 
   /**
@@ -196,7 +151,7 @@ public interface IBoundInstanceFlag
    */
   @Override
   default void setValue(@NonNull Object parentObject, @Nullable Object value) {
-    IBoundInstance.super.setValue(parentObject, value);
+    IFeatureBoundDefinitionInline.super.setValue(parentObject, value);
   }
 
   @Override

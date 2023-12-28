@@ -29,55 +29,61 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingContainerModelAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModelField;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldAbsolute;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FieldConstraints;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.InlineDefineField;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.JsonKey;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.JsonValueKeyFlag;
 
 import java.math.BigInteger;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelFieldInline
-    extends AbstractInstanceModel<InlineDefineField, IModelContainer>
-    implements IFieldInstance, IFieldDefinition,
-    IFeatureInlinedDefinition<IFieldDefinition, IFieldInstance>,
-    IFeatureFlagContainer<IFlagInstance> {
-  @NonNull
-  private final Map<QName, Set<String>> properties;
+    extends AbstractInstanceModelNamedInline<InlineDefineField,
+        IBindingDefinitionModelField,
+        IBindingInstanceModelFieldAbsolute,
+        IBindingContainerModelAbsolute>
+    implements IBindingInstanceModelFieldAbsolute, IBindingDefinitionModelField {
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
   private final Object defaultValue;
   @NonNull
-  private final Lazy<FlagContainerSupport> flagContainer;
+  private final Lazy<IContainerFlagSupport<IBindingInstanceFlag>> flagContainer;
   @NonNull
   private final Lazy<IValueConstrained> valueConstraints;
 
   public InstanceModelFieldInline(
       @NonNull InlineDefineField binding,
-      @NonNull IModelContainer parent) {
-    super(binding, parent);
-    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
+      @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
+      int position,
+      @NonNull IBindingContainerModelAbsolute parent) {
+    super(binding,
+        bindingInstance,
+        position,
+        parent,
+        ObjectUtils.requireNonNull(binding.getProps()),
+        binding.getGroupAs());
     this.javaTypeAdapter = ModelSupport.dataType(getBinding().getAsType());
     this.defaultValue = ModelSupport.defaultValue(getBinding().getDefault(), this.javaTypeAdapter);
-    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(binding.getFlags(), this)));
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> FlagContainerSupport.of(
+        binding.getFlags(),
+        bindingInstance,
+        this)));
     this.valueConstraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
       FieldConstraints constraints = getBinding().getConstraint();
@@ -92,7 +98,12 @@ public class InstanceModelFieldInline
   }
 
   @Override
-  public FlagContainerSupport getFlagContainer() {
+  public boolean isInXmlWrapped() {
+    return ModelSupport.fieldInXml(getBinding().getInXml());
+  }
+
+  @Override
+  public IContainerFlagSupport<IBindingInstanceFlag> getFlagContainer() {
     return ObjectUtils.notNull(flagContainer.get());
   }
 
@@ -107,18 +118,13 @@ public class InstanceModelFieldInline
   }
 
   @Override
-  public IFieldDefinition getDefinition() {
+  public IBindingDefinitionModelField getDefinition() {
     return this;
   }
 
   @Override
-  public IFieldInstance getInlineInstance() {
+  public IBindingInstanceModelFieldAbsolute getInlineInstance() {
     return this;
-  }
-
-  @Override
-  public Map<QName, Set<String>> getProperties() {
-    return properties;
   }
 
   @Override
@@ -149,6 +155,12 @@ public class InstanceModelFieldInline
   @Override
   public MarkupMultiline getRemarks() {
     return ModelSupport.remarks(getBinding().getRemarks());
+  }
+
+  @Override
+  public String getJsonKeyFlagName() {
+    JsonKey jsonKey = getBinding().getJsonKey();
+    return jsonKey == null ? null : jsonKey.getFlagRef();
   }
 
   @Override

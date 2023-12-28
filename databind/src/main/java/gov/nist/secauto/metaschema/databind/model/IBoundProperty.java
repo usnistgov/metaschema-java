@@ -33,7 +33,7 @@ import java.util.Collection;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundProperty extends IBinding, IFeatureJavaField {
+public interface IBoundProperty extends IBoundModuleElement, IFeatureJavaField {
   /**
    * Get the Metaschema module instance associated with this binding.
    *
@@ -61,7 +61,17 @@ public interface IBoundProperty extends IBinding, IFeatureJavaField {
   @NonNull
   String getJsonName();
 
-  Collection<? extends Object> getItemValues(Object value);
+  /**
+   * Get the individual item values for this property.
+   * <p>
+   * A property can be single- or multi-valued. This method gets each value in
+   * either case.
+   *
+   * @param propertyValue
+   *          the value for the property, which can be multi-valued
+   * @return the item values
+   */
+  Collection<? extends Object> getItemValues(Object propertyValue);
 
   /**
    * Copy this instance from one parent object to another.

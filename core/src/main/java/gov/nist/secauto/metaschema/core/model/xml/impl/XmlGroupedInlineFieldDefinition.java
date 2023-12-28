@@ -30,14 +30,13 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractGroupedNamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractNamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
 import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
@@ -54,10 +53,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class XmlGroupedInlineFieldDefinition
-    extends AbstractGroupedNamedModelInstance
-    implements IGroupedFieldInstance, IFieldDefinition,
-    IFeatureInlinedDefinition<IFieldDefinition, IGroupedFieldInstance>,
-    IFeatureFlagContainer<IFlagInstance> {
+    extends AbstractNamedModelInstanceGrouped
+    implements IFieldInstanceGrouped, IFieldDefinition,
+    IFeatureInlinedDefinition<IFieldDefinition, IFieldInstanceGrouped>,
+    IFeatureContainerFlag<IFlagInstance> {
 
   @NonNull
   private final GroupedInlineFieldDefinitionType xmlObject;
@@ -103,7 +102,7 @@ public class XmlGroupedInlineFieldDefinition
   }
 
   @Override
-  public IFlagContainerSupport<IFlagInstance> getFlagContainer() {
+  public XmlFlagContainerSupport getFlagContainer() {
     return ObjectUtils.notNull(flagContainer.get());
   }
 
@@ -112,6 +111,10 @@ public class XmlGroupedInlineFieldDefinition
     return ObjectUtils.notNull(constraints.get());
   }
 
+  @Override
+  public IFlagInstance getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
+  }
   // ----------------------------------------
   // - Start XmlBeans driven code - CPD-OFF -
   // ----------------------------------------

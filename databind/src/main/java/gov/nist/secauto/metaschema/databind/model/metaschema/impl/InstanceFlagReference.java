@@ -28,10 +28,13 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionFlag;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagReference;
 
 import java.util.Map;
@@ -41,29 +44,44 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceFlagReference
     extends AbstractInstance<FlagReference>
-    implements IFlagInstance {
+    implements IBindingInstanceFlag {
   @NonNull
-  private final IFlagDefinition definition;
+  private final IBindingDefinitionFlag definition;
   @NonNull
   private final Map<QName, Set<String>> properties;
   @Nullable
   private final Object defaultValue;
+  @NonNull
+  private final Lazy<IAssemblyNodeItem> boundNodeItem;
 
   public InstanceFlagReference(
       @NonNull FlagReference obj,
-      @NonNull IFlagDefinition definition,
-      @NonNull IFlagContainer parent) {
+      @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
+      int position,
+      @NonNull IBindingDefinitionFlag definition,
+      @NonNull IBindingDefinitionModel parent) {
     super(obj, parent);
     this.definition = definition;
     this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
     this.defaultValue = ModelSupport.defaultValue(getBinding().getDefault(), definition.getJavaTypeAdapter());
+    this.boundNodeItem = ObjectUtils.notNull(
+        Lazy.lazy(() -> (IAssemblyNodeItem) getContainingModule().getBoundNodeItem()
+            .getModelItemsByName(bindingInstance.getEffectiveName())
+            .get(position)));
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public INodeItem getBoundNodeItem() {
+    return boundNodeItem.get();
   }
 
   @Override
-  public IFlagDefinition getDefinition() {
+  public IBindingDefinitionFlag getDefinition() {
     return definition;
   }
 

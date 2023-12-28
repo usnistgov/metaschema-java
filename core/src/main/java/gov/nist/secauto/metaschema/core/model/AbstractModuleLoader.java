@@ -52,10 +52,12 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @param <M>
  *          the Java type of the Metaschema module loaded by this loader
  */
+// REFACTOR: make an IModuleLoader interface
 public abstract class AbstractModuleLoader<T, M extends IModule<M, ?, ?, ?, ?>>
-    extends AbstractLoader<M> {
+    extends AbstractLoader<M>
+    implements IModuleLoader<M> {
   @NonNull
-  private final List<IModulePostProcessor> modulePostProcessors;
+  private final List<IModuleLoader.IModulePostProcessor> modulePostProcessors;
 
   /**
    * Construct a new Metaschema module loader, which use the provided module post
@@ -65,17 +67,17 @@ public abstract class AbstractModuleLoader<T, M extends IModule<M, ?, ?, ?, ?>>
    *          post processors to perform additional module customization when
    *          loading
    */
-  protected AbstractModuleLoader(@NonNull List<IModulePostProcessor> modulePostProcessors) {
+  protected AbstractModuleLoader(@NonNull List<IModuleLoader.IModulePostProcessor> modulePostProcessors) {
     this.modulePostProcessors = CollectionUtil.unmodifiableList(new ArrayList<>(modulePostProcessors));
   }
 
   /**
-   * Get the set of additional constraints associated with this loader.
+   * Get the set of module post processors associated with this loader.
    *
    * @return the set of constraints
    */
   @NonNull
-  protected List<IModulePostProcessor> getModulePostProcessors() {
+  protected List<IModuleLoader.IModulePostProcessor> getModulePostProcessors() {
     return modulePostProcessors;
   }
 
@@ -99,6 +101,13 @@ public abstract class AbstractModuleLoader<T, M extends IModule<M, ?, ?, ?, ?>>
       @NonNull T binding,
       @NonNull List<M> importedModules) throws MetaschemaException;
 
+  /**
+   * Get the list of Metaschema module URIs associated with the provided binding.
+   *
+   * @param binding
+   *          the Metaschema module binding declaring the imports
+   * @return the list of Metaschema module URIs
+   */
   @NonNull
   protected abstract List<URI> getImports(@NonNull T binding);
 
@@ -118,8 +127,8 @@ public abstract class AbstractModuleLoader<T, M extends IModule<M, ?, ?, ?, ?>>
       try {
         importedModules = new LinkedHashMap<>();
         for (URI importedResource : imports) {
-          importedResource = ObjectUtils.notNull(resource.resolve(importedResource));
-          importedModules.put(importedResource, loadInternal(importedResource, visitedResources));
+          URI resolvedResource = ObjectUtils.notNull(resource.resolve(importedResource));
+          importedModules.put(resolvedResource, loadInternal(resolvedResource, visitedResources));
         }
       } catch (MetaschemaException ex) {
         throw new IOException(ex);
@@ -131,7 +140,7 @@ public abstract class AbstractModuleLoader<T, M extends IModule<M, ?, ?, ?, ?>>
     try {
       M module = newModule(resource, binding, new ArrayList<>(values));
 
-      for (IModulePostProcessor postProcessor : getModulePostProcessors()) {
+      for (IModuleLoader.IModulePostProcessor postProcessor : getModulePostProcessors()) {
         postProcessor.processModule(module);
       }
       return module;

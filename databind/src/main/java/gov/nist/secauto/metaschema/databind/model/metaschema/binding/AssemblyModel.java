@@ -45,14 +45,13 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssemb
 import gov.nist.secauto.metaschema.databind.model.annotations.Matches;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Object;
-import java.lang.Override;
-import java.lang.String;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 @SuppressWarnings({
     "PMD.CouplingBetweenObjects",
@@ -162,14 +161,14 @@ public class AssemblyModel {
   public static class ChoiceGroup {
     @BoundFlag(
         formalName = "Minimum Occurrence",
-        useName = "min-occurs",
+        name = "min-occurs",
         defaultValue = "0",
         typeAdapter = NonNegativeIntegerAdapter.class)
     private BigInteger _minOccurs;
 
     @BoundFlag(
         formalName = "Maximum Occurrence",
-        useName = "max-occurs",
+        name = "max-occurs",
         defaultValue = "unbounded",
         typeAdapter = StringAdapter.class,
         valueConstraints = @ValueConstraints(
@@ -285,20 +284,20 @@ public class AssemblyModel {
     public static class Assembly {
       @BoundFlag(
           formalName = "Global Assembly Reference",
-          useName = "ref",
+          name = "ref",
           required = true,
           typeAdapter = TokenAdapter.class)
       private String _ref;
 
       @BoundFlag(
           formalName = "Assembly Reference Binary Name",
-          useName = "index",
+          name = "index",
           typeAdapter = PositiveIntegerAdapter.class)
       private BigInteger _index;
 
       @BoundFlag(
           formalName = "Deprecated Version",
-          useName = "deprecated",
+          name = "deprecated",
           typeAdapter = StringAdapter.class)
       private String _deprecated;
 
@@ -454,32 +453,32 @@ public class AssemblyModel {
     public static class Field {
       @BoundFlag(
           formalName = "Global Field Reference",
-          useName = "ref",
+          name = "ref",
           required = true,
           typeAdapter = TokenAdapter.class)
       private String _ref;
 
       @BoundFlag(
           formalName = "Field Reference Binary Name",
-          useName = "index",
+          name = "index",
           typeAdapter = PositiveIntegerAdapter.class)
       private BigInteger _index;
 
       @BoundFlag(
           formalName = "Deprecated Version",
-          useName = "deprecated",
+          name = "deprecated",
           typeAdapter = StringAdapter.class)
       private String _deprecated;
 
       @BoundFlag(
           formalName = "Default Field Value",
-          useName = "default",
+          name = "default",
           typeAdapter = StringAdapter.class)
       private String _default;
 
       @BoundFlag(
           formalName = "Field In XML",
-          useName = "in-xml",
+          name = "in-xml",
           defaultValue = "WRAPPED",
           typeAdapter = TokenAdapter.class,
           valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
@@ -658,20 +657,20 @@ public class AssemblyModel {
     public static class DefineAssembly {
       @BoundFlag(
           formalName = "Inline Assembly Name",
-          useName = "name",
+          name = "name",
           required = true,
           typeAdapter = TokenAdapter.class)
       private String _name;
 
       @BoundFlag(
           formalName = "Inline Assembly Binary Name",
-          useName = "index",
+          name = "index",
           typeAdapter = PositiveIntegerAdapter.class)
       private BigInteger _index;
 
       @BoundFlag(
           formalName = "Deprecated Version",
-          useName = "deprecated",
+          name = "deprecated",
           typeAdapter = StringAdapter.class)
       private String _deprecated;
 
@@ -900,26 +899,26 @@ public class AssemblyModel {
     public static class DefineField {
       @BoundFlag(
           formalName = "Inline Field Name",
-          useName = "name",
+          name = "name",
           required = true,
           typeAdapter = TokenAdapter.class)
       private String _name;
 
       @BoundFlag(
           formalName = "Inline Field Binary Name",
-          useName = "index",
+          name = "index",
           typeAdapter = PositiveIntegerAdapter.class)
       private BigInteger _index;
 
       @BoundFlag(
           formalName = "Deprecated Version",
-          useName = "deprecated",
+          name = "deprecated",
           typeAdapter = StringAdapter.class)
       private String _deprecated;
 
       @BoundFlag(
           formalName = "Field Value Data Type",
-          useName = "as-type",
+          name = "as-type",
           defaultValue = "string",
           typeAdapter = TokenAdapter.class,
           valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
@@ -947,7 +946,7 @@ public class AssemblyModel {
 
       @BoundFlag(
           formalName = "Default Field Value",
-          useName = "default",
+          name = "default",
           typeAdapter = StringAdapter.class)
       private String _default;
 

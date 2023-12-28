@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractGroupedNamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractNamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedAssemblyReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -45,8 +45,8 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class XmlGroupedAssemblyInstance
-    extends AbstractGroupedNamedModelInstance
-    implements IGroupedAssemblyInstance {
+    extends AbstractNamedModelInstanceGrouped
+    implements IAssemblyInstanceGrouped {
   @NonNull
   private final GroupedAssemblyReferenceType xmlObject;
 

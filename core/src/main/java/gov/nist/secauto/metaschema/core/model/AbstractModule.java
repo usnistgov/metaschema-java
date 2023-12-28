@@ -63,7 +63,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 @SuppressWarnings("PMD.CouplingBetweenObjects")
 public abstract class AbstractModule<
     M extends IModule<M, C, FL, FI, A>,
-    C extends IFlagContainer,
+    C extends IContainerFlag,
     FL extends IFlagDefinition,
     FI extends IFieldDefinition,
     A extends IAssemblyDefinition>

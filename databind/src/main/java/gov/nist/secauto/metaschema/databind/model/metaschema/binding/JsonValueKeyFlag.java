@@ -29,8 +29,7 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Override;
-import java.lang.String;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -45,7 +44,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class JsonValueKeyFlag {
   @BoundFlag(
       formalName = "Flag Reference",
-      useName = "flag-ref",
+      name = "flag-ref",
       required = true,
       typeAdapter = TokenAdapter.class)
   private String _flagRef;

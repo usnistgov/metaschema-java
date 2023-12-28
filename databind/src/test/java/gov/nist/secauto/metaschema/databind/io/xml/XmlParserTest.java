@@ -37,7 +37,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.AbstractBoundModelTestSupport;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelField;
 import gov.nist.secauto.metaschema.databind.model.test.FlaggedAssembly;
@@ -82,9 +82,9 @@ class XmlParserTest
 
     IBindingContext bindingContext = getBindingContext();
 
-    IBoundDefinitionAssembly assembly
+    IBoundDefinitionModelAssembly assembly
         = ObjectUtils.requireNonNull(
-            (IBoundDefinitionAssembly) bindingContext.getBoundDefinitionForClass(MultiFieldAssembly.class));
+            (IBoundDefinitionModelAssembly) bindingContext.getBoundDefinitionForClass(MultiFieldAssembly.class));
 
     IBoundInstanceModelField field1Instance = ObjectUtils.requireNonNull(assembly.getFieldInstanceByName("field1"));
 
@@ -109,10 +109,10 @@ class XmlParserTest
     XMLEventReader2 eventReader = (XMLEventReader2) factory.createXMLEventReader(new StringReader(xml));
 
     IBindingContext bindingContext = getBindingContext();
-    IBoundDefinitionAssembly assembly
+    IBoundDefinitionModelAssembly assembly
         = ObjectUtils
             .requireNonNull(
-                (IBoundDefinitionAssembly) bindingContext.getBoundDefinitionForClass(FlaggedAssembly.class));
+                (IBoundDefinitionModelAssembly) bindingContext.getBoundDefinitionForClass(FlaggedAssembly.class));
 
     IBoundInstanceFlag idProperty = assembly.getFlagInstanceByName("id");
     assert idProperty != null;
@@ -154,9 +154,9 @@ class XmlParserTest
 
     IBindingContext bindingContext = getBindingContext();
 
-    IBoundDefinitionAssembly assembly
+    IBoundDefinitionModelAssembly assembly
         = ObjectUtils.requireNonNull(
-            (IBoundDefinitionAssembly) bindingContext.getBoundDefinitionForClass(MultiFieldAssembly.class));
+            (IBoundDefinitionModelAssembly) bindingContext.getBoundDefinitionForClass(MultiFieldAssembly.class));
 
     IBoundInstanceModelField field1Instance
         = ObjectUtils.requireNonNull(assembly.getFieldInstanceByName("field1"));

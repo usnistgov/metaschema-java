@@ -33,8 +33,8 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
@@ -49,7 +49,7 @@ import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance>
+abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstanceAbsolute>
     extends AbstractInstanceTypeInfo<INSTANCE, IAssemblyDefinitionTypeInfo>
     implements IModelInstanceTypeInfo {
 
@@ -61,15 +61,16 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance>
 
   @Override
   public String getBaseName() {
-    return ObjectUtils.notNull(getInstance().getGroupAsName());
+    return ObjectUtils.requireNonNull(getInstance().getGroupAsName());
   }
 
   @Override
   public @NonNull TypeName getJavaFieldType() {
     TypeName item = getJavaItemType();
 
-    @NonNull TypeName retval;
-    IModelInstance instance = getInstance();
+    @NonNull
+    TypeName retval;
+    IModelInstanceAbsolute instance = getInstance();
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {
       if (JsonGroupAsBehavior.KEYED.equals(instance.getJsonGroupAsBehavior())) {
@@ -89,10 +90,10 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance>
   protected abstract AnnotationSpec.Builder newBindingAnnotation();
 
   @Override
-  public Set<IFlagContainer> buildField(
+  public Set<IModelDefinition> buildField(
       TypeSpec.Builder typeBuilder,
       FieldSpec.Builder fieldBuilder) {
-    Set<IFlagContainer> retval = new HashSet<>(super.buildField(typeBuilder, fieldBuilder));
+    Set<IModelDefinition> retval = new HashSet<>(super.buildField(typeBuilder, fieldBuilder));
 
     AnnotationSpec.Builder annotation = newBindingAnnotation();
 
@@ -107,13 +108,15 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance>
   protected AnnotationSpec.Builder generateGroupAsAnnotation() {
     AnnotationSpec.Builder groupAsAnnoation = AnnotationSpec.builder(GroupAs.class);
 
-    IModelInstance modelInstance = getInstance();
+    IModelInstanceAbsolute modelInstance = getInstance();
 
     groupAsAnnoation.addMember("name", "$S",
         ObjectUtils.requireNonNull(modelInstance.getGroupAsName(), "The grouping name must be non-null"));
 
     String groupAsNamespace = modelInstance.getGroupAsXmlNamespace();
     if (groupAsNamespace == null) {
+      groupAsAnnoation.addMember("namespace", "$S", "##default");
+    } else if (groupAsNamespace.isEmpty()) {
       groupAsAnnoation.addMember("namespace", "$S", "##none");
     } else if (!modelInstance.getContainingModule().getXmlNamespace().toASCIIString().equals(groupAsNamespace)) {
       groupAsAnnoation.addMember("namespace", "$S", groupAsNamespace);

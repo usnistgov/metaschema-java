@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.metapath.format;
 
+import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyInstanceGroupedNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;
@@ -102,6 +103,17 @@ public interface IPathFormatter {
    */
   @NonNull
   String formatAssembly(@NonNull IAssemblyNodeItem assembly);
+
+  /**
+   * This visitor callback is used to format an individual grouped assembly path
+   * segment.
+   *
+   * @param assembly
+   *          the node to format
+   * @return the formatted text for the segment
+   */
+  @NonNull
+  String formatAssembly(@NonNull IAssemblyInstanceGroupedNodeItem assembly);
 
   /**
    * This visitor callback is used to format a root assembly path segment.

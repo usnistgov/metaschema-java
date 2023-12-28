@@ -26,21 +26,21 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.GroupedModelContainerSupport;
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureGroupedModelContainer;
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
-import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
+import gov.nist.secauto.metaschema.core.model.IContainerModelSupport;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelGrouped;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.IGroupAs;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyGrouped;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldGrouped;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelNamedGrouped;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceGroupBinding;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel.ChoiceGroup.Assembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel.ChoiceGroup.DefineAssembly;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.JsonKey;
 
 import java.math.BigInteger;
@@ -49,27 +49,61 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelChoiceGroup
-    extends AbstractInstanceModel<AssemblyModel.ChoiceGroup, IModelContainer>
-    implements IChoiceGroupInstance,
-    IFeatureGroupedModelContainer<
-        IGroupedNamedModelInstance,
-        IGroupedFieldInstance,
-        IGroupedAssemblyInstance> {
+    extends AbstractInstanceModel<AssemblyModel.ChoiceGroup, IBindingDefinitionAssembly>
+    implements IInstanceModelChoiceGroupBinding,
+    IFeatureContainerModelGrouped<
+        IBindingInstanceModelNamedGrouped,
+        IBindingInstanceModelFieldGrouped,
+        IBindingInstanceModelAssemblyGrouped>,
+    IFeatureInstanceModelGroupAs {
   @NonNull
-  private final Lazy<ModelContainerSupport> modelContainer;
+  private final IGroupAs groupAs;
+  @NonNull
+  private final Lazy<IContainerModelSupport<
+      IBindingInstanceModelNamedGrouped,
+      IBindingInstanceModelNamedGrouped,
+      IBindingInstanceModelFieldGrouped,
+      IBindingInstanceModelAssemblyGrouped>> modelContainer;
+  @NonNull
+  private final Lazy<IAssemblyNodeItem> boundNodeItem;
 
   public InstanceModelChoiceGroup(
       @NonNull AssemblyModel.ChoiceGroup binding,
-      @NonNull IAssemblyDefinition parent) {
+      @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
+      int position,
+      @NonNull IBindingDefinitionAssembly parent,
+      @NonNull INodeItemFactory nodeItemFactory) {
     super(binding, parent);
-    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      return new ModelContainerSupport(binding, this);
-    }));
+    this.groupAs = ModelSupport.groupAs(binding.getGroupAs());
+    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> ChoiceGroupModelContainerSupport.of(
+        binding,
+        bindingInstance,
+        this,
+        nodeItemFactory)));
+    this.boundNodeItem = ObjectUtils.notNull(
+        Lazy.lazy(() -> (IAssemblyNodeItem) getContainingDefinition().getBoundNodeItem()
+            .getModelItemsByName(bindingInstance.getJsonName())
+            .get(position)));
   }
 
   @Override
-  public ModelContainerSupport getModelContainer() {
+  public IContainerModelSupport<
+      IBindingInstanceModelNamedGrouped,
+      IBindingInstanceModelNamedGrouped,
+      IBindingInstanceModelFieldGrouped,
+      IBindingInstanceModelAssemblyGrouped> getModelContainer() {
     return ObjectUtils.notNull(modelContainer.get());
+  }
+
+  @Override
+  public IGroupAs getGroupAs() {
+    return groupAs;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public INodeItem getBoundNodeItem() {
+    return boundNodeItem.get();
   }
 
   @Override
@@ -87,7 +121,7 @@ public class InstanceModelChoiceGroup
   }
 
   @Override
-  public IAssemblyDefinition getOwningDefinition() {
+  public IBindingDefinitionAssembly getOwningDefinition() {
     return getContainingDefinition();
   }
 
@@ -102,82 +136,4 @@ public class InstanceModelChoiceGroup
     JsonKey jsonKey = getBinding().getJsonKey();
     return jsonKey == null ? null : jsonKey.getFlagRef();
   }
-
-  private static class ModelContainerSupport
-      extends GroupedModelContainerSupport {
-
-    public ModelContainerSupport(
-        @NonNull AssemblyModel.ChoiceGroup binding,
-        @NonNull InstanceModelChoiceGroup parent) {
-      for (Object obj : ObjectUtils.notNull(binding.getChoices())) {
-        if (obj instanceof Assembly) {
-          IGroupedAssemblyInstance assembly = newInstance((AssemblyModel.ChoiceGroup.Assembly) obj, parent);
-          addInstance(assembly);
-        } else if (obj instanceof DefineAssembly) {
-          IGroupedAssemblyInstance assembly
-              = new InstanceModelGroupedAssemblyInline((AssemblyModel.ChoiceGroup.DefineAssembly) obj, parent);
-          addInstance(assembly);
-        } else if (obj instanceof AssemblyModel.ChoiceGroup.Field) {
-          IGroupedFieldInstance field = newInstance((AssemblyModel.ChoiceGroup.Field) obj, parent);
-          addInstance(field);
-        } else if (obj instanceof AssemblyModel.ChoiceGroup.DefineField) {
-          IGroupedFieldInstance field
-              = new InstanceModelGroupedFieldInline((AssemblyModel.ChoiceGroup.DefineField) obj, parent);
-          addInstance(field);
-        } else {
-          throw new UnsupportedOperationException(String.format("Unknown model instance class: %s", obj.getClass()));
-        }
-      }
-    }
-
-    private void addInstance(IGroupedAssemblyInstance assembly) {
-      String effectiveName = assembly.getEffectiveName();
-      getAssemblyInstanceMap().put(effectiveName, assembly);
-      getNamedModelInstanceMap().put(effectiveName, assembly);
-    }
-
-    private void addInstance(IGroupedFieldInstance field) {
-      String effectiveName = field.getEffectiveName();
-      getFieldInstanceMap().put(effectiveName, field);
-      getNamedModelInstanceMap().put(effectiveName, field);
-    }
-
-    private static IGroupedAssemblyInstance newInstance(
-        @NonNull AssemblyModel.ChoiceGroup.Assembly obj,
-        @NonNull IChoiceGroupInstance parent) {
-      IAssemblyDefinition owningDefinition = parent.getOwningDefinition();
-      IModule<?, ?, ?, ?, ?> module = owningDefinition.getContainingModule();
-
-      String name = ObjectUtils.requireNonNull(obj.getRef());
-      IAssemblyDefinition definition = module.getScopedAssemblyDefinitionByName(name);
-
-      if (definition == null) {
-        throw new IllegalStateException(
-            String.format("Unable to resolve assembly reference '%s' in definition '%s' in module '%s'",
-                name,
-                owningDefinition.getName(),
-                module.getShortName()));
-      }
-      return new InstanceModelGroupedAssemblyReference(obj, definition, parent);
-    }
-
-    private static IGroupedFieldInstance newInstance(
-        @NonNull AssemblyModel.ChoiceGroup.Field obj,
-        @NonNull IChoiceGroupInstance parent) {
-      IAssemblyDefinition owningDefinition = parent.getOwningDefinition();
-      IModule<?, ?, ?, ?, ?> module = owningDefinition.getContainingModule();
-
-      String name = ObjectUtils.requireNonNull(obj.getRef());
-      IFieldDefinition definition = module.getScopedFieldDefinitionByName(name);
-      if (definition == null) {
-        throw new IllegalStateException(
-            String.format("Unable to resolve field reference '%s' in definition '%s' in module '%s'",
-                name,
-                owningDefinition.getName(),
-                module.getShortName()));
-      }
-      return new InstanceModelGroupedFieldReference(obj, definition, parent);
-    }
-  }
-
 }

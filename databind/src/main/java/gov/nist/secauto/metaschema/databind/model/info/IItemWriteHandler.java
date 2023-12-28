@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
@@ -110,7 +110,7 @@ public interface IItemWriteHandler {
    */
   void writeItemField(
       @NonNull Object item,
-      @NonNull IBoundDefinitionFieldComplex definition) throws IOException;
+      @NonNull IBoundDefinitionModelFieldComplex definition) throws IOException;
 
   /**
    * Write an item.
@@ -166,7 +166,7 @@ public interface IItemWriteHandler {
    */
   void writeItemAssembly(
       @NonNull Object item,
-      @NonNull IBoundDefinitionAssembly definition) throws IOException;
+      @NonNull IBoundDefinitionModelAssembly definition) throws IOException;
 
   /**
    * Write an item.

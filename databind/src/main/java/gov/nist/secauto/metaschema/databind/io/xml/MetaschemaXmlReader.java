@@ -30,10 +30,10 @@ import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstance;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
@@ -231,7 +231,7 @@ public class MetaschemaXmlReader
    *           if an error occurred while parsing the input
    */
   protected void readModelInstances(
-      @NonNull IBoundDefinitionAssembly targetDefinition,
+      @NonNull IBoundDefinitionModelAssembly targetDefinition,
       @NonNull Object targetObject)
       throws IOException {
     Collection<? extends IBoundInstanceModel> instances = targetDefinition.getModelInstances();
@@ -283,7 +283,7 @@ public class MetaschemaXmlReader
     boolean retval = nextEvent.isStartElement();
     if (retval) {
       QName qname = ObjectUtils.notNull(nextEvent.asStartElement().getName());
-      retval = qname.equals(targetInstance.getXmlGroupAsQName()) // parse the grouping element
+      retval = qname.equals(targetInstance.getEffectiveXmlGroupAsQName()) // parse the grouping element
           || targetInstance.canHandleXmlQName(qname); // parse the instance(s)
     }
     return retval;
@@ -313,7 +313,7 @@ public class MetaschemaXmlReader
       if (handled) {
         // XmlEventUtil.skipWhitespace(reader);
 
-        QName groupQName = parseGrouping ? instance.getXmlGroupAsQName() : null;
+        QName groupQName = parseGrouping ? instance.getEffectiveXmlGroupAsQName() : null;
         if (groupQName != null) {
           // we need to parse the grouping element, if the next token matches
           XmlEventUtil.requireStartElement(reader, groupQName);
@@ -470,7 +470,7 @@ public class MetaschemaXmlReader
     }
 
     private void handleFieldDefinitionBody(
-        @NonNull IBoundDefinitionFieldComplex definition,
+        @NonNull IBoundDefinitionModelFieldComplex definition,
         @NonNull Object item) throws IOException {
       IBoundFieldValue fieldValue = definition.getFieldValue();
 
@@ -487,7 +487,7 @@ public class MetaschemaXmlReader
 
       try {
         QName wrapper = null;
-        if (instance.isValueWrappedInXml()) {
+        if (instance.isEffectiveValueWrappedInXml()) {
           wrapper = new QName(instance.getXmlNamespace(), instance.getEffectiveName());
 
           XmlEventUtil.skipWhitespace(getReader());
@@ -533,7 +533,7 @@ public class MetaschemaXmlReader
     @Override
     public Object readItemField(
         Object parent,
-        IBoundDefinitionFieldComplex definition) throws IOException {
+        IBoundDefinitionModelFieldComplex definition) throws IOException {
       return readDefinitionElement(
           definition,
           getStartElement(),
@@ -550,7 +550,7 @@ public class MetaschemaXmlReader
     }
 
     private void handleAssemblyDefinitionBody(
-        @NonNull IBoundDefinitionAssembly definition,
+        @NonNull IBoundDefinitionModelAssembly definition,
         @NonNull Object item) throws IOException {
       readModelInstances(definition, item);
     }
@@ -580,7 +580,7 @@ public class MetaschemaXmlReader
     @Override
     public Object readItemAssembly(
         Object parent,
-        IBoundDefinitionAssembly definition) throws IOException {
+        IBoundDefinitionModelAssembly definition) throws IOException {
       return readDefinitionElement(
           definition,
           getStartElement(),

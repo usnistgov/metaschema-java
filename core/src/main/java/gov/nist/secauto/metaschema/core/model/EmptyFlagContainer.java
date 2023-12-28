@@ -67,18 +67,12 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-class EmptyFlagContainer<FI extends IFlagInstance> implements IFlagContainerSupport<FI> {
+class EmptyFlagContainer<FI extends IFlagInstance> implements IContainerFlagSupport<FI> {
   @NonNull
   public static final EmptyFlagContainer<?> EMPTY = new EmptyFlagContainer<>();
 
   @Override
   public Map<String, FI> getFlagInstanceMap() {
     return CollectionUtil.emptyMap();
-  }
-
-  @Override
-  public FI getJsonKeyFlagInstance() {
-    // no JSON key
-    return null;
   }
 }

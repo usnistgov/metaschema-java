@@ -34,8 +34,9 @@ import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.validation.IContentValidator;
 import gov.nist.secauto.metaschema.core.model.validation.XmlSchemaContentValidator;
-import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.databind.io.Format;
+import gov.nist.secauto.metaschema.databind.model.metaschema.BindingModuleLoader;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
 import org.jdom2.Document;
@@ -173,10 +174,10 @@ class XmlSuiteTest
 
   @Test
   void testliboscalJavaIssue181() throws IOException, MetaschemaException, XMLStreamException, JDOMException {
-    ModuleLoader loader = new ModuleLoader();
+    BindingModuleLoader loader = new BindingModuleLoader();
     loader.allowEntityResolution();
 
-    IModule module = loader.load(new URL(
+    IBindingModule module = loader.load(new URL(
         // "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.1.1/src/metaschema/oscal_catalog_metaschema.xml"));
     ISchemaGenerator schemaGenerator = new XmlSchemaGenerator();
@@ -210,10 +211,10 @@ class XmlSuiteTest
 
   @Test
   void testLiboscalJavaIssue181() throws IOException, MetaschemaException, XMLStreamException, JDOMException {
-    ModuleLoader loader = new ModuleLoader();
+    BindingModuleLoader loader = new BindingModuleLoader();
     loader.allowEntityResolution();
 
-    IModule module = loader.load(new URL(
+    IBindingModule module = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.1.1/src/metaschema/oscal_catalog_metaschema.xml"));
     ISchemaGenerator schemaGenerator = new XmlSchemaGenerator();
     IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();

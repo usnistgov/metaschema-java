@@ -28,51 +28,52 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingContainerModelAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyAbsolute;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyReference;
 
 import java.math.BigInteger;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class InstanceModelAssemblyReference
-    extends AbstractInstanceModel<AssemblyReference, IModelContainer>
-    implements IAssemblyInstance {
-  @NonNull
-  private final IAssemblyDefinition definition;
-  @NonNull
-  private final Map<QName, Set<String>> properties;
-
+    extends AbstractInstanceModelNamedReference<
+        AssemblyReference,
+        IBindingDefinitionAssembly,
+        IBindingContainerModelAbsolute>
+    implements IBindingInstanceModelAssemblyAbsolute {
+  /**
+   * Construct a new assembly reference.
+   *
+   * @param binding
+   *          the assembly reference instance object bound to a Java class
+   * @param bindingInstance
+   *          the Metaschema module instance for the bound object
+   * @param position
+   *          the zero-based position of this bound object relative to its bound
+   *          object siblings
+   * @param definition
+   *          the referenced global assembly definition
+   * @param parent
+   *          the assembly definition containing this binding
+   */
   public InstanceModelAssemblyReference(
       @NonNull AssemblyReference binding,
-      @NonNull IAssemblyDefinition definition,
-      @NonNull IModelContainer parent) {
-    super(binding, parent);
-    this.definition = definition;
-    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
-  }
-
-  @Override
-  public IAssemblyDefinition getDefinition() {
-    return definition;
-  }
-
-  @Override
-  public Map<QName, Set<String>> getProperties() {
-    return properties;
-  }
-
-  @Override
-  public String getName() {
-    return getDefinition().getName();
+      @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
+      int position,
+      @NonNull IBindingDefinitionAssembly definition,
+      @NonNull IBindingContainerModelAbsolute parent) {
+    super(binding,
+        bindingInstance,
+        position,
+        definition,
+        parent,
+        ObjectUtils.requireNonNull(binding.getProps()),
+        binding.getGroupAs());
   }
 
   @Override

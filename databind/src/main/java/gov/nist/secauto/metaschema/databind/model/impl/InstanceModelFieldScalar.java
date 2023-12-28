@@ -27,17 +27,19 @@
 package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
 import java.lang.reflect.Field;
+import java.util.Optional;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -46,7 +48,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 public class InstanceModelFieldScalar
     extends AbstractBoundInstanceField
     implements IBoundInstanceModelFieldScalar,
-    IFeatureBoundDefinitionFlagContainer {
+    IFeatureBoundContainerFlag {
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
@@ -64,7 +66,7 @@ public class InstanceModelFieldScalar
    */
   public InstanceModelFieldScalar(
       @NonNull Field javaField,
-      @NonNull IBoundDefinitionAssembly containingDefinition) {
+      @NonNull IBoundDefinitionModelAssembly containingDefinition) {
     super(javaField, containingDefinition);
     this.javaTypeAdapter = ModelUtil.getDataTypeAdapter(
         getAnnotation().typeAdapter(),
@@ -90,8 +92,8 @@ public class InstanceModelFieldScalar
   // ------------------------------------------
 
   @Override
-  public IBoundDefinitionFlagContainerSupport getFlagContainer() {
-    return IBoundDefinitionFlagContainerSupport.empty();
+  public IContainerFlagSupport<IBoundInstanceFlag> getFlagContainer() {
+    return IContainerFlagSupport.empty();
   }
 
   @SuppressWarnings("null")
@@ -107,8 +109,11 @@ public class InstanceModelFieldScalar
   }
 
   @Override
-  public String getUseName() {
-    return ModelUtil.resolveNoneOrValue(getAnnotation().useName());
+  public String getName() {
+    // the name is stored as a usename to remain consistent with non-scalar valued
+    // fields
+    return ObjectUtils.notNull(
+        Optional.ofNullable(ModelUtil.resolveNoneOrValue(getAnnotation().useName())).orElse(getField().getName()));
   }
 
   @Override

@@ -39,12 +39,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundInstanceModelFieldScalar
     extends IBoundInstanceModelField,
-    IBoundDefinitionField, IFeatureScalarItemValueHandler {
+    IBoundDefinitionModelField, IFeatureScalarItemValueHandler,
+    IFeatureBoundDefinitionInline<IBoundDefinitionModelField, IBoundInstanceModelFieldScalar> {
 
   // integrate above
 
   @Override
-  IBoundDefinitionAssembly getContainingDefinition();
+  IBoundDefinitionModelAssembly getContainingDefinition();
 
   @Override
   default IBoundInstanceModelFieldScalar getInstance() {
@@ -62,12 +63,8 @@ public interface IBoundInstanceModelFieldScalar
   }
 
   @Override
-  default boolean isInline() {
-    return true;
-  }
-
-  @Override
   default IBoundInstanceModelFieldScalar getInlineInstance() {
+    // always inline
     return this;
   }
 
@@ -79,31 +76,12 @@ public interface IBoundInstanceModelFieldScalar
   /**
    * {@inheritDoc}
    * <p>
-   * This is an inline instance that is both a definition and an instance. Don't
-   * delegate to the definition, since this would be redundant.
-   */
-  @Override
-  @NonNull
-  default String getEffectiveName() {
-    String useName = getUseName();
-    return useName == null ? getName() : useName;
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
    * Use the effective name of the instance.
    */
   @Override
   @NonNull
   default String getJsonName() {
     return IBoundInstanceModelField.super.getJsonName();
-  }
-
-  @Override
-  @NonNull
-  default IBoundModule getContainingModule() {
-    return IBoundInstanceModelField.super.getContainingModule();
   }
 
   @Override
@@ -119,6 +97,11 @@ public interface IBoundInstanceModelFieldScalar
   default IBoundInstanceFlag getItemJsonKey(Object item) {
     // no flags, no JSON key
     return null;
+  }
+
+  @Override
+  default Object getEffectiveDefaultValue() {
+    return IBoundInstanceModelField.super.getEffectiveDefaultValue();
   }
 
   @Override
@@ -190,4 +173,5 @@ public interface IBoundInstanceModelFieldScalar
   default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
     handler.writeItemField(item, this);
   }
+
 }

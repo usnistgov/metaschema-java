@@ -28,9 +28,9 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo.def;
 
 import com.squareup.javapoet.ClassName;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.FlagInstanceTypeInfoImpl;
@@ -51,7 +51,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-public abstract class AbstractModelDefinitionTypeInfo<DEF extends IFlagContainer>
+public abstract class AbstractModelDefinitionTypeInfo<DEF extends IModelDefinition>
     implements IModelDefinitionTypeInfo {
   private static final Logger LOGGER = LogManager.getLogger(AbstractModelDefinitionTypeInfo.class);
   @NonNull

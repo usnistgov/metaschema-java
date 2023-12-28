@@ -30,11 +30,11 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractFlagInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractInstance;
 import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -53,8 +53,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlInlineFlagDefinition
-    extends AbstractFlagInstance
-    implements IFlagDefinition, IFeatureInlinedDefinition<IFlagDefinition, IFlagInstance> {
+    extends AbstractInstance<IModelDefinition>
+    implements IFlagInstance, IFlagDefinition,
+    IFeatureInlinedDefinition<IFlagDefinition, IFlagInstance> {
   @NonNull
   private final InlineFlagDefinitionType xmlFlag;
   @Nullable
@@ -73,7 +74,7 @@ class XmlInlineFlagDefinition
    *          contain flags.
    */
   @SuppressWarnings("PMD.NullAssignment")
-  public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlObject, @NonNull IFlagContainer parent) {
+  public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlObject, @NonNull IModelDefinition parent) {
     super(parent);
     this.xmlFlag = xmlObject;
     this.defaultValue = xmlObject.isSetDefault()
@@ -113,6 +114,11 @@ class XmlInlineFlagDefinition
   @Override
   public Object getDefaultValue() {
     return defaultValue;
+  }
+
+  @Override
+  public IModelDefinition getContainingDefinition() {
+    return getParentContainer();
   }
 
   // ----------------------------------------

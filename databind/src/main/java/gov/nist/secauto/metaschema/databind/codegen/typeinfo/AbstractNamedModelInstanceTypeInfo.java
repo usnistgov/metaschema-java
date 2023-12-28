@@ -33,11 +33,9 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstanceBase;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -55,7 +53,7 @@ import javax.lang.model.element.Modifier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelInstance>
+abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelInstanceAbsolute>
     extends AbstractModelInstanceTypeInfo<INSTANCE>
     implements INamedModelInstanceTypeInfo {
   public AbstractNamedModelInstanceTypeInfo(
@@ -87,13 +85,13 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
   }
 
   @Override
-  public Set<IFlagContainer> buildField(
+  public Set<IModelDefinition> buildField(
       TypeSpec.Builder typeBuilder,
       FieldSpec.Builder fieldBuilder) {
-    Set<IFlagContainer> retval = super.buildField(typeBuilder, fieldBuilder);
+    Set<IModelDefinition> retval = super.buildField(typeBuilder, fieldBuilder);
 
-    IFlagContainer definition = getInstance().getDefinition();
-    if (definition.isInline() && !(definition instanceof IFieldDefinition && definition.isSimple())) {
+    IModelDefinition definition = getInstance().getDefinition();
+    if (definition.isInline() && definition.hasChildren()) {
       retval = new HashSet<>(retval);
 
       // this is an inline definition that must be built as a child class
@@ -103,21 +101,14 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
   }
 
   @Override
-  public void buildBindingAnnotationCommon(@NonNull AnnotationSpec.Builder annotation) {
-
-    INamedModelInstanceBase instance = getInstance();
-    TypeInfoUtils.buildConnonBindingAnnotationValues(instance, annotation);
-  }
-
-  @Override
-  public Set<IFlagContainer> buildBindingAnnotation(
+  public Set<IModelDefinition> buildBindingAnnotation(
       TypeSpec.Builder typeBuilder,
       FieldSpec.Builder fieldBuilder,
       AnnotationSpec.Builder annotation) {
 
     buildBindingAnnotationCommon(annotation);
 
-    INamedModelInstance instance = getInstance();
+    INamedModelInstanceAbsolute instance = getInstance();
 
     int minOccurs = instance.getMinOccurs();
     if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
@@ -140,7 +131,7 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
   protected void buildExtraMethods(TypeSpec.Builder builder, FieldSpec valueField) {
     super.buildExtraMethods(builder, valueField);
 
-    INamedModelInstance instance = getInstance();
+    INamedModelInstanceAbsolute instance = getInstance();
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {
       TypeName itemType = getJavaItemType();

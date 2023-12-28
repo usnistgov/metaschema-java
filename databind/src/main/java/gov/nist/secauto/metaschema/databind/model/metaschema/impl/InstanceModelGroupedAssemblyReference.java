@@ -29,43 +29,34 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedAssemblyInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyGrouped;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceGroupBinding;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel;
-
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class InstanceModelGroupedAssemblyReference
     extends AbstractInstanceModelGrouped<AssemblyModel.ChoiceGroup.Assembly>
-    implements IGroupedAssemblyInstance, IFeatureValueless {
+    implements IBindingInstanceModelAssemblyGrouped {
   @NonNull
   private final IAssemblyDefinition definition;
-  @NonNull
-  private final Map<QName, Set<String>> properties;
 
-  protected InstanceModelGroupedAssemblyReference(
+  public InstanceModelGroupedAssemblyReference(
       @NonNull AssemblyModel.ChoiceGroup.Assembly binding,
-      @NonNull IAssemblyDefinition definition,
-      @NonNull IChoiceGroupInstance parent) {
-    super(binding, parent);
+      @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
+      int position,
+      @NonNull IBindingDefinitionAssembly definition,
+      @NonNull IInstanceModelChoiceGroupBinding parent) {
+    super(binding, bindingInstance, position, parent, ObjectUtils.requireNonNull(binding.getProps()));
     this.definition = definition;
-    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
   }
 
   @Override
   public IAssemblyDefinition getDefinition() {
     return definition;
-  }
-
-  @Override
-  public Map<QName, Set<String>> getProperties() {
-    return properties;
   }
 
   @Override

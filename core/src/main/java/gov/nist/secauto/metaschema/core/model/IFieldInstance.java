@@ -28,11 +28,18 @@ package gov.nist.secauto.metaschema.core.model;
 
 import javax.xml.namespace.QName;
 
-public interface IFieldInstance extends IFieldInstanceBase, INamedModelInstance {
+public interface IFieldInstance extends IField, INamedModelInstance, IValuedInstance {
+  @Override
+  default String getXmlNamespace() {
+    return INamedModelInstance.super.getXmlNamespace();
+  }
+
+  @Override
+  IFieldDefinition getDefinition();
 
   @Override
   default QName getXmlQName() {
-    return isValueWrappedInXml() ? INamedModelInstance.super.getXmlQName() : null;
+    return isEffectiveValueWrappedInXml() ? INamedModelInstance.super.getXmlQName() : null;
   }
 
   /**
@@ -41,18 +48,5 @@ public interface IFieldInstance extends IFieldInstanceBase, INamedModelInstance 
    * @return {@code true} if an XML wrapper is required, or {@code false}
    *         otherwise
    */
-  default boolean isInXmlWrapped() {
-    return true;
-  }
-
-  /**
-   * Indicate if the instance allows values without an XML element wrapper.
-   *
-   * @return {@code true} if the underlying data type is allowed to be unwrapped,
-   *         or {@code false} otherwise
-   */
-  @Override
-  default boolean isValueWrappedInXml() {
-    return isInXmlWrapped() || !getDefinition().getJavaTypeAdapter().isUnrappedValueAllowedInXml();
-  }
+  boolean isInXmlWrapped();
 }

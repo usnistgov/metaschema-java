@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.impl.DefinitionField;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceModelFieldComplex;
@@ -39,10 +39,10 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundInstanceModelField extends IBoundInstanceModelNamed, IFieldInstance {
+public interface IBoundInstanceModelField extends IBoundInstanceModelNamed, IFieldInstanceAbsolute {
 
   @Override
-  IBoundDefinitionField getDefinition();
+  IBoundDefinitionModelField getDefinition();
 
   /**
    * Create a new bound field instance.
@@ -56,7 +56,7 @@ public interface IBoundInstanceModelField extends IBoundInstanceModelNamed, IFie
   @NonNull
   static IBoundInstanceModelField newInstance(
       @NonNull Field field,
-      @NonNull IBoundDefinitionAssembly containingDefinition) {
+      @NonNull IBoundDefinitionModelAssembly containingDefinition) {
     Class<?> itemType = IBoundInstanceModel.getItemType(field);
     IBindingContext bindingContext = containingDefinition.getBindingContext();
     IBoundDefinitionModel definition = bindingContext.getBoundDefinitionForClass(itemType);
@@ -78,7 +78,7 @@ public interface IBoundInstanceModelField extends IBoundInstanceModelNamed, IFie
   @Override
   default boolean canHandleXmlQName(QName qname) {
     boolean retval;
-    if (isValueWrappedInXml()) {
+    if (isEffectiveValueWrappedInXml()) {
       retval = qname.equals(getXmlQName());
     } else {
       IDataTypeAdapter<?> adapter = getDefinition().getJavaTypeAdapter();

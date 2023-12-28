@@ -26,18 +26,18 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.model.IModule;
 
 public interface IBindingModule
     extends IModule<
         IBindingModule,
-        IFlagContainer,
-        IFlagDefinition,
-        IFieldDefinition,
-        IAssemblyDefinition> {
-  // no additional methods
+        IBindingDefinitionModel,
+        IBindingDefinitionFlag,
+        IBindingDefinitionModelField,
+        IBindingDefinitionAssembly>,
+    IBinding {
+
+  @Override
+  IDocumentNodeItem getBoundNodeItem();
 }

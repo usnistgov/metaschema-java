@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
@@ -122,7 +122,7 @@ public interface IItemReadHandler {
   @NonNull
   Object readItemField(
       @Nullable Object parent,
-      @NonNull IBoundDefinitionFieldComplex definition) throws IOException;
+      @NonNull IBoundDefinitionModelFieldComplex definition) throws IOException;
 
   /**
    * Parse and return an item.
@@ -187,7 +187,7 @@ public interface IItemReadHandler {
   @NonNull
   Object readItemAssembly(
       @Nullable Object parent,
-      @NonNull IBoundDefinitionAssembly definition) throws IOException;
+      @NonNull IBoundDefinitionModelAssembly definition) throws IOException;
 
   /**
    * Parse and return an item.

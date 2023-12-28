@@ -28,44 +28,35 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModelField;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldGrouped;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceGroupBinding;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel;
-
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class InstanceModelGroupedFieldReference
     extends AbstractInstanceModelGrouped<AssemblyModel.ChoiceGroup.Field>
-    implements IGroupedFieldInstance, IFeatureValueless {
+    implements IBindingInstanceModelFieldGrouped {
   @NonNull
   private final IFieldDefinition definition;
-  @NonNull
-  private final Map<QName, Set<String>> properties;
 
   protected InstanceModelGroupedFieldReference(
       @NonNull AssemblyModel.ChoiceGroup.Field binding,
-      @NonNull IFieldDefinition definition,
-      @NonNull IChoiceGroupInstance parent) {
-    super(binding, parent);
+      @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
+      int position,
+      @NonNull IBindingDefinitionModelField definition,
+      @NonNull IInstanceModelChoiceGroupBinding parent) {
+    super(binding, bindingInstance, position, parent, ObjectUtils.requireNonNull(binding.getProps()));
     this.definition = definition;
-    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
   }
 
   @Override
   public IFieldDefinition getDefinition() {
     return definition;
-  }
-
-  @Override
-  public Map<QName, Set<String>> getProperties() {
-    return properties;
   }
 
   @Override

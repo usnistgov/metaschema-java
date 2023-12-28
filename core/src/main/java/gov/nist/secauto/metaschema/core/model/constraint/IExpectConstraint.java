@@ -47,7 +47,7 @@ public interface IExpectConstraint extends IConstraint {
 
   /**
    * A message to emit when the constraint is violated. Allows embedded Metapath
-   * expressions using the syntax {@code \{path\}}.
+   * expressions using the syntax {@code \{metapath\}}.
    *
    * @return the message if defined or {@code null} otherwise
    */

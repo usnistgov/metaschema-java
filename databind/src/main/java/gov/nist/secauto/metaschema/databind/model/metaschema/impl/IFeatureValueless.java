@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.IInstance;
+import gov.nist.secauto.metaschema.core.model.IInstanceAbsolute;
 
-public interface IFeatureValueless extends IInstance {
+public interface IFeatureValueless extends IInstanceAbsolute {
   @Override
   default Object getValue(Object parent) {
     // no value

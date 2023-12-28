@@ -59,7 +59,7 @@ public interface IBoundInstanceModelChoiceGroup
   @NonNull
   static IBoundInstanceModelChoiceGroup newInstance(
       @NonNull Field field,
-      @NonNull IBoundDefinitionAssembly containingDefinition) {
+      @NonNull IBoundDefinitionModelAssembly containingDefinition) {
     return new InstanceModelChoiceGroup(field, containingDefinition);
   }
 
@@ -71,7 +71,7 @@ public interface IBoundInstanceModelChoiceGroup
   @Override
   default String getJsonName() {
     // always the group-as name
-    return ObjectUtils.notNull(getGroupAsName());
+    return ObjectUtils.requireNonNull(getGroupAsName());
   }
 
   @Override
@@ -79,7 +79,12 @@ public interface IBoundInstanceModelChoiceGroup
 
   @Override
   @NonNull
-  IBoundDefinitionAssembly getOwningDefinition();
+  IBoundDefinitionModelAssembly getOwningDefinition();
+
+  @Override
+  default IBoundDefinitionModelAssembly getContainingDefinition() {
+    return getOwningDefinition();
+  }
 
   /**
    * Get the bound grouped model instance associated with the provided Java class.

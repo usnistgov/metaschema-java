@@ -42,6 +42,7 @@ module gov.nist.secauto.metaschema.databind {
   requires org.yaml.snakeyaml;
 
   requires flexmark.util.sequence;
+  requires com.google.auto.service;
 
   exports gov.nist.secauto.metaschema.databind;
   exports gov.nist.secauto.metaschema.databind.codegen;

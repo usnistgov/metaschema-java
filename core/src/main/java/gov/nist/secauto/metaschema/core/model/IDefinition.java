@@ -62,9 +62,7 @@ public interface IDefinition extends INamedModelElement, IFeatureValueConstraine
    *
    * @return the instance or {@code null} otherwise
    */
-  // REFACTOR: need to figure out how to move this to the instance side; this
-  // doesn't make sense on the definition side
-  INamedInstanceBase getInlineInstance();
+  INamedInstance getInlineInstance();
 
   /**
    * Generates a coordinate string for the provided information element

@@ -29,9 +29,9 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelField;
+import gov.nist.secauto.metaschema.databind.model.IGroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
@@ -60,9 +60,9 @@ public abstract class AbstractBoundInstanceField
    */
   protected AbstractBoundInstanceField(
       @NonNull Field javaField,
-      @NonNull IBoundDefinitionAssembly containingDefinition) {
+      @NonNull IBoundDefinitionModelAssembly containingDefinition) {
     super(javaField, BoundField.class, containingDefinition);
-    this.groupAs = IGroupAs.of(getAnnotation().groupAs(), containingDefinition);
+    this.groupAs = ModelUtil.groupAs(getAnnotation().groupAs());
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
       if (IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
         throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
@@ -86,11 +86,6 @@ public abstract class AbstractBoundInstanceField
   // ------------------------------------------
 
   @Override
-  public String getName() {
-    return ObjectUtils.notNull(getField().getName());
-  }
-
-  @Override
   public IGroupAs getGroupAs() {
     return groupAs;
   }
@@ -103,11 +98,6 @@ public abstract class AbstractBoundInstanceField
   @Override
   public MarkupLine getDescription() {
     return ModelUtil.resolveToMarkupLine(getAnnotation().description());
-  }
-
-  @Override
-  public String getUseName() {
-    return ModelUtil.resolveNoneOrValue(getAnnotation().useName());
   }
 
   @Override

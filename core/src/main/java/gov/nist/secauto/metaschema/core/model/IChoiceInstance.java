@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.core.model;
 /**
  * A marker interface for a choice of allowed instances in a Metachema.
  */
-public interface IChoiceInstance extends IModelInstance, IModelContainer {
+public interface IChoiceInstance extends IModelInstanceAbsolute, IContainerModelAbsolute {
 
   /**
    * Provides the Metaschema model type of "CHOICE".
@@ -39,6 +39,17 @@ public interface IChoiceInstance extends IModelInstance, IModelContainer {
   @Override
   default ModelType getModelType() {
     return ModelType.CHOICE;
+  }
+
+  /**
+   * Retrieve the Metaschema assembly definition on which this instance is
+   * declared.
+   *
+   * @return the parent Metaschema assembly definition
+   */
+  @Override
+  default IAssemblyDefinition getContainingDefinition() {
+    return getParentContainer().getOwningDefinition();
   }
 
   @Override
@@ -57,7 +68,7 @@ public interface IChoiceInstance extends IModelInstance, IModelContainer {
   }
 
   @Override
-  default boolean isValueWrappedInXml() {
+  default boolean isEffectiveValueWrappedInXml() {
     throw new UnsupportedOperationException("not applicable");
   }
 }

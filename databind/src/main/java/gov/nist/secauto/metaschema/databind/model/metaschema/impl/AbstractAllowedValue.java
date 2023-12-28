@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -50,7 +49,7 @@ public abstract class AbstractAllowedValue implements IAllowedValue {
 
   @Override
   public MarkupLine getDescription() {
-    return ObjectUtils.requireNonNull(getRemark());
+    MarkupLine remark = getRemark();
+    return remark == null ? MarkupLine.fromMarkdown("") : remark;
   }
-
 }

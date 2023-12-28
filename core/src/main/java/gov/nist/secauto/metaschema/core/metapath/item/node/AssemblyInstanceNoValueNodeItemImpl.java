@@ -34,9 +34,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 class AssemblyInstanceNoValueNodeItemImpl
-    extends AbstractModelInstanceNodeItem<
-        IAssemblyDefinition,
-        IAssemblyInstance>
+    extends AbstractInstanceNodeItem<IAssemblyDefinition, IAssemblyInstance, IAssemblyNodeItem>
     implements IAssemblyNodeItem,
     IFeatureNoDataItem,
     IFeatureModelContainerItem {

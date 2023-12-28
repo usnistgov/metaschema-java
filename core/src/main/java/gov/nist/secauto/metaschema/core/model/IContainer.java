@@ -26,14 +26,15 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 public interface IContainer {
   /**
-   * Retrieve the Metaschema definition containing this container.
+   * Identifies if the container allows child instances or not.
+   * <p>
+   * This can be the case if the container has flags or a complex model with at
+   * least a choice, choice group, field, or assembly instance.
    *
-   * @return the containing Metaschema definition
+   * @return {@code true} if there are flags or a model, or {@code false}
+   *         otherwise
    */
-  @NonNull
-  IFlagContainer getOwningDefinition();
+  boolean hasChildren();
 }

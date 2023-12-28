@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.AnnotationSpec;
 
-import gov.nist.secauto.metaschema.core.model.IGroupedFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedField;
 
 import java.lang.annotation.Annotation;
@@ -36,11 +36,11 @@ import java.lang.annotation.Annotation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class GroupedFieldInstanceTypeInfo
-    extends AbstractGroupedNamedModelInstanceTypeInfo<IGroupedFieldInstance>
+    extends AbstractGroupedNamedModelInstanceTypeInfo<IFieldInstanceGrouped>
     implements IGroupedFieldInstanceTypeInfo {
 
   public GroupedFieldInstanceTypeInfo(
-      @NonNull IGroupedFieldInstance modelInstance,
+      @NonNull IFieldInstanceGrouped modelInstance,
       @NonNull IChoiceGroupTypeInfo choiceGroupTypeInfo) {
     super(modelInstance, choiceGroupTypeInfo);
   }

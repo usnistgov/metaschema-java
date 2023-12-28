@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind;
 import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.IModulePostProcessor;
+import gov.nist.secauto.metaschema.core.model.IModuleLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.IProduction;
 import gov.nist.secauto.metaschema.databind.codegen.ModuleCompilerHelper;
@@ -44,8 +44,8 @@ import gov.nist.secauto.metaschema.databind.io.xml.DefaultXmlDeserializer;
 import gov.nist.secauto.metaschema.databind.io.xml.DefaultXmlSerializer;
 import gov.nist.secauto.metaschema.databind.io.yaml.DefaultYamlDeserializer;
 import gov.nist.secauto.metaschema.databind.io.yaml.DefaultYamlSerializer;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 
@@ -83,7 +83,7 @@ public class DefaultBindingContext implements IBindingContext {
   @NonNull
   private final Map<Class<?>, IBoundDefinitionModelComplex> boundClassToStrategyMap = new ConcurrentHashMap<>();
   @NonNull
-  private final Map<IBoundDefinitionAssembly, IBindingMatcher> bindingMatchers = new ConcurrentHashMap<>();
+  private final Map<IBoundDefinitionModelAssembly, IBindingMatcher> bindingMatchers = new ConcurrentHashMap<>();
 
   /**
    * Get the singleton instance of this binding context.
@@ -106,7 +106,7 @@ public class DefaultBindingContext implements IBindingContext {
    * @param modulePostProcessors
    *          a list of module post processors to call after loading a module
    */
-  public DefaultBindingContext(@NonNull List<IModulePostProcessor> modulePostProcessors) {
+  public DefaultBindingContext(@NonNull List<IModuleLoader.IModulePostProcessor> modulePostProcessors) {
     // only allow extended classes
     moduleLoaderStrategy = new PostProcessingModuleLoaderStrategy(this, modulePostProcessors);
   }
@@ -129,7 +129,7 @@ public class DefaultBindingContext implements IBindingContext {
    *
    * @return the list of matchers
    * @see #registerBindingMatcher(Class)
-   * @see #registerBindingMatcher(IBoundDefinitionAssembly)
+   * @see #registerBindingMatcher(IBoundDefinitionModelAssembly)
    */
   @NonNull
   protected Collection<IBindingMatcher> getBindingMatchers() {
@@ -138,7 +138,7 @@ public class DefaultBindingContext implements IBindingContext {
 
   @Override
   @NonNull
-  public IBindingMatcher registerBindingMatcher(@NonNull IBoundDefinitionAssembly definition) {
+  public IBindingMatcher registerBindingMatcher(@NonNull IBoundDefinitionModelAssembly definition) {
     return ObjectUtils.notNull(bindingMatchers.computeIfAbsent(definition, (key) -> IBindingMatcher.of(definition)));
   }
 
@@ -147,7 +147,7 @@ public class DefaultBindingContext implements IBindingContext {
     IBoundDefinitionModelComplex definition = getBoundDefinitionForClass(clazz);
 
     try {
-      IBoundDefinitionAssembly assemblyDefinition = IBoundDefinitionAssembly.class.cast(definition);
+      IBoundDefinitionModelAssembly assemblyDefinition = IBoundDefinitionModelAssembly.class.cast(definition);
       return registerBindingMatcher(ObjectUtils.requireNonNull(assemblyDefinition));
     } catch (ClassCastException ex) {
       throw new IllegalArgumentException(
@@ -179,9 +179,9 @@ public class DefaultBindingContext implements IBindingContext {
   @Override
   public <CLASS> ISerializer<CLASS> newSerializer(@NonNull Format format, @NonNull Class<CLASS> clazz) {
     Objects.requireNonNull(format, "format");
-    IBoundDefinitionAssembly definition;
+    IBoundDefinitionModelAssembly definition;
     try {
-      definition = IBoundDefinitionAssembly.class.cast(getBoundDefinitionForClass(clazz));
+      definition = IBoundDefinitionModelAssembly.class.cast(getBoundDefinitionForClass(clazz));
     } catch (ClassCastException ex) {
       throw new IllegalStateException(String.format("Class '%s' is not a bound assembly.", clazz.getClass().getName()));
     }
@@ -212,9 +212,9 @@ public class DefaultBindingContext implements IBindingContext {
    */
   @Override
   public <CLASS> IDeserializer<CLASS> newDeserializer(@NonNull Format format, @NonNull Class<CLASS> clazz) {
-    IBoundDefinitionAssembly definition;
+    IBoundDefinitionModelAssembly definition;
     try {
-      definition = IBoundDefinitionAssembly.class.cast(getBoundDefinitionForClass(clazz));
+      definition = IBoundDefinitionModelAssembly.class.cast(getBoundDefinitionForClass(clazz));
     } catch (ClassCastException ex) {
       throw new IllegalStateException(String.format("Class '%s' is not a bound assembly.", clazz.getClass().getName()));
     }
@@ -274,7 +274,7 @@ public class DefaultBindingContext implements IBindingContext {
   public IBoundModule registerModule(Class<? extends IBoundModule> clazz) {
     IBoundModule retval = getModuleLoaderStrategy().loadModule(clazz);
     // retval.getExportedAssemblyDefinitions().stream()
-    // .map(def -> (IBoundDefinitionAssembly) def)
+    // .map(def -> (IBoundDefinitionModelAssembly) def)
     // .filter(def -> def.isRoot())
     // .forEachOrdered(def -> registerBindingMatcher(ObjectUtils.notNull(def)));
     return retval;

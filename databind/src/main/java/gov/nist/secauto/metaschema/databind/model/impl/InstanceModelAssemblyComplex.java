@@ -30,10 +30,11 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
+import gov.nist.secauto.metaschema.databind.model.IGroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
@@ -56,7 +57,7 @@ public class InstanceModelAssemblyComplex
     extends AbstractBoundInstanceModelJavaField<BoundAssembly>
     implements IBoundInstanceModelAssembly {
   @NonNull
-  private final IBoundDefinitionAssembly definition;
+  private final IBoundDefinitionModelAssembly definition;
   @NonNull
   private final IGroupAs groupAs;
   @NonNull
@@ -75,11 +76,11 @@ public class InstanceModelAssemblyComplex
    */
   public InstanceModelAssemblyComplex(
       @NonNull Field javaField,
-      @NonNull IBoundDefinitionAssembly definition,
-      @NonNull IBoundDefinitionAssembly containingDefinition) {
+      @NonNull IBoundDefinitionModelAssembly definition,
+      @NonNull IBoundDefinitionModelAssembly containingDefinition) {
     super(javaField, BoundAssembly.class, containingDefinition);
     this.definition = definition;
-    this.groupAs = IGroupAs.of(getAnnotation().groupAs(), containingDefinition);
+    this.groupAs = ModelUtil.groupAs(getAnnotation().groupAs());
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
       if (IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
         throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
@@ -113,7 +114,7 @@ public class InstanceModelAssemblyComplex
   }
 
   @Override
-  public IBoundDefinitionAssembly getDefinition() {
+  public IBoundDefinitionModelAssembly getDefinition() {
     return definition;
   }
 

@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundModule;
@@ -60,8 +60,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class DefinitionField
-    extends AbstractBoundDefinitionFlagContainer<MetaschemaField>
-    implements IBoundDefinitionFieldComplex {
+    extends AbstractBoundDefinitionModelComplex<MetaschemaField>
+    implements IBoundDefinitionModelFieldComplex {
   @NonNull
   private final FieldValue fieldValue;
   @Nullable
@@ -187,6 +187,11 @@ public class DefinitionField
   }
 
   @Override
+  public IBoundInstanceFlag getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
+  }
+
+  @Override
   @NonNull
   public IValueConstrained getConstraintSupport() {
     return ObjectUtils.notNull(constraints.get());
@@ -267,7 +272,7 @@ public class DefinitionField
     }
 
     @Override
-    public IBoundDefinitionFieldComplex getParentFieldDefinition() {
+    public IBoundDefinitionModelFieldComplex getParentFieldDefinition() {
       return DefinitionField.this;
     }
 

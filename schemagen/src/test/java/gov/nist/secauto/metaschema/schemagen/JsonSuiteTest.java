@@ -32,8 +32,9 @@ import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.validation.IContentValidator;
 import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValidator;
-import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.databind.io.Format;
+import gov.nist.secauto.metaschema.databind.model.metaschema.BindingModuleLoader;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
 
 import org.junit.jupiter.api.Disabled;
@@ -131,10 +132,10 @@ class JsonSuiteTest
   @Disabled
   @Test
   void testOSCALComplete() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
-    ModuleLoader loader = new ModuleLoader();
+    BindingModuleLoader loader = new BindingModuleLoader();
     loader.allowEntityResolution();
 
-    IModule module = loader.load(new URL(
+    IBindingModule module = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
     ISchemaGenerator schemaGenerator = new JsonSchemaGenerator();
     IMutableConfiguration<SchemaGenerationFeature<?>> features
@@ -152,9 +153,10 @@ class JsonSuiteTest
   @Disabled
   @Test
   void testTestMetaschema() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
-    ModuleLoader loader = new ModuleLoader();
+    BindingModuleLoader loader = new BindingModuleLoader();
     loader.allowEntityResolution();
-    IModule module = loader.load(new URL(
+
+    IBindingModule module = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/metaschema/71233f4eb6854e820c7949144e86afa4d7981b22/test-suite/metaschema-xspec/json-schema-gen/json-value-testing-mini-metaschema.xml"));
     ISchemaGenerator schemaGenerator = new JsonSchemaGenerator();
     IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();

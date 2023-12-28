@@ -26,37 +26,80 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelNamedGrouped;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceGroupBinding;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Property;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
-public abstract class AbstractInstanceModelGrouped<BINDING>
+public abstract class AbstractInstanceModelGrouped<
+    BINDING>
     extends AbstractBinding<BINDING>
-    implements IGroupedNamedModelInstance {
+    implements IBindingInstanceModelNamedGrouped,
+    IFeatureValueless {
   @NonNull
-  private final IChoiceGroupInstance parent;
+  private final IInstanceModelChoiceGroupBinding parent;
+  @NonNull
+  private final Map<QName, Set<String>> properties;
+  @NonNull
+  private final Lazy<IAssemblyNodeItem> boundNodeItem;
 
   protected AbstractInstanceModelGrouped(
       @NonNull BINDING binding,
-      @NonNull IChoiceGroupInstance parent) {
+      @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
+      int position,
+      @NonNull IInstanceModelChoiceGroupBinding parent,
+      @NonNull List<Property> properties) {
     super(binding);
     this.parent = parent;
+    this.properties = ModelSupport.parseProperties(properties);
+    this.boundNodeItem = ObjectUtils.notNull(
+        Lazy.lazy(() -> (IAssemblyNodeItem) getContainingDefinition().getBoundNodeItem()
+            .getModelItemsByName(bindingInstance.getEffectiveName())
+            .get(position)));
   }
 
   @Override
-  public IChoiceGroupInstance getParentContainer() {
+  public IInstanceModelChoiceGroupBinding getParentContainer() {
     return parent;
   }
 
   @Override
-  public IAssemblyDefinition getContainingDefinition() {
+  public Map<QName, Set<String>> getProperties() {
+    return properties;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public INodeItem getBoundNodeItem() {
+    return boundNodeItem.get();
+  }
+
+  @Override
+  public IBindingDefinitionAssembly getContainingDefinition() {
     return getParentContainer().getOwningDefinition();
   }
 
   @Override
   public String getJsonKeyFlagName() {
     return getParentContainer().getJsonKeyFlagName();
+  }
+
+  @Override
+  public IBindingModule getContainingModule() {
+    return getContainingDefinition().getContainingModule();
   }
 }

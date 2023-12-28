@@ -30,8 +30,8 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IGroupedNamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +44,7 @@ import javax.lang.model.element.Modifier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractGroupedNamedModelInstanceTypeInfo<I extends IGroupedNamedModelInstance>
+public abstract class AbstractGroupedNamedModelInstanceTypeInfo<I extends INamedModelInstanceGrouped>
     implements IGroupedNamedModelInstanceTypeInfo {
   @NonNull
   private final I instance;
@@ -64,6 +64,7 @@ public abstract class AbstractGroupedNamedModelInstanceTypeInfo<I extends IGroup
       @NonNull AnnotationSpec.Builder instanceAnnotation,
       @NonNull AnnotationSpec.Builder choiceGroupAnnotation);
 
+  @NonNull
   protected I getInstance() {
     return instance;
   }
@@ -73,19 +74,19 @@ public abstract class AbstractGroupedNamedModelInstanceTypeInfo<I extends IGroup
   }
 
   @Override
-  public Set<IFlagContainer> generateMemberAnnotation(
+  public Set<IModelDefinition> generateMemberAnnotation(
       @NonNull AnnotationSpec.Builder choiceGroupAnnotation,
       @NonNull TypeSpec.Builder typeBuilder,
       boolean requireExtension) {
 
     AnnotationSpec.Builder memberAnnotation = ObjectUtils.notNull(AnnotationSpec.builder(getBindingAnnotation()));
 
-    TypeInfoUtils.buildConnonBindingAnnotationValues(getInstance(), memberAnnotation);
+    TypeInfoUtils.buildCommonBindingAnnotationValues(getInstance(), memberAnnotation);
 
-    Set<IFlagContainer> retval = new HashSet<>();
+    Set<IModelDefinition> retval = new HashSet<>();
 
     I instance = getInstance();
-    IFlagContainer definition = getInstance().getDefinition();
+    IModelDefinition definition = getInstance().getDefinition();
 
     IChoiceGroupTypeInfo choiceGroupTypeInfo = getChoiceGroupTypeInfo();
     ITypeResolver typeResolver = choiceGroupTypeInfo.getParentTypeInfo().getTypeResolver();

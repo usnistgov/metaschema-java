@@ -29,14 +29,16 @@ package gov.nist.secauto.metaschema.databind.model.metaschema;
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.model.AbstractModuleLoader;
-import gov.nist.secauto.metaschema.core.model.IModulePostProcessor;
+import gov.nist.secauto.metaschema.core.model.IModuleLoader;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
+import gov.nist.secauto.metaschema.databind.model.metaschema.impl.BindingModule;
 
 import java.io.IOException;
 import java.net.URI;
@@ -70,7 +72,7 @@ public class BindingModuleLoader
    *          post processors to perform additional module customization when
    *          loading
    */
-  public BindingModuleLoader(@NonNull List<IModulePostProcessor> modulePostProcessors) {
+  public BindingModuleLoader(@NonNull List<IModuleLoader.IModulePostProcessor> modulePostProcessors) {
     super(modulePostProcessors);
     this.loader = IBindingContext.instance().newBoundLoader();
   }
@@ -78,7 +80,13 @@ public class BindingModuleLoader
   @Override
   protected IBindingModule newModule(URI resource, METASCHEMA binding, List<IBindingModule> importedModules)
       throws MetaschemaException {
-    return new BindingModule(resource, binding, importedModules);
+    return new BindingModule(
+        resource,
+        ObjectUtils.notNull(
+            (IBoundDefinitionModelAssembly) getLoader().getBindingContext()
+                .getBoundDefinitionForClass(METASCHEMA.class)),
+        binding,
+        importedModules);
   }
 
   @Override
@@ -116,5 +124,9 @@ public class BindingModuleLoader
   @Override
   public IMutableConfiguration<DeserializationFeature<?>> set(DeserializationFeature<?> feature, Object value) {
     return getLoader().set(feature, value);
+  }
+
+  public void allowEntityResolution() {
+    enableFeature(DeserializationFeature.DESERIALIZE_XML_ALLOW_ENTITY_RESOLUTION);
   }
 }

@@ -42,9 +42,10 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IContainerFlag;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
@@ -151,14 +152,14 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     Path classFile = ObjectUtils.notNull(javaFile.writeToPath(targetDirectory));
 
     // now generate all related definition classes
-    Stream<? extends IFlagContainer> globalDefinitions = Stream.concat(
+    Stream<? extends IContainerFlag> globalDefinitions = Stream.concat(
         module.getAssemblyDefinitions().stream(),
         module.getFieldDefinitions().stream());
 
     Set<String> classNames = new HashSet<>();
 
     @SuppressWarnings("PMD.UseConcurrentHashMap") // map is unmodifiable
-    Map<IFlagContainer, IGeneratedDefinitionClass> definitionProductions
+    Map<IContainerFlag, IGeneratedDefinitionClass> definitionProductions
         = ObjectUtils.notNull(globalDefinitions
             // Get type information for assembly and field definitions.
             // Avoid field definitions without flags that don't require a generated class
@@ -174,7 +175,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
             })
             // generate the class for each type information
             .map(typeInfo -> {
-              IFlagContainer definition = typeInfo.getDefinition();
+              IModelDefinition definition = typeInfo.getDefinition();
               IGeneratedDefinitionClass generatedClass;
               try {
                 generatedClass = generateClass(typeInfo, targetDirectory);
@@ -282,7 +283,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
 
     ITypeResolver typeResolver = getTypeResolver();
     for (IFieldDefinition definition : module.getFieldDefinitions()) {
-      if (!definition.isSimple()) {
+      if (definition.hasChildren()) {
         moduleAnnotation.addMember("fields", "$T.class", typeResolver.getClassName(definition));
       }
     }
@@ -438,7 +439,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       builder.superclass(baseClassName);
     }
 
-    Set<IFlagContainer> additionalChildClasses;
+    Set<IModelDefinition> additionalChildClasses;
     if (typeInfo instanceof IAssemblyDefinitionTypeInfo) {
       additionalChildClasses = buildClass((IAssemblyDefinitionTypeInfo) typeInfo, builder);
     } else if (typeInfo instanceof IFieldDefinitionTypeInfo) {
@@ -450,7 +451,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
 
     ITypeResolver typeResolver = getTypeResolver();
 
-    for (IFlagContainer definition : additionalChildClasses) {
+    for (IModelDefinition definition : additionalChildClasses) {
       assert definition != null;
       IModelDefinitionTypeInfo childTypeInfo = typeResolver.getTypeInfo(definition);
       TypeSpec childClass = newClassBuilder(childTypeInfo, true).build();
@@ -470,10 +471,10 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
    * @return the set of additional definitions for which child classes need to be
    *         generated
    */
-  protected Set<IFlagContainer> buildClass(
+  protected Set<IModelDefinition> buildClass(
       @NonNull IAssemblyDefinitionTypeInfo typeInfo,
       @NonNull TypeSpec.Builder builder) {
-    Set<IFlagContainer> retval = new HashSet<>();
+    Set<IModelDefinition> retval = new HashSet<>();
 
     retval.addAll(buildClass((IModelDefinitionTypeInfo) typeInfo, builder));
 
@@ -509,10 +510,10 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
    * @return the set of additional definitions for which child classes need to be
    *         generated
    */
-  protected Set<IFlagContainer> buildClass(
+  protected Set<IModelDefinition> buildClass(
       @NonNull IFieldDefinitionTypeInfo typeInfo,
       @NonNull TypeSpec.Builder builder) {
-    Set<IFlagContainer> retval = new HashSet<>();
+    Set<IModelDefinition> retval = new HashSet<>();
     retval.addAll(buildClass((IModelDefinitionTypeInfo) typeInfo, builder));
 
     AnnotationSpec.Builder metaschemaField = ObjectUtils.notNull(AnnotationSpec.builder(MetaschemaField.class));
@@ -538,7 +539,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
    *         generated
    */
   @NonNull
-  protected Set<IFlagContainer> buildClass(
+  protected Set<IModelDefinition> buildClass(
       @NonNull IModelDefinitionTypeInfo typeInfo,
       @NonNull TypeSpec.Builder builder) {
     MarkupLine description = typeInfo.getDefinition().getDescription();
@@ -546,7 +547,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       builder.addJavadoc(description.toHtml());
     }
 
-    Set<IFlagContainer> additionalChildClasses = new HashSet<>();
+    Set<IModelDefinition> additionalChildClasses = new HashSet<>();
 
     // // generate a no-arg constructor
     // builder.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC).build());
@@ -610,23 +611,23 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       @NonNull FieldSpec.Builder builder) {
     IFieldDefinition definition = typeInfo.getParentDefinitionTypeInfo().getDefinition();
     AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(BoundFieldValue.class);
-
+  
     IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
-
+  
     // a field object always has a single value
     if (!definition.hasJsonValueKeyFlagInstance()) {
       fieldValue.addMember("valueKeyName", "$S", definition.getJsonValueKeyName());
     } // else do nothing, the annotation will be on the flag
-
+  
     if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {
       fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getClass());
     }
-
+  
     Object defaultValue = definition.getDefaultValue();
     if (defaultValue != null) {
       fieldValue.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
     }
-
+  
     builder.addAnnotation(fieldValue.build());
   }
   */
@@ -645,7 +646,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       @NonNull IModelInstanceTypeInfo typeInfo,
       @NonNull TypeSpec.Builder builder,
       @NonNull FieldSpec valueField) {
-    IModelInstance instance = typeInfo.getInstance();
+    IModelInstanceAbsolute instance = typeInfo.getInstance();
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {
       TypeName itemType = typeInfo.getJavaItemType();
@@ -659,7 +660,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
               valueField);
         } else {
           // FIXME: implement choice group
-          throw new UnsupportedOperationException();
+          throw new UnsupportedOperationException("implement");
         }
       } else {
         {

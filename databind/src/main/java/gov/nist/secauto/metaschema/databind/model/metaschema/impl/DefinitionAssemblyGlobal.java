@@ -28,21 +28,28 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AssemblyModelContainerSupport;
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IStandardModelContainerSupport;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
+import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelNamedAbsolute;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceBinding;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceGroupBinding;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyConstraints;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.JsonKey;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
 
 import java.util.Map;
@@ -55,32 +62,62 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 public class DefinitionAssemblyGlobal
     extends AbstractDefinition<METASCHEMA.DefineAssembly>
-    implements IAssemblyDefinition,
-    IFeatureStandardModelContainer,
-    IFeatureFlagContainer<IFlagInstance> {
+    implements IBindingDefinitionAssembly,
+    IFeatureBindingContainerFlag,
+    IFeatureBindingContainerModelAssembly {
   @NonNull
   private final Map<QName, Set<String>> properties;
   @NonNull
-  private final Lazy<FlagContainerSupport> flagContainer;
+  private final Lazy<IContainerFlagSupport<IBindingInstanceFlag>> flagContainer;
   @NonNull
-  private final Lazy<IStandardModelContainerSupport> modelContainer;
+  private final Lazy<IContainerModelAssemblySupport<
+      IBindingInstanceModelAbsolute,
+      IBindingInstanceModelNamedAbsolute,
+      IBindingInstanceModelFieldAbsolute,
+      IBindingInstanceModelAssemblyAbsolute,
+      IInstanceModelChoiceBinding,
+      IInstanceModelChoiceGroupBinding>> modelContainer;
   @NonNull
   private final Lazy<IModelConstrained> modelConstraints;
+  @NonNull
+  private final Lazy<IAssemblyNodeItem> boundNodeItem;
 
+  /**
+   * Construct a new global assembly definition.
+   *
+   * @param binding
+   *          the assembly reference object bound to a Java class
+   * @param bindingInstance
+   *          the Metaschema module instance for the bound assembly reference
+   *          object
+   * @param position
+   *          the zero-based position of this instance relative to its bound
+   *          object siblings
+   * @param module
+   *          the containing Metaschema module
+   * @param nodeItemFactory
+   *          the node item factory used to generate child nodes
+   */
   public DefinitionAssemblyGlobal(
+      @NonNull METASCHEMA.DefineAssembly binding,
+      @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
+      int position,
       @NonNull IBindingModule module,
-      @NonNull METASCHEMA.DefineAssembly binding) {
-    super(module, binding);
-    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
-    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(binding.getFlags(), this)));
-    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      AssemblyModel model = binding.getModel();
+      @NonNull INodeItemFactory nodeItemFactory) {
+    super(binding, module);
+    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(binding.getProps()));
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> FlagContainerSupport.of(
+        binding.getFlags(),
+        bindingInstance,
+        this)));
+    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> AssemblyModelContainerSupport.of(
+        binding.getModel(),
+        ObjectUtils.requireNonNull(bindingInstance.getDefinition().getAssemblyInstanceByName("model")),
+        this,
+        nodeItemFactory)));
+    this.modelConstraints = ObjectUtils.notNull(Lazy.lazy(() ->
 
-      return model == null
-          ? new AssemblyModelContainerSupport()
-          : new BindingModelContainerSupport(model, this);
-    }));
-    this.modelConstraints = ObjectUtils.notNull(Lazy.lazy(() -> {
+    {
       IModelConstrained retval = new AssemblyConstraintSet();
       AssemblyConstraints constraints = getBinding().getConstraint();
       if (constraints != null) {
@@ -88,21 +125,38 @@ public class DefinitionAssemblyGlobal
       }
       return retval;
     }));
+    this.boundNodeItem = ObjectUtils.notNull(Lazy.lazy(() -> (IAssemblyNodeItem)
+
+    getContainingModule().getBoundNodeItem()
+        .getModelItemsByName(bindingInstance.getEffectiveName())
+        .get(position)));
   }
 
   @Override
-  public FlagContainerSupport getFlagContainer() {
+  public IContainerFlagSupport<IBindingInstanceFlag> getFlagContainer() {
     return ObjectUtils.notNull(flagContainer.get());
   }
 
   @Override
-  public IStandardModelContainerSupport getModelContainer() {
+  public IContainerModelAssemblySupport<
+      IBindingInstanceModelAbsolute,
+      IBindingInstanceModelNamedAbsolute,
+      IBindingInstanceModelFieldAbsolute,
+      IBindingInstanceModelAssemblyAbsolute,
+      IInstanceModelChoiceBinding,
+      IInstanceModelChoiceGroupBinding> getModelContainer() {
     return ObjectUtils.notNull(modelContainer.get());
   }
 
   @Override
   public IModelConstrained getConstraintSupport() {
     return ObjectUtils.notNull(modelConstraints.get());
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public INodeItem getBoundNodeItem() {
+    return boundNodeItem.get();
   }
 
   @Override
@@ -131,18 +185,6 @@ public class DefinitionAssemblyGlobal
   }
 
   @Override
-  public boolean isInline() {
-    // global definitions are never inline
-    return false;
-  }
-
-  @Override
-  public IAssemblyInstance getInlineInstance() {
-    // global definitions are never inline
-    return null;
-  }
-
-  @Override
   public Integer getIndex() {
     return ModelSupport.index(getBinding().getIndex());
   }
@@ -160,6 +202,12 @@ public class DefinitionAssemblyGlobal
   @Override
   public MarkupMultiline getRemarks() {
     return ModelSupport.remarks(getBinding().getRemarks());
+  }
+
+  @Override
+  public String getJsonKeyFlagName() {
+    JsonKey jsonKey = getBinding().getJsonKey();
+    return jsonKey == null ? null : jsonKey.getFlagRef();
   }
 
   @Override

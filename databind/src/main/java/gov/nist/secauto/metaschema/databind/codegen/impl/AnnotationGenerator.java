@@ -40,10 +40,10 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
@@ -159,7 +159,7 @@ public final class AnnotationGenerator {
 
   public static void buildValueConstraints(
       @NonNull AnnotationSpec.Builder builder,
-      @NonNull IFlagContainer definition) {
+      @NonNull IModelDefinition definition) {
 
     List<? extends IAllowedValuesConstraint> allowedValues = definition.getAllowedValuesConstraints();
     List<? extends IIndexHasKeyConstraint> indexHasKey = definition.getIndexHasKeyConstraints();
@@ -366,8 +366,8 @@ public final class AnnotationGenerator {
     LogBuilder warn = LOGGER.atWarn();
     for (IDefinitionNodeItem<?, ?> item : instanceSet.asList()) {
       INamedInstance instance = item.getInstance();
-      if (instance instanceof INamedModelInstance) {
-        INamedModelInstance modelInstance = (INamedModelInstance) instance;
+      if (instance instanceof INamedModelInstanceAbsolute) {
+        INamedModelInstanceAbsolute modelInstance = (INamedModelInstanceAbsolute) instance;
 
         checkMinOccurs(definition, constraint, modelInstance, logBuilder);
         checkMaxOccurs(definition, constraint, modelInstance, logBuilder);
@@ -385,7 +385,7 @@ public final class AnnotationGenerator {
   private static void checkMinOccurs(
       @NonNull IAssemblyDefinition definition,
       @NonNull ICardinalityConstraint constraint,
-      @NonNull INamedModelInstance modelInstance,
+      @NonNull INamedModelInstanceAbsolute modelInstance,
       @NonNull LogBuilder logBuilder) {
     Integer minOccurs = constraint.getMinOccurs();
     if (minOccurs != null) {
@@ -413,7 +413,7 @@ public final class AnnotationGenerator {
   private static void checkMaxOccurs(
       @NonNull IAssemblyDefinition definition,
       @NonNull ICardinalityConstraint constraint,
-      @NonNull INamedModelInstance modelInstance,
+      @NonNull INamedModelInstanceAbsolute modelInstance,
       @NonNull LogBuilder logBuilder) {
     Integer maxOccurs = constraint.getMaxOccurs();
     if (maxOccurs != null) {

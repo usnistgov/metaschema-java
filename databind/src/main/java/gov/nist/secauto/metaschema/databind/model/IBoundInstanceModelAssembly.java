@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -43,7 +43,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Represents an assembly instance bound to Java field.
  */
 public interface IBoundInstanceModelAssembly
-    extends IBoundInstanceModelNamedComplex, IAssemblyInstance {
+    extends IBoundInstanceModelNamedComplex, IAssemblyInstanceAbsolute {
 
   /**
    * Create a new bound assembly instance.
@@ -57,12 +57,12 @@ public interface IBoundInstanceModelAssembly
   @NonNull
   static IBoundInstanceModelAssembly newInstance(
       @NonNull Field field,
-      @NonNull IBoundDefinitionAssembly containingDefinition) {
+      @NonNull IBoundDefinitionModelAssembly containingDefinition) {
     Class<?> itemType = IBoundInstanceModel.getItemType(field);
     IBindingContext bindingContext = containingDefinition.getBindingContext();
     IBoundDefinitionModel definition = bindingContext.getBoundDefinitionForClass(itemType);
-    if (definition instanceof IBoundDefinitionAssembly) {
-      return new InstanceModelAssemblyComplex(field, (IBoundDefinitionAssembly) definition, containingDefinition);
+    if (definition instanceof IBoundDefinitionModelAssembly) {
+      return new InstanceModelAssemblyComplex(field, (IBoundDefinitionModelAssembly) definition, containingDefinition);
     }
 
     throw new IllegalStateException(String.format(
@@ -78,7 +78,7 @@ public interface IBoundInstanceModelAssembly
 
   @Override
   @NonNull
-  IBoundDefinitionAssembly getDefinition();
+  IBoundDefinitionModelAssembly getDefinition();
   // @Override
   // default Object getValue(Object parent) {
   // return IBoundInstanceModelNamed.super.getValue(parent);
@@ -122,10 +122,5 @@ public interface IBoundInstanceModelAssembly
   @Override
   default void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
     getDefinition().callAfterDeserialize(targetObject, parentObject);
-  }
-
-  @Override
-  default String toCoordinates() {
-    return IBoundInstanceModelNamedComplex.super.toCoordinates();
   }
 }

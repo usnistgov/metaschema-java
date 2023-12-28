@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IConfigurationFeature;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 
 import java.util.Map;
 
@@ -40,11 +40,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 abstract class AbstractSerializationBase<T extends IConfigurationFeature<?>>
     implements IMutableConfiguration<T> {
   @NonNull
-  private final IBoundDefinitionAssembly definition;
+  private final IBoundDefinitionModelAssembly definition;
   @NonNull
   private final DefaultConfiguration<T> configuration;
 
-  protected AbstractSerializationBase(@NonNull IBoundDefinitionAssembly definition) {
+  protected AbstractSerializationBase(@NonNull IBoundDefinitionModelAssembly definition) {
     this.definition = definition;
     this.configuration = new DefaultConfiguration<>();
   }
@@ -66,7 +66,7 @@ abstract class AbstractSerializationBase<T extends IConfigurationFeature<?>>
    * @return the class binding for the Module assembly
    */
   @NonNull
-  protected IBoundDefinitionAssembly getDefinition() {
+  protected IBoundDefinitionModelAssembly getDefinition() {
     return definition;
   }
 

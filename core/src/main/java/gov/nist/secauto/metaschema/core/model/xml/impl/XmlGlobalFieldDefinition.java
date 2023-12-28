@@ -31,9 +31,8 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvi
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -56,8 +55,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 @SuppressWarnings({ "PMD.GodClass", "PMD.CouplingBetweenObjects" })
 class XmlGlobalFieldDefinition
     implements IFieldDefinition,
-    IFeatureFlagContainer<IFlagInstance>,
-    IFeatureGlobalDefinition<IFieldInstance> {
+    IFeatureContainerFlag<IFlagInstance> {
   @NonNull
   private final GlobalFieldDefinitionType xmlObject;
   @NonNull
@@ -131,8 +129,8 @@ class XmlGlobalFieldDefinition
   }
 
   @Override
-  public IFieldInstance getInlineInstance() {
-    return IFeatureGlobalDefinition.super.getInlineInstance();
+  public IFlagInstance getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
   }
 
   // ----------------------------------------

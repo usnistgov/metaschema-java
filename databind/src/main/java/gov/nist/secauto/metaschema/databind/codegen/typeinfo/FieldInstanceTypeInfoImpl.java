@@ -36,7 +36,8 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.impl.AnnotationGenerator;
@@ -48,11 +49,11 @@ import java.util.Set;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class FieldInstanceTypeInfoImpl
-    extends AbstractNamedModelInstanceTypeInfo<IFieldInstance>
+    extends AbstractNamedModelInstanceTypeInfo<IFieldInstanceAbsolute>
     implements IFieldInstanceTypeInfo {
 
   public FieldInstanceTypeInfoImpl(
-      @NonNull IFieldInstance instance,
+      @NonNull IFieldInstanceAbsolute instance,
       @NonNull IAssemblyDefinitionTypeInfo parentDefinition) {
     super(instance, parentDefinition);
   }
@@ -61,7 +62,7 @@ public class FieldInstanceTypeInfoImpl
   public TypeName getJavaItemType() {
     TypeName retval;
     IFieldInstance fieldInstance = getInstance();
-    if (fieldInstance.getDefinition().isSimple()) {
+    if (!fieldInstance.getDefinition().hasChildren()) {
       IDataTypeAdapter<?> dataType = fieldInstance.getDefinition().getJavaTypeAdapter();
       // this is a simple value
       retval = ObjectUtils.notNull(ClassName.get(dataType.getJavaClass()));
@@ -78,12 +79,12 @@ public class FieldInstanceTypeInfoImpl
 
   @SuppressWarnings("checkstyle:methodlength")
   @Override
-  public Set<IFlagContainer> buildBindingAnnotation(
+  public Set<IModelDefinition> buildBindingAnnotation(
       TypeSpec.Builder typeBuilder,
       FieldSpec.Builder fieldBuilder,
       AnnotationSpec.Builder annotation) {
     // first build the core attributes
-    final Set<IFlagContainer> retval = super.buildBindingAnnotation(typeBuilder, fieldBuilder, annotation);
+    final Set<IModelDefinition> retval = super.buildBindingAnnotation(typeBuilder, fieldBuilder, annotation);
 
     IFieldInstance instance = getInstance();
 
@@ -101,12 +102,11 @@ public class FieldInstanceTypeInfoImpl
     }
 
     // handle the field value related info
-    if (definition.isSimple() && !MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(adapter)) {
+    if (!definition.hasChildren()) {
       // this is a simple field, without flags
-      annotation.addMember("typeAdapter", "$T.class", adapter.getClass());
-    }
-
-    if (definition.isSimple()) {
+      if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(adapter)) {
+        annotation.addMember("typeAdapter", "$T.class", adapter.getClass());
+      }
       AnnotationGenerator.buildValueConstraints(annotation, definition);
     }
     return retval;

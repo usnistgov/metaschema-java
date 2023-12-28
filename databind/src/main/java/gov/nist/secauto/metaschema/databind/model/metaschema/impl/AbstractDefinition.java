@@ -26,22 +26,23 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinition;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractDefinition<BINDING>
     extends AbstractBinding<BINDING>
-    implements IDefinition {
+    implements IBindingDefinition {
   @NonNull
   private final IBindingModule module;
 
   protected AbstractDefinition(
-      @NonNull IBindingModule module,
-      @NonNull BINDING binding) {
+      @NonNull BINDING binding,
+      @NonNull IBindingModule module) {
     super(binding);
     this.module = module;
+
   }
 
   @Override

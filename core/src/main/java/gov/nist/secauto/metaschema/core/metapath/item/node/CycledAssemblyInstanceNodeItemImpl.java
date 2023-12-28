@@ -35,7 +35,7 @@ import java.util.List;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class CycledAssemblyInstanceNodeItemImpl
-    extends AbstractModelInstanceNodeItem<IAssemblyDefinition, IAssemblyInstance>
+    extends AbstractInstanceNodeItem<IAssemblyDefinition, IAssemblyInstance, IAssemblyNodeItem>
     implements ICycledAssemblyNodeItem, IFeatureNoDataItem {
   @NonNull
   private final IAssemblyNodeItem cycledNodeItem;

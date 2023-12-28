@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.databind.codegen.config;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModelType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -53,7 +53,7 @@ class DefaultBindingConfigurationTest {
 
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
-  private final IFlagContainer definition = context.mock(IFlagContainer.class);
+  private final IModelDefinition definition = context.mock(IModelDefinition.class);
   private final IModule<?, ?, ?, ?, ?> module = context.mock(IModule.class);
 
   @Test

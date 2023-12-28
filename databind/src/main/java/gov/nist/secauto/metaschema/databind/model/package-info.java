@@ -23,10 +23,12 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
 /**
- * Provides the core implementation of the Module model
- * ({@link gov.nist.secauto.metaschema.core.model}) represented as Java class
- * annotations ({@link gov.nist.secauto.metaschema.databind.model.annotations}).
+ * Provides an overlay of the Metaschema module model
+ * ({@link gov.nist.secauto.metaschema.core.model}) representing module
+ * constructs as bound Java class annotations
+ * ({@link gov.nist.secauto.metaschema.databind.model.annotations}).
  */
 
 package gov.nist.secauto.metaschema.databind.model;

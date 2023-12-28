@@ -28,50 +28,48 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingContainerModelAbsolute;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModelField;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldAbsolute;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FieldReference;
 
 import java.math.BigInteger;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class InstanceModelFieldReference
-    extends AbstractInstanceModel<FieldReference, IModelContainer>
-    implements IFieldInstance {
-  @NonNull
-  private final IFieldDefinition definition;
-  @NonNull
-  private final Map<QName, Set<String>> properties;
+    extends AbstractInstanceModelNamedReference<
+        FieldReference,
+        IBindingDefinitionModelField,
+        IBindingContainerModelAbsolute>
+    implements IBindingInstanceModelFieldAbsolute {
   @Nullable
   private final Object defaultValue;
 
   public InstanceModelFieldReference(
       @NonNull FieldReference binding,
-      @NonNull IFieldDefinition definition,
-      @NonNull IModelContainer parent) {
-    super(binding, parent);
-    this.definition = definition;
-    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
+      @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
+      int position,
+      @NonNull IBindingDefinitionModelField definition,
+      @NonNull IBindingContainerModelAbsolute parent) {
+    super(
+        binding,
+        bindingInstance,
+        position,
+        definition,
+        parent,
+        ObjectUtils.requireNonNull(binding.getProps()),
+        binding.getGroupAs());
     this.defaultValue = ModelSupport.defaultValue(getBinding().getDefault(), definition.getJavaTypeAdapter());
   }
 
   @Override
-  public IFieldDefinition getDefinition() {
-    return definition;
-  }
-
-  @Override
-  public Map<QName, Set<String>> getProperties() {
-    return properties;
+  public boolean isInXmlWrapped() {
+    return ModelSupport.fieldInXml(getBinding().getInXml());
   }
 
   @Override

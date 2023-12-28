@@ -51,15 +51,15 @@ public abstract class AbstractBoundModule
         IBoundModule,
         IBoundDefinitionModelComplex,
         IBoundDefinitionFlag,
-        IBoundDefinitionField,
-        IBoundDefinitionAssembly>
+        IBoundDefinitionModelField,
+        IBoundDefinitionModelAssembly>
     implements IBoundModule {
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
-  private final Lazy<Map<String, IBoundDefinitionAssembly>> assemblyDefinitions;
+  private final Lazy<Map<String, IBoundDefinitionModelAssembly>> assemblyDefinitions;
   @NonNull
-  private final Lazy<Map<String, IBoundDefinitionField>> fieldDefinitions;
+  private final Lazy<Map<String, IBoundDefinitionModelField>> fieldDefinitions;
 
   /**
    * Create a new Module instance for a given class annotated by the
@@ -136,19 +136,19 @@ public abstract class AbstractBoundModule
     this.assemblyDefinitions = ObjectUtils.notNull(Lazy.lazy(() -> Arrays.stream(getAssemblyClasses())
         .map(clazz -> {
           assert clazz != null;
-          return (IBoundDefinitionAssembly) ObjectUtils
+          return (IBoundDefinitionModelAssembly) ObjectUtils
               .requireNonNull(bindingContext.getBoundDefinitionForClass(clazz));
         })
         .collect(Collectors.toUnmodifiableMap(
-            IBoundDefinitionAssembly::getName,
+            IBoundDefinitionModelAssembly::getName,
             Function.identity()))));
     this.fieldDefinitions = ObjectUtils.notNull(Lazy.lazy(() -> Arrays.stream(getFieldClasses())
         .map(clazz -> {
           assert clazz != null;
-          return (IBoundDefinitionField) ObjectUtils.requireNonNull(bindingContext.getBoundDefinitionForClass(clazz));
+          return (IBoundDefinitionModelField) ObjectUtils.requireNonNull(bindingContext.getBoundDefinitionForClass(clazz));
         })
         .collect(Collectors.toUnmodifiableMap(
-            IBoundDefinitionField::getName,
+            IBoundDefinitionModelField::getName,
             Function.identity()))));
   }
 
@@ -198,18 +198,18 @@ public abstract class AbstractBoundModule
    *
    * @return the mapping
    */
-  protected Map<String, IBoundDefinitionAssembly> getAssemblyDefinitionMap() {
+  protected Map<String, IBoundDefinitionModelAssembly> getAssemblyDefinitionMap() {
     return assemblyDefinitions.get();
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<IBoundDefinitionAssembly> getAssemblyDefinitions() {
+  public Collection<IBoundDefinitionModelAssembly> getAssemblyDefinitions() {
     return getAssemblyDefinitionMap().values();
   }
 
   @Override
-  public IBoundDefinitionAssembly getAssemblyDefinitionByName(@NonNull String name) {
+  public IBoundDefinitionModelAssembly getAssemblyDefinitionByName(@NonNull String name) {
     return getAssemblyDefinitionMap().get(name);
   }
 
@@ -218,18 +218,18 @@ public abstract class AbstractBoundModule
    *
    * @return the mapping
    */
-  protected Map<String, IBoundDefinitionField> getFieldDefinitionMap() {
+  protected Map<String, IBoundDefinitionModelField> getFieldDefinitionMap() {
     return fieldDefinitions.get();
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<IBoundDefinitionField> getFieldDefinitions() {
+  public Collection<IBoundDefinitionModelField> getFieldDefinitions() {
     return getFieldDefinitionMap().values();
   }
 
   @Override
-  public IBoundDefinitionField getFieldDefinitionByName(@NonNull String name) {
+  public IBoundDefinitionModelField getFieldDefinitionByName(@NonNull String name) {
     return getFieldDefinitionMap().get(name);
   }
 

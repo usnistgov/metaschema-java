@@ -36,9 +36,9 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.impl.AnnotationGenerator;
@@ -71,7 +71,7 @@ public class FlagInstanceTypeInfoImpl
 
   @SuppressWarnings("PMD.CyclomaticComplexity") // acceptable
   @Override
-  public Set<IFlagContainer> buildField(
+  public Set<IModelDefinition> buildField(
       TypeSpec.Builder typeBuilder,
       FieldSpec.Builder fieldBuilder) {
     super.buildField(typeBuilder, fieldBuilder);
@@ -90,7 +90,7 @@ public class FlagInstanceTypeInfoImpl
       annotation.addMember("description", "$S", description.toMarkdown());
     }
 
-    annotation.addMember("useName", "$S", instance.getEffectiveName());
+    annotation.addMember("name", "$S", instance.getEffectiveName());
 
     Integer index = instance.getEffectiveIndex();
     if (index != null) {
@@ -127,7 +127,7 @@ public class FlagInstanceTypeInfoImpl
 
     fieldBuilder.addAnnotation(annotation.build());
 
-    IFlagContainer parent = instance.getContainingDefinition();
+    IModelDefinition parent = instance.getContainingDefinition();
     if (parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
       fieldBuilder.addAnnotation(JsonKey.class);
     }

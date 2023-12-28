@@ -50,14 +50,14 @@ public class ConstraintValueEnum
     extends AbstractAllowedValue {
   @BoundFlag(
       formalName = "Allowed Value Enumeration Value",
-      useName = "value",
+      name = "value",
       required = true,
       typeAdapter = StringAdapter.class)
   private String _value;
 
   @BoundFlag(
       formalName = "Allowed Value Deprecation Version",
-      useName = "deprecated",
+      name = "deprecated",
       typeAdapter = StringAdapter.class)
   private String _deprecated;
 

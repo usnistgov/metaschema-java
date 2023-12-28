@@ -36,10 +36,10 @@ import java.math.BigInteger;
 @MetaschemaAssembly(name = "simple-assembly", rootName = "test", moduleClass = TestMetaschema.class,
     rootNamespace = "http://example.com/ns")
 public class SimpleAssembly {
-  @BoundFlag(useName = "id")
+  @BoundFlag(name = "id")
   private String _id;
 
-  @BoundFlag(useName = "number", typeAdapter = IntegerAdapter.class)
+  @BoundFlag(name = "number", typeAdapter = IntegerAdapter.class)
   private BigInteger _number;
 
   public SimpleAssembly() {

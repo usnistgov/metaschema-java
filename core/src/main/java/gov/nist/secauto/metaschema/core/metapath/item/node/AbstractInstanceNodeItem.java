@@ -27,16 +27,15 @@
 package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IContainerFlag;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-abstract class AbstractInstanceNodeItem<
+public abstract class AbstractInstanceNodeItem<
     D extends IDefinition,
     I extends INamedInstance,
-    P extends IModelNodeItem<
-        ? extends IFlagContainer, ? extends INamedInstance>>
+    P extends IModelNodeItem<? extends IContainerFlag, ? extends INamedInstance>>
     implements IDefinitionNodeItem<D, I> {
 
   @NonNull

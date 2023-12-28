@@ -32,17 +32,64 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 /**
  * This marker interface indicates that this object is an instance.
  */
-public interface IInstance extends IInstanceBase {
+public interface IInstance extends IModelElement {
+
   /**
-   * Get the current value from the provided {@code parentInstance} object.
-   * <p>
-   * The provided object must be of the type associated with the definition
-   * containing this instance.
+   * Retrieve the Metaschema module definition on which the instance was declared.
    *
-   * @param parent
-   *          the object associated with the definition containing this property
-   * @return the value if available, or {@code null} otherwise
+   * @return the Metaschema module definition on which the instance was declared
+   */
+  @NonNull
+  IModelDefinition getContainingDefinition();
+
+  /**
+   * Get the parent model definition that serves as the container of this
+   * instance.
+   *
+   * @return the container
+   */
+  @NonNull
+  IContainer getParentContainer();
+
+  @Override
+  default IModule<?, ?, ?, ?, ?> getContainingModule() {
+    return getContainingDefinition().getContainingModule();
+  }
+
+  /**
+   * Get the effective default value for the instance.
+   * <p>
+   * Child implementations are expected to override this method to provide a more
+   * reasonable default value.
+   *
+   * @return the default value or {@code null} if there is no default value
    */
   @Nullable
-  Object getValue(@NonNull Object parent);
+  default Object getEffectiveDefaultValue() {
+    return getDefaultValue();
+  }
+
+  /**
+   * Generates a "coordinate" string for the provided information element
+   * instance.
+   *
+   * A coordinate consists of the element's:
+   * <ul>
+   * <li>containing Metaschema module's short name</li>
+   * <li>model type</li>
+   * <li>name</li>
+   * <li>hash code</li>
+   * <li>the hash code of the definition</li>
+   * </ul>
+   *
+   * @return the coordinate
+   */
+  @SuppressWarnings("null")
+  @Override
+  default String toCoordinates() {
+    IModule<?, ?, ?, ?, ?> module = getContainingModule();
+
+    // TODO: revisit this to add more context i.e. the containing definition
+    return String.format("%s:%s", module.getShortName(), getModelType());
+  }
 }

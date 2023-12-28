@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinition;
+import gov.nist.secauto.metaschema.databind.model.IGroupAs;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -98,20 +98,20 @@ public final class ModelUtil {
   }
 
   @Nullable
-  public static String resolveOptionalNamespace(String annotationValue, IBoundDefinition definition) {
-    return resolveNamespace(annotationValue, definition, true);
+  public static String resolveOptionalNamespace(String annotationValue) {
+    return resolveNamespace(annotationValue, true);
   }
 
   @NonNull
-  public static String resolveNamespace(String annotationValue, IBoundDefinition definition) {
-    return ObjectUtils.notNull(resolveNamespace(annotationValue, definition, false));
+  public static String resolveNamespace(String annotationValue) {
+    return ObjectUtils.requireNonNull(resolveNamespace(annotationValue, false));
   }
 
   /**
    * Resolves a provided namespace value. If the value is {@code null} or
    * "##default", then the provided default value will be used instead. If the
-   * value is {@code null} or "##none", then a {@code null} value will be used if
-   * allowNone is {@code true}. Otherwise, the value is returned.
+   * value is "##none" and {@code allowNone} is {@code true}, then an empty string
+   * value will be used. Otherwise, the value is returned.
    *
    * @param value
    *          the requested value
@@ -121,13 +121,13 @@ public final class ModelUtil {
    *          if the "##none" value is honored
    * @return the resolved value or {@code null} if no namespace is defined
    */
-  private static String resolveNamespace(String value, IBoundDefinition definition, boolean allowNone) {
+  private static String resolveNamespace(String value, boolean allowNone) {
     String retval;
     if (value == null || Constants.DEFAULT_STRING_VALUE.equals(value)) {
       // get namespace from the metaschema
-      retval = definition.getContainingModule().getXmlNamespace().toASCIIString();
+      retval = null;
     } else if (allowNone && Constants.NO_STRING_VALUE.equals(value)) {
-      retval = null; // NOPMD - intentional
+      retval = ""; // NOPMD - intentional
     } else {
       retval = value;
     }
@@ -207,4 +207,10 @@ public final class ModelUtil {
         : javaTypeAdapter.parse(defaultValue);
   }
 
+  @NonNull
+  public static IGroupAs groupAs(@NonNull GroupAs groupAs) {
+    return Constants.NULL_VALUE.equals(groupAs.name())
+        ? IGroupAs.SINGLETON_GROUP_AS
+        : new DefaultGroupAs(groupAs);
+  }
 }

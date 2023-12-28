@@ -32,15 +32,11 @@ import gov.nist.secauto.metaschema.core.model.IInstance;
  * Represents a Metaschema module instance bound to Java data.
  */
 public interface IBoundInstance extends IBoundProperty, IInstance {
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Don't delegate to the definition, since this is an inline instance that is
-   * both a definition and an instance.
-   */
   @Override
   default Object getEffectiveDefaultValue() {
-    return IInstance.super.getEffectiveDefaultValue();
+    // this is the same as IInstance, but is needed since IBoundProperty also
+    // declares it
+    return getDefaultValue();
   }
 
   @Override

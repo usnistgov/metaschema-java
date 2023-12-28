@@ -32,10 +32,10 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFlagInstance extends IFlag, IValuedInstance, INamedInstance {
+public interface IFlagInstance extends IFlag, IValuedInstance, IInstanceAbsolute {
 
   @Override
-  IFlagContainer getParentContainer();
+  IContainerFlag getParentContainer();
 
   @Override
   default String getXmlNamespace() {
@@ -82,7 +82,7 @@ public interface IFlagInstance extends IFlag, IValuedInstance, INamedInstance {
    *         {@code false} otherwise
    */
   default boolean isJsonValueKey() {
-    IFlagContainer containingDefinition = getContainingDefinition();
+    IContainerFlag containingDefinition = getContainingDefinition();
     return containingDefinition instanceof IFieldDefinition
         && this.equals(((IFieldDefinition) containingDefinition).getJsonValueKeyFlagInstance());
   }

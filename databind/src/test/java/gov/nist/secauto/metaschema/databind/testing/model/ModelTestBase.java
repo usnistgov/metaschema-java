@@ -28,11 +28,12 @@ package gov.nist.secauto.metaschema.databind.testing.model;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
@@ -49,7 +50,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public abstract class ModelTestBase {
   public static void assertAssemblyDefinition(
       @NonNull Class<?> assemblyClass,
-      @NonNull IBoundDefinitionAssembly assembly) {
+      @NonNull IBoundDefinitionModelAssembly assembly) {
     MetaschemaAssembly annotation = assemblyClass.getAnnotation(MetaschemaAssembly.class);
 
     assertAll(
@@ -83,7 +84,8 @@ public abstract class ModelTestBase {
                     assembly.getRootName(),
                     "rootName"),
                 () -> assertEquals(
-                    Optional.ofNullable(ModelUtil.resolveNamespace(annotation.rootNamespace(), assembly)).orElse(null),
+                    Optional.ofNullable(ModelUtil.resolveOptionalNamespace(annotation.rootNamespace()))
+                        .orElse(assembly.getContainingModule().getXmlNamespace().toASCIIString()),
                     assembly.getRootXmlQName().getNamespaceURI(),
                     "rootNamespace"),
                 () -> assertTrue(true));
@@ -106,8 +108,7 @@ public abstract class ModelTestBase {
 
     IDataTypeAdapter<?> adapter = ModelUtil.getDataTypeAdapter(annotation.typeAdapter(), context);
 
-    String name = Optional.ofNullable(ModelUtil.resolveNoneOrValue(annotation.useName()))
-        .orElse(field.getName());
+    String name = Optional.ofNullable(ModelUtil.resolveNoneOrValue(annotation.name())).orElse(field.getName());
 
     assertAll(
         flagJavaFieldName + " flag failed",
@@ -115,10 +116,9 @@ public abstract class ModelTestBase {
             name,
             flag.getName(),
             "name"),
-        () -> assertEquals(
-            ModelUtil.resolveNoneOrValue(annotation.useName()),
+        () -> assertNull(
             flag.getUseName(),
-            "useName"),
+            "useNname"),
         () -> assertEquals(
             adapter,
             flag.getDefinition().getJavaTypeAdapter(),
@@ -155,14 +155,24 @@ public abstract class ModelTestBase {
 
     IDataTypeAdapter<?> adapter = ModelUtil.getDataTypeAdapter(annotation.typeAdapter(), context);
 
+    String name;
+    String useName;
+    if (field.getDefinition().hasChildren()) {
+      name = field.getDefinition().getName();
+      useName = ModelUtil.resolveNoneOrValue(annotation.useName());
+    } else {
+      name = Optional.ofNullable(ModelUtil.resolveNoneOrValue(annotation.useName())).orElse(javaField.getName());
+      useName = null;
+    }
+
     assertAll(
         fieldJavaFieldName + " field failed",
         () -> assertEquals(
-            javaField.getName(),
+            name,
             field.getName(),
             "name"),
         () -> assertEquals(
-            ModelUtil.resolveNoneOrValue(annotation.useName()),
+            useName,
             field.getUseName(),
             "useName"),
         () -> assertEquals(
@@ -174,7 +184,8 @@ public abstract class ModelTestBase {
             field.getDefaultValue(),
             "defaultValue"),
         () -> assertEquals(
-            ModelUtil.resolveNamespace(annotation.namespace(), field.getContainingDefinition()),
+            Optional.ofNullable(ModelUtil.resolveOptionalNamespace(annotation.namespace()))
+                .orElse(field.getContainingModule().getXmlNamespace().toASCIIString()),
             field.getXmlNamespace(),
             "namespace"),
         () -> assertEquals(

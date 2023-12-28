@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
+import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
@@ -47,7 +48,7 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class FlagContainerSupport implements IBoundDefinitionFlagContainerSupport {
+public class FlagContainerSupport implements IContainerFlagSupport<IBoundInstanceFlag> {
   @NonNull
   private final Map<String, IBoundInstanceFlag> flagInstances;
   @Nullable
@@ -55,7 +56,7 @@ public class FlagContainerSupport implements IBoundDefinitionFlagContainerSuppor
 
   @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   public FlagContainerSupport(
-      @NonNull AbstractBoundDefinitionFlagContainer<?> definition,
+      @NonNull AbstractBoundDefinitionModelComplex<?> definition,
       @Nullable Consumer<IBoundInstanceFlag> peeker) {
     Class<?> clazz = definition.getBoundClass();
 
@@ -139,9 +140,7 @@ public class FlagContainerSupport implements IBoundDefinitionFlagContainerSuppor
     return flagInstances;
   }
 
-  @Override
   public IBoundInstanceFlag getJsonKeyFlagInstance() {
     return jsonKeyFlag;
   }
-
 }

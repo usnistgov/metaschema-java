@@ -29,10 +29,10 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo.def;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAbsolute;
 import gov.nist.secauto.metaschema.core.model.IInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IInstanceTypeInfo;
@@ -95,10 +95,10 @@ class AssemblyDefinitionTypeInfoImpl
   }
 
   private Stream<? extends IModelInstanceTypeInfo> processModel(
-      @NonNull IModelContainer model) {
+      @NonNull IContainerModelAbsolute model) {
     Stream<IModelInstanceTypeInfo> modelInstances = Stream.empty();
     // create model instances for the model
-    for (IModelInstance instance : model.getModelInstances()) {
+    for (IModelInstanceAbsolute instance : model.getModelInstances()) {
       assert instance != null;
 
       if (instance instanceof IChoiceGroupInstance) {
@@ -109,11 +109,11 @@ class AssemblyDefinitionTypeInfoImpl
         modelInstances = Stream.concat(
             modelInstances,
             processModel((IChoiceInstance) instance));
-      } else if (instance instanceof INamedModelInstance) {
+      } else if (instance instanceof INamedModelInstanceAbsolute) {
         // else the instance is an object model instance with a name
         modelInstances = Stream.concat(
             modelInstances,
-            Stream.of(getTypeResolver().getTypeInfo((INamedModelInstance) instance, this)));
+            Stream.of(getTypeResolver().getTypeInfo((INamedModelInstanceAbsolute) instance, this)));
       }
     }
     return modelInstances;

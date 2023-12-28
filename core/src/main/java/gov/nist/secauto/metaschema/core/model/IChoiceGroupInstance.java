@@ -31,10 +31,18 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IChoiceGroupInstance
-    extends IModelInstance, IGroupedModelContainer {
+    extends IModelInstanceAbsolute, IContainerModelGrouped {
 
+  /**
+   * Retrieve the Metaschema assembly definition on which this instance is
+   * declared.
+   *
+   * @return the parent Metaschema assembly definition
+   */
   @Override
-  IAssemblyDefinition getOwningDefinition();
+  default IAssemblyDefinition getContainingDefinition() {
+    return getOwningDefinition();
+  }
 
   /**
    * Provides the Metaschema model type of "CHOICE".
@@ -63,13 +71,13 @@ public interface IChoiceGroupInstance
   String getJsonKeyFlagName();
 
   @Override
-  default boolean isValueWrappedInXml() {
+  default boolean isEffectiveValueWrappedInXml() {
     return true;
   }
 
   @Override
   default MarkupMultiline getRemarks() {
-    // TODO Auto-generated method stub
+    // no remarks
     return null;
   }
 }

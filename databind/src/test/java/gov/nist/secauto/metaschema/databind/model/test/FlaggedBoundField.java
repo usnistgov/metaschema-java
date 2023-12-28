@@ -28,18 +28,18 @@ package gov.nist.secauto.metaschema.databind.model.test;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.BooleanAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 
 @MetaschemaField(name = "flagged-bound-field", moduleClass = TestMetaschema.class)
 public class FlaggedBoundField {
   @JsonKey
-  @BoundFlag(useName = "field-required-flag", typeAdapter = TokenAdapter.class, required = true)
+  @BoundFlag(name = "field-required-flag", typeAdapter = TokenAdapter.class, required = true)
   private String id; // NOPMD - intentional
 
-  @BoundFlag(useName = "field-other-flag", typeAdapter = BooleanAdapter.class)
+  @BoundFlag(name = "field-other-flag", typeAdapter = BooleanAdapter.class)
   private String other; // NOPMD - intentional
 
   @BoundFieldValue(valueKeyName = "field-value")

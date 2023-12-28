@@ -31,8 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Override;
-import java.lang.String;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -47,14 +46,14 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class ConstraintLetExpression {
   @BoundFlag(
       formalName = "Let Variable Name",
-      useName = "var",
+      name = "var",
       required = true,
       typeAdapter = TokenAdapter.class)
   private String _var;
 
   @BoundFlag(
       formalName = "Let Value Metapath Expression",
-      useName = "expression",
+      name = "expression",
       required = true,
       typeAdapter = StringAdapter.class)
   private String _expression;

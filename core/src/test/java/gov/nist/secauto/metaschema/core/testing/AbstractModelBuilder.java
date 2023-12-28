@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.core.testing;
 
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModelElement;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelElement;
@@ -85,7 +85,7 @@ public abstract class AbstractModelBuilder<T extends AbstractModelBuilder<T>>
   protected <DEF extends IDefinition> void applyNamedInstance(
       @NonNull INamedInstance instance,
       @NonNull DEF definition,
-      @NonNull IFlagContainer parent) {
+      @NonNull IModelDefinition parent) {
     applyNamedModelElement(instance);
     getContext().checking(new Expectations() {
       {

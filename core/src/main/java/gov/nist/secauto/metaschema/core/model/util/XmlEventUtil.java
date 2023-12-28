@@ -305,16 +305,16 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     if (!xmlEvent.isStartElement()) {
       return xmlEvent;
     }
-    if (LOGGER.isInfoEnabled()) {
-      LOGGER.atInfo().log(String.format("At location %s", toString(xmlEvent)));
-    }
+    // if (LOGGER.isInfoEnabled()) {
+    // LOGGER.atInfo().log(String.format("At location %s", toString(xmlEvent)));
+    // }
 
     int depth = 0;
     do {
       xmlEvent = reader.nextEvent();
-      if (LOGGER.isInfoEnabled()) {
-        LOGGER.atInfo().log(String.format("Skipping %s", toString(xmlEvent)));
-      }
+      // if (LOGGER.isInfoEnabled()) {
+      // LOGGER.atInfo().log(String.format("Skipping %s", toString(xmlEvent)));
+      // }
       if (xmlEvent.isStartElement()) {
         depth++;
       } else if (xmlEvent.isEndElement()) {

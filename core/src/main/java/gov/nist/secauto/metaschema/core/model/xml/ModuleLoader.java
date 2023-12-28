@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.core.model.xml;
 
 import gov.nist.secauto.metaschema.core.model.AbstractModuleLoader;
-import gov.nist.secauto.metaschema.core.model.IModulePostProcessor;
+import gov.nist.secauto.metaschema.core.model.IModuleLoader;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.xml.impl.XmlModule;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.METASCHEMADocument;
@@ -78,7 +78,7 @@ public class ModuleLoader
    *          post processors to perform additional module customization when
    *          loading
    */
-  public ModuleLoader(@NonNull List<IModulePostProcessor> modulePostProcessors) {
+  public ModuleLoader(@NonNull List<IModuleLoader.IModulePostProcessor> modulePostProcessors) {
     super(modulePostProcessors);
   }
 

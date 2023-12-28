@@ -151,13 +151,13 @@ public class AssemblyConstraints implements IModelConstraintsBase {
       implements ITargetedConstraintBase {
     @BoundFlag(
         formalName = "Constraint Identifier",
-        useName = "id",
+        name = "id",
         typeAdapter = TokenAdapter.class)
     private String _id;
 
     @BoundFlag(
         formalName = "Constraint Severity Level",
-        useName = "level",
+        name = "level",
         defaultValue = "ERROR",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
@@ -173,13 +173,13 @@ public class AssemblyConstraints implements IModelConstraintsBase {
 
     @BoundFlag(
         formalName = "Minimum Occurrence",
-        useName = "min-occurs",
+        name = "min-occurs",
         typeAdapter = NonNegativeIntegerAdapter.class)
     private BigInteger _minOccurs;
 
     @BoundFlag(
         formalName = "Maximum Occurrence",
-        useName = "max-occurs",
+        name = "max-occurs",
         typeAdapter = StringAdapter.class,
         valueConstraints = @ValueConstraints(
             matches = @Matches(level = IConstraint.Level.ERROR, pattern = "^[1-9][0-9]*|unbounded$")))
@@ -187,7 +187,7 @@ public class AssemblyConstraints implements IModelConstraintsBase {
 
     @BoundFlag(
         formalName = "Constraint Target Metapath Expression",
-        useName = "target",
+        name = "target",
         required = true,
         typeAdapter = StringAdapter.class)
     private String _target;
@@ -339,13 +339,13 @@ public class AssemblyConstraints implements IModelConstraintsBase {
       implements ITargetedConstraintBase {
     @BoundFlag(
         formalName = "Constraint Identifier",
-        useName = "id",
+        name = "id",
         typeAdapter = TokenAdapter.class)
     private String _id;
 
     @BoundFlag(
         formalName = "Constraint Severity Level",
-        useName = "level",
+        name = "level",
         defaultValue = "ERROR",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
@@ -361,14 +361,14 @@ public class AssemblyConstraints implements IModelConstraintsBase {
 
     @BoundFlag(
         formalName = "Index Name",
-        useName = "name",
+        name = "name",
         required = true,
         typeAdapter = TokenAdapter.class)
     private String _name;
 
     @BoundFlag(
         formalName = "Constraint Target Metapath Expression",
-        useName = "target",
+        name = "target",
         required = true,
         typeAdapter = StringAdapter.class)
     private String _target;
@@ -556,13 +556,13 @@ public class AssemblyConstraints implements IModelConstraintsBase {
       implements ITargetedConstraintBase {
     @BoundFlag(
         formalName = "Constraint Identifier",
-        useName = "id",
+        name = "id",
         typeAdapter = TokenAdapter.class)
     private String _id;
 
     @BoundFlag(
         formalName = "Constraint Severity Level",
-        useName = "level",
+        name = "level",
         defaultValue = "ERROR",
         typeAdapter = TokenAdapter.class,
         valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
@@ -578,7 +578,7 @@ public class AssemblyConstraints implements IModelConstraintsBase {
 
     @BoundFlag(
         formalName = "Constraint Target Metapath Expression",
-        useName = "target",
+        name = "target",
         required = true,
         typeAdapter = StringAdapter.class)
     private String _target;
