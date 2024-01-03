@@ -145,8 +145,7 @@
     <build>
         <resources>
             <resource>
-                <directory>
-                    ${project.build.directory}/generated-resources/xmlbeans</directory>
+                <directory>${project.build.directory}/generated-resources/xmlbeans</directory>
             </resource>
             <resource>
                 <directory>${project.build.directory}/generated-resources/schema</directory>
@@ -296,8 +295,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>
-                                target/generated-resources/schema/schema</outputDirectory>
+                            <outputDirectory>target/generated-resources/schema/schema</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>metaschema/schema</directory>

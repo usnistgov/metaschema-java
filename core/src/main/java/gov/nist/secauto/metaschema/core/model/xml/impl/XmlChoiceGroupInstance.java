@@ -221,7 +221,7 @@ class XmlChoiceGroupInstance
     ObjectUtils.notNull(state.getRight()).append(instance);
   }
 
-  private class XmlModelContainer
+  private static class XmlModelContainer
       extends DefaultGroupedModelContainerSupport<
           INamedModelInstanceGrouped,
           IFieldInstanceGrouped,

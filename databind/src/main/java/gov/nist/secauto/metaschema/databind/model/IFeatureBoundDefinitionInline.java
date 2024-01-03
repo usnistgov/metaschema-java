@@ -27,21 +27,21 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
-import gov.nist.secauto.metaschema.core.model.INamedInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+// REFACTOR: Try to eliminate this interface in favor of IFeatureInlinedDefinition
 public interface IFeatureBoundDefinitionInline<
     DEFINITION extends IBoundDefinition,
-    INSTANCE extends IBoundInstance & INamedInstance>
-    extends IBoundDefinition, IBoundInstance,
+    INSTANCE extends IBoundInstanceNamed>
+    extends IBoundDefinition, IBoundInstanceNamed,
     IFeatureInlinedDefinition<DEFINITION, INSTANCE> {
-  @Override
-  default Object getEffectiveDefaultValue() {
-    // this is the same as IInstance, but is needed since IBoundProperty also
-    // declares it
-    return getDefaultValue();
-  }
+  //
+  // @Override
+  // default Object getEffectiveDefaultValue() {
+  // // needed to avoid conflict between IBoundInstance and INamedInstance
+  // return IBoundInstanceNamed.super.getDefaultValue();
+  // }
 
   /**
    * {@inheritDoc}

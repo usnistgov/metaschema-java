@@ -50,7 +50,7 @@ public interface IUniqueConstraint extends IKeyConstraint {
     return new Builder();
   }
 
-  class Builder
+  final class Builder
       extends AbstractKeyConstraintBuilder<Builder, IUniqueConstraint> {
     private Builder() {
       // disable construction

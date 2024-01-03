@@ -26,11 +26,12 @@
 
 package gov.nist.secauto.metaschema.core.testing;
 
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModelElement;
+import gov.nist.secauto.metaschema.core.model.INamed;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelElement;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -67,59 +68,54 @@ public abstract class AbstractModelBuilder<T extends AbstractModelBuilder<T>>
   }
 
   protected void applyDefinition(@NonNull IDefinition definition) {
-    applyNamedModelElement(definition);
-    getContext().checking(new Expectations() {
-      {
-        allowing(definition).getName();
-        will(returnValue(name));
-        allowing(definition).getEffectiveName();
-        will(returnValue(name));
-        allowing(definition).getUseName();
-        will(returnValue(null));
-        allowing(definition).getProperties();
-        will(returnValue(CollectionUtil.emptyMap()));
-      }
-    });
+    applyModelElement(definition);
+    applyNamed(definition);
+    applyAttributable(definition);
   }
 
   protected <DEF extends IDefinition> void applyNamedInstance(
       @NonNull INamedInstance instance,
       @NonNull DEF definition,
       @NonNull IModelDefinition parent) {
-    applyNamedModelElement(instance);
+    applyModelElement(instance);
+    applyNamed(instance);
+    applyAttributable(instance);
     getContext().checking(new Expectations() {
       {
-        allowing(instance).getName();
-        will(returnValue(name));
-        allowing(instance).getEffectiveName();
-        will(returnValue(name));
-        allowing(instance).getUseName();
-        will(returnValue(null));
-        allowing(instance).getProperties();
-        will(returnValue(CollectionUtil.emptyMap()));
         allowing(instance).getDefinition();
         will(returnValue(definition));
         allowing(instance).getContainingDefinition();
         will(returnValue(parent));
         allowing(instance).getParentContainer();
         will(returnValue(parent));
-
       }
     });
   }
 
-  protected void applyNamedModelElement(@NonNull INamedModelElement element) {
-    applyModelElement(element);
+  protected void applyNamed(@NonNull INamed element) {
     getContext().checking(new Expectations() {
       {
+        allowing(element).getName();
+        will(returnValue(name));
+        allowing(element).getUseName();
+        will(returnValue(null));
+        allowing(element).getEffectiveName();
+        will(returnValue(name));
         allowing(element).getFormalName();
         will(returnValue(null));
         allowing(element).getDescription();
         will(returnValue(null));
-        allowing(element).getProperties();
-        will(returnValue(CollectionUtil.emptyMap()));
         allowing(element).getUseName();
         will(returnValue(null));
+      }
+    });
+  }
+
+  protected void applyAttributable(@NonNull IAttributable element) {
+    getContext().checking(new Expectations() {
+      {
+        allowing(element).getProperties();
+        will(returnValue(CollectionUtil.emptyMap()));
       }
     });
   }

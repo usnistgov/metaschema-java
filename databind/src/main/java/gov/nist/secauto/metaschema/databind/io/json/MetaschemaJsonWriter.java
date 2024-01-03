@@ -116,7 +116,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       if (jsonValueKey != null) {
         item = fieldValue.getDefaultValue();
       }
-    } else if (item.equals(fieldValue.getEffectiveDefaultValue())) {
+    } else if (item.equals(fieldValue.getResolvedDefaultValue())) {
       item = null;
     }
 
@@ -163,7 +163,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       @NonNull IBoundProperty instance,
       @NonNull Object parentItem) throws IOException {
     Object value = instance.getValue(parentItem);
-    if (!(value == null || value.equals(instance.getEffectiveDefaultValue()))) {
+    if (!(value == null || value.equals(instance.getResolvedDefaultValue()))) {
       writer.writeFieldName(instance.getJsonName());
       instance.writeItem(value, getItemWriter());
     }
@@ -185,7 +185,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     }
   }
 
-  private class ItemWriter implements IItemWriteHandler {
+  private final class ItemWriter implements IItemWriteHandler {
     @Override
     public void writeItemFlag(Object item, IBoundInstanceFlag instance) throws IOException {
       writeScalarItem(item, instance);
@@ -218,7 +218,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       writeDefinitionObject(
           definition,
           item,
-          ((ObjectWriter<IBoundDefinitionModelFieldComplex>) this::writeObjectProperties));
+          (ObjectWriter<IBoundDefinitionModelFieldComplex>) this::writeObjectProperties);
     }
 
     @Override

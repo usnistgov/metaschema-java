@@ -33,6 +33,7 @@ import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
@@ -91,7 +92,7 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
     Set<IModelDefinition> retval = super.buildField(typeBuilder, fieldBuilder);
 
     IModelDefinition definition = getInstance().getDefinition();
-    if (definition.isInline() && definition.hasChildren()) {
+    if (definition.isInline() && (definition.hasChildren() || definition instanceof IAssemblyDefinition)) {
       retval = new HashSet<>(retval);
 
       // this is an inline definition that must be built as a child class

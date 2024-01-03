@@ -27,47 +27,27 @@
 package gov.nist.secauto.metaschema.core.model;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * A marker interface for Metaschema constructs that can be members of a
- * Metaschema definition's model that are named.
+ * Metaschema module's model that have a name and other identifying
+ * characteristics.
  */
-public interface INamedModelElement extends IModelElement {
-  /**
-   * The formal display name.
-   *
-   * @return the formal name or {@code null} if not defined
-   */
-  @Nullable
-  String getFormalName();
-
+public interface INamed extends IDescribable {
   /**
    * The resolved formal display name, which allows an instance to override a
    * definition's name.
    *
    * @return the formal name or {@code null} if not defined
    */
+  // from INamedModelElement
   @Nullable
   default String getEffectiveFormalName() {
     return getFormalName();
   }
-
-  /**
-   * Get the text that describes the basic use of the element.
-   *
-   * @return a line of markup text or {@code null} if not defined
-   */
-  @Nullable
-  MarkupLine getDescription();
 
   /**
    * Get the text that describes the basic use of the element, which allows an
@@ -75,60 +55,10 @@ public interface INamedModelElement extends IModelElement {
    *
    * @return a line of markup text or {@code null} if not defined
    */
+  // from INamedModelElement
   @Nullable
   default MarkupLine getEffectiveDescription() {
     return getDescription();
-  }
-
-  /**
-   * Get the mapping of property name to values for the model element.
-   *
-   * @return the mapping
-   */
-  @NonNull
-  Map<QName, Set<String>> getProperties();
-
-  /**
-   * Determine if a property is defined.
-   *
-   * @param qname
-   *          the qualified name of the property
-   * @return {@code true} if the property is defined or {@code false} otherwise
-   */
-  default boolean hasProperty(@NonNull QName qname) {
-    return getProperties().containsKey(qname);
-  }
-
-  /**
-   * Get the values associated with a given property.
-   *
-   * @param qname
-   *          the qualified name of the property
-   * @return the values or an empty set
-   */
-  @NonNull
-  default Set<String> getPropertyValues(@NonNull QName qname) {
-    Set<String> retval = getProperties().get(qname);
-    if (retval == null) {
-      retval = CollectionUtil.emptySet();
-    }
-    return retval;
-  }
-
-  /**
-   * Determine if a given property, with a given {@code qname}, has the identified
-   * {@code value}.
-   *
-   * @param qname
-   *          the qualified name of the property
-   * @param value
-   *          the expected property value
-   * @return {@code true} if the property value is defined or {@code false}
-   *         otherwise
-   */
-  default boolean hasPropertyValue(@NonNull QName qname, @NonNull String value) {
-    Set<String> values = getProperties().get(qname);
-    return values != null && values.contains(value);
   }
 
   // @NonNull
@@ -146,39 +76,20 @@ public interface INamedModelElement extends IModelElement {
   // }
 
   /**
-   * Get the name used for the associated property in JSON/YAML.
-   *
-   * @return the JSON property name
-   */
-  @NonNull
-  default String getJsonName() {
-    return getEffectiveName();
-  }
-
-  /**
    * Retrieve the name of the model element.
    *
    * @return the name
    */
+  // from INamedModelElement
   @NonNull
   String getName();
-
-  /**
-   * Retrieve the index value to use for binary naming.
-   *
-   * @return the name index or {@code null} if no name index is defined
-   */
-  @Nullable
-  default Integer getIndex() {
-    // no index by default
-    return null;
-  }
 
   /**
    * Retrieve the name to use for the model element, instead of the name.
    *
    * @return the use name or {@code null} if no use name is defined
    */
+  // from INamedModelElement
   @Nullable
   default String getUseName() {
     // no use-name by default
@@ -197,6 +108,7 @@ public interface INamedModelElement extends IModelElement {
    * @see #getUseName()
    * @see #getName()
    */
+  // from INamedModelElement
   @NonNull
   default String getEffectiveName() {
     @Nullable String useName = getUseName();
@@ -204,10 +116,23 @@ public interface INamedModelElement extends IModelElement {
   }
 
   /**
+   * Retrieve the index value to use for binary naming.
+   *
+   * @return the name index or {@code null} if no name index is defined
+   */
+  // from INamedModelElement
+  @Nullable
+  default Integer getIndex() {
+    // no index by default
+    return null;
+  }
+
+  /**
    * Retrieve the index value to use for binary naming, instead of the name.
    *
    * @return the use name index or {@code null} if no use name index is defined
    */
+  // from INamedModelElement
   @Nullable
   default Integer getUseIndex() {
     // no use-name index by default
@@ -224,9 +149,21 @@ public interface INamedModelElement extends IModelElement {
    *
    * @return the index value if available, or {@code null} otherwise
    */
+  // from INamedModelElement
   @Nullable
   default Integer getEffectiveIndex() {
     @Nullable Integer useIndex = getUseIndex();
     return useIndex == null ? getIndex() : useIndex;
+  }
+
+  /**
+   * Get the name used for the associated property in JSON/YAML.
+   *
+   * @return the JSON property name
+   */
+  // from INamedModelElement
+  @NonNull
+  default String getJsonName() {
+    return getEffectiveName();
   }
 }

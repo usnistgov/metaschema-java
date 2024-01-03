@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
@@ -45,13 +46,12 @@ import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Remarks;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.UseName;
 
 import java.math.BigInteger;
+import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -62,13 +62,18 @@ public final class ModelSupport {
   }
 
   @NonNull
-  public static Map<QName, Set<String>> parseProperties(@NonNull List<Property> props) {
+  public static Map<IAttributable.Key, Set<String>> parseProperties(@NonNull List<Property> props) {
     return CollectionUtil.unmodifiableMap(ObjectUtils.notNull(props.stream()
         .collect(
             Collectors.groupingBy(
-                (prop) -> new QName(prop.getNamespace().toASCIIString(), prop.getName()),
+                (prop) -> {
+                  String name = ObjectUtils.requireNonNull(prop.getName());
+                  URI namespace = prop.getNamespace();
+                  return namespace == null ? IAttributable.key(name)
+                      : IAttributable.key(name, ObjectUtils.notNull(namespace.toASCIIString()));
+                },
                 Collectors.mapping(
-                    (prop) -> prop.getValue(),
+                    (prop) -> ObjectUtils.requireNonNull(prop.getValue()),
                     Collectors.toCollection(LinkedHashSet::new))))));
   }
 

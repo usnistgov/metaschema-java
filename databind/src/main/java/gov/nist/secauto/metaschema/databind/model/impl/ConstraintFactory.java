@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
@@ -66,8 +67,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -143,13 +142,13 @@ final class ConstraintFactory {
         String name = property.name();
         String namespace = property.namespace();
         @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops") // ok
-        QName qname = new QName(namespace, name);
+        IAttributable.Key key = IAttributable.key(namespace, name);
 
         String[] values = property.values();
         List<String> valueList = Arrays.asList(values);
         @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops") // ok
         Set<String> valueSet = new LinkedHashSet<>(valueList);
-        builder.property(qname, valueSet);
+        builder.property(key, valueSet);
       }
     }
     return builder;

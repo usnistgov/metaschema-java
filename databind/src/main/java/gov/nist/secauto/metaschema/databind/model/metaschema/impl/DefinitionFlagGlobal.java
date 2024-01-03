@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -45,8 +46,6 @@ import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
@@ -55,7 +54,7 @@ public class DefinitionFlagGlobal
     extends AbstractDefinition<METASCHEMA.DefineFlag>
     implements IBindingDefinitionFlag {
   @NonNull
-  private final Map<QName, Set<String>> properties;
+  private final Map<IAttributable.Key, Set<String>> properties;
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
@@ -109,7 +108,7 @@ public class DefinitionFlagGlobal
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return properties;
   }
 

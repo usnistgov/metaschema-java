@@ -62,7 +62,7 @@ public abstract class AbstractModelDefinitionTypeInfo<DEF extends IModelDefiniti
   private final ClassName className;
   @Nullable
   private final ClassName baseClassName;
-  private Lazy<Map<String, IFlagInstanceTypeInfo>> flagTypeInfos;
+  private final Lazy<Map<String, IFlagInstanceTypeInfo>> flagTypeInfos;
 
   public AbstractModelDefinitionTypeInfo(
       @NonNull DEF definition,

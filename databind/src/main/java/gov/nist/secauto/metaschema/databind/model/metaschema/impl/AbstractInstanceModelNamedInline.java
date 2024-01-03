@@ -26,12 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingContainerModelAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModel;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceFlag;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelNamedAbsolute;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Property;
 
@@ -42,12 +38,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public abstract class AbstractInstanceModelNamedInline<
     BINDING,
-    DEFINITION extends IBindingDefinitionModel,
-    INSTANCE extends IBindingInstanceModelNamedAbsolute,
     PARENT extends IBindingContainerModelAbsolute>
-    extends AbstractInstanceModelNamed<BINDING, PARENT>
-    implements IFeatureInlinedDefinition<DEFINITION, INSTANCE>,
-    IFeatureBindingContainerFlag {
+    extends AbstractInstanceModelNamed<BINDING, PARENT> {
 
   /**
    * Construct a new bound named instance that represents an inline definition.
@@ -75,11 +67,5 @@ public abstract class AbstractInstanceModelNamedInline<
       @NonNull List<Property> properties,
       @Nullable GroupAs groupAs) {
     super(binding, bindingInstance, position, parent, properties, groupAs);
-  }
-
-  @Override
-  public String getJsonKeyFlagName() {
-    IBindingInstanceFlag jsonKey = getJsonKeyFlagInstance();
-    return jsonKey == null ? null : jsonKey.getEffectiveName();
   }
 }

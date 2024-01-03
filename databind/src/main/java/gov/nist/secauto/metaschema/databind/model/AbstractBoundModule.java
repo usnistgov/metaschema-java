@@ -145,7 +145,8 @@ public abstract class AbstractBoundModule
     this.fieldDefinitions = ObjectUtils.notNull(Lazy.lazy(() -> Arrays.stream(getFieldClasses())
         .map(clazz -> {
           assert clazz != null;
-          return (IBoundDefinitionModelField) ObjectUtils.requireNonNull(bindingContext.getBoundDefinitionForClass(clazz));
+          return (IBoundDefinitionModelField) ObjectUtils
+              .requireNonNull(bindingContext.getBoundDefinitionForClass(clazz));
         })
         .collect(Collectors.toUnmodifiableMap(
             IBoundDefinitionModelField::getName,

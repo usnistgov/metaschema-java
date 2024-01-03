@@ -29,14 +29,14 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 import com.squareup.javapoet.ClassName;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
@@ -231,8 +231,7 @@ class DefaultTypeResolver implements ITypeResolver {
       @NonNull String packageOrTypeName,
       @NonNull String suggestedClassName,
       @NonNull IModelDefinition definition) {
-    @NonNull
-    String retval = suggestedClassName;
+    @NonNull String retval = suggestedClassName;
     Set<String> classNames = getClassNamesFor(packageOrTypeName);
     synchronized (classNames) {
       boolean clash = false;

@@ -179,7 +179,7 @@ public final class StaticContext {
   /**
    * A builder used to generate the static context.
    */
-  public static class Builder {
+  public static final class Builder {
     private URI baseUri;
     @NonNull
     private final Map<String, URI> namespaces = new ConcurrentHashMap<>();

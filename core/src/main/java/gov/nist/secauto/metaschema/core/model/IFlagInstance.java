@@ -59,31 +59,4 @@ public interface IFlagInstance extends IFlag, IValuedInstance, IInstanceAbsolute
    * @return {@code true} if a value is required, or {@code false} otherwise
    */
   boolean isRequired();
-
-  /**
-   * Determines if this flag's value is used as the property name for the JSON
-   * object that holds the remaining data based on this flag's containing
-   * definition.
-   *
-   * @return {@code true} if this flag is used as a JSON key, or {@code false}
-   *         otherwise
-   */
-  default boolean isJsonKey() {
-    IFlagInstance flagInstance = getContainingDefinition().getJsonKeyFlagInstance();
-    return this.equals(flagInstance);
-  }
-
-  /**
-   * Determines if this flag is used as a JSON "value key". A "value key" is a
-   * flag who's value is used as the property name for the containing objects
-   * value.
-   *
-   * @return {@code true} if the flag is used as a JSON "value key", or
-   *         {@code false} otherwise
-   */
-  default boolean isJsonValueKey() {
-    IContainerFlag containingDefinition = getContainingDefinition();
-    return containingDefinition instanceof IFieldDefinition
-        && this.equals(((IFieldDefinition) containingDefinition).getJsonValueKeyFlagInstance());
-  }
 }

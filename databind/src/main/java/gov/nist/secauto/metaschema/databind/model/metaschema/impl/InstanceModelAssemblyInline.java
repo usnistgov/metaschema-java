@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
 import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
+import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
@@ -58,10 +59,10 @@ import nl.talsmasoftware.lazy4j.Lazy;
 public class InstanceModelAssemblyInline
     extends AbstractInstanceModelNamedInline<
         InlineDefineAssembly,
-        IBindingDefinitionAssembly,
-        IBindingInstanceModelAssemblyAbsolute,
         IBindingContainerModelAbsolute>
     implements IBindingInstanceModelAssemblyAbsolute, IBindingDefinitionAssembly,
+    IFeatureInlinedDefinition<IBindingDefinitionAssembly, IBindingInstanceModelAssemblyAbsolute>,
+    IFeatureBindingContainerFlag,
     IFeatureBindingContainerModelAssembly {
   @NonNull
   private final Lazy<IContainerFlagSupport<IBindingInstanceFlag>> flagContainer;
@@ -148,7 +149,7 @@ public class InstanceModelAssemblyInline
   }
 
   @Override
-  public IBindingDefinitionAssembly getDefinition() {
+  public InstanceModelAssemblyInline getDefinition() {
     return this;
   }
 

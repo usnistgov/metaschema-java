@@ -63,7 +63,7 @@ public interface IIndexConstraint extends IKeyConstraint {
     return new Builder();
   }
 
-  class Builder
+  final class Builder
       extends AbstractKeyConstraintBuilder<Builder, DefaultIndexConstraint> {
     private String name;
 

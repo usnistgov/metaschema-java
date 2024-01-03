@@ -121,7 +121,12 @@ public abstract class AbstractSchemaGeneratorTestSuite
       return null;
     };
     JSON_SCHEMA_PROVIDER = jsonProvider;
-
+    // Module module = ModuleLayer.boot()
+    // .findModule("gov.nist.secauto.metaschema.core")
+    // .orElseThrow();
+    //
+    // try (InputStream is
+    // = module.getResourceAsStream("schema.json/json-schema.json")) {
     try (InputStream is = ModuleLoader.class.getResourceAsStream("/schema/json/json-schema.json")) {
       assert is != null : "unable to get JSON schema resource";
       JsonSchemaContentValidator schemaValidator = new JsonSchemaContentValidator(is);
@@ -131,12 +136,10 @@ public abstract class AbstractSchemaGeneratorTestSuite
     }
 
     @SuppressWarnings("null")
-    @NonNull
-    Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
+    @NonNull Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
       try {
         URL schemaResource = path.toUri().toURL();
-        @SuppressWarnings("resource")
-        StreamSource source
+        @SuppressWarnings("resource") StreamSource source
             = new StreamSource(schemaResource.openStream(), schemaResource.toString());
         List<? extends Source> schemaSources = Collections.singletonList(source);
         return new XmlSchemaContentValidator(schemaSources);
@@ -146,8 +149,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     };
     XML_CONTENT_VALIDATOR_PROVIDER = xmlContentValidatorProvider;
 
-    @NonNull
-    Function<Path, JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
+    @NonNull Function<Path, JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
       try (InputStream is = Files.newInputStream(path, StandardOpenOption.READ)) {
         assert is != null;
         return new JsonSchemaContentValidator(is);

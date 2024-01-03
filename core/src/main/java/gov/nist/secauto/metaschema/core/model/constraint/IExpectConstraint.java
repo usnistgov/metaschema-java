@@ -65,7 +65,7 @@ public interface IExpectConstraint extends IConstraint {
     return new Builder();
   }
 
-  class Builder
+  final class Builder
       extends AbstractConstraintBuilder<Builder, IExpectConstraint> {
     private MetapathExpression test;
     private String message;

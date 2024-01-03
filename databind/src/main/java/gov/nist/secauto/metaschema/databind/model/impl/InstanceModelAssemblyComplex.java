@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
@@ -41,10 +41,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
@@ -53,9 +50,11 @@ import nl.talsmasoftware.lazy4j.Lazy;
  * Implements a Metaschema module assembly instance bound to a Java field,
  * supported by a bound definition class.
  */
+// TODO: implement getProperties()
 public class InstanceModelAssemblyComplex
     extends AbstractBoundInstanceModelJavaField<BoundAssembly>
-    implements IBoundInstanceModelAssembly {
+    implements IBoundInstanceModelAssembly,
+    IFeatureDefinitionReferenceInstance<IBoundDefinitionModelAssembly, IBoundInstanceModelAssembly> {
   @NonNull
   private final IBoundDefinitionModelAssembly definition;
   @NonNull
@@ -131,13 +130,6 @@ public class InstanceModelAssemblyComplex
   @Override
   public MarkupLine getDescription() {
     return ModelUtil.resolveToMarkupLine(getAnnotation().description());
-  }
-
-  @Override
-  @NonNull
-  public Map<QName, Set<String>> getProperties() {
-    // TODO: implement
-    return CollectionUtil.emptyMap();
   }
 
   @Override

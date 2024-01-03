@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
@@ -49,7 +50,8 @@ import nl.talsmasoftware.lazy4j.Lazy;
  */
 public class InstanceModelGroupedAssembly
     extends AbstractBoundInstanceModelGroupedNamed<BoundGroupedAssembly>
-    implements IBoundInstanceModelGroupedAssembly {
+    implements IBoundInstanceModelGroupedAssembly,
+    IFeatureDefinitionReferenceInstance<IBoundDefinitionModelAssembly, IBoundInstanceModelGroupedAssembly> {
   @NonNull
   private final IBoundDefinitionModelAssembly definition;
   @NonNull

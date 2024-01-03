@@ -31,7 +31,6 @@ import gov.nist.secauto.metaschema.databind.io.BindingException;
 import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IBoundProperty extends IBoundModuleElement, IFeatureJavaField {
   /**
@@ -41,15 +40,6 @@ public interface IBoundProperty extends IBoundModuleElement, IFeatureJavaField {
    */
   @NonNull
   IBoundProperty getInstance();
-
-  /**
-   * Get the default value for the bound property, considering defaults in any
-   * related elements as needed.
-   *
-   * @return the effective default value
-   */
-  @Nullable
-  Object getEffectiveDefaultValue();
 
   /**
    * Get the JSON/YAML property/key name to use for serialization-related

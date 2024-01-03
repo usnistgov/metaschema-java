@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
 import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
@@ -55,8 +56,6 @@ import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
@@ -66,7 +65,7 @@ public class DefinitionAssemblyGlobal
     IFeatureBindingContainerFlag,
     IFeatureBindingContainerModelAssembly {
   @NonNull
-  private final Map<QName, Set<String>> properties;
+  private final Map<IAttributable.Key, Set<String>> properties;
   @NonNull
   private final Lazy<IContainerFlagSupport<IBindingInstanceFlag>> flagContainer;
   @NonNull
@@ -160,7 +159,7 @@ public class DefinitionAssemblyGlobal
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return properties;
   }
 

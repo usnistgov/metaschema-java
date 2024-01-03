@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.schemagen.json.property;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -36,7 +36,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class SingletonNamedModelInstanceJsonProperty
     extends AbstractNamedModelInstanceJsonProperty {
 
-  public SingletonNamedModelInstanceJsonProperty(@NonNull INamedModelInstance instance) {
+  public SingletonNamedModelInstanceJsonProperty(@NonNull INamedModelInstanceAbsolute instance) {
     super(instance);
   }
 

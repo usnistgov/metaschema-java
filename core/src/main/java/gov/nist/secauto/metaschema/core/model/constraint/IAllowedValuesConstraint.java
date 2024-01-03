@@ -117,13 +117,13 @@ public interface IAllowedValuesConstraint extends IConstraint {
     return new Builder();
   }
 
-  class Builder
+  final class Builder
       extends AbstractConstraintBuilder<Builder, IAllowedValuesConstraint> {
     @NonNull
     private final Map<String, IAllowedValue> allowedValues = new LinkedHashMap<>(); // NOPMD not thread safe
-    private boolean allowedOther = IAllowedValuesConstraint.ALLOW_OTHER_DEFAULT;
+    private boolean allowedOther = ALLOW_OTHER_DEFAULT;
     @NonNull
-    private Extensible extensible = IAllowedValuesConstraint.EXTENSIBLE_DEFAULT;
+    private Extensible extensible = EXTENSIBLE_DEFAULT;
 
     private Builder() {
       // disable construction

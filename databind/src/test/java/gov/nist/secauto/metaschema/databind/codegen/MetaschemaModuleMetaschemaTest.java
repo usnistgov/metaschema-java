@@ -92,22 +92,19 @@ class MetaschemaModuleMetaschemaTest
 
     {
       IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.XML, METASCHEMA.class);
-      @SuppressWarnings("unused")
-      METASCHEMA readMetaschema = deserializer.deserialize(
+      deserializer.deserialize(
           ObjectUtils.notNull(Paths.get("target/metaschema.xml")));
     }
 
     {
       IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.JSON, METASCHEMA.class);
-      @SuppressWarnings("unused")
-      METASCHEMA readMetaschema = deserializer.deserialize(
+      deserializer.deserialize(
           ObjectUtils.notNull(Paths.get("target/metaschema.json")));
     }
 
     {
       IDeserializer<METASCHEMA> deserializer = context.newDeserializer(Format.YAML, METASCHEMA.class);
-      @SuppressWarnings("unused")
-      METASCHEMA readMetaschema = deserializer.deserialize(
+      deserializer.deserialize(
           ObjectUtils.notNull(Paths.get("target/metaschema.yaml")));
     }
   }

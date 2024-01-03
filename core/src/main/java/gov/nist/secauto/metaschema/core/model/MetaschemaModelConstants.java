@@ -42,6 +42,7 @@ public final class MetaschemaModelConstants {
   public static final XmlGroupAsBehavior DEFAULT_XML_GROUP_AS_BEHAVIOR = XmlGroupAsBehavior.UNGROUPED;
   @NonNull
   public static final String DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME = "object-type";
+  public static final String NAMESPACE = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";
 
   private MetaschemaModelConstants() {
     /* disable construction */

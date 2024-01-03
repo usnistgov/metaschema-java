@@ -35,8 +35,8 @@ import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.impl.DefinitionAssembly;
 import gov.nist.secauto.metaschema.databind.model.impl.DefinitionField;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -45,9 +45,9 @@ public class SimpleModuleLoaderStrategy implements IBindingContext.IModuleLoader
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
-  private final Map<Class<?>, IBoundModule> modulesByClass = new HashMap<>(); // NOPMD - intentional
+  private final Map<Class<?>, IBoundModule> modulesByClass = new ConcurrentHashMap<>();
   @NonNull
-  private final Map<Class<?>, IBoundDefinitionModelComplex> definitionsByClass = new HashMap<>();
+  private final Map<Class<?>, IBoundDefinitionModelComplex> definitionsByClass = new ConcurrentHashMap<>();
 
   protected SimpleModuleLoaderStrategy(@NonNull IBindingContext bindingContext) {
     this.bindingContext = bindingContext;

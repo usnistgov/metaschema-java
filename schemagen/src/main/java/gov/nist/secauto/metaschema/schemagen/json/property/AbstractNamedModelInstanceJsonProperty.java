@@ -26,15 +26,15 @@
 
 package gov.nist.secauto.metaschema.schemagen.json.property;
 
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractNamedModelInstanceJsonProperty
-    extends AbstractJsonProperty<INamedModelInstance>
+    extends AbstractJsonProperty<INamedModelInstanceAbsolute>
     implements INamedModelInstanceJsonProperty {
 
-  public AbstractNamedModelInstanceJsonProperty(@NonNull INamedModelInstance instance) {
+  public AbstractNamedModelInstanceJsonProperty(@NonNull INamedModelInstanceAbsolute instance) {
     super(instance);
   }
 

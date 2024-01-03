@@ -26,20 +26,16 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
 
 import java.lang.annotation.Annotation;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+//TODO: implement getProperties()
 public abstract class AbstractBoundInstanceModelGroupedNamed<
     A extends Annotation>
     implements IBoundInstanceModelGroupedNamed {
@@ -72,12 +68,6 @@ public abstract class AbstractBoundInstanceModelGroupedNamed<
   @Override
   public String getJsonKeyFlagName() {
     return getParentContainer().getJsonKeyFlagName();
-  }
-
-  @Override
-  public Map<QName, Set<String>> getProperties() {
-    // TODO: implement
-    return CollectionUtil.emptyMap();
   }
 
   @Override

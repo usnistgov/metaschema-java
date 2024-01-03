@@ -29,11 +29,11 @@ package gov.nist.secauto.metaschema.schemagen.xml.schematype;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupDataTypeProvider;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IContainerFlag;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
@@ -61,10 +61,10 @@ public class XmlComplexTypeAssemblyDefinition
   protected void generateTypeBody(XmlGenerationState state) throws XMLStreamException {
     IAssemblyDefinition definition = getDefinition();
 
-    Collection<? extends IModelInstance> modelInstances = definition.getModelInstances();
+    Collection<? extends IModelInstanceAbsolute> modelInstances = definition.getModelInstances();
     if (!modelInstances.isEmpty()) {
       state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "sequence", XmlSchemaGenerator.NS_XML_SCHEMA);
-      for (IModelInstance modelInstance : modelInstances) {
+      for (IModelInstanceAbsolute modelInstance : modelInstances) {
         assert modelInstance != null;
         generateModelInstance(modelInstance, state);
       }
@@ -81,7 +81,7 @@ public class XmlComplexTypeAssemblyDefinition
   }
 
   protected void generateModelInstance( // NOPMD acceptable complexity
-      @NonNull IModelInstance modelInstance,
+      @NonNull IModelInstanceAbsolute modelInstance,
       @NonNull XmlGenerationState state)
       throws XMLStreamException {
 
@@ -90,7 +90,7 @@ public class XmlComplexTypeAssemblyDefinition
       // handle grouping
       state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "element", XmlSchemaGenerator.NS_XML_SCHEMA);
 
-      QName groupAsQName = ObjectUtils.requireNonNull(modelInstance.getXmlGroupAsQName());
+      QName groupAsQName = ObjectUtils.requireNonNull(modelInstance.getEffectiveXmlGroupAsQName());
 
       if (state.getDefaultNS().equals(groupAsQName.getNamespaceURI())) {
         state.writeAttribute("name", ObjectUtils.requireNonNull(groupAsQName.getLocalPart()));
@@ -115,10 +115,10 @@ public class XmlComplexTypeAssemblyDefinition
 
     switch (modelInstance.getModelType()) {
     case ASSEMBLY:
-      generateNamedModelInstance((INamedModelInstance) modelInstance, grouped, state);
+      generateNamedModelInstance((INamedModelInstanceAbsolute) modelInstance, grouped, state);
       break;
     case FIELD: {
-      IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
+      IFieldInstanceAbsolute fieldInstance = (IFieldInstanceAbsolute) modelInstance;
       if (fieldInstance.isEffectiveValueWrappedInXml()) {
         generateNamedModelInstance(fieldInstance, grouped, state);
       } else {
@@ -141,7 +141,7 @@ public class XmlComplexTypeAssemblyDefinition
   }
 
   protected void generateNamedModelInstance(
-      @NonNull INamedModelInstance modelInstance,
+      @NonNull INamedModelInstanceAbsolute modelInstance,
       boolean grouped,
       @NonNull XmlGenerationState state) throws XMLStreamException {
     state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "element", XmlSchemaGenerator.NS_XML_SCHEMA);
@@ -160,7 +160,7 @@ public class XmlComplexTypeAssemblyDefinition
               : ObjectUtils.notNull(Integer.toString(modelInstance.getMaxOccurs())));
     }
 
-    IContainerFlag definition = modelInstance.getDefinition();
+    IModelDefinition definition = modelInstance.getDefinition();
     IXmlType type = state.getTypeForDefinition(definition);
 
     if (state.isInline(definition)) {
@@ -174,7 +174,7 @@ public class XmlComplexTypeAssemblyDefinition
   }
 
   protected static void generateUnwrappedFieldInstance(
-      @NonNull IFieldInstance fieldInstance,
+      @NonNull IFieldInstanceAbsolute fieldInstance,
       boolean grouped,
       @NonNull XmlGenerationState state) throws XMLStreamException {
 
@@ -207,11 +207,12 @@ public class XmlComplexTypeAssemblyDefinition
     state.writeEndElement(); // xs:group
   }
 
-  protected void generateChoiceModelInstance(@NonNull IChoiceInstance choice,
+  protected void generateChoiceModelInstance(
+      @NonNull IChoiceInstance choice,
       @NonNull XmlGenerationState state) throws XMLStreamException {
     state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "choice", XmlSchemaGenerator.NS_XML_SCHEMA);
 
-    for (IModelInstance instance : choice.getModelInstances()) {
+    for (IModelInstanceAbsolute instance : choice.getModelInstances()) {
       assert instance != null;
 
       if (instance instanceof IChoiceInstance) {

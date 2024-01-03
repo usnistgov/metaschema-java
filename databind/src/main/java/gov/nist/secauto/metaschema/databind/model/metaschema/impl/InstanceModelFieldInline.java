@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
+import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -54,10 +55,10 @@ import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelFieldInline
     extends AbstractInstanceModelNamedInline<InlineDefineField,
-        IBindingDefinitionModelField,
-        IBindingInstanceModelFieldAbsolute,
         IBindingContainerModelAbsolute>
-    implements IBindingInstanceModelFieldAbsolute, IBindingDefinitionModelField {
+    implements IBindingInstanceModelFieldAbsolute, IBindingDefinitionModelField,
+    IFeatureInlinedDefinition<IBindingDefinitionModelField, IBindingInstanceModelFieldAbsolute>,
+    IFeatureBindingContainerFlag {
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
@@ -118,7 +119,7 @@ public class InstanceModelFieldInline
   }
 
   @Override
-  public IBindingDefinitionModelField getDefinition() {
+  public InstanceModelFieldInline getDefinition() {
     return this;
   }
 

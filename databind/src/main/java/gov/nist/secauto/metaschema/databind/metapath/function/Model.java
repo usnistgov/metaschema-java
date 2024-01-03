@@ -44,7 +44,7 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class Model {
+public final class Model {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("model")
@@ -61,6 +61,10 @@ public class Model {
       .returnOne()
       .functionHandler(Model::execute)
       .build();
+
+  private Model() {
+    // disable construction
+  }
 
   @SuppressWarnings({ "unused",
       "PMD.OnlyOneReturn" // readability
@@ -93,7 +97,7 @@ public class Model {
   public static INodeItem getModel(@NonNull IDefinitionNodeItem<?, ?> definitionNodeItem) {
     INamedInstance instance = definitionNodeItem.getInstance();
     INodeItem retval = null;
-    if (instance != null && instance instanceof IBinding) {
+    if (instance instanceof IBinding) {
       retval = ((IBinding) instance).getBoundNodeItem();
     } else {
       IDefinition definition = definitionNodeItem.getDefinition();

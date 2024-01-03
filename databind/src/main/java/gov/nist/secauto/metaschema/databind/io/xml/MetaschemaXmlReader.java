@@ -341,7 +341,7 @@ public class MetaschemaXmlReader
     }
   }
 
-  private class ModelInstanceReadHandler
+  private final class ModelInstanceReadHandler
       extends AbstractModelInstanceReadHandler {
 
     private ModelInstanceReadHandler(
@@ -410,7 +410,7 @@ public class MetaschemaXmlReader
     }
   }
 
-  private class ItemReadHandler implements IItemReadHandler {
+  private final class ItemReadHandler implements IItemReadHandler {
     @NonNull
     private final StartElement startElement;
 

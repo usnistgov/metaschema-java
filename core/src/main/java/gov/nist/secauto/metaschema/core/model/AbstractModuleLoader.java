@@ -119,8 +119,7 @@ public abstract class AbstractModuleLoader<T, M extends IModule<M, ?, ?, ?, ?>>
 
     // now check if this Metaschema imports other metaschema
     List<URI> imports = getImports(binding);
-    @NonNull
-    Map<URI, M> importedModules;
+    @NonNull Map<URI, M> importedModules;
     if (imports.isEmpty()) {
       importedModules = ObjectUtils.notNull(Collections.emptyMap());
     } else {

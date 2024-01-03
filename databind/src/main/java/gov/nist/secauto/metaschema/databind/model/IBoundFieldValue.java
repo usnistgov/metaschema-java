@@ -48,11 +48,7 @@ public interface IBoundFieldValue extends IFeatureScalarItemValueHandler, IBound
     return this;
   }
 
-  /**
-   * Retrieves the default data value for this model construct.
-   *
-   * @return the default value or {@code null} if there is no default
-   */
+  @Override
   @Nullable
   Object getDefaultValue();
 

@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.INamedInstanceBase;
+import gov.nist.secauto.metaschema.core.model.INamedInstance;
 import gov.nist.secauto.metaschema.core.model.IValuedDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
@@ -140,7 +140,7 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
       @NonNull IModule<?, ?, ?, ?, ?> childModule) {
     StringBuilder builder = new StringBuilder();
     if (definition.isInline()) {
-      INamedInstanceBase inlineInstance = definition.getInlineInstance();
+      INamedInstance inlineInstance = definition.getInlineInstance();
       IDefinition parentDefinition = inlineInstance.getContainingDefinition();
 
       builder

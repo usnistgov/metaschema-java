@@ -30,8 +30,10 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractNamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedAssemblyReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -40,13 +42,12 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class XmlGroupedAssemblyInstance
     extends AbstractNamedModelInstanceGrouped
-    implements IAssemblyInstanceGrouped {
+    implements IAssemblyInstanceGrouped,
+    IFeatureDefinitionReferenceInstance<IAssemblyDefinition, IAssemblyInstanceGrouped> {
   @NonNull
   private final GroupedAssemblyReferenceType xmlObject;
 
@@ -98,7 +99,7 @@ public class XmlGroupedAssemblyInstance
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 

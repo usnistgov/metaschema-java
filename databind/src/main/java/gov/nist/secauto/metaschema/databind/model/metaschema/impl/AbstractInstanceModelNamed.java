@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.IGroupAs;
@@ -39,8 +40,6 @@ import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Property;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -61,7 +60,7 @@ public abstract class AbstractInstanceModelNamed<
     implements IBindingInstanceModelNamedAbsolute,
     IFeatureInstanceModelGroupAs {
   @NonNull
-  private final Map<QName, Set<String>> properties;
+  private final Map<IAttributable.Key, Set<String>> properties;
   @NonNull
   private final IGroupAs groupAs;
   @NonNull
@@ -102,7 +101,7 @@ public abstract class AbstractInstanceModelNamed<
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return properties;
   }
 

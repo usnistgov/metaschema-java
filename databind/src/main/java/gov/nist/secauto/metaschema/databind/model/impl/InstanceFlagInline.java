@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
@@ -44,11 +43,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
 import java.lang.reflect.Field;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -58,6 +53,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
  * Implements a Metaschema module inline flag instance/definition bound to a
  * Java field.
  */
+// TODO: implement getProperties()
 public class InstanceFlagInline
     extends AbstractBoundInstanceJavaField<BoundFlag, IBoundDefinitionModel>
     implements IBoundInstanceFlag {
@@ -140,13 +136,6 @@ public class InstanceFlagInline
   @Nullable
   public MarkupLine getDescription() {
     return ModelUtil.resolveToMarkupLine(getAnnotation().description());
-  }
-
-  @Override
-  @NonNull
-  public Map<QName, Set<String>> getProperties() {
-    // TODO: implement
-    return CollectionUtil.emptyMap();
   }
 
   @Override

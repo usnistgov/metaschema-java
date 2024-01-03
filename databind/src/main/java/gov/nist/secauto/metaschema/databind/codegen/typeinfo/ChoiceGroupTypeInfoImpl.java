@@ -33,8 +33,8 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
@@ -70,6 +70,7 @@ public class ChoiceGroupTypeInfoImpl
     return ObjectUtils.notNull(AnnotationSpec.builder(BoundChoiceGroup.class));
   }
 
+  @SuppressWarnings("PMD.UseConcurrentHashMap")
   @Override
   public Set<IModelDefinition> buildBindingAnnotation(
       TypeSpec.Builder typeBuilder,

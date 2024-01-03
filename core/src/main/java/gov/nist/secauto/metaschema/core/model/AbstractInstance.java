@@ -52,6 +52,6 @@ public abstract class AbstractInstance<P extends IContainer> implements IInstanc
   @Override
   @Nullable
   public Object getValue(Object parent) {
-    return getEffectiveDefaultValue();
+    return getResolvedDefaultValue();
   }
 }

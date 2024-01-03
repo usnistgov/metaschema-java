@@ -26,8 +26,10 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
@@ -47,7 +49,8 @@ import nl.talsmasoftware.lazy4j.Lazy;
  */
 public class InstanceModelFieldComplex
     extends AbstractBoundInstanceField
-    implements IBoundInstanceModelFieldComplex {
+    implements IBoundInstanceModelFieldComplex,
+    IFeatureDefinitionReferenceInstance<IBoundDefinitionModelFieldComplex, IBoundInstanceModelFieldComplex> {
   @NonNull
   private final DefinitionField definition;
   @NonNull
@@ -99,7 +102,7 @@ public class InstanceModelFieldComplex
           fieldValue.setValue(retval, fieldValueDefault);
 
           for (IBoundInstanceFlag flag : definition.getFlagInstances()) {
-            Object flagDefault = flag.getEffectiveDefaultValue();
+            Object flagDefault = flag.getResolvedDefaultValue();
             if (flagDefault != null) {
               flag.setValue(retval, flagDefault);
             }
@@ -123,7 +126,7 @@ public class InstanceModelFieldComplex
   // ------------------------------------------
 
   @Override
-  public DefinitionField getDefinition() {
+  public final DefinitionField getDefinition() {
     return definition;
   }
 

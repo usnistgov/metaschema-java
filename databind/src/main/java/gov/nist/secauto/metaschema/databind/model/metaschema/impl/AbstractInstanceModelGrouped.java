@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
@@ -40,8 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
@@ -53,7 +52,7 @@ public abstract class AbstractInstanceModelGrouped<
   @NonNull
   private final IInstanceModelChoiceGroupBinding parent;
   @NonNull
-  private final Map<QName, Set<String>> properties;
+  private final Map<IAttributable.Key, Set<String>> properties;
   @NonNull
   private final Lazy<IAssemblyNodeItem> boundNodeItem;
 
@@ -78,7 +77,7 @@ public abstract class AbstractInstanceModelGrouped<
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return properties;
   }
 

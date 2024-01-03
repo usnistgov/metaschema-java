@@ -30,6 +30,8 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionFlag;
@@ -40,19 +42,18 @@ import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagReferen
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceFlagReference
     extends AbstractInstance<FlagReference>
-    implements IBindingInstanceFlag {
+    implements IBindingInstanceFlag,
+    IFeatureDefinitionReferenceInstance<IBindingDefinitionFlag, IBindingInstanceFlag> {
   @NonNull
   private final IBindingDefinitionFlag definition;
   @NonNull
-  private final Map<QName, Set<String>> properties;
+  private final Map<IAttributable.Key, Set<String>> properties;
   @Nullable
   private final Object defaultValue;
   @NonNull
@@ -86,7 +87,7 @@ public class InstanceFlagReference
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return properties;
   }
 

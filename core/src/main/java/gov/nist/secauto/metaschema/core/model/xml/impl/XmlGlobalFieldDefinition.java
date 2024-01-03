@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
@@ -45,8 +46,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -188,7 +187,7 @@ class XmlGlobalFieldDefinition
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 

@@ -60,7 +60,7 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
       @NonNull Object targetObject,
       @NonNull Collection<? extends IBoundProperty> unhandledInstances) throws IOException {
     for (IBoundProperty instance : unhandledInstances) {
-      Object value = instance.getEffectiveDefaultValue();
+      Object value = instance.getResolvedDefaultValue();
       if (value != null) {
         instance.setValue(targetObject, value);
       }

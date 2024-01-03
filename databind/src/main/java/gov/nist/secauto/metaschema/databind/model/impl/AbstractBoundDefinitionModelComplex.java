@@ -130,8 +130,7 @@ public abstract class AbstractBoundDefinitionModelComplex<A extends Annotation>
   public <CLASS> CLASS newInstance() {
     Class<?> clazz = getBoundClass();
     try {
-      @SuppressWarnings("unchecked")
-      Constructor<CLASS> constructor
+      @SuppressWarnings("unchecked") Constructor<CLASS> constructor
           = (Constructor<CLASS>) clazz.getDeclaredConstructor();
       return ObjectUtils.notNull(constructor.newInstance());
     } catch (NoSuchMethodException ex) {

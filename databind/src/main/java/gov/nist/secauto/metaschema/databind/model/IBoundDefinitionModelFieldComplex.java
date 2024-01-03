@@ -73,7 +73,7 @@ public interface IBoundDefinitionModelFieldComplex
 
       // since the field value is non-null, populate the flags
       for (IBoundInstanceFlag flag : definition.getFlagInstances()) {
-        Object flagDefault = flag.getEffectiveDefaultValue();
+        Object flagDefault = flag.getResolvedDefaultValue();
         if (flagDefault != null) {
           flag.setValue(retval, flagDefault);
         }

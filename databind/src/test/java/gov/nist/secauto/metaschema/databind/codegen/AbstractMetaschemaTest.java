@@ -102,8 +102,7 @@ abstract class AbstractMetaschemaTest {
       @NonNull Path file,
       @NonNull CLASS rootObject,
       @NonNull IBindingContext context) throws IOException {
-    @SuppressWarnings("unchecked")
-    Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
+    @SuppressWarnings("unchecked") Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
 
     try (Writer writer = Files.newBufferedWriter(file, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
         StandardOpenOption.TRUNCATE_EXISTING)) {

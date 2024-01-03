@@ -60,11 +60,6 @@ public interface IBoundInstanceModelNamed extends IBoundInstanceModel, INamedMod
     return INamedModelInstanceAbsolute.super.getJsonName();
   }
 
-  @Override
-  default Object getEffectiveDefaultValue() {
-    return IBoundInstanceModel.super.getEffectiveDefaultValue();
-  }
-
   @Nullable
   default IBoundInstanceFlag getJsonKey() {
     String jsonKeyName = getJsonKeyFlagName();

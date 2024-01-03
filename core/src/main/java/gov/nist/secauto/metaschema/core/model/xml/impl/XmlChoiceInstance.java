@@ -198,7 +198,7 @@ class XmlChoiceInstance
     ObjectUtils.notNull(state.getRight()).append(instance);
   }
 
-  private class XmlModelContainer
+  private static class XmlModelContainer
       extends DefaultContainerModelSupport<
           IModelInstanceAbsolute,
           INamedModelInstanceAbsolute,

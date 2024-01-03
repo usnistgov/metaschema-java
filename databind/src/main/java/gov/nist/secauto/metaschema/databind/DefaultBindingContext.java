@@ -183,7 +183,8 @@ public class DefaultBindingContext implements IBindingContext {
     try {
       definition = IBoundDefinitionModelAssembly.class.cast(getBoundDefinitionForClass(clazz));
     } catch (ClassCastException ex) {
-      throw new IllegalStateException(String.format("Class '%s' is not a bound assembly.", clazz.getClass().getName()));
+      throw new IllegalStateException(
+          String.format("Class '%s' is not a bound assembly.", clazz.getClass().getName()), ex);
     }
     if (definition == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", clazz.getClass().getName()));
@@ -216,7 +217,9 @@ public class DefaultBindingContext implements IBindingContext {
     try {
       definition = IBoundDefinitionModelAssembly.class.cast(getBoundDefinitionForClass(clazz));
     } catch (ClassCastException ex) {
-      throw new IllegalStateException(String.format("Class '%s' is not a bound assembly.", clazz.getClass().getName()));
+      throw new IllegalStateException(
+          String.format("Class '%s' is not a bound assembly.", clazz.getClass().getName()),
+          ex);
     }
     if (definition == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", clazz.getName()));
@@ -272,12 +275,12 @@ public class DefaultBindingContext implements IBindingContext {
 
   @Override
   public IBoundModule registerModule(Class<? extends IBoundModule> clazz) {
-    IBoundModule retval = getModuleLoaderStrategy().loadModule(clazz);
+    return getModuleLoaderStrategy().loadModule(clazz);
     // retval.getExportedAssemblyDefinitions().stream()
     // .map(def -> (IBoundDefinitionModelAssembly) def)
     // .filter(def -> def.isRoot())
     // .forEachOrdered(def -> registerBindingMatcher(ObjectUtils.notNull(def)));
-    return retval;
+    // return retval;
   }
 
   @Override
@@ -315,8 +318,7 @@ public class DefaultBindingContext implements IBindingContext {
     if (definition == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", other.getClass().getName()));
     }
-    @SuppressWarnings("unchecked")
-    CLASS retval = (CLASS) definition.deepCopyItem(other, parentInstance);
+    @SuppressWarnings("unchecked") CLASS retval = (CLASS) definition.deepCopyItem(other, parentInstance);
     return retval;
   }
 }

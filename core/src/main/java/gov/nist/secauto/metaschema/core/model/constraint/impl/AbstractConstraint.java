@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.model.constraint.impl;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -37,8 +38,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -59,7 +58,7 @@ public abstract class AbstractConstraint implements IConstraint { // NOPMD - int
   @Nullable
   private final MarkupMultiline remarks;
   @NonNull
-  private final Map<QName, Set<String>> properties;
+  private final Map<IAttributable.Key, Set<String>> properties;
 
   /**
    * Construct a new Metaschema constraint.
@@ -89,7 +88,7 @@ public abstract class AbstractConstraint implements IConstraint { // NOPMD - int
       @NonNull ISource source,
       @NonNull Level level,
       @NonNull MetapathExpression target,
-      @NonNull Map<QName, Set<String>> properties,
+      @NonNull Map<IAttributable.Key, Set<String>> properties,
       @Nullable MarkupMultiline remarks) {
     Objects.requireNonNull(target);
     this.id = id;
@@ -134,7 +133,7 @@ public abstract class AbstractConstraint implements IConstraint { // NOPMD - int
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return CollectionUtil.unmodifiableMap(properties);
   }
 

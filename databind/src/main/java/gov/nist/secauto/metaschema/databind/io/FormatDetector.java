@@ -140,7 +140,7 @@ public class FormatDetector {
     }
   }
 
-  public static class Result {
+  public static final class Result {
     @NonNull
     private final DataFormatMatcher matcher;
 

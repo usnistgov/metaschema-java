@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.ModelType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -89,8 +90,8 @@ public class AssemblyDefinitionJsonSchema
       new FlagInstanceJsonProperty(flag).generateProperty(properties, state); // NOPMD instantiation needed
     }
     // generate model properties
-    Collection<? extends INamedModelInstance> instances = definition.getNamedModelInstances();
-    for (INamedModelInstance instance : instances) {
+    Collection<? extends INamedModelInstanceAbsolute> instances = definition.getNamedModelInstances();
+    for (INamedModelInstanceAbsolute instance : instances) {
       assert instance != null;
       INamedModelInstanceJsonProperty.newProperty(instance)
           .generateProperty(properties, state);
@@ -151,7 +152,7 @@ public class AssemblyDefinitionJsonSchema
             @NonNull PropertyCollection newInstanceProperties = oldInstanceProperties.copy();
 
             // add the choice
-            INamedModelInstanceJsonProperty.newProperty((INamedModelInstance) optionInstance)
+            INamedModelInstanceJsonProperty.newProperty((INamedModelInstanceAbsolute) optionInstance)
                 .generateProperty(newInstanceProperties, state);
 
             newRetval.add(newInstanceProperties);

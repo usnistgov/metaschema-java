@@ -74,7 +74,6 @@ public class FlagContainerSupport implements IContainerFlagSupport<IBindingInsta
       @NonNull IBindingDefinitionModel parent) {
     // create temporary collections to store the child binding objects
     final Map<String, IBindingInstanceFlag> flagInstances = new LinkedHashMap<>();
-    IBindingInstanceFlag jsonKeyFlag = null;
 
     // create counter to track child positions
     int flagReferencePosition = 0;

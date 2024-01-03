@@ -83,7 +83,7 @@ public interface IModule<
     FL extends IFlagDefinition,
     FI extends IFieldDefinition,
     A extends IAssemblyDefinition> {
-  String METASCHEMA_XML_NS = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";
+  String METASCHEMA_XML_NS = MetaschemaModelConstants.NAMESPACE;
 
   /**
    * Get a filter that will match all definitions that are not locally defined.

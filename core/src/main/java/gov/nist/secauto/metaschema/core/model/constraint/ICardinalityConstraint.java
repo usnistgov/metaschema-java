@@ -70,7 +70,7 @@ public interface ICardinalityConstraint extends IConstraint {
     return new Builder();
   }
 
-  class Builder
+  final class Builder
       extends AbstractConstraintBuilder<Builder, ICardinalityConstraint> {
     private Integer minOccurs;
     private Integer maxOccurs;

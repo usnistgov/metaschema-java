@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.IInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
 import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
@@ -43,7 +43,7 @@ import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IJsonProperty<I extends INamedInstance> {
+public interface IJsonProperty<I extends IInstanceAbsolute> {
   @NonNull
   I getInstance();
 

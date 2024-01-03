@@ -36,17 +36,17 @@ import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonReader;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 class DefaultAssemblyClassBindingTest
     extends AbstractBoundModelTestSupport {
   @Test
   void testMinimalJsonParse() throws JsonParseException, IOException {
-    File testContent
-        = new File(getClass().getResource("/content/minimal.json").getFile());
-    try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
+    Path testContent = Paths.get("src/test/resources/content/minimal.json");
+    try (BufferedReader reader = Files.newBufferedReader(testContent)) {
       assert reader != null;
 
       IBoundDefinitionModelAssembly classBinding = getRootAssemblyClassBinding();

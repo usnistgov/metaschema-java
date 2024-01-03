@@ -40,6 +40,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * @param <INSTANCE>
  *          the associated instance Java type
  */
+// REFACTOR: rename to IFeatureInlinedDefinitionInstance
 public interface IFeatureInlinedDefinition<DEFINITION extends IDefinition, INSTANCE extends INamedInstance>
     extends IDefinition, INamedInstance {
   @Override

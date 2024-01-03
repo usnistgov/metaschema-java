@@ -30,7 +30,7 @@ package gov.nist.secauto.metaschema.core.model;
  * A marker interface for an information element that is a field model type.
  *
  */
-public interface IField extends INamedModelElement {
+public interface IField extends IModelElement, INamed, IAttributable {
   /**
    * Provides the Metaschema model type of "FIELD".
    *

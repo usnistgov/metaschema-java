@@ -69,6 +69,26 @@ public interface IBoundInstanceFlag
     return new InstanceFlagInline(field, containingDefinition);
   }
 
+  /**
+   * Determines if this flag's value is used as the property name for the JSON
+   * object that holds the remaining data based on this flag's containing
+   * definition.
+   *
+   * @return {@code true} if this flag is used as a JSON key, or {@code false}
+   *         otherwise
+   */
+  boolean isJsonKey();
+
+  /**
+   * Determines if this flag is used as a JSON "value key". A "value key" is a
+   * flag who's value is used as the property name for the containing objects
+   * value.
+   *
+   * @return {@code true} if the flag is used as a JSON "value key", or
+   *         {@code false} otherwise
+   */
+  boolean isJsonValueKey();
+
   // Flag Instance Features
   // ======================
 

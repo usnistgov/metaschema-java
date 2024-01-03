@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.schemagen.json.property;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import gov.nist.secauto.metaschema.core.model.IInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
@@ -36,7 +37,7 @@ import gov.nist.secauto.metaschema.schemagen.json.schema.IJsonSchema;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractJsonProperty<I extends INamedInstance> implements IJsonProperty<I> {
+public abstract class AbstractJsonProperty<I extends IInstanceAbsolute & INamedInstance> implements IJsonProperty<I> {
   @NonNull
   private final I instance;
 
@@ -61,7 +62,7 @@ public abstract class AbstractJsonProperty<I extends INamedInstance> implements 
   protected void generateSchemaOrRef(
       @NonNull ObjectNode obj,
       @NonNull JsonGenerationState state) {
-    INamedInstance instance = getInstance();
+    I instance = getInstance();
     IJsonSchema schema = state.getSchema(instance.getDefinition());
     schema.generateSchemaOrRef(state, obj);
   }

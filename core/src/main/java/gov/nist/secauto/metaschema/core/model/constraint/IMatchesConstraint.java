@@ -53,7 +53,7 @@ public interface IMatchesConstraint extends IConstraint {
     return new Builder();
   }
 
-  class Builder
+  final class Builder
       extends AbstractConstraintBuilder<Builder, IMatchesConstraint> {
     private Pattern pattern;
     private IDataTypeAdapter<?> datatype;

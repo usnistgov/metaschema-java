@@ -123,7 +123,7 @@ public @interface AllowedValues {
    * @return the extension mode
    */
   @NonNull
-  IAllowedValuesConstraint.Extensible extensible() default IAllowedValuesConstraint.Extensible.MODEL;
+  IAllowedValuesConstraint.Extensible extensible() default IAllowedValuesConstraint.Extensible.EXTERNAL;
 
   /**
    * The message to emit when the constraint is violated.

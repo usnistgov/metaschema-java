@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelField;
 import gov.nist.secauto.metaschema.databind.model.IGroupAs;
@@ -37,13 +36,10 @@ import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.lang.reflect.Field;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+// TODO: implement getProperties()
 public abstract class AbstractBoundInstanceField
     extends AbstractBoundInstanceModelJavaField<BoundField>
     implements IBoundInstanceModelField {
@@ -119,12 +115,6 @@ public abstract class AbstractBoundInstanceField
   @Override
   public final int getMaxOccurs() {
     return getAnnotation().maxOccurs();
-  }
-
-  @Override
-  public Map<QName, Set<String>> getProperties() {
-    // TODO: implement
-    return CollectionUtil.emptyMap();
   }
 
   @Override

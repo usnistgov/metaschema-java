@@ -224,7 +224,7 @@ public class MetaConstraintLoader
     }
   }
 
-  private static class MetaConstraintSet implements IConstraintSet {
+  private static final class MetaConstraintSet implements IConstraintSet {
     @NonNull
     private final List<ITargetedConstaints> targetedConstraints;
 

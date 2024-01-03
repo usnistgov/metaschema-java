@@ -33,13 +33,6 @@ import gov.nist.secauto.metaschema.core.model.IInstance;
  */
 public interface IBoundInstance extends IBoundProperty, IInstance {
   @Override
-  default Object getEffectiveDefaultValue() {
-    // this is the same as IInstance, but is needed since IBoundProperty also
-    // declares it
-    return getDefaultValue();
-  }
-
-  @Override
   IBoundDefinitionModel getContainingDefinition();
 
   /**

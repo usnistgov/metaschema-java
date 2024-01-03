@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.schemagen.xml.schematype;
 
-import gov.nist.secauto.metaschema.core.model.IContainerFlag;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.xml.impl.DocumentationGenerator;
@@ -39,7 +39,7 @@ import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractXmlComplexType<D extends IContainerFlag>
+public abstract class AbstractXmlComplexType<D extends IModelDefinition>
     extends AbstractXmlType
     implements IXmlComplexType {
   @NonNull

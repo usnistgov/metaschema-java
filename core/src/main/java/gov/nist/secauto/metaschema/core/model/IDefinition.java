@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.impl.IFeatureValueConst
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IDefinition extends INamedModelElement, IFeatureValueConstrained {
+public interface IDefinition extends IModelElement, INamed, IAttributable, IFeatureValueConstrained {
 
   @NonNull
   ModuleScopeEnum DEFAULT_DEFINITION_MODEL_SCOPE = ModuleScopeEnum.INHERITED;

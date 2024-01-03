@@ -100,11 +100,6 @@ public interface IBoundInstanceModelFieldScalar
   }
 
   @Override
-  default Object getEffectiveDefaultValue() {
-    return IBoundInstanceModelField.super.getEffectiveDefaultValue();
-  }
-
-  @Override
   default Object getFieldValue(Object item) {
     // the item is the field value
     return item;

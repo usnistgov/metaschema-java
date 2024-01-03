@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.core.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This marker interface indicates that this object is an instance.
@@ -54,19 +53,6 @@ public interface IInstance extends IModelElement {
   @Override
   default IModule<?, ?, ?, ?, ?> getContainingModule() {
     return getContainingDefinition().getContainingModule();
-  }
-
-  /**
-   * Get the effective default value for the instance.
-   * <p>
-   * Child implementations are expected to override this method to provide a more
-   * reasonable default value.
-   *
-   * @return the default value or {@code null} if there is no default value
-   */
-  @Nullable
-  default Object getEffectiveDefaultValue() {
-    return getDefaultValue();
   }
 
   /**

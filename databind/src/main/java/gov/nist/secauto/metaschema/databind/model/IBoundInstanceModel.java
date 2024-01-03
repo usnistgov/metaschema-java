@@ -78,8 +78,8 @@ public interface IBoundInstanceModel
   IBoundDefinitionModelAssembly getContainingDefinition();
 
   @Override
-  default Object getEffectiveDefaultValue() {
-    return getMaxOccurs() == 1 ? getDefaultValue() : getCollectionInfo().emptyValue();
+  default Object getResolvedDefaultValue() {
+    return getMaxOccurs() == 1 ? getEffectiveDefaultValue() : getCollectionInfo().emptyValue();
   }
 
   /**

@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IContainerModel;
@@ -53,8 +54,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
@@ -183,7 +182,7 @@ class XmlInlineAssemblyDefinition
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 

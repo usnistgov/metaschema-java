@@ -30,9 +30,11 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IContainerModel;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
-import gov.nist.secauto.metaschema.core.model.IContainerModel;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FieldReferenceType;
@@ -43,14 +45,13 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlFieldInstance
     extends AbstractInstance<IContainerModel>
-    implements IFieldInstanceAbsolute {
+    implements IFieldInstanceAbsolute,
+    IFeatureDefinitionReferenceInstance<IFieldDefinition, IFieldInstanceAbsolute> {
   @NonNull
   private final FieldReferenceType xmlObject;
   @Nullable
@@ -77,7 +78,7 @@ class XmlFieldInstance
   }
 
   @Override
-  public IFieldDefinition getDefinition() {
+  public final IFieldDefinition getDefinition() {
     // this will always be not null
     return ObjectUtils.notNull(getContainingModule().getScopedFieldDefinitionByName(getName()));
   }
@@ -96,7 +97,7 @@ class XmlFieldInstance
    *
    * @return the underlying XML data
    */
-  protected FieldReferenceType getXmlObject() {
+  protected final FieldReferenceType getXmlObject() {
     return xmlObject;
   }
 
@@ -118,12 +119,12 @@ class XmlFieldInstance
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 
   @Override
-  public String getName() {
+  public final String getName() {
     return ObjectUtils.requireNonNull(getXmlObject().getRef());
   }
 

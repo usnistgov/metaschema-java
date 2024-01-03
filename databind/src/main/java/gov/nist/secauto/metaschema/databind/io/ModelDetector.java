@@ -204,7 +204,7 @@ public class ModelDetector {
     return retval;
   }
 
-  public static class Result {
+  public static final class Result {
     @NonNull
     private final Class<?> boundClass;
     @NonNull

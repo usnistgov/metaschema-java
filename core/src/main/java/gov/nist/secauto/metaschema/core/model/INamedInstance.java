@@ -26,12 +26,9 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This marker interface indicates that the instance has a flag, field, or
@@ -39,8 +36,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * identify the data.
  *
  */
-public interface INamedInstance extends IInstance, INamedModelElement {
-
+public interface INamedInstance extends INamed, IAttributable, IInstance {
   /**
    * Retrieve the definition of this instance.
    *
@@ -48,59 +44,6 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    */
   @NonNull
   IDefinition getDefinition();
-
-  @Override
-  @NonNull
-  default String getEffectiveName() {
-    String result = getUseName();
-    if (result == null) {
-      // fall back to the definition
-      IDefinition def = getDefinition();
-      result = def.getEffectiveName();
-    }
-    return result;
-  }
-
-  @Override
-  @Nullable
-  default Integer getEffectiveIndex() {
-    Integer result = getUseIndex();
-    if (result == null) {
-      // fall back to the definition
-      IDefinition def = getDefinition();
-      result = def.getEffectiveIndex();
-    }
-    return result;
-  }
-
-  @Override
-  default String getEffectiveFormalName() {
-    String result = getFormalName();
-    return result == null ? getDefinition().getEffectiveFormalName() : result;
-  }
-
-  @Override
-  default MarkupLine getEffectiveDescription() {
-    MarkupLine result = getDescription();
-    return result == null ? getDefinition().getEffectiveDescription() : result;
-  }
-
-  /**
-   * The resolved default value, which allows an instance to override a
-   * definition's default value.
-   *
-   * @return the default value or {@code null} if not defined on either the
-   *         instance or definition
-   */
-  @Override
-  @Nullable
-  default Object getEffectiveDefaultValue() {
-    Object retval = getDefaultValue();
-    if (retval == null) {
-      retval = getDefinition().getDefaultValue();
-    }
-    return retval;
-  }
 
   /**
    * Get the XML qualified name to use in XML.
@@ -118,32 +61,5 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    */
   default String getXmlNamespace() {
     return getContainingModule().getXmlNamespace().toASCIIString();
-  }
-
-  /**
-   * Generates a "coordinate" string for the provided information element
-   * instance.
-   *
-   * A coordinate consists of the element's:
-   * <ul>
-   * <li>containing Metaschema module's short name</li>
-   * <li>model type</li>
-   * <li>name</li>
-   * <li>hash code</li>
-   * <li>the hash code of the definition</li>
-   * </ul>
-   *
-   * @return the coordinate
-   */
-  @SuppressWarnings("null")
-  @Override
-  default String toCoordinates() {
-    IDefinition definition = getDefinition();
-    return String.format("%s:%s:%s@%d(%d)",
-        getContainingDefinition().getContainingModule().getShortName(),
-        getModelType(),
-        definition.getName(),
-        hashCode(),
-        definition.isInline() ? 0 : definition.hashCode());
   }
 }

@@ -27,8 +27,8 @@
 package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.databind.io.IProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 

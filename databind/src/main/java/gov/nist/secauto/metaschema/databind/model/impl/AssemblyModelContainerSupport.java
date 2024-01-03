@@ -72,6 +72,7 @@ class AssemblyModelContainerSupport
   @NonNull
   private final Map<String, IBoundInstanceModelChoiceGroup> choiceGroupInstances;
 
+  @SuppressWarnings("PMD.UseConcurrentHashMap")
   public AssemblyModelContainerSupport(
       @NonNull DefinitionAssembly containingDefinition) {
     this.modelInstances = CollectionUtil.unmodifiableList(ObjectUtils.notNull(

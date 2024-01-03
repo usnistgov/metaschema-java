@@ -31,7 +31,6 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -50,7 +49,6 @@ import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.namespace.QName;
 
@@ -58,6 +56,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
+//TODO: implement getProperties()
 public class DefinitionAssembly
     extends AbstractBoundDefinitionModelComplex<MetaschemaAssembly>
     implements IBoundDefinitionModelAssembly,
@@ -171,13 +170,6 @@ public class DefinitionAssembly
   @Nullable
   public MarkupLine getDescription() {
     return ModelUtil.resolveToMarkupLine(getAnnotation().description());
-  }
-
-  @Override
-  @NonNull
-  public Map<QName, Set<String>> getProperties() {
-    // TODO: implement
-    return CollectionUtil.emptyMap();
   }
 
   @Override

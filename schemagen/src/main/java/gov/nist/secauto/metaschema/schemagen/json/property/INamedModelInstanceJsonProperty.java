@@ -26,16 +26,16 @@
 
 package gov.nist.secauto.metaschema.schemagen.json.property;
 
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface INamedModelInstanceJsonProperty extends IJsonProperty<INamedModelInstance> {
+public interface INamedModelInstanceJsonProperty extends IJsonProperty<INamedModelInstanceAbsolute> {
   int getMinOccurs();
 
   int getMaxOccurs();
 
-  static INamedModelInstanceJsonProperty newProperty(@NonNull INamedModelInstance instance) {
+  static INamedModelInstanceJsonProperty newProperty(@NonNull INamedModelInstanceAbsolute instance) {
     int maxOccurs = instance.getMaxOccurs();
 
     INamedModelInstanceJsonProperty retval;

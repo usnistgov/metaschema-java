@@ -50,7 +50,7 @@ public interface IIndexHasKeyConstraint extends IKeyConstraint {
     return new Builder();
   }
 
-  class Builder
+  final class Builder
       extends AbstractKeyConstraintBuilder<Builder, IIndexHasKeyConstraint> {
     private String indexName;
 

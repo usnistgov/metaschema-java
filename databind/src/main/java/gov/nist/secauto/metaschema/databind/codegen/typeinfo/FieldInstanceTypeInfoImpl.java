@@ -62,12 +62,12 @@ public class FieldInstanceTypeInfoImpl
   public TypeName getJavaItemType() {
     TypeName retval;
     IFieldInstance fieldInstance = getInstance();
-    if (!fieldInstance.getDefinition().hasChildren()) {
+    if (fieldInstance.getDefinition().hasChildren()) {
+      retval = super.getJavaItemType();
+    } else {
       IDataTypeAdapter<?> dataType = fieldInstance.getDefinition().getJavaTypeAdapter();
       // this is a simple value
       retval = ObjectUtils.notNull(ClassName.get(dataType.getJavaClass()));
-    } else {
-      retval = super.getJavaItemType();
     }
     return retval;
   }

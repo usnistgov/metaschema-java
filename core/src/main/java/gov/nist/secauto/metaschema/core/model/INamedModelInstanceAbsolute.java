@@ -33,11 +33,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public interface INamedModelInstanceAbsolute extends INamedModelInstance, IModelInstanceAbsolute {
   @Override
   default String getJsonName() {
-    @NonNull
-    String retval;
+    @NonNull String retval;
     if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      @NonNull
-      String groupAsName = ObjectUtils.requireNonNull(getGroupAsName(),
+      @NonNull String groupAsName = ObjectUtils.requireNonNull(getGroupAsName(),
           ObjectUtils.notNull(String.format("null group-as name in instance '%s' on definition '%s' in '%s'",
               this.getName(),
               this.getContainingDefinition().getName(),

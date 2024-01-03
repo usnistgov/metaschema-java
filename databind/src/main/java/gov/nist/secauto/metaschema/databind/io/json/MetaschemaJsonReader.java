@@ -257,7 +257,7 @@ public class MetaschemaJsonReader
     }
   }
 
-  private class ItemReader implements IJsonParsingContext.ItemReader {
+  private final class ItemReader implements IJsonParsingContext.ItemReader {
 
     @Override
     public Object readItemFlag(Object parentItem, IBoundInstanceFlag instance) throws IOException {
@@ -416,7 +416,7 @@ public class MetaschemaJsonReader
       return retval;
     }
 
-    private class JsonKeyBodyHandler implements DefinitionBodyHandler<IBoundDefinitionModelComplex> {
+    private final class JsonKeyBodyHandler implements DefinitionBodyHandler<IBoundDefinitionModelComplex> {
       @NonNull
       private final IBoundInstanceFlag jsonKey;
       @NonNull
@@ -432,8 +432,7 @@ public class MetaschemaJsonReader
       @Override
       public void accept(IBoundDefinitionModelComplex definition, Object parentItem, IJsonProblemHandler problemHandler)
           throws IOException {
-        @SuppressWarnings("resource")
-        JsonParser parser = getReader();
+        @SuppressWarnings("resource") JsonParser parser = getReader();
         JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
 
         // the field will be the JSON key
@@ -456,7 +455,7 @@ public class MetaschemaJsonReader
       }
     }
 
-    private class PropertyBodyHandler implements DefinitionBodyHandler<IBoundDefinitionModelComplex> {
+    private final class PropertyBodyHandler implements DefinitionBodyHandler<IBoundDefinitionModelComplex> {
       @NonNull
       private final Map<String, IBoundProperty> jsonProperties;
 
@@ -467,8 +466,7 @@ public class MetaschemaJsonReader
       @Override
       public void accept(IBoundDefinitionModelComplex definition, Object parentItem, IJsonProblemHandler problemHandler)
           throws IOException {
-        @SuppressWarnings("resource")
-        JsonParser parser = getReader();
+        @SuppressWarnings("resource") JsonParser parser = getReader();
 
         // advance past the start object
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
@@ -527,7 +525,7 @@ public class MetaschemaJsonReader
       }
     }
 
-    private class GroupedInstanceProblemHandler implements IJsonProblemHandler {
+    private final class GroupedInstanceProblemHandler implements IJsonProblemHandler {
       @NonNull
       private final IBoundInstanceModelGroupedNamed instance;
       @NonNull
@@ -565,7 +563,7 @@ public class MetaschemaJsonReader
       }
     }
 
-    private class JsomValueKeyProblemHandler implements IJsonProblemHandler {
+    private final class JsomValueKeyProblemHandler implements IJsonProblemHandler {
       @NonNull
       private final IJsonProblemHandler delegate;
       @NonNull
@@ -592,8 +590,7 @@ public class MetaschemaJsonReader
         if (foundJsonValueKey) {
           retval = delegate.handleUnknownProperty(definition, parentItem, fieldName, reader);
         } else {
-          @SuppressWarnings("resource")
-          JsonParser parser = getReader();
+          @SuppressWarnings("resource") JsonParser parser = getReader();
           // handle JSON value key
           String key = ObjectUtils.notNull(parser.getCurrentName());
           Object keyValue = jsonValueKyeFlag.getJavaTypeAdapter().parse(key);
@@ -693,8 +690,7 @@ public class MetaschemaJsonReader
 
       IBoundInstanceModel instance = getCollectionInfo().getInstance();
 
-      @SuppressWarnings("PMD.UseConcurrentHashMap")
-      Map<String, Object> items = new LinkedHashMap<>();
+      @SuppressWarnings("PMD.UseConcurrentHashMap") Map<String, Object> items = new LinkedHashMap<>();
 
       // A map value is always wrapped in a START_OBJECT, since fields are used for
       // the keys

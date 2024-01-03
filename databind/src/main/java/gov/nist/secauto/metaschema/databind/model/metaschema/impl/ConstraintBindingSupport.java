@@ -146,7 +146,7 @@ public final class ConstraintBindingSupport {
       @NonNull ISource source) {
     IAllowedValuesConstraint.Builder builder = IAllowedValuesConstraint.builder()
         .allowedOther(ModelSupport.yesOrNo(obj.getAllowOther()))
-        .extensible(extensible(ObjectUtils.requireNonNull(obj.getExtensible())));
+        .extensible(extensible(obj.getExtensible()));
     applyCommonValues(obj, null, source, builder);
 
     for (ConstraintValueEnum value : ObjectUtils.requireNonNull(obj.getEnums())) {
@@ -357,9 +357,7 @@ public final class ConstraintBindingSupport {
     }
 
     builder.target(target(target));
-
-    String level = ObjectUtils.requireNonNull(constraint.getLevel());
-    builder.level(level(level));
+    builder.level(level(constraint.getLevel()));
     builder.source(source);
     return builder;
   }
@@ -372,42 +370,46 @@ public final class ConstraintBindingSupport {
   }
 
   @NonNull
-  private static IConstraint.Level level(@NonNull String level) {
-    IConstraint.Level retval;
-    switch (level) {
-    case "CRITICAL":
-      retval = IConstraint.Level.CRITICAL;
-      break;
-    case "ERROR":
-      retval = IConstraint.Level.ERROR;
-      break;
-    case "WARNING":
-      retval = IConstraint.Level.WARNING;
-      break;
-    case "INFORMATIONAL":
-      retval = IConstraint.Level.INFORMATIONAL;
-      break;
-    default:
-      throw new UnsupportedOperationException(level);
+  private static IConstraint.Level level(@Nullable String level) {
+    IConstraint.Level retval = IConstraint.DEFAULT_LEVEL;
+    if (level != null) {
+      switch (level) {
+      case "CRITICAL":
+        retval = IConstraint.Level.CRITICAL;
+        break;
+      case "ERROR":
+        retval = IConstraint.Level.ERROR;
+        break;
+      case "WARNING":
+        retval = IConstraint.Level.WARNING;
+        break;
+      case "INFORMATIONAL":
+        retval = IConstraint.Level.INFORMATIONAL;
+        break;
+      default:
+        throw new UnsupportedOperationException(level);
+      }
     }
     return retval;
   }
 
   @NonNull
-  private static IAllowedValuesConstraint.Extensible extensible(@NonNull String extensible) {
-    IAllowedValuesConstraint.Extensible retval;
-    switch (extensible) {
-    case "model":
-      retval = IAllowedValuesConstraint.Extensible.MODEL;
-      break;
-    case "external":
-      retval = IAllowedValuesConstraint.Extensible.EXTERNAL;
-      break;
-    case "none":
-      retval = IAllowedValuesConstraint.Extensible.NONE;
-      break;
-    default:
-      throw new UnsupportedOperationException(extensible);
+  private static IAllowedValuesConstraint.Extensible extensible(@Nullable String extensible) {
+    IAllowedValuesConstraint.Extensible retval = IAllowedValuesConstraint.EXTENSIBLE_DEFAULT;
+    if (extensible != null) {
+      switch (extensible) {
+      case "model":
+        retval = IAllowedValuesConstraint.Extensible.MODEL;
+        break;
+      case "external":
+        retval = IAllowedValuesConstraint.Extensible.EXTERNAL;
+        break;
+      case "none":
+        retval = IAllowedValuesConstraint.Extensible.NONE;
+        break;
+      default:
+        throw new UnsupportedOperationException(extensible);
+      }
     }
     return retval;
   }

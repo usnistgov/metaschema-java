@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvi
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
@@ -45,8 +46,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -82,8 +81,8 @@ class XmlInlineFlagDefinition
         : null;
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
-      if (getXmlFlag().isSetConstraint()) {
-        ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlFlag().getConstraint()),
+      if (getXmlObject().isSetConstraint()) {
+        ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlObject().getConstraint()),
             ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
       }
       return retval;
@@ -130,53 +129,54 @@ class XmlInlineFlagDefinition
    *
    * @return the XML model
    */
-  protected final InlineFlagDefinitionType getXmlFlag() {
+  protected final InlineFlagDefinitionType getXmlObject() {
     return xmlFlag;
   }
 
   @SuppressWarnings("null")
   @Override
-  public IDataTypeAdapter<?> getJavaTypeAdapter() {
-    return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
+  public final IDataTypeAdapter<?> getJavaTypeAdapter() {
+    return getXmlObject().isSetAsType() ? getXmlObject().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
   }
 
   @Override
   public String getFormalName() {
-    return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;
+    return getXmlObject().isSetFormalName() ? getXmlObject().getFormalName() : null;
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupLine getDescription() {
-    return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription())
+    return getXmlObject().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlObject().getDescription())
         : null;
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
-    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlFlag().getPropList()));
+  public Map<IAttributable.Key, Set<String>> getProperties() {
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 
   @SuppressWarnings("null")
   @Override
   public String getName() {
-    return getXmlFlag().getName();
+    return getXmlObject().getName();
   }
 
   @Override
   public Integer getIndex() {
-    return getXmlFlag().isSetIndex() ? getXmlFlag().getIndex().intValue() : null;
+    return getXmlObject().isSetIndex() ? getXmlObject().getIndex().intValue() : null;
   }
 
   @Override
   public boolean isRequired() {
-    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
+    return getXmlObject().isSetRequired() ? getXmlObject().getRequired()
+        : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
-    return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
+    return getXmlObject().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlObject().getRemarks()) : null;
   }
 
   // -------------------------------------

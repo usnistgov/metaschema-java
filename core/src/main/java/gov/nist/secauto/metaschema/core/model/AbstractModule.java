@@ -192,6 +192,7 @@ public abstract class AbstractModule<
     @NonNull
     private final Map<String, A> exportedAssemblyDefinitions;
 
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public Exports(
         @NonNull List<? extends M> importedModules) {
       // Populate the stream with the definitions from this module

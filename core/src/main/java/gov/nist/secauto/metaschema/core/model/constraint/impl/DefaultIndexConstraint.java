@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.model.constraint.impl;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IKeyField;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -36,8 +37,6 @@ import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -81,7 +80,7 @@ public final class DefaultIndexConstraint
       @NonNull ISource source,
       @NonNull Level level,
       @NonNull MetapathExpression target,
-      @NonNull Map<QName, Set<String>> properties,
+      @NonNull Map<IAttributable.Key, Set<String>> properties,
       @NonNull String name,
       @NonNull List<IKeyField> keyFields,
       @Nullable MarkupMultiline remarks) {

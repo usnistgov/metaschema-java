@@ -34,12 +34,12 @@ import gov.nist.secauto.metaschema.core.model.validation.IContentValidator;
 import gov.nist.secauto.metaschema.core.model.validation.IValidationFinding;
 import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
 import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValidator.JsonValidationFinding;
-import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.databind.io.ISerializer;
+import gov.nist.secauto.metaschema.databind.model.metaschema.BindingModuleLoader;
 import gov.nist.secauto.metaschema.model.testing.xml.xmlbeans.ContentCaseType;
 import gov.nist.secauto.metaschema.model.testing.xml.xmlbeans.GenerateSchemaDocument.GenerateSchema;
 import gov.nist.secauto.metaschema.model.testing.xml.xmlbeans.MetaschemaDocument;
@@ -84,7 +84,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public abstract class AbstractTestSuite {
   private static final Logger LOGGER = LogManager.getLogger(AbstractTestSuite.class);
-  private static final ModuleLoader LOADER = new ModuleLoader();
+  private static final BindingModuleLoader LOADER = new BindingModuleLoader();
 
   private static final boolean DELETE_RESULTS_ON_EXIT = false;
 
@@ -385,7 +385,7 @@ public abstract class AbstractTestSuite {
                 contentCase.getValidationResult(),
                 validate(
                     ObjectUtils.notNull(contentValidator), ObjectUtils.notNull(contentUri.toURL())),
-                "validation did not match expectation");
+                "validation did not match expectation for: " + contentUri.toASCIIString());
           });
     } else if (contentCase.getValidationResult()) {
       retval = DynamicTest.dynamicTest(

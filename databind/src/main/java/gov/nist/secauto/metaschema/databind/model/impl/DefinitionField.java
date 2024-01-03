@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -50,15 +49,13 @@ import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
 
 import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
+//TODO: implement getProperties()
 public class DefinitionField
     extends AbstractBoundDefinitionModelComplex<MetaschemaField>
     implements IBoundDefinitionModelFieldComplex {
@@ -212,13 +209,6 @@ public class DefinitionField
   @Nullable
   public MarkupLine getDescription() {
     return ModelUtil.resolveToMarkupLine(getAnnotation().description());
-  }
-
-  @Override
-  @NonNull
-  public Map<QName, Set<String>> getProperties() {
-    // TODO: implement
-    return CollectionUtil.emptyMap();
   }
 
   @Override

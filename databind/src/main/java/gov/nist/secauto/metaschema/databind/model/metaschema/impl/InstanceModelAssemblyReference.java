@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
@@ -45,7 +46,8 @@ public class InstanceModelAssemblyReference
         AssemblyReference,
         IBindingDefinitionAssembly,
         IBindingContainerModelAbsolute>
-    implements IBindingInstanceModelAssemblyAbsolute {
+    implements IBindingInstanceModelAssemblyAbsolute,
+    IFeatureDefinitionReferenceInstance<IBindingDefinitionAssembly, IBindingInstanceModelAssemblyAbsolute> {
   /**
    * Construct a new assembly reference.
    *

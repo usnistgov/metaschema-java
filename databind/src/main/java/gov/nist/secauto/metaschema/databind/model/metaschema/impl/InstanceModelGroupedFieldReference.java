@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModelField;
@@ -40,9 +40,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class InstanceModelGroupedFieldReference
     extends AbstractInstanceModelGrouped<AssemblyModel.ChoiceGroup.Field>
-    implements IBindingInstanceModelFieldGrouped {
+    implements IBindingInstanceModelFieldGrouped,
+    IFeatureDefinitionReferenceInstance<IBindingDefinitionModelField, IBindingInstanceModelFieldGrouped> {
   @NonNull
-  private final IFieldDefinition definition;
+  private final IBindingDefinitionModelField definition;
 
   protected InstanceModelGroupedFieldReference(
       @NonNull AssemblyModel.ChoiceGroup.Field binding,
@@ -55,7 +56,7 @@ public class InstanceModelGroupedFieldReference
   }
 
   @Override
-  public IFieldDefinition getDefinition() {
+  public IBindingDefinitionModelField getDefinition() {
     return definition;
   }
 

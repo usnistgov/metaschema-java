@@ -179,6 +179,7 @@ class AssemblyModelContainerSupport
             parent,
             nodeItemFactory);
         modelInstances.add(choice);
+        choiceInstances.add(choice);
       } else if (obj instanceof AssemblyModel.ChoiceGroup) {
         IInstanceModelChoiceGroupBinding choiceGroup = new InstanceModelChoiceGroup(
             (ChoiceGroup) obj,
@@ -187,6 +188,7 @@ class AssemblyModelContainerSupport
             parent,
             nodeItemFactory);
         modelInstances.add(choiceGroup);
+        choiceGroupInstances.put(choiceGroup.getGroupAsName(), choiceGroup);
       } else {
         throw new UnsupportedOperationException(String.format("Unknown model instance class: %s", obj.getClass()));
       }
