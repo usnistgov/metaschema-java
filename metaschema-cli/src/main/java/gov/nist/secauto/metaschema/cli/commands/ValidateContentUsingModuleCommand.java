@@ -163,7 +163,7 @@ public class ValidateContentUsingModuleCommand
 
     @Override
     public List<Source> getXmlSchemas() throws IOException {
-      Path schemaFile = Files.createTempFile(getTempDir(), "schema-", ".json");
+      Path schemaFile = Files.createTempFile(getTempDir(), "schema-", ".xml");
       assert schemaFile != null;
       IMutableConfiguration<SchemaGenerationFeature<?>> configuration = new DefaultConfiguration<>();
       ISchemaGenerator.generateSchema(getModule(), schemaFile, SchemaFormat.XML, configuration);
