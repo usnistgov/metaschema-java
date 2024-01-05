@@ -678,7 +678,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
 
             if (index == null) {
               getConstraintValidationHandler().handleGenericValidationViolation(constraint, keyRef.getNode(), item,
-                  "Key reference to undefined index");
+                  String.format("Key reference to undefined index with name '%s'", indexName));
             } else {
 
               INodeItem referencedItem = index.get(key);
