@@ -24,11 +24,11 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
+package gov.nist.secauto.metaschema.databind.model.metaschema;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import java.util.List;
 
-public interface ITargetedConstraintBase extends IConstraintBase {
-  @Nullable
-  String getTarget();
+public interface IModelConstraintsBase extends IValueConstraintsBase {
+  @Override
+  List<? extends ITargetedConstraintBase> getRules();
 }

@@ -59,12 +59,7 @@ class DayTimeDurationItemImpl
   @SuppressWarnings("PMD.OnlyOneReturn")
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (!(obj instanceof IDayTimeDurationItem)) {
-      return false;
-    }
-    return compareTo((IDayTimeDurationItem) obj) == 0;
+    return this == obj
+        || (obj instanceof IDayTimeDurationItem && compareTo((IDayTimeDurationItem) obj) == 0);
   }
 }

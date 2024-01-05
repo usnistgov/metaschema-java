@@ -73,7 +73,7 @@ public interface IFeatureFlagContainerItem extends INodeItem {
   /**
    * Provides an abstract implementation of a lazy loaded collection of flags.
    */
-  public class FlagContainer {
+  class FlagContainer {
     @NonNull
     private final Map<String, IFlagNodeItem> flags;
 

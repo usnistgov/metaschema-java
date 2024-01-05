@@ -301,12 +301,32 @@ public interface ISequence<ITEM_TYPE extends IItem> extends List<ITEM_TYPE> {
 
   @Override
   default boolean add(ITEM_TYPE item) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("object is immutable");
+  }
+
+  @Override
+  default void add(int index, ITEM_TYPE element) {
+    throw new UnsupportedOperationException("object is immutable");
+  }
+
+  @Override
+  default boolean addAll(Collection<? extends ITEM_TYPE> collection) {
+    throw new UnsupportedOperationException("object is immutable");
+  }
+
+  @Override
+  default boolean addAll(int index, Collection<? extends ITEM_TYPE> collection) {
+    throw new UnsupportedOperationException("object is immutable");
   }
 
   @Override
   default boolean remove(Object obj) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("object is immutable");
+  }
+
+  @Override
+  default ITEM_TYPE remove(int index) {
+    throw new UnsupportedOperationException("object is immutable");
   }
 
   @Override
@@ -315,28 +335,18 @@ public interface ISequence<ITEM_TYPE extends IItem> extends List<ITEM_TYPE> {
   }
 
   @Override
-  default boolean addAll(Collection<? extends ITEM_TYPE> collection) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
   default boolean removeAll(Collection<?> collection) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("object is immutable");
   }
 
   @Override
   default boolean retainAll(Collection<?> collection) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("object is immutable");
   }
 
   @Override
   default void clear() {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  default boolean addAll(int index, Collection<? extends ITEM_TYPE> c) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("object is immutable");
   }
 
   @Override
@@ -346,17 +356,7 @@ public interface ISequence<ITEM_TYPE extends IItem> extends List<ITEM_TYPE> {
 
   @Override
   default ITEM_TYPE set(int index, ITEM_TYPE element) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  default void add(int index, ITEM_TYPE element) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  default ITEM_TYPE remove(int index) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("object is immutable");
   }
 
   @Override

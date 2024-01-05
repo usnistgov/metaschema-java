@@ -85,12 +85,7 @@ class BooleanItemImpl implements IBooleanItem {
   @SuppressWarnings("PMD.OnlyOneReturn")
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (!(obj instanceof IBooleanItem)) {
-      return false;
-    }
-    return compareTo((IBooleanItem) obj) == 0;
+    return this == obj
+        || (obj instanceof IBooleanItem && compareTo((IBooleanItem) obj) == 0);
   }
 }

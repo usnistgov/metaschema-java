@@ -263,7 +263,7 @@ public class Quantified
       if (size == 0) {
         return Collections.emptyListIterator();
       }
-      return new CartesianProductIterator<T>(dimensions);
+      return new CartesianProductIterator<>(dimensions);
     }
 
     // /**

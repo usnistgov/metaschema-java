@@ -24,11 +24,14 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
+package gov.nist.secauto.metaschema.databind.model.metaschema;
+
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.ConstraintLetExpression;
 
 import java.util.List;
 
-public interface IModelConstraintsBase extends IValueConstraintsBase {
-  @Override
-  List<? extends ITargetedConstraintBase> getRules();
+public interface IValueConstraintsBase {
+  List<ConstraintLetExpression> getLets();
+
+  List<? extends IConstraintBase> getRules();
 }

@@ -41,7 +41,7 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import gov.nist.secauto.metaschema.databind.model.metaschema.impl.ITargetedConstraintBase;
+import gov.nist.secauto.metaschema.databind.model.metaschema.ITargetedConstraintBase;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;

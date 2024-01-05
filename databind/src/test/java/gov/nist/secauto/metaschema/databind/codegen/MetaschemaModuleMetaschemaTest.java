@@ -117,7 +117,7 @@ class MetaschemaModuleMetaschemaTest
   }
 
   @Test
-  void testOSCALBindingModuleLoader() throws MetaschemaException, IOException {
+  void testOscalBindingModuleLoader() throws MetaschemaException, IOException {
     BindingModuleLoader loader = new BindingModuleLoader();
     loader.set(DeserializationFeature.DESERIALIZE_XML_ALLOW_ENTITY_RESOLUTION, true);
     IBindingModule module = loader.load(ObjectUtils.notNull(URI.create(
@@ -126,7 +126,7 @@ class MetaschemaModuleMetaschemaTest
   }
 
   @Test
-  void testOSCALXmlModuleLoader() throws MetaschemaException, IOException {
+  void testOscalXmlModuleLoader() throws MetaschemaException, IOException {
     ModuleLoader loader = new ModuleLoader();
     // loader.set(DeserializationFeature.DESERIALIZE_XML_ALLOW_ENTITY_RESOLUTION,
     // true);

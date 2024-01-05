@@ -64,16 +64,7 @@ public abstract class AbstractIntegerItem
   @Override
   public IIntegerItem abs() {
     BigInteger value = asInteger();
-    int signum = value.signum();
-
-    IIntegerItem retval;
-    if (signum > -1) {
-      retval = this;
-    } else {
-      retval = IIntegerItem.valueOf(
-          value.abs());
-    }
-    return retval;
+    return value.signum() > -1 ? this : IIntegerItem.valueOf(value.abs());
   }
 
   @Override
@@ -81,14 +72,10 @@ public abstract class AbstractIntegerItem
     return asInteger().hashCode();
   }
 
+  @SuppressWarnings("PMD.OnlyOneReturn")
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true; // NOPMD readability
-    }
-    if (!(obj instanceof IIntegerItem)) {
-      return false; // NOPMD readability
-    }
-    return compareTo((IIntegerItem) obj) == 0;
+    return this == obj
+        || (obj instanceof IIntegerItem && compareTo((IIntegerItem) obj) == 0);
   }
 }

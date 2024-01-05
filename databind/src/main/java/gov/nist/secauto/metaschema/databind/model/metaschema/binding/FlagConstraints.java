@@ -42,8 +42,8 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssemb
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import gov.nist.secauto.metaschema.databind.model.metaschema.impl.IConstraintBase;
-import gov.nist.secauto.metaschema.databind.model.metaschema.impl.IValueConstraintsBase;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IConstraintBase;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IValueConstraintsBase;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;

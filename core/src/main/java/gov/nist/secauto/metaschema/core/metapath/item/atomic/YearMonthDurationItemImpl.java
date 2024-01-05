@@ -60,12 +60,7 @@ class YearMonthDurationItemImpl
   @SuppressWarnings("PMD.OnlyOneReturn") // readability
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (!(obj instanceof IYearMonthDurationItem)) {
-      return false;
-    }
-    return compareTo((IYearMonthDurationItem) obj) == 0;
+    return this == obj
+        || (obj instanceof IYearMonthDurationItem && compareTo((IYearMonthDurationItem) obj) == 0);
   }
 }

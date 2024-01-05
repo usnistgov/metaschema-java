@@ -126,7 +126,8 @@ public class ConstraintLoader
 
     // now check if this constraint set imports other constraint sets
     int size = xmlObject.getMETASCHEMACONSTRAINTS().sizeOfImportArray();
-    @NonNull Map<URI, IConstraintSet> importedConstraints;
+    @NonNull
+    Map<URI, IConstraintSet> importedConstraints;
     if (size == 0) {
       importedConstraints = ObjectUtils.notNull(Collections.emptyMap());
     } else {
@@ -214,7 +215,7 @@ public class ConstraintLoader
     return CollectionUtil.unmodifiableList(scopedConstraints);
   }
 
-  private static void handleScopedAssembly(
+  private static void handleScopedAssembly( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<ISource, List<ITargetedConstaints>> state) {
     Scope.Assembly assembly = (Scope.Assembly) obj;
@@ -226,7 +227,7 @@ public class ConstraintLoader
     state.getRight().add(new AssemblyTargetedConstraints(expression, constraints));
   }
 
-  private static void handleScopedField(
+  private static void handleScopedField( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<ISource, List<ITargetedConstaints>> state) {
     Scope.Field field = (Scope.Field) obj;
@@ -238,7 +239,7 @@ public class ConstraintLoader
     state.getRight().add(new FieldTargetedConstraints(expression, constraints));
   }
 
-  private static void handleScopedFlag(
+  private static void handleScopedFlag( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<ISource, List<ITargetedConstaints>> state) {
     Scope.Flag flag = (Scope.Flag) obj;

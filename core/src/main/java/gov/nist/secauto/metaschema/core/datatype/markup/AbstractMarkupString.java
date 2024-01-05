@@ -72,6 +72,7 @@ import javax.xml.stream.XMLStreamWriter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYPE>>
     implements IMarkupString<TYPE> {
   private static final Logger LOGGER = LogManager.getLogger(FlexmarkFactory.class);
@@ -88,7 +89,13 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   @NonNull
   private final Document document;
 
-  public AbstractMarkupString(@NonNull Document document) {
+  /**
+   * Construct a new markup string based on the provided flexmark AST graph.
+   *
+   * @param document
+   *          the AST graph representing Markdown text
+   */
+  protected AbstractMarkupString(@NonNull Document document) {
     this.document = document;
   }
 
@@ -135,6 +142,20 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   // writeHtml(xmlStreamWriter, effectiveNamespace);
   // }
 
+  /**
+   * Parse HTML-based text into markdown as a flexmark AST graph.
+   * <p>
+   * This method uses a two-step approach that first translates the HTML into
+   * markdown, and then parses the markdown into an AST graph.
+   *
+   * @param html
+   *          the HTML text to parse
+   * @param htmlParser
+   *          the HTML parser used to produce markdown
+   * @param markdownParser
+   *          the markdown parser
+   * @return the markdown AST graph
+   */
   @NonNull
   protected static Document parseHtml(@NonNull String html, @NonNull FlexmarkHtmlConverter htmlParser,
       @NonNull Parser markdownParser) {
@@ -171,6 +192,15 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
     return parseMarkdown(markdown, markdownParser);
   }
 
+  /**
+   * Parse markdown-based text into a flexmark AST graph.
+   *
+   * @param markdown
+   *          the markdown text to parse
+   * @param parser
+   *          the markdown parser
+   * @return the markdown AST graph
+   */
   @SuppressWarnings("null")
   @NonNull
   protected static Document parseMarkdown(@NonNull String markdown, @NonNull Parser parser) {

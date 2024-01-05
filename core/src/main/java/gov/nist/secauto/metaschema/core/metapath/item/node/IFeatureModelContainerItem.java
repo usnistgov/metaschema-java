@@ -56,7 +56,7 @@ public interface IFeatureModelContainerItem extends IFeatureFlagContainerItem {
   /**
    * Provides an abstract implementation of a lazy loaded model.
    */
-  public class ModelContainer
+  class ModelContainer
       extends FlagContainer {
     private final Map<String, List<? extends IModelNodeItem<?, ?>>> modelItems;
 

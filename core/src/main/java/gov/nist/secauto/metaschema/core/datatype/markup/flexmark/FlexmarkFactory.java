@@ -35,6 +35,7 @@ import com.vladsch.flexmark.util.data.DataHolder;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@SuppressWarnings("PMD.DataClass")
 public class FlexmarkFactory {
   @NonNull
   private static final FlexmarkFactory SINGLETON = new FlexmarkFactory();
@@ -62,7 +63,7 @@ public class FlexmarkFactory {
   }
 
   @SuppressWarnings("null")
-  public FlexmarkFactory(@NonNull DataHolder config) {
+  public FlexmarkFactory(@SuppressWarnings("exports") @NonNull DataHolder config) {
     this.configuration = config;
     this.markdownParser = Parser.builder(config)
         .customDelimiterProcessor(new FixedEmphasisDelimiterProcessor(Parser.STRONG_WRAPS_EMPHASIS.get(config)))
@@ -74,7 +75,7 @@ public class FlexmarkFactory {
   }
 
   @NonNull
-  public DataHolder getConfiguration() {
+  protected DataHolder getConfiguration() {
     return configuration;
   }
 
@@ -98,6 +99,7 @@ public class FlexmarkFactory {
     return formatter;
   }
 
+  @SuppressWarnings("exports")
   @NonNull
   public FlexmarkHtmlConverter getFlexmarkHtmlConverter() {
     return htmlConverter;

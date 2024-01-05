@@ -100,20 +100,24 @@ public class FunctionLibrary implements IFunctionLibrary {
 
   @Override
   public IFunction getFunction(@NonNull String name, int arity) {
-    IFunction retval;
+    IFunction retval = null;
     synchronized (this) {
       NamedFunctionSet functions = libraryByName.get(name);
-      retval = functions == null ? null : functions.getFunctionWithArity(arity);
+      if (functions != null) {
+        retval = functions.getFunctionWithArity(arity);
+      }
     }
     return retval;
   }
 
   @Override
   public IFunction getFunction(@NonNull QName name, int arity) {
-    IFunction retval;
+    IFunction retval = null;
     synchronized (this) {
       NamedFunctionSet functions = libraryByQName.get(name);
-      retval = functions == null ? null : functions.getFunctionWithArity(arity);
+      if (functions != null) {
+        retval = functions.getFunctionWithArity(arity);
+      }
     }
     return retval;
   }

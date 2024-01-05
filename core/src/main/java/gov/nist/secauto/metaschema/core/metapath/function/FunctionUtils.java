@@ -52,6 +52,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 /**
  * A collection of utility functions for use in implementing Metapath functions.
  */
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public final class FunctionUtils {
   public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
 
@@ -166,7 +167,8 @@ public final class FunctionUtils {
    */
   @Nullable
   public static <ITEM extends IItem> ITEM getFirstItem(@NonNull ISequence<ITEM> sequence, boolean requireSingleton) {
-    @Nullable ITEM retval = null;
+    @Nullable
+    ITEM retval = null;
     if (!sequence.isEmpty()) {
       List<ITEM> items = sequence.asList();
       if (requireSingleton && items.size() != 1) {

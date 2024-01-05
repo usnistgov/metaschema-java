@@ -39,6 +39,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 //@SuppressWarnings("PMD.CouplingBetweenObjects")
 public final class XmlModelParser {
+  private XmlModelParser() {
+    // disable construction
+  }
 
   @NonNull
   public static JsonGroupAsBehavior getJsonGroupAsBehavior(@Nullable GroupAsType groupAs) {

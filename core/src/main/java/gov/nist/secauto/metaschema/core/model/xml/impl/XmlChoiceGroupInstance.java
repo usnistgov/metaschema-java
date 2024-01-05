@@ -184,7 +184,7 @@ class XmlChoiceGroupInstance
         }
       };
 
-  private static void handleField(
+  private static void handleField( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IChoiceGroupInstance, XmlModelContainer> state) {
     IFieldInstanceGrouped instance = new XmlGroupedFieldInstance(
@@ -193,7 +193,7 @@ class XmlChoiceGroupInstance
     ObjectUtils.notNull(state.getRight()).append(instance);
   }
 
-  private static void handleDefineField(
+  private static void handleDefineField( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IChoiceGroupInstance, XmlModelContainer> state) {
     IFieldInstanceGrouped instance = new XmlGroupedInlineFieldDefinition(
@@ -202,7 +202,7 @@ class XmlChoiceGroupInstance
     ObjectUtils.notNull(state.getRight()).append(instance);
   }
 
-  private static void handleAssembly(
+  private static void handleAssembly( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IChoiceGroupInstance, XmlModelContainer> state) {
     IAssemblyInstanceGrouped instance = new XmlGroupedAssemblyInstance(
@@ -211,7 +211,7 @@ class XmlChoiceGroupInstance
     ObjectUtils.notNull(state.getRight()).append(instance);
   }
 
-  private static void handleDefineAssembly(
+  private static void handleDefineAssembly( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IChoiceGroupInstance, XmlModelContainer> state) {
     IAssemblyInstanceGrouped instance = new XmlGroupedInlineAssemblyDefinition(

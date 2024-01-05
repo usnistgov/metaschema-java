@@ -143,7 +143,7 @@ public final class ModuleCompilerHelper {
   public static ClassLoader newClassLoader(
       @NonNull final Path classDir,
       @NonNull final ClassLoader parent) {
-    return AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+    return AccessController.doPrivileged(new PrivilegedAction<>() {
       @Override
       public URLClassLoader run() {
         try {

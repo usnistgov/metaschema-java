@@ -129,13 +129,6 @@ public interface NameConverter {
       extends NameUtil
       implements NameConverter {
 
-    /**
-     * Default constructor.
-     */
-    public Standard() {
-      // do nothing
-    }
-
     @Override
     public String toClassName(String token) {
       return toMixedCaseName(toWordList(token), true);
@@ -241,7 +234,7 @@ public interface NameConverter {
     }
 
     private static String removeIllegalIdentifierChars(String token) {
-      StringBuilder newToken = new StringBuilder(token.length() + 1); // max expected length
+      StringBuilder newToken = new StringBuilder(token.length() * 2); // max expected length
       for (int i = 0; i < token.length(); i++) {
         char ch = token.charAt(i);
         if (i == 0 && !Character.isJavaIdentifierStart(ch)) { // ch can't be used as FIRST char
@@ -258,12 +251,11 @@ public interface NameConverter {
 
     private static List<String> tokenize(String str, String sep) {
       StringTokenizer tokens = new StringTokenizer(str, sep);
-      ArrayList<String> retval = new ArrayList<>();
+      List<String> retval = new ArrayList<>();
 
       while (tokens.hasMoreTokens()) {
         retval.add(tokens.nextToken());
       }
-
       return retval;
     }
 
@@ -273,7 +265,6 @@ public interface NameConverter {
       for (int i = list.size() - 1; i >= 0; i--) {
         rev.add(list.get(i));
       }
-
       return rev;
     }
 
@@ -281,10 +272,9 @@ public interface NameConverter {
       StringBuilder buf = new StringBuilder(tokens.get(0));
 
       for (int i = 1; i < tokens.size(); i++) {
-        buf.append(sep);
-        buf.append(tokens.get(i));
+        buf.append(sep)
+            .append(tokens.get(i));
       }
-
       return buf.toString();
     }
   }

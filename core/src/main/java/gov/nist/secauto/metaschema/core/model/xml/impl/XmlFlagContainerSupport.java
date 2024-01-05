@@ -82,7 +82,7 @@ class XmlFlagContainerSupport
         }
       };
 
-  private static void handleFlag(
+  private static void handleFlag( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IModelDefinition, Map<String, IFlagInstance>> state) {
     XmlFlagInstance flagInstance = new XmlFlagInstance(
@@ -91,7 +91,7 @@ class XmlFlagContainerSupport
     state.getRight().put(flagInstance.getEffectiveName(), flagInstance);
   }
 
-  private static void handleDefineFlag(
+  private static void handleDefineFlag( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IModelDefinition, Map<String, IFlagInstance>> state) {
     XmlInlineFlagDefinition flagInstance = new XmlInlineFlagDefinition(

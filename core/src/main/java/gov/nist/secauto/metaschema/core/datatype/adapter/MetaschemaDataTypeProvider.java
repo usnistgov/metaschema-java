@@ -34,9 +34,10 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeProvider;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides for runtime discovery of built-in implementations of the core
- * Metaschema data types.
+ * Provides runtime discovery of built-in implementations of the core Metaschema
+ * data types.
  */
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 @AutoService(IDataTypeProvider.class)
 public final class MetaschemaDataTypeProvider // NOPMD - Used for service initialization
     extends AbstractDataTypeProvider {

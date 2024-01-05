@@ -24,34 +24,11 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
-
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Property;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Remarks;
-
-import java.util.List;
+package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IConstraintBase {
-
+public interface ITargetedConstraintBase extends IConstraintBase {
   @Nullable
-  String getId();
-
-  @Nullable
-  String getFormalName();
-
-  @Nullable
-  MarkupLine getDescription();
-
-  @Nullable
-  List<Property> getProps();
-
-  @Nullable
-  Remarks getRemarks();
-
-  @Nullable
-  String getLevel();
-
+  String getTarget();
 }

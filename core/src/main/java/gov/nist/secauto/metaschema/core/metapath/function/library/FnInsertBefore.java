@@ -85,7 +85,8 @@ public final class FnInsertBefore {
       IItem focus) {
     ISequence<IItem> target = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
     IIntegerItem position
-        = FunctionUtils.getFirstItem(FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true);
+        = ObjectUtils.requireNonNull(
+            FunctionUtils.getFirstItem(FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true));
     ISequence<IItem> inserts = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(2)));
     return ISequence.of(fnInsertBefore(target, position, inserts));
   }
@@ -104,7 +105,12 @@ public final class FnInsertBefore {
    *          the sequence of Metapath items to be inserted into the target
    * @return the sequence of Metapath items with insertions
    */
-  public static <T extends IItem> List<T> fnInsertBefore(List<T> target, IIntegerItem positionItem, List<T> inserts) {
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  @NonNull
+  public static <T extends IItem> List<T> fnInsertBefore(
+      @NonNull List<T> target,
+      @NonNull IIntegerItem positionItem,
+      @NonNull List<T> inserts) {
     if (target.isEmpty()) {
       return inserts;
     }

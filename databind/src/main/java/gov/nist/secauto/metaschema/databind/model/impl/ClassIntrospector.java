@@ -36,8 +36,8 @@ public final class ClassIntrospector {
     // disable construction
   }
 
+  @SuppressWarnings("PMD.EmptyCatchBlock")
   public static List<Method> getMatchingMethods(Class<?> clazz, String name, Class<?>... parameterTypes) {
-
     List<Method> retval = new LinkedList<>();
     Class<?> searchClass = clazz;
     do {
@@ -52,6 +52,7 @@ public final class ClassIntrospector {
     return retval.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(retval);
   }
 
+  @SuppressWarnings("PMD.EmptyCatchBlock")
   public static Method getMatchingMethod(Class<?> clazz, String name, Class<?>... parameterTypes) {
     Method retval = null;
     Class<?> searchClass = clazz;

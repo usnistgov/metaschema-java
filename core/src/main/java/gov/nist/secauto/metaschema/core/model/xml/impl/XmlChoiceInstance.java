@@ -162,7 +162,7 @@ class XmlChoiceInstance
         }
       };
 
-  private static void handleField(
+  private static void handleField( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IChoiceInstance, XmlModelContainer> state) {
     IFieldInstanceAbsolute instance = new XmlFieldInstance(
@@ -171,7 +171,7 @@ class XmlChoiceInstance
     ObjectUtils.notNull(state.getRight()).append(instance);
   }
 
-  private static void handleDefineField(
+  private static void handleDefineField( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IChoiceInstance, XmlModelContainer> state) {
     IFieldInstanceAbsolute instance = new XmlInlineFieldDefinition(
@@ -180,7 +180,7 @@ class XmlChoiceInstance
     ObjectUtils.notNull(state.getRight()).append(instance);
   }
 
-  private static void handleAssembly(
+  private static void handleAssembly( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IChoiceInstance, XmlModelContainer> state) {
     IAssemblyInstanceAbsolute instance = new XmlAssemblyInstance(
@@ -189,7 +189,7 @@ class XmlChoiceInstance
     ObjectUtils.notNull(state.getRight()).append(instance);
   }
 
-  private static void handleDefineAssembly(
+  private static void handleDefineAssembly( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IChoiceInstance, XmlModelContainer> state) {
     IAssemblyInstanceAbsolute instance = new XmlInlineAssemblyDefinition(

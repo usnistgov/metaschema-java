@@ -66,6 +66,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * <p>
  * This class is not thread safe.
  */
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public class DefaultConstraintValidator implements IConstraintValidator { // NOPMD - intentional
   private static final Logger LOGGER = LogManager.getLogger(DefaultConstraintValidator.class);
 
@@ -189,7 +190,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
    *          the Metapath dynamic execution context to use for Metapath
    *          evaluation
    */
-  private void validateHasCardinality(
+  private void validateHasCardinality( // NOPMD false positive
       @NonNull List<? extends ICardinalityConstraint> constraints,
       @NonNull IAssemblyNodeItem item,
       @NonNull DynamicContext dynamicContext) {
@@ -381,7 +382,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
    *          the Metapath dynamic execution context to use for Metapath
    *          evaluation
    */
-  private void validateMatches(
+  private void validateMatches( // NOPMD false positive
       @NonNull List<? extends IMatchesConstraint> constraints,
       @NonNull IDefinitionNodeItem<?, ?> item,
       @NonNull DynamicContext dynamicContext) {
@@ -449,7 +450,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
    *          the Metapath dynamic execution context to use for Metapath
    *          evaluation
    */
-  private void validateIndexHasKey(
+  private void validateIndexHasKey( // NOPMD false positive
       @NonNull List<? extends IIndexHasKeyConstraint> constraints,
       @NonNull IDefinitionNodeItem<?, ?> item,
       @NonNull DynamicContext dynamicContext) {
@@ -636,7 +637,8 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   protected void updateValueStatus(@NonNull INodeItem targetItem, @NonNull IAllowedValuesConstraint allowedValues) {
     // constraint.getAllowedValues().containsKey(value)
 
-    @Nullable ValueStatus valueStatus = valueMap.get(targetItem);
+    @Nullable
+    ValueStatus valueStatus = valueMap.get(targetItem);
     if (valueStatus == null) {
       valueStatus = new ValueStatus(targetItem);
       valueMap.put(targetItem, valueStatus);

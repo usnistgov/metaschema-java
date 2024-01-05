@@ -76,6 +76,7 @@ public final class FnConcat {
     // disable construction
   }
 
+  @SuppressWarnings("unused")
   @NonNull
   private static ISequence<IStringItem> execute(
       @NonNull IFunction function,
@@ -90,16 +91,40 @@ public final class FnConcat {
         }))));
   }
 
+  /**
+   * An implementation of XPath 3.1 <a href=
+   * "https://www.w3.org/TR/xpath-functions-31/#func-concat">fn:concat</a>.
+   *
+   * @param items
+   *          the items to concatenate
+   * @return the atomized result
+   */
   @NonNull
   public static IStringItem concat(IAnyAtomicItem... items) {
     return concat(ObjectUtils.notNull(Arrays.asList(items)));
   }
 
+  /**
+   * An implementation of XPath 3.1 <a href=
+   * "https://www.w3.org/TR/xpath-functions-31/#func-concat">fn:concat</a>.
+   *
+   * @param items
+   *          the items to concatenate
+   * @return the atomized result
+   */
   @NonNull
   public static IStringItem concat(@NonNull List<? extends IAnyAtomicItem> items) {
     return concat(ObjectUtils.notNull(items.stream()));
   }
 
+  /**
+   * An implementation of XPath 3.1 <a href=
+   * "https://www.w3.org/TR/xpath-functions-31/#func-concat">fn:concat</a>.
+   *
+   * @param items
+   *          the items to concatenate
+   * @return the atomized result
+   */
   @NonNull
   public static IStringItem concat(@NonNull Stream<? extends IAnyAtomicItem> items) {
     return IStringItem.valueOf(ObjectUtils.notNull(items

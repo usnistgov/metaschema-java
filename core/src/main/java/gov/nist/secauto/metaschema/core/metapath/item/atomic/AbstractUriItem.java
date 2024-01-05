@@ -55,15 +55,10 @@ public abstract class AbstractUriItem
     return asUri().hashCode();
   }
 
+  @SuppressWarnings("PMD.OnlyOneReturn")
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true; // NOPMD readability
-    }
-    if (!(obj instanceof IAnyUriItem)) {
-      return false; // NOPMD readability
-    }
-    return compareTo((IAnyUriItem) obj) == 0;
+    return this == obj
+        || (obj instanceof IAnyUriItem && compareTo((IAnyUriItem) obj) == 0);
   }
-
 }

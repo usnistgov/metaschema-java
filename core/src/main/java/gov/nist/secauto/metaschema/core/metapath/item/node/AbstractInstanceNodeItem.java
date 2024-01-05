@@ -27,7 +27,7 @@
 package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IContainerFlag;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -35,7 +35,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public abstract class AbstractInstanceNodeItem<
     D extends IDefinition,
     I extends INamedInstance,
-    P extends IModelNodeItem<? extends IContainerFlag, ? extends INamedInstance>>
+    P extends IModelNodeItem<? extends IModelDefinition, ? extends INamedInstance>>
     implements IDefinitionNodeItem<D, I> {
 
   @NonNull

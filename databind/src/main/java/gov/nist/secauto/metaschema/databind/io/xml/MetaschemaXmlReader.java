@@ -419,10 +419,12 @@ public class MetaschemaXmlReader
     }
 
     /**
+     * Get the current start element.
+     *
      * @return the startElement
      */
     @NonNull
-    protected StartElement getStartElement() {
+    private StartElement getStartElement() {
       return startElement;
     }
 

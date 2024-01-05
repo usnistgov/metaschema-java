@@ -63,6 +63,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 /**
  * Supports compiling and executing Metapath expressions.
  */
+@SuppressWarnings({
+    "PMD.CouplingBetweenObjects" // necessary since this class aggregates functionality
+})
 public class MetapathExpression {
 
   public enum ResultType {
@@ -108,7 +111,8 @@ public class MetapathExpression {
    */
   @NonNull
   public static MetapathExpression compile(@NonNull String path) {
-    @NonNull MetapathExpression retval;
+    @NonNull
+    MetapathExpression retval;
     if (".".equals(path)) {
       retval = CONTEXT_NODE;
     } else {
@@ -321,7 +325,8 @@ public class MetapathExpression {
       throw new InvalidTypeMetapathException(null, String.format("unsupported result type '%s'", resultType.name()));
     }
 
-    @SuppressWarnings("unchecked") T retval = (T) result;
+    @SuppressWarnings("unchecked")
+    T retval = (T) result;
     return retval;
   }
 

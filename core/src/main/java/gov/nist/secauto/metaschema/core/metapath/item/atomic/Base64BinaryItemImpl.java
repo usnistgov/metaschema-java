@@ -59,12 +59,7 @@ class Base64BinaryItemImpl
   @SuppressWarnings("PMD.OnlyOneReturn")
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (!(obj instanceof IBase64BinaryItem)) {
-      return false;
-    }
-    return compareTo((IBase64BinaryItem) obj) == 0;
+    return this == obj
+        || (obj instanceof IBase64BinaryItem && compareTo((IBase64BinaryItem) obj) == 0);
   }
 }

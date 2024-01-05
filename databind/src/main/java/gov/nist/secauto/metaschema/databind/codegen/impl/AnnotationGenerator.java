@@ -204,7 +204,7 @@ public final class AnnotationGenerator {
       buildConstraint(AllowedValues.class, constraintAnnotation, constraint);
 
       boolean isAllowedOther = constraint.isAllowedOther();
-      if (!Boolean.valueOf(isAllowedOther).equals(getDefaultValue(AllowedValues.class, "allowOthers"))) {
+      if (isAllowedOther != (boolean) getDefaultValue(AllowedValues.class, "allowOthers")) {
         constraintAnnotation.addMember("allowOthers", "$L", isAllowedOther);
       }
 

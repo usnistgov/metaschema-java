@@ -71,14 +71,10 @@ class DecimalItemImpl
     return Objects.hash(asDecimal());
   }
 
+  @SuppressWarnings("PMD.OnlyOneReturn")
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true; // NOPMD readability
-    }
-    if (!(obj instanceof IDecimalItem)) {
-      return false; // NOPMD readability
-    }
-    return compareTo((IDecimalItem) obj) == 0;
+    return this == obj
+        || (obj instanceof IDecimalItem && compareTo((IDecimalItem) obj) == 0);
   }
 }

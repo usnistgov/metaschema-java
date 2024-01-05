@@ -114,6 +114,7 @@ public class XmlAssemblyModelContainer
    *          choice
    * @return the model container
    */
+  @SuppressWarnings("PMD.ShortMethodName")
   public static IContainerModelAssemblySupport<
       IModelInstanceAbsolute,
       INamedModelInstanceAbsolute,
@@ -130,7 +131,7 @@ public class XmlAssemblyModelContainer
             .getRight();
   }
 
-  private static void handleField(
+  private static void handleField( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IAssemblyDefinition, XmlAssemblyModelContainer> state) {
     IFieldInstanceAbsolute instance = new XmlFieldInstance(
@@ -139,7 +140,7 @@ public class XmlAssemblyModelContainer
     ObjectUtils.notNull(state.getRight()).append(instance);
   }
 
-  private static void handleDefineField(
+  private static void handleDefineField( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IAssemblyDefinition, XmlAssemblyModelContainer> state) {
     IFieldInstanceAbsolute instance = new XmlInlineFieldDefinition(
@@ -148,7 +149,7 @@ public class XmlAssemblyModelContainer
     ObjectUtils.notNull(state.getRight()).append(instance);
   }
 
-  private static void handleAssemmbly(
+  private static void handleAssemmbly( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IAssemblyDefinition, XmlAssemblyModelContainer> state) {
     IAssemblyInstanceAbsolute instance = new XmlAssemblyInstance(
@@ -157,7 +158,7 @@ public class XmlAssemblyModelContainer
     ObjectUtils.notNull(state.getRight()).append(instance);
   }
 
-  private static void handleDefineAssembly(
+  private static void handleDefineAssembly( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IAssemblyDefinition, XmlAssemblyModelContainer> state) {
     IAssemblyInstanceAbsolute instance = new XmlInlineAssemblyDefinition(
@@ -166,7 +167,7 @@ public class XmlAssemblyModelContainer
     ObjectUtils.notNull(state.getRight()).append(instance);
   }
 
-  private static void handleChoice(
+  private static void handleChoice( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IAssemblyDefinition, XmlAssemblyModelContainer> state) {
     XmlChoiceInstance instance = new XmlChoiceInstance(
@@ -175,7 +176,7 @@ public class XmlAssemblyModelContainer
     ObjectUtils.notNull(state.getRight()).append(instance);
   }
 
-  private static void handleChoiceGroup(
+  private static void handleChoiceGroup( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<IAssemblyDefinition, XmlAssemblyModelContainer> state) {
     XmlChoiceGroupInstance instance = new XmlChoiceGroupInstance(

@@ -69,7 +69,7 @@ class XmlFlagInstance
     this.xmlFlag = xmlObject;
     this.defaultValue = xmlObject.isSetDefault()
         ? getDefinition().getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlObject.getDefault()))
-        : null;
+        : null; // NOPMD needed for final variable
   }
 
   /**
