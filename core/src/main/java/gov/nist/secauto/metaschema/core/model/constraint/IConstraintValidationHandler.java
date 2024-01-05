@@ -97,4 +97,10 @@ public interface IConstraintValidationHandler {
   void handleAllowedValuesViolation(
       @NonNull List<IAllowedValuesConstraint> failedConstraints,
       @NonNull INodeItem target);
+
+  void handleGenericValidationViolation(
+      @NonNull IConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String message);
 }

@@ -241,4 +241,13 @@ public class LoggingConstraintValidationHandler
     }
   }
 
+  @Override
+  public void handleGenericValidationViolation(IConstraint constraint, INodeItem node, INodeItem target,
+      String message) {
+    Level level = constraint.getLevel();
+    if (isLogged(level)) {
+      logConstraint(level, node, newGenericValidationViolationMessage(constraint, node, target, message), null);
+    }
+  }
+
 }

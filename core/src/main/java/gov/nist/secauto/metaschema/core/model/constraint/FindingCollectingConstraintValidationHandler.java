@@ -190,4 +190,11 @@ public class FindingCollectingConstraintValidationHandler
         .build());
   }
 
+  @Override
+  public void handleGenericValidationViolation(IConstraint constraint, INodeItem node, INodeItem target,
+      String message) {
+    addFinding(ConstraintValidationFinding.builder(constraint, node)
+        .message(newGenericValidationViolationMessage(constraint, node, target, message))
+        .build());
+  }
 }

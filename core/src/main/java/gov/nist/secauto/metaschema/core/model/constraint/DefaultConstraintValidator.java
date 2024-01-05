@@ -677,7 +677,8 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
             List<String> key = IIndex.toKey(item, constraint.getKeyFields(), dynamicContext);
 
             if (index == null) {
-              getConstraintValidationHandler().handleIndexMiss(constraint, keyRef.getNode(), item, key);
+              getConstraintValidationHandler().handleGenericValidationViolation(constraint, keyRef.getNode(), item,
+                  "Key reference to undefined index");
             } else {
 
               INodeItem referencedItem = index.get(key);
