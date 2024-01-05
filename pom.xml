@@ -123,7 +123,7 @@
 		<dependency.commons-io.version>2.15.1</dependency.commons-io.version>
 		<dependency.commons-lang3.version>3.14.0</dependency.commons-lang3.version>
 		<dependency.commons-text.version>1.11.0</dependency.commons-text.version>
-		<dependency.everit-json.version>1.14.3</dependency.everit-json.version>
+		<dependency.everit-json.version>1.14.4</dependency.everit-json.version>
 		<dependency.flexmark.version>0.64.8</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.32</dependency.freemarker.version>
 		<dependency.inject-resources-junit-jupiter.version>0.3.3</dependency.inject-resources-junit-jupiter.version>
