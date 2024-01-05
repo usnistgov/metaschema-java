@@ -33,7 +33,6 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelGrouped;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
@@ -157,13 +156,13 @@ class XmlChoiceGroupInstance
   private static final XmlObjectParser<Pair<IChoiceGroupInstance, XmlModelContainer>> XML_MODEL_PARSER
       = new XmlObjectParser<>(ObjectUtils.notNull(
           Map.ofEntries(
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "assembly"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "assembly"),
                   XmlChoiceGroupInstance::handleAssembly),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "define-assembly"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "define-assembly"),
                   XmlChoiceGroupInstance::handleDefineAssembly),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "field"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "field"),
                   XmlChoiceGroupInstance::handleField),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "define-field"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "define-field"),
                   XmlChoiceGroupInstance::handleDefineField)))) {
 
         @Override

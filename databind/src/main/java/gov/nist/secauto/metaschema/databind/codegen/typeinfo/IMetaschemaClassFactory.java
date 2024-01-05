@@ -77,7 +77,7 @@ public interface IMetaschemaClassFactory {
    */
   @NonNull
   IGeneratedModuleClass generateClass(
-      @NonNull IModule<?, ?, ?, ?, ?> module,
+      @NonNull IModule module,
       @NonNull Path targetDirectory) throws IOException;
 
   /**

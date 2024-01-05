@@ -31,8 +31,8 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractModule;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IContainerFlag;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.xml.IXmlModule;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
@@ -62,7 +62,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class XmlModule
     extends AbstractModule<
         IXmlModule,
-        IContainerFlag,
+        IModelDefinition,
         IFlagDefinition,
         IFieldDefinition,
         IAssemblyDefinition>
@@ -255,7 +255,7 @@ public class XmlModule
 
   @SuppressWarnings("null")
   @Override
-  public List<? extends IContainerFlag> getAssemblyAndFieldDefinitions() {
+  public List<IModelDefinition> getAssemblyAndFieldDefinitions() {
     return Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
         .collect(Collectors.toList());
   }

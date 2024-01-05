@@ -247,7 +247,7 @@ public class BindingModule
 
   @SuppressWarnings("null")
   @Override
-  public List<? extends IBindingDefinitionModel> getAssemblyAndFieldDefinitions() {
+  public List<IBindingDefinitionModel> getAssemblyAndFieldDefinitions() {
     return Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
         .collect(Collectors.toList());
   }

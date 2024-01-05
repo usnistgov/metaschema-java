@@ -85,7 +85,7 @@ public interface INodeItemFactory {
    * @return the new node item
    */
   @NonNull
-  IModuleNodeItem newModuleNodeItem(@NonNull IModule<?, ?, ?, ?, ?> module);
+  IModuleNodeItem newModuleNodeItem(@NonNull IModule module);
 
   /**
    * Create a new {@link IFlagNodeItem}, with no associated value, based on the

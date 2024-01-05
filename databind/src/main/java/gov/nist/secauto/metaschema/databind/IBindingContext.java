@@ -206,7 +206,7 @@ public interface IBindingContext {
    */
   @NonNull
   IBindingContext registerModule(
-      @NonNull IModule<?, ?, ?, ?, ?> module,
+      @NonNull IModule module,
       @NonNull Path compilePath) throws IOException;
 
   /**

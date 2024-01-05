@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.core.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IModuleLoader<M extends IModule<M, ?, ?, ?, ?>> extends ILoader<M> {
+public interface IModuleLoader<M extends IModuleExtended<M, ?, ?, ?, ?>> extends ILoader<M> {
   /**
    * Used to define a post-processing operation to perform on a module.
    */
@@ -40,6 +40,6 @@ public interface IModuleLoader<M extends IModule<M, ?, ?, ?, ?>> extends ILoader
      * @param module
      *          the Metaschema module to post-process
      */
-    void processModule(@NonNull IModule<?, ?, ?, ?, ?> module);
+    void processModule(@NonNull IModule module);
   }
 }

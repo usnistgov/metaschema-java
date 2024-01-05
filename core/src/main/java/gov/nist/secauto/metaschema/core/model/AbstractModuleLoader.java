@@ -53,7 +53,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  *          the Java type of the Metaschema module loaded by this loader
  */
 // REFACTOR: make an IModuleLoader interface
-public abstract class AbstractModuleLoader<T, M extends IModule<M, ?, ?, ?, ?>>
+public abstract class AbstractModuleLoader<T, M extends IModuleExtended<M, ?, ?, ?, ?>>
     extends AbstractLoader<M>
     implements IModuleLoader<M> {
   @NonNull

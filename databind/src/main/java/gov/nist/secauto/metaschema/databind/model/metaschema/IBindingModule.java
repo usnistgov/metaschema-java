@@ -27,10 +27,10 @@
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
-import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.IModuleExtended;
 
 public interface IBindingModule
-    extends IModule<
+    extends IModuleExtended<
         IBindingModule,
         IBindingDefinitionModel,
         IBindingDefinitionFlag,

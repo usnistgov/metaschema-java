@@ -31,7 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
-import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
@@ -93,13 +93,13 @@ public final class ConstraintXmlSupport {
   private static final XmlObjectParser<Pair<ISource, IValueConstrained>> FLAG_PARSER
       = new XmlObjectParser<>(ObjectUtils.notNull(
           Map.ofEntries(
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "allowed-values"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "allowed-values"),
                   ConstraintXmlSupport::handleAllowedValues),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "index-has-key"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "index-has-key"),
                   ConstraintXmlSupport::handleIndexHasKey),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "matches"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "matches"),
                   ConstraintXmlSupport::handleMatches),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "expect"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "expect"),
                   ConstraintXmlSupport::handleExpect)))) {
 
         @Override
@@ -125,13 +125,13 @@ public final class ConstraintXmlSupport {
   private static final XmlObjectParser<Pair<ISource, IValueConstrained>> FIELD_PARSER
       = new XmlObjectParser<>(ObjectUtils.notNull(
           Map.ofEntries(
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "allowed-values"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "allowed-values"),
                   ConstraintXmlSupport::handleScopedAllowedValues),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "index-has-key"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "index-has-key"),
                   ConstraintXmlSupport::handleScopedIndexHasKey),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "matches"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "matches"),
                   ConstraintXmlSupport::handleScopedMatches),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "expect"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "expect"),
                   ConstraintXmlSupport::handleScopedExpect)))) {
 
         @Override
@@ -157,19 +157,19 @@ public final class ConstraintXmlSupport {
   private static final XmlObjectParser<Pair<ISource, IModelConstrained>> ASSEMBLY_PARSER
       = new XmlObjectParser<>(ObjectUtils.notNull(
           Map.ofEntries(
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "allowed-values"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "allowed-values"),
                   ConstraintXmlSupport::handleScopedAllowedValues),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "index-has-key"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "index-has-key"),
                   ConstraintXmlSupport::handleScopedIndexHasKey),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "matches"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "matches"),
                   ConstraintXmlSupport::handleScopedMatches),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "expect"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "expect"),
                   ConstraintXmlSupport::handleScopedExpect),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "index"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "index"),
                   ConstraintXmlSupport::handleScopedIndex),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "is-unique"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "is-unique"),
                   ConstraintXmlSupport::handleScopedIsUnique),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "has-cardinality"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "has-cardinality"),
                   ConstraintXmlSupport::handleScopedHasCardinality)))) {
 
         @Override
@@ -485,14 +485,14 @@ public final class ConstraintXmlSupport {
         AllowedValueType enumType = bean.addNewEnum();
         enumType.setValue(value);
 
-        XmlbeansMarkupVisitor.visit(description, IModule.METASCHEMA_XML_NS, enumType);
+        XmlbeansMarkupVisitor.visit(description, MetaschemaModelConstants.XML_NAMESPACE, enumType);
       }
 
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, MetaschemaModelConstants.XML_NAMESPACE, remarksType);
       }
       return null;
     }
@@ -517,7 +517,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, MetaschemaModelConstants.XML_NAMESPACE, remarksType);
       }
       return null;
     }
@@ -539,7 +539,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, MetaschemaModelConstants.XML_NAMESPACE, remarksType);
       }
       return null;
     }
@@ -564,7 +564,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, MetaschemaModelConstants.XML_NAMESPACE, remarksType);
       }
       return null;
     }
@@ -590,7 +590,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, MetaschemaModelConstants.XML_NAMESPACE, remarksType);
       }
     }
 
@@ -607,7 +607,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, MetaschemaModelConstants.XML_NAMESPACE, remarksType);
       }
       return null;
     }
@@ -625,7 +625,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, MetaschemaModelConstants.XML_NAMESPACE, remarksType);
       }
       return null;
     }
@@ -641,7 +641,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, MetaschemaModelConstants.XML_NAMESPACE, remarksType);
       }
       return null;
     }

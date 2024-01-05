@@ -72,5 +72,5 @@ public interface IModelElement extends IDefaultable {
    */
   // REFACTOR: move to definition
   @NonNull
-  IModule<?, ?, ?, ?, ?> getContainingModule();
+  IModule getContainingModule();
 }

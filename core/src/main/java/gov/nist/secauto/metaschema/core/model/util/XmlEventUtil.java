@@ -73,7 +73,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     EVENT_NAME_MAP.put(XMLStreamConstants.ATTRIBUTE, "ATTRIBUTE");
     EVENT_NAME_MAP.put(XMLStreamConstants.DTD, "DTD");
     EVENT_NAME_MAP.put(XMLStreamConstants.CDATA, "CDATA");
-    EVENT_NAME_MAP.put(XMLStreamConstants.NAMESPACE, "NAMESPACE");
+    EVENT_NAME_MAP.put(XMLStreamConstants.NAMESPACE, "XML_NAMESPACE");
     EVENT_NAME_MAP.put(XMLStreamConstants.NOTATION_DECLARATION, "NOTATION_DECLARATION");
     EVENT_NAME_MAP.put(XMLStreamConstants.ENTITY_DECLARATION, "ENTITY_DECLARATION");
   }

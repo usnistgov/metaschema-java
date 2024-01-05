@@ -45,14 +45,14 @@ public class DefaultGeneratedModuleClass
     extends DefaultGeneratedClass
     implements IGeneratedModuleClass {
   @NonNull
-  private final IModule<?, ?, ?, ?, ?> module;
+  private final IModule module;
   @NonNull
   private final Map<IContainerFlag, IGeneratedDefinitionClass> definitionClassMap;
   @NonNull
   private final String packageName;
 
   public DefaultGeneratedModuleClass(
-      @NonNull IModule<?, ?, ?, ?, ?> module,
+      @NonNull IModule module,
       @NonNull ClassName className,
       @NonNull Path classFile,
       @NonNull Map<IContainerFlag, IGeneratedDefinitionClass> definitionClassMap,
@@ -64,7 +64,7 @@ public class DefaultGeneratedModuleClass
   }
 
   @Override
-  public IModule<?, ?, ?, ?, ?> getModule() {
+  public IModule getModule() {
     return module;
   }
 

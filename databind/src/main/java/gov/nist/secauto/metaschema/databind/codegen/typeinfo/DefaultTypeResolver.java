@@ -62,7 +62,7 @@ class DefaultTypeResolver implements ITypeResolver {
 
   private final Map<String, Set<String>> packageToClassNamesMap = new ConcurrentHashMap<>();
   private final Map<IModelDefinition, ClassName> definitionToTypeMap = new ConcurrentHashMap<>();
-  private final Map<IModule<?, ?, ?, ?, ?>, ClassName> moduleToTypeMap = new ConcurrentHashMap<>();
+  private final Map<IModule, ClassName> moduleToTypeMap = new ConcurrentHashMap<>();
   private final Map<IAssemblyDefinition, IAssemblyDefinitionTypeInfo> assemblyDefinitionToTypeInfoMap
       = new ConcurrentHashMap<>();
   private final Map<IFieldDefinition, IFieldDefinitionTypeInfo> fieldDefinitionToTypeInfoMap
@@ -195,7 +195,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public ClassName getClassName(IModule<?, ?, ?, ?, ?> module) {
+  public ClassName getClassName(IModule module) {
     return ObjectUtils.notNull(moduleToTypeMap.computeIfAbsent(
         module,
         (mod) -> {
@@ -272,7 +272,7 @@ class DefaultTypeResolver implements ITypeResolver {
   }
 
   @Override
-  public String getPackageName(@NonNull IModule<?, ?, ?, ?, ?> module) {
+  public String getPackageName(@NonNull IModule module) {
     return bindingConfiguration.getPackageNameForModule(module);
   }
 

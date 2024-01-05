@@ -60,8 +60,7 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
   }
 
   @Override
-  public IModuleNodeItem newModuleNodeItem(
-      IModule<?, ?, ?, ?, ?> module) {
+  public IModuleNodeItem newModuleNodeItem(IModule module) {
     return new ModuleNodeItemImpl(
         module,
         this);

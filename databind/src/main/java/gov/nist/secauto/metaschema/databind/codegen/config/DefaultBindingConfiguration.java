@@ -63,7 +63,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
       = new ConcurrentHashMap<>();
 
   @Override
-  public String getPackageNameForModule(IModule<?, ?, ?, ?, ?> module) {
+  public String getPackageNameForModule(IModule module) {
     URI namespace = module.getXmlNamespace();
     return getPackageNameForNamespace(ObjectUtils.notNull(namespace.toASCIIString()));
   }
@@ -128,7 +128,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   }
 
   @Override
-  public @NonNull String getClassName(@NonNull IModule<?, ?, ?, ?, ?> module) {
+  public @NonNull String getClassName(@NonNull IModule module) {
     // TODO: make this configurable
     return ClassUtils.toClassName(module.getShortName() + "Module");
   }
@@ -188,7 +188,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    * @return the configuration for the Module or {@code null} if there is no
    *         configuration
    */
-  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NonNull IModule<?, ?, ?, ?, ?> module) {
+  protected MetaschemaBindingConfiguration getMetaschemaBindingConfiguration(@NonNull IModule module) {
     String moduleUri = ObjectUtils.notNull(module.getLocation().toString());
     return getMetaschemaBindingConfiguration(moduleUri);
 

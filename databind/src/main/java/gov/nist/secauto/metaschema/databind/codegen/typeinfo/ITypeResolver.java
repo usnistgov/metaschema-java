@@ -155,7 +155,7 @@ public interface ITypeResolver {
    * @return the class name information for the Module module
    */
   @NonNull
-  ClassName getClassName(@NonNull IModule<?, ?, ?, ?, ?> module);
+  ClassName getClassName(@NonNull IModule module);
 
   /**
    * Get the name of the class associated with the provided Metaschema definition.
@@ -216,7 +216,7 @@ public interface ITypeResolver {
    * @return the Java package name
    */
   @NonNull
-  String getPackageName(@NonNull IModule<?, ?, ?, ?, ?> module);
+  String getPackageName(@NonNull IModule module);
 
   @NonNull
   String getPropertyName(@NonNull IDefinitionTypeInfo parent, @NonNull String name);

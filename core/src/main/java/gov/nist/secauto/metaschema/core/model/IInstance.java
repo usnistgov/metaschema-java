@@ -51,7 +51,7 @@ public interface IInstance extends IModelElement {
   IContainer getParentContainer();
 
   @Override
-  default IModule<?, ?, ?, ?, ?> getContainingModule() {
+  default IModule getContainingModule() {
     return getContainingDefinition().getContainingModule();
   }
 
@@ -73,7 +73,7 @@ public interface IInstance extends IModelElement {
   @SuppressWarnings("null")
   @Override
   default String toCoordinates() {
-    IModule<?, ?, ?, ?, ?> module = getContainingModule();
+    IModule module = getContainingModule();
 
     // TODO: revisit this to add more context i.e. the containing definition
     return String.format("%s:%s", module.getShortName(), getModelType());

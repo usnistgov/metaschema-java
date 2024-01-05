@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
-import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FlagReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFieldDefinitionType;
@@ -62,9 +62,9 @@ class XmlFlagContainerSupport
   private static final XmlObjectParser<Pair<IModelDefinition, Map<String, IFlagInstance>>> XML_MODEL_PARSER
       = new XmlObjectParser<>(ObjectUtils.notNull(
           Map.ofEntries(
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "flag"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "flag"),
                   XmlFlagContainerSupport::handleFlag),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "define-flag"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "define-flag"),
                   XmlFlagContainerSupport::handleDefineFlag)))) {
 
         @Override

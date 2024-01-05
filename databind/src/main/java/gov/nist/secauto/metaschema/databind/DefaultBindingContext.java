@@ -246,7 +246,7 @@ public class DefaultBindingContext implements IBindingContext {
   @SuppressWarnings({ "PMD.UseProperClassLoader", "unchecked" }) // false positive
   @NonNull
   public IBindingContext registerModule(
-      @NonNull IModule<?, ?, ?, ?, ?> module,
+      @NonNull IModule module,
       @NonNull Path compilePath) throws IOException {
     if (!(module instanceof IBoundModule)) {
       Files.createDirectories(compilePath);

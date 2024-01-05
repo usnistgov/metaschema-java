@@ -56,7 +56,7 @@ class DefaultFieldPropertyTest {
   JUnit5Mockery context = new JUnit5Mockery();
 
   @Mock
-  private IModule<?, ?, ?, ?, ?> module; // NOPMD - it's injected
+  private IModule module; // NOPMD - it's injected
   @Mock
   private IBoundDefinitionModelAssembly classBinding; // NOPMD - it's injected
   @Mock

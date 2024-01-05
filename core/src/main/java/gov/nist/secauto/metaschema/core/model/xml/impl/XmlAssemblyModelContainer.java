@@ -33,8 +33,8 @@ import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AssemblyModelType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AssemblyReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ChoiceType;
@@ -68,17 +68,17 @@ public class XmlAssemblyModelContainer
   private static final XmlObjectParser<Pair<IAssemblyDefinition, XmlAssemblyModelContainer>> XML_MODEL_PARSER
       = new XmlObjectParser<>(ObjectUtils.notNull(
           Map.ofEntries(
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "assembly"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "assembly"),
                   XmlAssemblyModelContainer::handleAssemmbly),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "define-assembly"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "define-assembly"),
                   XmlAssemblyModelContainer::handleDefineAssembly),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "field"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "field"),
                   XmlAssemblyModelContainer::handleField),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "define-field"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "define-field"),
                   XmlAssemblyModelContainer::handleDefineField),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "choice"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "choice"),
                   XmlAssemblyModelContainer::handleChoice),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "choice-group"),
+              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "choice-group"),
                   XmlAssemblyModelContainer::handleChoiceGroup)))) {
 
         @Override

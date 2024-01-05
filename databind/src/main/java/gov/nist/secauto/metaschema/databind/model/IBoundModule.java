@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.IModuleExtended;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 
 import java.net.URI;
@@ -35,7 +35,7 @@ import java.util.Collection;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundModule
-    extends IModule<
+    extends IModuleExtended<
         IBoundModule,
         IBoundDefinitionModelComplex,
         IBoundDefinitionFlag,
@@ -57,13 +57,13 @@ public interface IBoundModule
   }
 
   @Override
-  Collection<? extends IBoundDefinitionModelAssembly> getAssemblyDefinitions();
+  Collection<IBoundDefinitionModelAssembly> getAssemblyDefinitions();
 
   @Override
   IBoundDefinitionModelAssembly getAssemblyDefinitionByName(@NonNull String name);
 
   @Override
-  Collection<? extends IBoundDefinitionModelField> getFieldDefinitions();
+  Collection<IBoundDefinitionModelField> getFieldDefinitions();
 
   @Override
   IBoundDefinitionModelField getFieldDefinitionByName(@NonNull String name);

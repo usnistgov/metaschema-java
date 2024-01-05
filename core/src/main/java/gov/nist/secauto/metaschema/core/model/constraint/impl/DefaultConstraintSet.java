@@ -105,7 +105,7 @@ public class DefaultConstraintSet implements IConstraintSet {
   }
 
   @Override
-  public Iterable<ITargetedConstaints> getTargetedConstraintsForModule(@NonNull IModule<?, ?, ?, ?, ?> module) {
+  public Iterable<ITargetedConstaints> getTargetedConstraintsForModule(@NonNull IModule module) {
     QName qname = module.getQName();
 
     Map<QName, List<IScopedContraints>> map = getScopedContraints();

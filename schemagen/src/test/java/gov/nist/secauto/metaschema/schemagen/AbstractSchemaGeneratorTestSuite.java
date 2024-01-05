@@ -80,9 +80,9 @@ public abstract class AbstractSchemaGeneratorTestSuite
   @NonNull
   protected static final IConfiguration<SchemaGenerationFeature<?>> SCHEMA_GENERATION_CONFIG;
   @NonNull
-  protected static final BiFunction<IModule<?, ?, ?, ?, ?>, Writer, Void> XML_SCHEMA_PROVIDER;
+  protected static final BiFunction<IModule, Writer, Void> XML_SCHEMA_PROVIDER;
   @NonNull
-  protected static final BiFunction<IModule<?, ?, ?, ?, ?>, Writer, Void> JSON_SCHEMA_PROVIDER;
+  protected static final BiFunction<IModule, Writer, Void> JSON_SCHEMA_PROVIDER;
   @NonNull
   protected static final JsonSchemaContentValidator JSON_SCHEMA_VALIDATOR;
   @NonNull
@@ -98,7 +98,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     features.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     SCHEMA_GENERATION_CONFIG = features;
 
-    BiFunction<IModule<?, ?, ?, ?, ?>, Writer, Void> xmlProvider = (module, writer) -> {
+    BiFunction<IModule, Writer, Void> xmlProvider = (module, writer) -> {
       assert module != null;
       assert writer != null;
       try {
@@ -110,7 +110,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     };
     XML_SCHEMA_PROVIDER = xmlProvider;
 
-    BiFunction<IModule<?, ?, ?, ?, ?>, Writer, Void> jsonProvider = (module, writer) -> {
+    BiFunction<IModule, Writer, Void> jsonProvider = (module, writer) -> {
       assert module != null;
       assert writer != null;
       try {
@@ -171,12 +171,12 @@ public abstract class AbstractSchemaGeneratorTestSuite
     return ObjectUtils.notNull(Paths.get("target/test-schemagen"));
   }
 
-  protected Path produceXmlSchema(@NonNull IModule<?, ?, ?, ?, ?> module, @NonNull Path schemaPath) throws IOException {
+  protected Path produceXmlSchema(@NonNull IModule module, @NonNull Path schemaPath) throws IOException {
     produceSchema(module, schemaPath, XML_SCHEMA_PROVIDER);
     return schemaPath;
   }
 
-  protected Path produceJsonSchema(@NonNull IModule<?, ?, ?, ?, ?> module, @NonNull Path schemaPath)
+  protected Path produceJsonSchema(@NonNull IModule module, @NonNull Path schemaPath)
       throws IOException {
     produceSchema(module, schemaPath, JSON_SCHEMA_PROVIDER);
     return schemaPath;
@@ -197,7 +197,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     loader.enableFeature(DeserializationFeature.DESERIALIZE_XML_ALLOW_ENTITY_RESOLUTION);
     loader.allowEntityResolution();
     Path modulePath = collectionPath.resolve(metaschemaName);
-    IModule<?, ?, ?, ?, ?> module = loader.load(modulePath);
+    IModule module = loader.load(modulePath);
 
     Path jsonSchema = produceJsonSchema(module, generationDir.resolve(generatedSchemaName + ".json"));
     assertEquals(true, validate(JSON_SCHEMA_VALIDATOR, jsonSchema),

@@ -233,7 +233,7 @@ public class MetaConstraintLoader
     }
 
     @Override
-    public Iterable<ITargetedConstaints> getTargetedConstraintsForModule(IModule<?, ?, ?, ?, ?> module) {
+    public Iterable<ITargetedConstaints> getTargetedConstraintsForModule(IModule module) {
       return targetedConstraints;
     }
 

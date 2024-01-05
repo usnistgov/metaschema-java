@@ -140,7 +140,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
 
   @Override
   public IGeneratedModuleClass generateClass(
-      IModule<?, ?, ?, ?, ?> module,
+      IModule module,
       Path targetDirectory) throws IOException {
 
     // Generate the Module module class
@@ -271,7 +271,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
    */
   @NonNull
   protected TypeSpec.Builder newClassBuilder(
-      @NonNull IModule<?, ?, ?, ?, ?> module,
+      @NonNull IModule module,
       @NonNull ClassName className) { // NOPMD - long, but readable
 
     // create the class
@@ -295,7 +295,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
           typeResolver.getClassName(ObjectUtils.notNull(definition)));
     }
 
-    for (IModule<?, ?, ?, ?, ?> moduleImport : module.getImportedModules()) {
+    for (IModule moduleImport : module.getImportedModules()) {
       moduleAnnotation.addMember(
           "imports",
           "$T.class",
@@ -601,7 +601,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     }
 
     builder.addMember("name", "$S", definition.getName());
-    IModule<?, ?, ?, ?, ?> module = definition.getContainingModule();
+    IModule module = definition.getContainingModule();
     builder.addMember("moduleClass", "$T.class", getTypeResolver().getClassName(module));
   }
 

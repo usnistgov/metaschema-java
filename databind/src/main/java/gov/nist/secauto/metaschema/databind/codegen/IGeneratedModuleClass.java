@@ -44,7 +44,7 @@ public interface IGeneratedModuleClass extends IGeneratedClass {
    * @return the module data
    */
   @NonNull
-  IModule<?, ?, ?, ?, ?> getModule();
+  IModule getModule();
 
   /**
    * Get the Java package name associated with the Module module.

@@ -65,7 +65,7 @@ public interface IProduction {
    *         production did not involve generating classes for the provided module
    */
   @Nullable
-  IGeneratedModuleClass getModuleProduction(@NonNull IModule<?, ?, ?, ?, ?> module);
+  IGeneratedModuleClass getModuleProduction(@NonNull IModule module);
 
   /**
    * Get a stream of all definition Java classes generated as part of this
@@ -104,7 +104,7 @@ public interface IProduction {
    */
   @NonNull
   static IProduction of( // NOPMD - intentional
-      @NonNull Collection<? extends IModule<?, ?, ?, ?, ?>> modules,
+      @NonNull Collection<? extends IModule> modules,
       @NonNull IBindingConfiguration bindingConfiguration,
       @NonNull Path classDir) throws IOException {
 
@@ -113,7 +113,7 @@ public interface IProduction {
     IMetaschemaClassFactory classFactory = IMetaschemaClassFactory.newInstance(typeResolver);
 
     ProductionImpl retval = new ProductionImpl();
-    for (IModule<?, ?, ?, ?, ?> module : modules) {
+    for (IModule module : modules) {
       assert module != null;
       retval.addModule(module, classFactory, classDir);
     }

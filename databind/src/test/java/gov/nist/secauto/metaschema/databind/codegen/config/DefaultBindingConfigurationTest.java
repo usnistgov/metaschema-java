@@ -54,7 +54,7 @@ class DefaultBindingConfigurationTest {
   @RegisterExtension
   JUnit5Mockery context = new JUnit5Mockery();
   private final IModelDefinition definition = context.mock(IModelDefinition.class);
-  private final IModule<?, ?, ?, ?, ?> module = context.mock(IModule.class);
+  private final IModule module = context.mock(IModule.class);
 
   @Test
   void testLoader() throws MalformedURLException, IOException {

@@ -51,8 +51,8 @@ import nl.talsmasoftware.lazy4j.Lazy;
  *
  * @param <M>
  *          the imported module Java type
- * @param <C>
- *          the flag container Java type
+ * @param <D>
+ *          the definition Java type
  * @param <FL>
  *          the flag definition Java type
  * @param <FI>
@@ -62,12 +62,12 @@ import nl.talsmasoftware.lazy4j.Lazy;
  */
 @SuppressWarnings("PMD.CouplingBetweenObjects")
 public abstract class AbstractModule<
-    M extends IModule<M, C, FL, FI, A>,
-    C extends IContainerFlag,
+    M extends IModuleExtended<M, D, FL, FI, A>,
+    D extends IModelDefinition,
     FL extends IFlagDefinition,
     FI extends IFieldDefinition,
     A extends IAssemblyDefinition>
-    implements IModule<M, C, FL, FI, A> {
+    implements IModuleExtended<M, D, FL, FI, A> {
   private static final Logger LOGGER = LogManager.getLogger(AbstractModule.class);
 
   @NonNull
@@ -108,34 +108,6 @@ public abstract class AbstractModule<
   public M getImportedModuleByShortName(String name) {
     return getImportedModulesByShortName().get(name);
   }
-
-  @Override
-  public abstract Collection<A> getAssemblyDefinitions();
-
-  @Override
-  public abstract A getAssemblyDefinitionByName(String name);
-
-  @Override
-  public abstract Collection<FI> getFieldDefinitions();
-
-  @Override
-  public abstract FI getFieldDefinitionByName(String name);
-
-  @Override
-  public List<? extends C> getAssemblyAndFieldDefinitions() {
-    @SuppressWarnings("unchecked") Stream<? extends C> assemblies
-        = (Stream<? extends C>) getAssemblyDefinitions().stream();
-    @SuppressWarnings("unchecked") Stream<? extends C> fields = (Stream<? extends C>) getFieldDefinitions().stream();
-    return ObjectUtils.notNull(
-        Stream.concat(assemblies, fields)
-            .collect(Collectors.toList()));
-  }
-
-  @Override
-  public abstract Collection<FL> getFlagDefinitions();
-
-  @Override
-  public abstract FL getFlagDefinitionByName(String name);
 
   @SuppressWarnings("null")
   @Override
@@ -193,10 +165,9 @@ public abstract class AbstractModule<
     private final Map<String, A> exportedAssemblyDefinitions;
 
     @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
-    public Exports(
-        @NonNull List<? extends M> importedModules) {
+    public Exports(@NonNull List<? extends M> importedModules) {
       // Populate the stream with the definitions from this module
-      Predicate<IDefinition> filter = IModule.allNonLocalDefinitions();
+      Predicate<IDefinition> filter = IModuleExtended.allNonLocalDefinitions();
       Stream<FL> flags = getFlagDefinitions().stream()
           .filter(filter);
       Stream<FI> fields = getFieldDefinitions().stream()
@@ -255,17 +226,17 @@ public abstract class AbstractModule<
 
     @NonNull
     public Map<String, FL> getExportedFlagDefinitionMap() {
-      return exportedFlagDefinitions;
+      return this.exportedFlagDefinitions;
     }
 
     @NonNull
     public Map<String, FI> getExportedFieldDefinitionMap() {
-      return exportedFieldDefinitions;
+      return this.exportedFieldDefinitions;
     }
 
     @NonNull
     public Map<String, A> getExportedAssemblyDefinitionMap() {
-      return exportedAssemblyDefinitions;
+      return this.exportedAssemblyDefinitions;
     }
   }
 }

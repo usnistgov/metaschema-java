@@ -35,8 +35,8 @@ import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IBinding;
 
@@ -48,7 +48,7 @@ public final class Model {
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("model")
-      .namespace(IModule.METASCHEMA_XML_NS)
+      .namespace(MetaschemaModelConstants.METAPATH_FUNCTION_NAMESPACE)
       .argument(IArgument.builder()
           .name("node")
           .type(INodeItem.class)
