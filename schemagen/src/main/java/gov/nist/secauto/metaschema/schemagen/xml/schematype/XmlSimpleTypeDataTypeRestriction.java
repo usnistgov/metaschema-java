@@ -60,11 +60,21 @@ public class XmlSimpleTypeDataTypeRestriction
   }
 
   @Override
-  public void generateType(XmlGenerationState state, boolean anonymous) {
+  public boolean isInline(XmlGenerationState state) {
+    return true;
+  }
+
+  @Override
+  public boolean isGeneratedType(XmlGenerationState state) {
+    return true;
+  }
+
+  @Override
+  public void generate(XmlGenerationState state) {
     try {
       state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "simpleType", XmlSchemaGenerator.NS_XML_SCHEMA);
 
-      if (!anonymous) {
+      if (!isInline(state)) {
         state.writeAttribute("name", ObjectUtils.notNull(getQName().getLocalPart()));
       }
 

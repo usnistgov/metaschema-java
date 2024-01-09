@@ -145,7 +145,7 @@ public class XmlGenerationState
         getNS(definition));
   }
 
-  public IXmlType getTypeForDefinition(@NonNull IDefinition definition) {
+  public IXmlType getXmlForDefinition(@NonNull IDefinition definition) {
     IXmlType retval = definitionToTypeMap.get(definition);
     if (retval == null) {
       switch (definition.getModelType()) {
@@ -165,6 +165,8 @@ public class XmlGenerationState
       case FLAG:
         retval = getSimpleType((IFlagDefinition) definition);
         break;
+      case CHOICE_GROUP:
+      case CHOICE:
       default:
         throw new UnsupportedOperationException(definition.getModelType().toString());
       }
@@ -239,11 +241,9 @@ public class XmlGenerationState
 
     for (IXmlType type : definitionToTypeMap.values()) {
       if (!type.isInline(this) && type.isGeneratedType(this) && type.isReferenced(this)) {
-        type.generateType(this, false);
+        type.generate(this);
       } else {
-        if (type.isGeneratedType(this)) {
-          assert type.isInline(this) || !type.isReferenced(this);
-        }
+        assert !type.isGeneratedType(this) || type.isInline(this) || !type.isReferenced(this);
       }
     }
     getDatatypeManager().generateDatatypes(getXMLStreamWriter());

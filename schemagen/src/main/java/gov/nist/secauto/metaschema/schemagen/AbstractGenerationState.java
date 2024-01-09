@@ -41,7 +41,6 @@ import gov.nist.secauto.metaschema.schemagen.datatype.IDatatypeManager;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -69,7 +68,7 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
     this.writer = writer;
     this.datatypeManager = datatypeManager;
     this.inlineStrategy = IInlineStrategy.newInlineStrategy(configuration);
-    this.moduleIndex = ModuleIndex.indexDefinitions(module);
+    this.moduleIndex = ModuleIndex.indexDefinitions(module, this.inlineStrategy);
   }
 
   @Override
@@ -145,45 +144,32 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
 
       builder
           .append(getTypeContext(parentDefinition, childModule))
-          .append(toCamelCase(inlineInstance.getEffectiveName()));
+          .append(IGenerationState.toCamelCase(inlineInstance.getEffectiveName()));
     } else {
-      builder.append(toCamelCase(definition.getEffectiveName()));
+      builder.append(IGenerationState.toCamelCase(definition.getName()));
     }
     return builder;
   }
 
+  @Override
   @NonNull
   public String getTypeNameForDefinition(@NonNull IDefinition definition, @Nullable String suffix) {
     StringBuilder builder = new StringBuilder()
-        .append(toCamelCase(definition.getModelType().name()))
-        .append(toCamelCase(definition.getContainingModule().getShortName()));
+        .append(IGenerationState.toCamelCase(definition.getModelType().name()))
+        .append(IGenerationState.toCamelCase(definition.getContainingModule().getShortName()));
 
     if (isInline(definition)) {
-      builder.append(toCamelCase(definition.getEffectiveName()));
+      builder.append(IGenerationState.toCamelCase(definition.getEffectiveName()));
     } else {
       // need to append the parent name(s) to disambiguate this type name
       builder.append(getTypeContext(definition, definition.getContainingModule()));
     }
     if (suffix != null && !suffix.isBlank()) {
-      builder.append(toCamelCase(suffix));
+      builder.append(suffix);
     }
     builder.append("Type");
 
     return ObjectUtils.notNull(builder.toString());
-  }
-
-  @NonNull
-  protected static CharSequence toCamelCase(String text) {
-    StringBuilder builder = new StringBuilder();
-    for (String segment : text.split("\\p{Punct}")) {
-      if (segment.length() > 0) {
-        builder.append(segment.substring(0, 1).toUpperCase(Locale.ROOT));
-      }
-      if (segment.length() > 1) {
-        builder.append(segment.substring(1).toLowerCase(Locale.ROOT));
-      }
-    }
-    return builder;
   }
 
   public static class AllowedValueCollection {

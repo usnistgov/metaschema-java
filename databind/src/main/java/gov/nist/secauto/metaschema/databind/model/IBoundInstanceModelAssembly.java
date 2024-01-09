@@ -90,11 +90,6 @@ public interface IBoundInstanceModelAssembly
   // }
 
   @Override
-  default String getJsonKeyFlagName() {
-    return IBoundInstanceModelNamedComplex.super.getJsonKeyFlagName();
-  }
-
-  @Override
   default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
     return handler.readItemAssembly(ObjectUtils.requireNonNull(parent, "parent"), this);
   }

@@ -75,5 +75,4 @@ public interface INamedModelInstanceGrouped extends INamedModelInstance {
         ? ObjectUtils.notNull(choiceGroup.getJsonKeyFlagName())
         : null;
   }
-
 }

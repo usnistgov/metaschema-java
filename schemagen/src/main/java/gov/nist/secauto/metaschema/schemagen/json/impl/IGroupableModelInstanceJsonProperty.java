@@ -24,66 +24,23 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model;
+package gov.nist.secauto.metaschema.schemagen.json.impl;
 
-import java.util.Collection;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+public interface IGroupableModelInstanceJsonProperty<I extends IModelInstance & IGroupable>
+    extends IJsonProperty<I> {
+  default int getMinOccurs() {
+    return getInstance().getMinOccurs();
+  }
 
-public interface IFeatureContainerModelGrouped<
-    NMI extends INamedModelInstanceGrouped,
-    FI extends IFieldInstanceGrouped,
-    AI extends IAssemblyInstanceGrouped>
-    extends IContainerModelGrouped, IFeatureContainerModel<NMI, NMI, FI, AI> {
-  /**
-   * Lazy initialize the model instances associated with this choice group.
-   *
-   * @return the model container
-   */
-  @Override
-  @NonNull
-  IContainerModelSupport<NMI, NMI, FI, AI> getModelContainer();
-
-  @Override
-  default boolean hasChildren() {
-    return !getModelContainer().getModelInstances().isEmpty();
+  default int getMaxOccurs() {
+    return getInstance().getMaxOccurs();
   }
 
   @Override
-  default Collection<NMI> getModelInstances() {
-    return getModelContainer().getModelInstances();
-  }
-
-  @Override
-  default NMI getNamedModelInstanceByName(String name) {
-    return getModelContainer().getNamedModelInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<NMI> getNamedModelInstances() {
-    return getModelContainer().getNamedModelInstanceMap().values();
-  }
-
-  @Override
-  default FI getFieldInstanceByName(String name) {
-    return getModelContainer().getFieldInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<FI> getFieldInstances() {
-    return getModelContainer().getFieldInstanceMap().values();
-  }
-
-  @Override
-  default AI getAssemblyInstanceByName(String name) {
-    return getModelContainer().getAssemblyInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<AI> getAssemblyInstances() {
-    return getModelContainer().getAssemblyInstanceMap().values();
+  default boolean isRequired() {
+    return getMinOccurs() > 0;
   }
 }

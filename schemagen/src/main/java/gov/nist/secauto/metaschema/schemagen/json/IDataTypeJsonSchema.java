@@ -24,41 +24,13 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.property;
+package gov.nist.secauto.metaschema.schemagen.json;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class ListNamedModelInstanceJsonProperty
-    extends AbstractNamedModelInstanceJsonProperty {
-
-  public ListNamedModelInstanceJsonProperty(@NonNull INamedModelInstanceAbsolute instance) {
-    super(instance);
-  }
-
-  protected int getMinimumItems() {
-    return 1;
-  }
-
-  @Override
-  protected void generateBody(ObjectNode obj, JsonGenerationState state) {
-    obj.put("type", "array");
-
-    ObjectNode items = ObjectUtils.notNull(
-        obj.putObject("items"));
-
-    generateSchemaOrRef(items, state);
-
-    obj.put("minItems", Math.max(getMinimumItems(), getMinOccurs()));
-    int maxOccurs = getMaxOccurs();
-    if (maxOccurs != -1) {
-      obj.put("maxItems", maxOccurs);
-    }
-  }
-
+public interface IDataTypeJsonSchema extends IDefineableJsonSchema {
+  @NonNull
+  IDataTypeAdapter<?> getDataTypeAdapter();
 }

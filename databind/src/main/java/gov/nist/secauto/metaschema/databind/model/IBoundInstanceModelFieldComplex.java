@@ -61,21 +61,6 @@ public interface IBoundInstanceModelFieldComplex
   }
 
   @Override
-  default String getJsonKeyFlagName() {
-    return IBoundInstanceModelField.super.getJsonKeyFlagName();
-  }
-
-  @Override
-  default Object getValue(Object parent) {
-    return IBoundInstanceModelField.super.getValue(parent);
-  }
-
-  @Override
-  default void setValue(Object parentObject, Object value) {
-    IBoundInstanceModelField.super.setValue(parentObject, value);
-  }
-
-  @Override
   default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
     return handler.readItemField(ObjectUtils.requireNonNull(parent, "parent"), this);
   }

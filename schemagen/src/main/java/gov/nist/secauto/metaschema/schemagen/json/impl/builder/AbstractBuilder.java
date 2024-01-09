@@ -24,42 +24,12 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.property;
-
-import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
+package gov.nist.secauto.metaschema.schemagen.json.impl.builder;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface INamedModelInstanceJsonProperty extends IJsonProperty<INamedModelInstanceAbsolute> {
-  int getMinOccurs();
+public abstract class AbstractBuilder<T extends AbstractBuilder<T>> implements IBuilder<T> {
 
-  int getMaxOccurs();
-
-  static INamedModelInstanceJsonProperty newProperty(@NonNull INamedModelInstanceAbsolute instance) {
-    int maxOccurs = instance.getMaxOccurs();
-
-    INamedModelInstanceJsonProperty retval;
-    if (maxOccurs > 1 || maxOccurs == -1) {
-      switch (instance.getJsonGroupAsBehavior()) {
-      case LIST: {
-        retval = new ListNamedModelInstanceJsonProperty(instance);
-        break;
-      }
-      case SINGLETON_OR_LIST: {
-        retval = new SingletonOrListNamedModelInstanceJsonProperty(instance);
-        break;
-      }
-      case KEYED: {
-        retval = new KeyedNamedModelInstanceJsonProperty(instance);
-        break;
-      }
-      default:
-        throw new UnsupportedOperationException(
-            String.format("Unsupported group-as in-json binding '%s'.", instance.getJsonGroupAsBehavior()));
-      }
-    } else {
-      retval = new SingletonNamedModelInstanceJsonProperty(instance);
-    }
-    return retval;
-  }
+  @NonNull
+  protected abstract T thisBuilder();
 }

@@ -28,12 +28,13 @@ package gov.nist.secauto.metaschema.schemagen.xml.schematype;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupDataTypeProvider;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
@@ -129,6 +130,9 @@ public class XmlComplexTypeAssemblyDefinition
     case CHOICE:
       generateChoiceModelInstance((IChoiceInstance) modelInstance, state);
       break;
+    case CHOICE_GROUP:
+      generateChoiceGroupInstance((IChoiceGroupInstance) modelInstance, state);
+      break;
     default:
       throw new UnsupportedOperationException(modelInstance.getModelType().toString());
     }
@@ -160,12 +164,10 @@ public class XmlComplexTypeAssemblyDefinition
               : ObjectUtils.notNull(Integer.toString(modelInstance.getMaxOccurs())));
     }
 
-    IModelDefinition definition = modelInstance.getDefinition();
-    IXmlType type = state.getTypeForDefinition(definition);
-
-    if (state.isInline(definition)) {
+    IXmlType type = state.getXmlForDefinition(modelInstance.getDefinition());
+    if (type.isGeneratedType(state) && type.isInline(state)) {
       DocumentationGenerator.generateDocumentation(modelInstance, state);
-      type.generateType(state, true);
+      type.generate(state);
     } else {
       state.writeAttribute("type", type.getTypeReference());
       DocumentationGenerator.generateDocumentation(modelInstance, state);
@@ -223,5 +225,50 @@ public class XmlComplexTypeAssemblyDefinition
     }
 
     state.writeEndElement(); // xs:choice
+  }
+
+  private void generateChoiceGroupInstance(IChoiceGroupInstance choiceGroup, XmlGenerationState state)
+      throws XMLStreamException {
+    state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "choice", XmlSchemaGenerator.NS_XML_SCHEMA);
+
+    int min = choiceGroup.getMinOccurs();
+    if (min != 1) {
+      state.writeAttribute("minOccurs", ObjectUtils.notNull(Integer.toString(min)));
+    }
+
+    int max = choiceGroup.getMaxOccurs();
+    if (max < 0) {
+      state.writeAttribute("maxOccurs", "unbounded");
+    } else if (max > 1) {
+      state.writeAttribute("maxOccurs", ObjectUtils.notNull(Integer.toString(max)));
+    }
+
+    for (INamedModelInstanceGrouped instance : choiceGroup.getNamedModelInstances()) {
+      assert instance != null;
+
+      generateGroupedNamedModelInstance(instance, state);
+    }
+
+    state.writeEndElement(); // xs:choice
+  }
+
+  protected void generateGroupedNamedModelInstance(
+      @NonNull INamedModelInstanceGrouped instance,
+      @NonNull XmlGenerationState state) throws XMLStreamException {
+    state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "element", XmlSchemaGenerator.NS_XML_SCHEMA);
+
+    state.writeAttribute("name", instance.getEffectiveName());
+
+    // state.generateElementNameOrRef(modelInstance);
+
+    IXmlType type = state.getXmlForDefinition(instance.getDefinition());
+    if (type.isGeneratedType(state) && type.isInline(state)) {
+      DocumentationGenerator.generateDocumentation(instance, state);
+      type.generate(state);
+    } else {
+      state.writeAttribute("type", type.getTypeReference());
+      DocumentationGenerator.generateDocumentation(instance, state);
+    }
+    state.writeEndElement(); // xs:element
   }
 }

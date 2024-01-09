@@ -24,60 +24,13 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.property;
+package gov.nist.secauto.metaschema.schemagen.json;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import gov.nist.secauto.metaschema.core.model.IInstanceAbsolute;
-import gov.nist.secauto.metaschema.core.model.INamedInstance;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
-import gov.nist.secauto.metaschema.schemagen.json.schema.IJsonSchema;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractJsonProperty<I extends IInstanceAbsolute & INamedInstance> implements IJsonProperty<I> {
-  @NonNull
-  private final I instance;
-
-  public AbstractJsonProperty(@NonNull I instance) {
-    this.instance = instance;
-  }
-
-  @Override
-  public I getInstance() {
-    return instance;
-  }
-
-  @Override
-  public String getName() {
-    return getInstance().getJsonName();
-  }
-
-  protected abstract void generateBody(
-      @NonNull ObjectNode obj,
-      @NonNull JsonGenerationState state);
-
-  protected void generateSchemaOrRef(
-      @NonNull ObjectNode obj,
-      @NonNull JsonGenerationState state) {
-    I instance = getInstance();
-    IJsonSchema schema = state.getSchema(instance.getDefinition());
-    schema.generateSchemaOrRef(state, obj);
-  }
-
-  @Override
-  public void generateProperty(PropertyCollection properties, JsonGenerationState state) {
-    ObjectNode contextObj = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
-
-    generateBody(contextObj, state);
-
-    String name = getName();
-    properties.addProperty(name, contextObj);
-    if (isRequired()) {
-      properties.addRequired(name);
-    }
-  }
-
+public interface IModelDefinitionJsonSchema<D extends IModelDefinition> extends IDefinitionJsonSchema<D> {
+  void registerJsonKey(@NonNull IFlagInstance jsonKey, @NonNull String suffix);
 }

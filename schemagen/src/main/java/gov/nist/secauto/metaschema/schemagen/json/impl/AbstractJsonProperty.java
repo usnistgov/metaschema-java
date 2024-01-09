@@ -24,42 +24,54 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.property;
+package gov.nist.secauto.metaschema.schemagen.json.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
+import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class KeyedNamedModelInstanceJsonProperty
-    extends AbstractNamedModelInstanceJsonProperty {
+public abstract class AbstractJsonProperty<I extends IInstance>
+    implements IJsonProperty<I> {
+  @NonNull
+  private final I instance;
 
-  public KeyedNamedModelInstanceJsonProperty(@NonNull INamedModelInstanceAbsolute instance) {
-    super(instance);
+  protected AbstractJsonProperty(@NonNull I instance) {
+    this.instance = instance;
   }
 
   @Override
-  protected void generateBody(ObjectNode obj, JsonGenerationState state) {
-    obj.put("type", "object");
-    obj.put("minProperties", 1);
-
-    IFlagInstance jsonKey = getInstance().getDefinition().getJsonKeyFlagInstance();
-    if (jsonKey == null) {
-      throw new IllegalStateException();
-    }
-
-    state.getDataTypeSchemaForDefinition(jsonKey.getDefinition())
-        .generateSchemaOrRef(state, ObjectUtils.notNull(obj.putObject("propertyNames")));
-
-    // TODO: is this correct?
-    ObjectNode additional = ObjectUtils.notNull(
-        obj.putObject("additionalProperties"));
-
-    generateSchemaOrRef(additional, state);
+  public I getInstance() {
+    return instance;
   }
 
+  protected void generateMetadata(@NonNull ObjectNode obj) {
+    // do nothing by default
+  }
+
+  // REFACTOR: rename to generate schema
+  protected abstract void generateBody(
+      @NonNull ObjectNode obj,
+      @NonNull IJsonGenerationState state);
+
+  @Override
+  public void generateProperty(
+      PropertyCollection properties,
+      IJsonGenerationState state) {
+
+    ObjectNode contextObj = ObjectUtils.notNull(state.getJsonNodeFactory().objectNode());
+
+    generateMetadata(contextObj);
+
+    generateBody(contextObj, state);
+
+    String name = getName();
+    properties.addProperty(name, contextObj);
+    if (isRequired()) {
+      properties.addRequired(name);
+    }
+  }
 }

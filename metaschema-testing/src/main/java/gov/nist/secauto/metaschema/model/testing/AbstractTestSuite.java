@@ -70,10 +70,6 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -81,6 +77,7 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 public abstract class AbstractTestSuite {
   private static final Logger LOGGER = LogManager.getLogger(AbstractTestSuite.class);
@@ -165,7 +162,7 @@ public abstract class AbstractTestSuite {
                   }
                 });
               } catch (IOException ex) {
-                throw new IllegalStateException("Failed to delete collection: " + path, ex);
+                throw new JUnitException("Failed to delete collection: " + path, ex);
               }
             }
           }));
@@ -178,16 +175,19 @@ public abstract class AbstractTestSuite {
     assert collectionUri != null;
 
     LOGGER.atInfo().log("Collection: " + collectionUri);
-    Path collectionGenerationPath;
-    try {
-      collectionGenerationPath = ObjectUtils.notNull(Files.createTempDirectory(generationPath, "collection-"));
-      assert collectionGenerationPath != null;
-      if (DELETE_RESULTS_ON_EXIT) {
-        deleteCollectionOnExit(collectionGenerationPath);
+    Lazy<Path> collectionGenerationPath = ObjectUtils.notNull(Lazy.lazy(() -> {
+      Path retval;
+      try {
+        retval = ObjectUtils.notNull(Files.createTempDirectory(generationPath, "collection-"));
+        assert retval != null;
+        if (DELETE_RESULTS_ON_EXIT) {
+          deleteCollectionOnExit(retval);
+        }
+      } catch (IOException ex) {
+        throw new JUnitException("Unable to create collection temp directory", ex);
       }
-    } catch (IOException ex) {
-      throw new JUnitException("Unable to create collection temp directory", ex);
-    }
+      return retval;
+    }));
 
     return DynamicContainer.dynamicContainer(
         collection.getName(),
@@ -228,28 +228,33 @@ public abstract class AbstractTestSuite {
     };
   }
 
-  private DynamicContainer generateScenario(@NonNull TestScenario scenario, @NonNull URI collectionUri,
-      @NonNull Path collectionGenerationPath) {
-    Path scenarioGenerationPath;
-    try {
-      scenarioGenerationPath = Files.createTempDirectory(collectionGenerationPath, "scenario-");
-    } catch (IOException ex) {
-      throw new JUnitException("Unable to create scenario temp directory", ex);
-    }
+  private DynamicContainer generateScenario(
+      @NonNull TestScenario scenario,
+      @NonNull URI collectionUri,
+      @NonNull Lazy<Path> collectionGenerationPath) {
+    Lazy<Path> scenarioGenerationPath = Lazy.lazy(() -> {
+      Path retval;
+      try {
+        retval = Files.createTempDirectory(collectionGenerationPath.get(), "scenario-");
+      } catch (IOException ex) {
+        throw new JUnitException("Unable to create scenario temp directory", ex);
+      }
+      return retval;
+    });
 
-    try {
-      // create the directories the schema will be stored in
-      Files.createDirectories(scenarioGenerationPath);
-    } catch (IOException ex) {
-      throw new JUnitException("Unable to create test directories for path: " + scenarioGenerationPath, ex);
-    }
+    // try {
+    // // create the directories the schema will be stored in
+    // Files.createDirectories(scenarioGenerationPath);
+    // } catch (IOException ex) {
+    // throw new JUnitException("Unable to create test directories for path: " +
+    // scenarioGenerationPath, ex);
+    // }
 
     GenerateSchema generateSchema = scenario.getGenerateSchema();
     MetaschemaDocument.Metaschema metaschemaDirective = generateSchema.getMetaschema();
     URI metaschemaUri = collectionUri.resolve(metaschemaDirective.getLocation());
 
-    ExecutorService executor = Executors.newSingleThreadExecutor(); // NOPMD - intentional use of threads
-    Future<IModule> loadModuleFuture = executor.submit(() -> {
+    Lazy<IModule> lazyModule = Lazy.lazy(() -> {
       IModule module;
       try {
         module = LOADER.load(ObjectUtils.notNull(metaschemaUri.toURL()));
@@ -259,39 +264,58 @@ public abstract class AbstractTestSuite {
       return module;
     });
 
-    Future<Path> generateSchemaFuture = executor.submit(() -> {
+    Lazy<Path> lazySchema = Lazy.lazy(() -> {
       Path schemaPath;
+
+      String schemaExtension;
+      Format requiredContentFormat = getRequiredContentFormat();
+      switch (requiredContentFormat) {
+      case JSON:
+      case YAML:
+        schemaExtension = ".json";
+        break;
+      case XML:
+        schemaExtension = ".xsd";
+        break;
+      default:
+        throw new IllegalStateException();
+      }
+
       // determine what file to use for the schema
       try {
-        schemaPath = Files.createTempFile(scenarioGenerationPath, "", "-schema");
+        schemaPath = Files.createTempFile(scenarioGenerationPath.get(), "", "-schema" + schemaExtension);
       } catch (IOException ex) {
         throw new JUnitException("Unable to create schema temp file", ex);
       }
-      IModule module = loadModuleFuture.get();
-      produceSchema(ObjectUtils.notNull(module), ObjectUtils.notNull(schemaPath));
+      IModule module = lazyModule.get();
+      try {
+        produceSchema(ObjectUtils.notNull(module), ObjectUtils.notNull(schemaPath));
+      } catch (IOException ex) {
+        throw new IllegalStateException(ex);
+      }
       return schemaPath;
     });
 
-    Future<IBindingContext> dynamicBindingContextFuture = executor.submit(() -> {
-      IModule module = loadModuleFuture.get();
+    Lazy<IBindingContext> lazyDynamicBindingContext = Lazy.lazy(() -> {
+      IModule module = lazyModule.get();
       IBindingContext context;
       try {
         context = new DefaultBindingContext();
         context.registerModule(
             ObjectUtils.notNull(module),
-            ObjectUtils.notNull(scenarioGenerationPath));
+            ObjectUtils.notNull(scenarioGenerationPath.get()));
       } catch (Exception ex) { // NOPMD - intentional
         throw new JUnitException("Unable to generate classes for metaschema: " + metaschemaUri, ex);
       }
       return context;
     });
-    assert dynamicBindingContextFuture != null;
+    assert lazyDynamicBindingContext != null;
 
-    Future<IContentValidator> contentValidatorFuture = executor.submit(() -> {
-      Path schemaPath = generateSchemaFuture.get();
+    Lazy<IContentValidator> lazyContentValidator = Lazy.lazy(() -> {
+      Path schemaPath = lazySchema.get();
       return getContentValidatorSupplier().apply(schemaPath);
     });
-    assert contentValidatorFuture != null;
+    assert lazyContentValidator != null;
 
     // build a test container for the generate and validate steps
     DynamicTest validateSchema = DynamicTest.dynamicTest(
@@ -301,8 +325,8 @@ public abstract class AbstractTestSuite {
           if (supplier != null) {
             Path schemaPath;
             try {
-              schemaPath = ObjectUtils.requireNonNull(generateSchemaFuture.get());
-            } catch (ExecutionException ex) {
+              schemaPath = ObjectUtils.requireNonNull(lazySchema.get());
+            } catch (Exception ex) {
               throw new JUnitException( // NOPMD - cause is relevant, exception is not
                   "failed to generate schema", ex.getCause());
             }
@@ -316,8 +340,12 @@ public abstract class AbstractTestSuite {
           .flatMap(contentCase -> {
             assert contentCase != null;
             DynamicTest test
-                = generateValidationCase(contentCase, dynamicBindingContextFuture, contentValidatorFuture,
-                    collectionUri, ObjectUtils.notNull(scenarioGenerationPath));
+                = generateValidationCase(
+                    contentCase,
+                    lazyDynamicBindingContext,
+                    lazyContentValidator,
+                    collectionUri,
+                    ObjectUtils.notNull(scenarioGenerationPath));
             return test == null ? Stream.empty() : Stream.of(test);
           }).sequential();
     }
@@ -329,7 +357,10 @@ public abstract class AbstractTestSuite {
   }
 
   @SuppressWarnings("unchecked")
-  protected Path convertContent(URI contentUri, @NonNull Path generationPath, @NonNull IBindingContext context)
+  protected Path convertContent(
+      @NonNull URI contentUri,
+      @NonNull Path generationPath,
+      @NonNull IBindingContext context)
       throws IOException {
     Object object;
     try {
@@ -349,7 +380,8 @@ public abstract class AbstractTestSuite {
       throw new JUnitException("Unable to create schema temp file", ex);
     }
 
-    @SuppressWarnings("rawtypes") ISerializer serializer
+    @SuppressWarnings("rawtypes")
+    ISerializer serializer
         = context.newSerializer(getRequiredContentFormat(), object.getClass());
     serializer.serialize(object, convertedContetPath, getWriteOpenOptions());
 
@@ -358,12 +390,12 @@ public abstract class AbstractTestSuite {
 
   private DynamicTest generateValidationCase(
       @NonNull ContentCaseType contentCase,
-      @NonNull Future<IBindingContext> contextFuture,
-      @NonNull Future<IContentValidator> contentValidatorFuture,
+      @NonNull Lazy<IBindingContext> lazyBindingContext,
+      @NonNull Lazy<IContentValidator> lazyContentValidator,
       @NonNull URI collectionUri,
-      @NonNull Path generationPath) {
+      @NonNull Lazy<Path> generationPath) {
 
-    URI contentUri = collectionUri.resolve(contentCase.getLocation());
+    URI contentUri = ObjectUtils.notNull(collectionUri.resolve(contentCase.getLocation()));
 
     Format format = contentCase.getSourceFormat();
     DynamicTest retval = null;
@@ -375,8 +407,8 @@ public abstract class AbstractTestSuite {
           () -> {
             IContentValidator contentValidator;
             try {
-              contentValidator = contentValidatorFuture.get();
-            } catch (ExecutionException ex) {
+              contentValidator = lazyContentValidator.get();
+            } catch (Exception ex) {
               throw new JUnitException( // NOPMD - cause is relevant, exception is not
                   "failed to produce the content validator", ex.getCause());
             }
@@ -395,8 +427,8 @@ public abstract class AbstractTestSuite {
           () -> {
             IBindingContext context;
             try {
-              context = contextFuture.get();
-            } catch (ExecutionException ex) {
+              context = lazyBindingContext.get();
+            } catch (Exception ex) {
               throw new JUnitException( // NOPMD - cause is relevant, exception is not
                   "failed to produce the content validator", ex.getCause());
             }
@@ -404,15 +436,15 @@ public abstract class AbstractTestSuite {
 
             Path convertedContetPath;
             try {
-              convertedContetPath = convertContent(contentUri, generationPath, context);
+              convertedContetPath = convertContent(contentUri, ObjectUtils.notNull(generationPath.get()), context);
             } catch (Exception ex) { // NOPMD - intentional
               throw new JUnitException("failed to convert content: " + contentUri, ex);
             }
 
             IContentValidator contentValidator;
             try {
-              contentValidator = contentValidatorFuture.get();
-            } catch (ExecutionException ex) {
+              contentValidator = lazyContentValidator.get();
+            } catch (Exception ex) {
               throw new JUnitException( // NOPMD - cause is relevant, exception is not
                   "failed to produce the content validator",
                   ex.getCause());

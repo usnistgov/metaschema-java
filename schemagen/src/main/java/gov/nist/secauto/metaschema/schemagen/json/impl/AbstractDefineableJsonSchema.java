@@ -24,66 +24,37 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model;
+package gov.nist.secauto.metaschema.schemagen.json.impl;
 
-import java.util.Collection;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.schemagen.json.IDefineableJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IFeatureContainerModelGrouped<
-    NMI extends INamedModelInstanceGrouped,
-    FI extends IFieldInstanceGrouped,
-    AI extends IAssemblyInstanceGrouped>
-    extends IContainerModelGrouped, IFeatureContainerModel<NMI, NMI, FI, AI> {
-  /**
-   * Lazy initialize the model instances associated with this choice group.
-   *
-   * @return the model container
-   */
-  @Override
-  @NonNull
-  IContainerModelSupport<NMI, NMI, FI, AI> getModelContainer();
+public abstract class AbstractDefineableJsonSchema implements IDefineableJsonSchema {
+  @Nullable
+  private String name;
+
+  protected abstract String generateDefinitionName(@NonNull IJsonGenerationState state);
 
   @Override
-  default boolean hasChildren() {
-    return !getModelContainer().getModelInstances().isEmpty();
+  public String getDefinitionName(IJsonGenerationState state) {
+    synchronized (this) {
+      if (this.name == null) {
+        this.name = generateDefinitionName(state);
+      }
+      assert this.name != null;
+      return this.name;
+    }
   }
 
   @Override
-  default Collection<NMI> getModelInstances() {
-    return getModelContainer().getModelInstances();
-  }
-
-  @Override
-  default NMI getNamedModelInstanceByName(String name) {
-    return getModelContainer().getNamedModelInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<NMI> getNamedModelInstances() {
-    return getModelContainer().getNamedModelInstanceMap().values();
-  }
-
-  @Override
-  default FI getFieldInstanceByName(String name) {
-    return getModelContainer().getFieldInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<FI> getFieldInstances() {
-    return getModelContainer().getFieldInstanceMap().values();
-  }
-
-  @Override
-  default AI getAssemblyInstanceByName(String name) {
-    return getModelContainer().getAssemblyInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<AI> getAssemblyInstances() {
-    return getModelContainer().getAssemblyInstanceMap().values();
+  public String getDefinitionRef(IJsonGenerationState state) {
+    return ObjectUtils.notNull(new StringBuilder()
+        .append("#/definitions/")
+        .append(getDefinitionName(state))
+        .toString());
   }
 }

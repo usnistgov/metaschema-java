@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 /**
  * This marker interface is used to identify a field or assembly instance that
  * is a member of an assembly's model.
@@ -40,15 +38,6 @@ public interface IModelInstance extends IInstance {
   default IAssemblyDefinition getContainingDefinition() {
     return getParentContainer().getOwningDefinition();
   }
-
-  /**
-   * Get the name of the JSON key, if a JSON key is configured.
-   *
-   * @return the name of the JSON key flag if configured, or {@code null}
-   *         otherwise
-   */
-  @Nullable
-  String getJsonKeyFlagName();
 
   /**
    * Indicate if the instance allows values without an XML element wrapper.

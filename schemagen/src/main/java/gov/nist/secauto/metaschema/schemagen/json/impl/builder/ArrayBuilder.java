@@ -24,24 +24,40 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.property;
+package gov.nist.secauto.metaschema.schemagen.json.impl.builder;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
-import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+public class ArrayBuilder
+    extends AbstractCollectionBuilder<ArrayBuilder> {
 
-public class SingletonNamedModelInstanceJsonProperty
-    extends AbstractNamedModelInstanceJsonProperty {
+  @Override
+  public void build(
+      ObjectNode object,
+      IJsonGenerationState state) {
+    object.put("type", "array");
 
-  public SingletonNamedModelInstanceJsonProperty(@NonNull INamedModelInstanceAbsolute instance) {
-    super(instance);
+    if (!getTypes().isEmpty()) {
+      ObjectNode items = ObjectUtils.notNull(object.putObject("items"));
+      buildInternal(items, state);
+    }
+
+    if (getMinOccurrence() > 1) {
+      object.put("minItems", getMinOccurrence());
+    } else {
+      object.put("minItems", 1);
+    }
+
+    if (getMaxOccurrence() != -1) {
+      object.put("maxItems", getMaxOccurrence());
+    }
   }
 
   @Override
-  protected void generateBody(ObjectNode obj, JsonGenerationState state) {
-    generateSchemaOrRef(obj, state);
+  protected ArrayBuilder thisBuilder() {
+    return this;
   }
 }

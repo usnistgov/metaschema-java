@@ -24,42 +24,71 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.property;
+package gov.nist.secauto.metaschema.schemagen.json.impl.builder;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
+import gov.nist.secauto.metaschema.schemagen.json.IDataTypeJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
-public class SingletonOrListNamedModelInstanceJsonProperty
-    extends ListNamedModelInstanceJsonProperty {
+public class KeyedObjectBuilder
+    extends AbstractCollectionBuilder<KeyedObjectBuilder> {
 
-  public SingletonOrListNamedModelInstanceJsonProperty(@NonNull INamedModelInstanceAbsolute instance) {
-    super(instance);
+  @Override
+  protected KeyedObjectBuilder thisBuilder() {
+    return this;
   }
 
   @Override
-  protected int getMinimumItems() {
-    // this value needs to be two, since a singlton can be used for 1
-    return 2;
+  public void build(
+      ObjectNode object,
+      IJsonGenerationState state) {
+    object.put("type", "object");
+
+    if (getMinOccurrence() > 0) {
+      object.put("minProperties", getMinOccurrence());
+    }
+
+    if (getMaxOccurrence() != -1) {
+      object.put("maxProperties", getMaxOccurrence());
+    }
+
+    Set<IDataTypeJsonSchema> jsonKeyDataTypeSchemas = new LinkedHashSet<>();
+    List<IType> types = getTypes();
+    for (IType type : types) {
+      // handle json key
+      IDataTypeJsonSchema schema = type.getJsonKeyDataTypeSchema(state);
+      jsonKeyDataTypeSchemas.add(schema);
+    }
+
+    if (!types.isEmpty()) {
+      ObjectNode propertyNames = ObjectUtils.notNull(object.putObject("propertyNames"));
+      if (types.size() == 1) {
+        types.iterator().next().build(propertyNames, state);
+      } else {
+        ArrayNode anyOf = propertyNames.putArray("anyOf");
+        for (IType type : types) {
+          type.build(ObjectUtils.notNull(anyOf.objectNode()), state);
+        }
+      }
+    }
+
+    ObjectNode patternProperties = ObjectUtils.notNull(object.putObject("patternProperties"));
+    ObjectNode wildcard = patternProperties.putObject("^.*$");
+    if (types.size() == 1) {
+      types.iterator().next().build(wildcard, state);
+    } else {
+      ArrayNode oneOf = wildcard.putArray("anyOf");
+      for (IType type : types) {
+        type.build(oneOf, state);
+      }
+    }
   }
 
-  @Override
-  protected void generateBody(ObjectNode obj, JsonGenerationState state) {
-    ArrayNode oneOf = obj.putArray("oneOf");
-
-    ObjectNode singleton = ObjectUtils.notNull(
-        oneOf.addObject());
-
-    generateSchemaOrRef(singleton, state);
-
-    ObjectNode arrayObject = ObjectUtils.notNull(
-        oneOf.addObject());
-
-    super.generateBody(arrayObject, state);
-  }
 }

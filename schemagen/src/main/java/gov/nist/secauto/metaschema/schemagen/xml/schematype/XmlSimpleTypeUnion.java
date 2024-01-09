@@ -61,11 +61,16 @@ public class XmlSimpleTypeUnion
   }
 
   @Override
-  public void generateType(XmlGenerationState state, boolean anonymous) { // NOPMD unavoidable complexity
+  public boolean isInline(XmlGenerationState state) {
+    return true;
+  }
+
+  @Override
+  public void generate(XmlGenerationState state) { // NOPMD unavoidable complexity
     try {
       state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "simpleType", XmlSchemaGenerator.NS_XML_SCHEMA);
 
-      if (!anonymous) {
+      if (!isInline(state)) {
         state.writeAttribute("name", ObjectUtils.notNull(getQName().getLocalPart()));
       }
 
@@ -90,14 +95,14 @@ public class XmlSimpleTypeUnion
       }
 
       for (IXmlSimpleType inlineType : inlineTypes) {
-        inlineType.generateType(state, true);
+        inlineType.generate(state);
       }
 
       state.writeEndElement(); // xs:union
       state.writeEndElement(); // xs:simpleType
 
       for (IXmlSimpleType memberType : memberTypes) {
-        memberType.generateType(state, false);
+        memberType.generate(state);
       }
     } catch (XMLStreamException ex) {
       throw new SchemaGenerationException(ex);

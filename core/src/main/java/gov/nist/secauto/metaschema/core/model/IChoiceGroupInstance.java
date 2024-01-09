@@ -62,14 +62,6 @@ public interface IChoiceGroupInstance
   @NonNull
   String getJsonDiscriminatorProperty();
 
-  /**
-   * Get the name of the JSON key flag associated with each item object.
-   *
-   * @return the JSON key flag name or {@code null} if no JSON key is configured
-   */
-  @Override
-  String getJsonKeyFlagName();
-
   @Override
   default boolean isEffectiveValueWrappedInXml() {
     return true;

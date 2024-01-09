@@ -24,66 +24,57 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model;
+package gov.nist.secauto.metaschema.schemagen.json.impl.builder;
 
-import java.util.Collection;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
 
-public interface IFeatureContainerModelGrouped<
-    NMI extends INamedModelInstanceGrouped,
-    FI extends IFieldInstanceGrouped,
-    AI extends IAssemblyInstanceGrouped>
-    extends IContainerModelGrouped, IFeatureContainerModel<NMI, NMI, FI, AI> {
-  /**
-   * Lazy initialize the model instances associated with this choice group.
-   *
-   * @return the model container
-   */
-  @Override
-  @NonNull
-  IContainerModelSupport<NMI, NMI, FI, AI> getModelContainer();
+public class SingletonBuilder
+    extends AbstractCollectionBuilder<SingletonBuilder> {
+  private int minOccurrence = MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   @Override
-  default boolean hasChildren() {
-    return !getModelContainer().getModelInstances().isEmpty();
+  protected SingletonBuilder thisBuilder() {
+    return this;
   }
 
   @Override
-  default Collection<NMI> getModelInstances() {
-    return getModelContainer().getModelInstances();
+  public int getMinOccurrence() {
+    return minOccurrence;
   }
 
   @Override
-  default NMI getNamedModelInstanceByName(String name) {
-    return getModelContainer().getNamedModelInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<NMI> getNamedModelInstances() {
-    return getModelContainer().getNamedModelInstanceMap().values();
+  public int getMaxOccurrence() {
+    return 1;
   }
 
   @Override
-  default FI getFieldInstanceByName(String name) {
-    return getModelContainer().getFieldInstanceMap().get(name);
+  public SingletonBuilder minItems(int min) {
+    if (min < 0 || min > 1) {
+      throw new IllegalArgumentException(
+          String.format("The minimum value '%d' must be 0 or 1.", min));
+    }
+    minOccurrence = min;
+    return this;
   }
 
-  @SuppressWarnings("null")
   @Override
-  default Collection<FI> getFieldInstances() {
-    return getModelContainer().getFieldInstanceMap().values();
+  public SingletonBuilder maxItems(int max) {
+    if (max != 1) {
+      throw new IllegalArgumentException(
+          String.format("The maximum value '%d' must be 1.", max));
+    }
+    return this;
   }
 
   @Override
-  default AI getAssemblyInstanceByName(String name) {
-    return getModelContainer().getAssemblyInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<AI> getAssemblyInstances() {
-    return getModelContainer().getAssemblyInstanceMap().values();
+  public void build(
+      ObjectNode object,
+      IJsonGenerationState state) {
+    if (!getTypes().isEmpty()) {
+      buildInternal(object, state);
+    }
   }
 }

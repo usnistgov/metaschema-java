@@ -76,6 +76,8 @@ public interface IInstance extends IModelElement {
     IModule module = getContainingModule();
 
     // TODO: revisit this to add more context i.e. the containing definition
-    return String.format("%s:%s", module.getShortName(), getModelType());
+    return String.format("%s:%s",
+        module.getShortName(),
+        getModelType());
   }
 }

@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.IContainerModelGrouped;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
 
 import java.util.Collection;
 
@@ -37,7 +36,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IBoundContainerModelChoiceGroup extends IContainerModelGrouped {
 
   @Override
-  default Collection<? extends IModelInstance> getModelInstances() {
+  default Collection<? extends IBoundInstanceModelGroupedNamed> getModelInstances() {
     return getNamedModelInstances();
   }
 

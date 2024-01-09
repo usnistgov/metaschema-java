@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.datatype;
+package gov.nist.secauto.metaschema.schemagen.json.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,6 +49,10 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Support for managing Metaschema module data type implementations aligned with
+ * the JSON schema format for use in schema generation.
+ */
 public class JsonDatatypeManager
     extends AbstractDatatypeManager {
   private static final Map<String, List<String>> DATATYPE_DEPENDENCY_MAP = new ConcurrentHashMap<>();

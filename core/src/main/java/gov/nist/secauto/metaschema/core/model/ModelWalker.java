@@ -46,20 +46,20 @@ public abstract class ModelWalker<DATA> {
   protected abstract DATA getDefaultData();
 
   /**
-   * Will visit the provided metaschema flag definition.
+   * Will visit the provided Metaschema module flag definition.
    *
    * @param flag
-   *          the metaschema flag definition to walk
+   *          the Metaschema module flag definition to walk
    */
   public void walk(@NonNull IFlagDefinition flag) {
     walk(flag, getDefaultData());
   }
 
   /**
-   * Will visit the provided metaschema flag definition.
+   * Will visit the provided Metaschema module flag definition.
    *
    * @param flag
-   *          the metaschema flag definition to walk
+   *          the Metaschema module flag definition to walk
    * @param data
    *          additional state information to operate on
    */
@@ -68,22 +68,22 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema field definition, and then walk the
+   * Will visit the provided Metaschema module field definition, and then walk the
    * associated flag instances.
    *
    * @param field
-   *          the metaschema field definition to walk
+   *          the Metaschema module field definition to walk
    */
   public void walk(@NonNull IFieldDefinition field) {
     walk(field, getDefaultData());
   }
 
   /**
-   * Will visit the provided metaschema field definition, and then walk the
+   * Will visit the provided Metaschema module field definition, and then walk the
    * associated flag instances.
    *
    * @param field
-   *          the metaschema field definition to walk
+   *          the Metaschema module field definition to walk
    * @param data
    *          additional state information to operate on
    */
@@ -94,22 +94,22 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema assembly definition, and then walk the
-   * associated flag and model instances.
+   * Will visit the provided Metaschema module assembly definition, and then walk
+   * the associated flag and model instances.
    *
    * @param assembly
-   *          the metaschema assembly definition to walk
+   *          the Metaschema module assembly definition to walk
    */
   public void walk(@NonNull IAssemblyDefinition assembly) {
     walk(assembly, getDefaultData());
   }
 
   /**
-   * Will visit the provided metaschema assembly definition, and then walk the
-   * associated flag and model instances.
+   * Will visit the provided Metaschema module assembly definition, and then walk
+   * the associated flag and model instances.
    *
    * @param assembly
-   *          the metaschema assembly definition to walk
+   *          the Metaschema module assembly definition to walk
    * @param data
    *          additional state information to operate on
    */
@@ -121,11 +121,11 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema flag instance, and then walk the
+   * Will visit the provided Metaschema module flag instance, and then walk the
    * associated flag definition.
    *
    * @param instance
-   *          the metaschema flag instance to walk
+   *          the Metaschema module flag instance to walk
    * @param data
    *          additional state information to operate on
    */
@@ -136,11 +136,11 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema field instance, and then walk the
+   * Will visit the provided Metaschema module field instance, and then walk the
    * associated field definition.
    *
    * @param instance
-   *          the metaschema field instance to walk
+   *          the Metaschema module field instance to walk
    * @param data
    *          additional state information to operate on
    */
@@ -151,11 +151,11 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema assembly instance, and then walk the
-   * associated assembly definition.
+   * Will visit the provided Metaschema module assembly instance, and then walk
+   * the associated assembly definition.
    *
    * @param instance
-   *          the metaschema assembly instance to walk
+   *          the Metaschema module assembly instance to walk
    * @param data
    *          additional state information to operate on
    */
@@ -166,15 +166,30 @@ public abstract class ModelWalker<DATA> {
   }
 
   /**
-   * Will visit the provided metaschema choice instance, and then walk the
+   * Will visit the provided Metaschema module choice instance, and then walk the
    * choice's child model instances.
    *
    * @param instance
-   *          the metaschema choice instance to walk
+   *          the Metaschema module choice instance to walk
    * @param data
    *          additional state information to operate on
    */
   public void walk(@NonNull IChoiceInstance instance, DATA data) {
+    if (visit(instance, data)) {
+      walkModelInstances(instance.getModelInstances(), data);
+    }
+  }
+
+  /**
+   * Will visit the provided Metaschema module choice group instance, and then
+   * walk the choice's child model instances.
+   *
+   * @param instance
+   *          the Metaschema module choice instance to walk
+   * @param data
+   *          additional state information to operate on
+   */
+  public void walk(@NonNull IChoiceGroupInstance instance, DATA data) {
     if (visit(instance, data)) {
       walkModelInstances(instance.getModelInstances(), data);
     }
@@ -251,8 +266,28 @@ public abstract class ModelWalker<DATA> {
       walk((IAssemblyInstance) instance, data);
     } else if (instance instanceof IFieldInstance) {
       walk((IFieldInstance) instance, data);
+    } else if (instance instanceof IChoiceGroupInstance) {
+      walk((IChoiceGroupInstance) instance, data);
     } else if (instance instanceof IChoiceInstance) {
       walk((IChoiceInstance) instance, data);
+    }
+  }
+
+  /**
+   * Will visit the provided model definition.
+   *
+   * @param definition
+   *          the definition to visit
+   * @param data
+   *          additional state information to operate on
+   */
+  protected void visitDefinition(@NonNull IDefinition definition, DATA data) {
+    if (definition instanceof IAssemblyDefinition) {
+      visit((IAssemblyDefinition) definition, data);
+    } else if (definition instanceof IFieldDefinition) {
+      visit((IFieldDefinition) definition, data);
+    } else if (definition instanceof IFlagDefinition) {
+      visit((IFlagDefinition) definition, data);
     }
   }
 
@@ -354,6 +389,21 @@ public abstract class ModelWalker<DATA> {
    *         {@code false} otherwise
    */
   protected boolean visit(@NonNull IChoiceInstance instance, DATA data) {
+    return true;
+  }
+
+  /**
+   * Called when the provided instance is walked. This can be overridden by child
+   * classes to enable processing of the visited instance.
+   *
+   * @param instance
+   *          the instance that is visited
+   * @param data
+   *          additional state information to operate on
+   * @return {@code true} if the child instances are to be walked, or
+   *         {@code false} otherwise
+   */
+  protected boolean visit(@NonNull IChoiceGroupInstance instance, DATA data) {
     return true;
   }
 }

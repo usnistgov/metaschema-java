@@ -24,30 +24,18 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.schema;
+package gov.nist.secauto.metaschema.core.model;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
-import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
+public interface IKeyed {
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-public class FlagDefinitionJsonSchema
-    extends AbstractDefinitionJsonSchema<IFlagDefinition> {
-
-  public FlagDefinitionJsonSchema(
-      @NonNull IFlagDefinition definition) {
-    super(definition);
-  }
-
-  @Override
-  protected void generateBody(JsonGenerationState state, ObjectNode obj) {
-    state.getDataTypeSchemaForDefinition(getDefinition()).generateSchemaOrRef(state, obj);
-  }
-
-  @Override
-  public void resolveSubSchemas(JsonGenerationState state) {
-    state.getDataTypeSchemaForDefinition(getDefinition());
-  }
+  /**
+   * Get the name of the JSON key, if a JSON key is configured.
+   *
+   * @return the name of the JSON key flag if configured, or {@code null}
+   *         otherwise
+   */
+  @Nullable
+  String getJsonKeyFlagName();
 }

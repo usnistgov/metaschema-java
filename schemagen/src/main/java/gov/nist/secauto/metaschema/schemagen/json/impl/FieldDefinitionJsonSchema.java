@@ -24,7 +24,7 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.schema;
+package gov.nist.secauto.metaschema.schemagen.json.impl;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -34,43 +34,48 @@ import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.FlagInstanceFilter;
-import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
-import gov.nist.secauto.metaschema.schemagen.json.property.FlagInstanceJsonProperty;
-import gov.nist.secauto.metaschema.schemagen.json.property.IJsonProperty.PropertyCollection;
+import gov.nist.secauto.metaschema.schemagen.json.IDataTypeJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.IDefinitionJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
+import gov.nist.secauto.metaschema.schemagen.json.impl.IJsonProperty.PropertyCollection;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class FieldDefinitionJsonSchema
-    extends AbstractDefinitionJsonSchema<IFieldDefinition> {
+    extends AbstractModelDefinitionJsonSchema<IFieldDefinition> {
 
   public FieldDefinitionJsonSchema(
-      @NonNull IFieldDefinition definition) {
-    super(definition);
-  }
-
-  @Override
-  public void resolveSubSchemas(JsonGenerationState state) {
-    state.getDataTypeSchemaForDefinition(getDefinition());
-
-    for (IFlagInstance instance : getDefinition().getFlagInstances()) {
-      state.getSchema(instance.getDefinition());
-    }
+      @NonNull IFieldDefinition definition,
+      @Nullable String jsonKeyFlagName,
+      @Nullable String discriminatorProperty,
+      @Nullable String discriminatorValue,
+      @NonNull IJsonGenerationState state) {
+    super(definition, jsonKeyFlagName, discriminatorProperty, discriminatorValue);
+    // register the flag data type
+    state.getDataTypeSchemaForDefinition(definition);
   }
 
   @SuppressWarnings("PMD.CognitiveComplexity")
   @Override
-  protected void generateBody(JsonGenerationState state, ObjectNode obj) throws IOException {
+  protected void generateBody(
+      IJsonGenerationState state,
+      ObjectNode obj) throws IOException {
     IFieldDefinition definition = getDefinition();
 
     Collection<? extends IFlagInstance> flags = definition.getFlagInstances();
+    String discriminatorProperty = getDiscriminatorProperty();
     IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();
-    if (flags.isEmpty() || (jsonKeyFlag != null && flags.size() == 1)) { // NOPMD - readability
+    if (discriminatorProperty == null
+        && (flags.isEmpty() || (jsonKeyFlag != null && flags.size() == 1))) { // NOPMD readability
       // field is a simple data type value if there are no flags or if the only flag
       // is a JSON key
-      state.getDataTypeSchemaForDefinition(definition).generateSchemaOrRef(state, obj);
+      IDataTypeJsonSchema schema = state.getDataTypeSchemaForDefinition(definition);
+      schema.generateSchemaOrRef(obj, state);
     } else {
       obj.put("type", "object");
 
@@ -80,10 +85,18 @@ public class FieldDefinitionJsonSchema
 
       PropertyCollection properties = new PropertyCollection();
 
+      // handle possible discriminator
+      if (discriminatorProperty != null) {
+        ObjectNode discriminatorObj = state.getJsonNodeFactory().objectNode();
+        discriminatorObj.put("const", getDiscriminatorValue());
+        properties.addProperty(discriminatorProperty, discriminatorObj);
+      }
+
       // generate flag properties
       for (IFlagInstance flag : flags) {
         assert flag != null;
-        new FlagInstanceJsonProperty(flag).generateProperty(properties, state); // NOPMD unavoidable instantiation
+        new FlagInstanceJsonProperty(flag)
+            .generateProperty(properties, state); // NOPMD unavoidable instantiation
       }
 
       // generate value property
@@ -100,7 +113,8 @@ public class FieldDefinitionJsonSchema
 
         additionalPropertiesTypeNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
         // the type of the additional properties must be the datatype of the field value
-        state.getDataTypeSchemaForDefinition(definition).generateSchemaOrRef(state, additionalPropertiesTypeNode);
+        IDataTypeJsonSchema schema = state.getDataTypeSchemaForDefinition(definition);
+        schema.generateSchemaOrRef(additionalPropertiesTypeNode, state);
 
         ObjectNode additionalPropertiesNode = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
         ArrayNode allOf = additionalPropertiesNode.putArray("allOf");
@@ -116,16 +130,31 @@ public class FieldDefinitionJsonSchema
 
   public void generateSimpleFieldValueInstance(
       @NonNull PropertyCollection properties,
-      @NonNull JsonGenerationState state) {
+      @NonNull IJsonGenerationState state) {
 
     IFieldDefinition definition = getDefinition();
 
     String propertyName = definition.getEffectiveJsonValueKeyName();
 
     ObjectNode propertyObject = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
-    state.getDataTypeSchemaForDefinition(definition).generateSchemaOrRef(state, propertyObject);
+    IDataTypeJsonSchema schema = state.getDataTypeSchemaForDefinition(definition);
+    schema.generateSchemaOrRef(propertyObject, state);
 
     properties.addProperty(propertyName, propertyObject);
     properties.addRequired(propertyName);
   }
+
+  @Override
+  public void gatherDefinitions(
+      @NonNull Map<IKey, IDefinitionJsonSchema<?>> gatheredDefinitions,
+      @NonNull IJsonGenerationState state) {
+    super.gatherDefinitions(gatheredDefinitions, state);
+
+    IFieldDefinition definition = getDefinition();
+    IDataTypeJsonSchema schema = state.getDataTypeSchemaForDefinition(definition);
+    if (schema instanceof IDefinitionJsonSchema) {
+      ((IDefinitionJsonSchema<?>) schema).gatherDefinitions(gatheredDefinitions, state);
+    }
+  }
+
 }

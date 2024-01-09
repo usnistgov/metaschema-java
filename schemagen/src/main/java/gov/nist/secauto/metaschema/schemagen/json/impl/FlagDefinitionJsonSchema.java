@@ -24,44 +24,58 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.schema;
+package gov.nist.secauto.metaschema.schemagen.json.impl;
 
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.schemagen.json.IDataTypeJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.IDefinitionJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
+
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public abstract class AbstractDefineableJsonSchema implements IDefineableJsonSchema {
-  @Nullable
-  private String name;
+public class FlagDefinitionJsonSchema
+    extends AbstractDefinitionJsonSchema<IFlagDefinition> {
+  @NonNull
+  private final IKey key;
 
-  protected abstract String generateDefinitionName(@NonNull JsonGenerationState state);
+  public FlagDefinitionJsonSchema(@NonNull IFlagDefinition definition, @NonNull IJsonGenerationState state) {
+    super(definition);
+    this.key = IKey.of(definition);
+    state.getDataTypeSchemaForDefinition(definition);
+  }
 
   @Override
-  public String getDefinitionName(JsonGenerationState state) {
-    if (!isDefinition(state)) {
-      throw new IllegalStateException();
-    }
+  protected String generateDefinitionName(IJsonGenerationState state) {
+    return state.getTypeNameForDefinition(getDefinition(), null);
+  }
 
-    synchronized (this) {
-      if (name == null) {
-        name = generateDefinitionName(state);
-      }
-      assert name != null;
-      return name;
+  @Override
+  protected void generateBody(
+      IJsonGenerationState state,
+      ObjectNode obj) {
+    IFlagDefinition definition = getDefinition();
+    IDataTypeJsonSchema schema = state.getDataTypeSchemaForDefinition(definition);
+    schema.generateSchemaOrRef(obj, state);
+  }
+
+  @Override
+  public void gatherDefinitions(
+      @NonNull Map<IKey, IDefinitionJsonSchema<?>> gatheredDefinitions,
+      @NonNull IJsonGenerationState state) {
+    super.gatherDefinitions(gatheredDefinitions, state);
+
+    IDataTypeJsonSchema schema = state.getDataTypeSchemaForDefinition(getDefinition());
+    if (schema instanceof IDefinitionJsonSchema) {
+      ((IDefinitionJsonSchema<?>) schema).gatherDefinitions(gatheredDefinitions, state);
     }
   }
 
   @Override
-  public String getDefinitionRef(JsonGenerationState state) {
-    if (!isDefinition(state)) {
-      throw new IllegalStateException();
-    }
-
-    return ObjectUtils.notNull(new StringBuilder()
-        .append("#/definitions/")
-        .append(getDefinitionName(state))
-        .toString());
+  public IKey getKey() {
+    return key;
   }
 }

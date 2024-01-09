@@ -53,7 +53,7 @@ public class XmlSimpleTypeDataTypeReference
   }
 
   @Override
-  public void generateType(XmlGenerationState state, boolean anonymous) {
+  public void generate(XmlGenerationState state) {
     // do nothing, this is a direct reference to the underlying Module data type
     // the type is generated for the built-in type by the data type manager
   }

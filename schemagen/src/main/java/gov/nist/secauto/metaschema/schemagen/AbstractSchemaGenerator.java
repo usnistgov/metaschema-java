@@ -103,11 +103,10 @@ public abstract class AbstractSchemaGenerator<
       IModule metaschema,
       Writer out,
       IConfiguration<SchemaGenerationFeature<?>> configuration) {
-    // IInlineStrategy inlineStrategy =
-    // IInlineStrategy.newInlineStrategy(configuration);
     try {
       // avoid automatically closing streams not owned by the generator
-      @SuppressWarnings("PMD.CloseResource") T schemaWriter = newWriter(out);
+      @SuppressWarnings({ "PMD.CloseResource", "resource" })
+      T schemaWriter = newWriter(out);
       S generationState = newGenerationState(metaschema, schemaWriter, configuration);
       generateSchema(generationState);
       generationState.flushWriter();
@@ -137,20 +136,14 @@ public abstract class AbstractSchemaGenerator<
     List<IAssemblyDefinition> rootAssemblyDefinitions = new LinkedList<>();
     for (ModuleIndex.DefinitionEntry entry : generationState.getMetaschemaIndex().getDefinitions()) {
 
-      boolean referenced = entry.isReferenced();
-
       IDefinition definition = ObjectUtils.notNull(entry.getDefinition());
       if (definition instanceof IAssemblyDefinition && ((IAssemblyDefinition) definition).isRoot()) {
         // found root definition
         IAssemblyDefinition assemblyDefinition = (IAssemblyDefinition) definition;
         rootAssemblyDefinitions.add(assemblyDefinition);
-        if (!referenced) {
-          referenced = true;
-          entry.incrementReferenceCount();
-        }
-
       }
 
+      boolean referenced = entry.isReferenced();
       if (!referenced) {
         // skip unreferenced definitions
         continue;

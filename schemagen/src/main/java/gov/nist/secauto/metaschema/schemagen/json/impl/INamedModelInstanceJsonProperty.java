@@ -24,29 +24,12 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.property;
+package gov.nist.secauto.metaschema.schemagen.json.impl;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-public class FlagInstanceJsonProperty
-    extends AbstractJsonProperty<IFlagInstance> {
-
-  public FlagInstanceJsonProperty(@NonNull IFlagInstance instance) {
-    super(instance);
-  }
-
-  @Override
-  public boolean isRequired() {
-    return getInstance().isRequired();
-  }
-
-  @Override
-  protected void generateBody(ObjectNode obj, JsonGenerationState state) {
-    generateSchemaOrRef(obj, state);
-  }
+// REFACTOR: remove?
+public interface INamedModelInstanceJsonProperty
+    extends IGroupableModelInstanceJsonProperty<INamedModelInstanceAbsolute> {
+  // no additional methods
 }

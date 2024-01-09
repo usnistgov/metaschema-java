@@ -95,7 +95,8 @@ public abstract class AbstractSchemaGeneratorTestSuite
 
   static {
     IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
-    features.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    // features.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     SCHEMA_GENERATION_CONFIG = features;
 
     BiFunction<IModule, Writer, Void> xmlProvider = (module, writer) -> {
@@ -136,10 +137,12 @@ public abstract class AbstractSchemaGeneratorTestSuite
     }
 
     @SuppressWarnings("null")
-    @NonNull Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
+    @NonNull
+    Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
       try {
         URL schemaResource = path.toUri().toURL();
-        @SuppressWarnings("resource") StreamSource source
+        @SuppressWarnings("resource")
+        StreamSource source
             = new StreamSource(schemaResource.openStream(), schemaResource.toString());
         List<? extends Source> schemaSources = Collections.singletonList(source);
         return new XmlSchemaContentValidator(schemaSources);
@@ -149,7 +152,8 @@ public abstract class AbstractSchemaGeneratorTestSuite
     };
     XML_CONTENT_VALIDATOR_PROVIDER = xmlContentValidatorProvider;
 
-    @NonNull Function<Path, JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
+    @NonNull
+    Function<Path, JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
       try (InputStream is = Files.newInputStream(path, StandardOpenOption.READ)) {
         assert is != null;
         return new JsonSchemaContentValidator(is);
@@ -193,36 +197,40 @@ public abstract class AbstractSchemaGeneratorTestSuite
     Path testSuite = Paths.get("../core/metaschema/test-suite/schema-generation/");
     Path collectionPath = testSuite.resolve(collectionName);
 
+    // load the metaschema module
     BindingModuleLoader loader = new BindingModuleLoader();
     loader.enableFeature(DeserializationFeature.DESERIALIZE_XML_ALLOW_ENTITY_RESOLUTION);
     loader.allowEntityResolution();
     Path modulePath = collectionPath.resolve(metaschemaName);
     IModule module = loader.load(modulePath);
 
-    Path jsonSchema = produceJsonSchema(module, generationDir.resolve(generatedSchemaName + ".json"));
-    assertEquals(true, validate(JSON_SCHEMA_VALIDATOR, jsonSchema),
-        String.format("JSON schema '%s' was invalid", jsonSchema.toString()));
-    Path xmlSchema = produceXmlSchema(module, generationDir.resolve(generatedSchemaName + ".xsd"));
-
+    // generate the schema
     Path schemaPath;
-    switch (getRequiredContentFormat()) {
+    Format requiredContentFormat = getRequiredContentFormat();
+    switch (requiredContentFormat) {
     case JSON:
     case YAML:
+      Path jsonSchema = produceJsonSchema(module, generationDir.resolve(generatedSchemaName + ".json"));
+      assertEquals(true, validate(JSON_SCHEMA_VALIDATOR, jsonSchema),
+          String.format("JSON schema '%s' was invalid", jsonSchema.toString()));
       schemaPath = jsonSchema;
       break;
     case XML:
-      schemaPath = xmlSchema;
+      schemaPath = produceXmlSchema(module, generationDir.resolve(generatedSchemaName + ".xsd"));
       break;
     default:
       throw new IllegalStateException();
     }
 
+    // setup object binding
     IBindingContext context = new DefaultBindingContext();
     context.registerModule(module, generationDir);
+
+    // create content test cases
     for (ContentCase contentCase : contentCases) {
       Path contentPath = collectionPath.resolve(contentCase.getName());
 
-      if (!getRequiredContentFormat().equals(contentCase.getActualFormat())) {
+      if (!requiredContentFormat.equals(contentCase.getActualFormat())) {
         contentPath = convertContent(contentPath.toUri(), generationDir, context);
       }
 

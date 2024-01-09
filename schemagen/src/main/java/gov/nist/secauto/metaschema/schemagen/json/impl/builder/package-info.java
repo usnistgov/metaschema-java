@@ -24,32 +24,4 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.property;
-
-import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-public abstract class AbstractNamedModelInstanceJsonProperty
-    extends AbstractJsonProperty<INamedModelInstanceAbsolute>
-    implements INamedModelInstanceJsonProperty {
-
-  public AbstractNamedModelInstanceJsonProperty(@NonNull INamedModelInstanceAbsolute instance) {
-    super(instance);
-  }
-
-  @Override
-  public int getMinOccurs() {
-    return getInstance().getMinOccurs();
-  }
-
-  @Override
-  public int getMaxOccurs() {
-    return getInstance().getMaxOccurs();
-  }
-
-  @Override
-  public boolean isRequired() {
-    return getMinOccurs() > 0;
-  }
-}
+package gov.nist.secauto.metaschema.schemagen.json.impl.builder;

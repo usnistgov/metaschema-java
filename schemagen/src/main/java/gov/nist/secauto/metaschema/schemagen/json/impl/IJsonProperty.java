@@ -24,16 +24,18 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.property;
+package gov.nist.secauto.metaschema.schemagen.json.impl;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gov.nist.secauto.metaschema.core.model.IInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
-import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
+import gov.nist.secauto.metaschema.schemagen.json.IDefineableJsonSchema.IKey;
+import gov.nist.secauto.metaschema.schemagen.json.IDefinitionJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -43,7 +45,7 @@ import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IJsonProperty<I extends IInstanceAbsolute> {
+public interface IJsonProperty<I extends IInstance> {
   @NonNull
   I getInstance();
 
@@ -52,6 +54,10 @@ public interface IJsonProperty<I extends IInstanceAbsolute> {
 
   boolean isRequired();
 
+  void gatherDefinitions(
+      @NonNull Map<IKey, IDefinitionJsonSchema<?>> gatheredDefinitions,
+      @NonNull IJsonGenerationState state);
+
   /**
    * Generate the schema type.
    *
@@ -59,12 +65,18 @@ public interface IJsonProperty<I extends IInstanceAbsolute> {
    *          the containing property context to add the property to
    * @param state
    *          the schema generation state used for context and writing
+   * @param jsonKeyFlagName
+   *          the name of the flag to use as the JSON key, or @{code null} if no
+   *          flag is used as the JSON key
+   * @param discriminator
+   *          the name to use as the choice group discriminator, or @{code null}
+   *          if no choice group discriminator is used
    * @throws SchemaGenerationException
    *           if an error occurred while writing the type
    */
   void generateProperty(
       @NonNull PropertyCollection properties,
-      @NonNull JsonGenerationState state);
+      @NonNull IJsonGenerationState state);
 
   class PropertyCollection {
     private final Map<String, ObjectNode> properties;

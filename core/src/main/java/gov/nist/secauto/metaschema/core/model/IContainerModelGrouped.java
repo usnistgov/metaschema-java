@@ -36,6 +36,12 @@ public interface IContainerModelGrouped extends IContainerModel {
   @Override
   IAssemblyDefinition getOwningDefinition();
 
+  @Override
+  @NonNull
+  default Collection<? extends INamedModelInstanceGrouped> getModelInstances() {
+    return getNamedModelInstances();
+  }
+
   /**
    * Get all named model instances within the container.
    *

@@ -24,54 +24,16 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.schema;
+package gov.nist.secauto.metaschema.schemagen.json.impl.builder;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
+import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class DataTypeJsonSchema
-    extends AbstractDefineableJsonSchema {
-  @NonNull
-  private final String name;
-  @NonNull
-  private final IDataTypeAdapter<?> dataTypeAdapter;
-
-  public DataTypeJsonSchema(
-      @NonNull String name,
-      @NonNull IDataTypeAdapter<?> dataTypeAdapter) {
-    this.name = name;
-    this.dataTypeAdapter = dataTypeAdapter;
-  }
-
-  @Override
-  public void resolveSubSchemas(JsonGenerationState state) {
-    // do nothing
-  }
-
-  @NonNull
-  protected IDataTypeAdapter<?> getDataTypeAdapter() {
-    return dataTypeAdapter;
-  }
-
-  @Override
-  protected String generateDefinitionName(JsonGenerationState state) {
-    return name;
-  }
-
-  @Override
-  public boolean isInline(JsonGenerationState state) {
-    // built in data types are never inline
-    return false;
-  }
-
-  @Override
-  public void generateSchema(JsonGenerationState state, ObjectNode obj) {
-    // do nothing, this is a direct reference to the underlying Module data type
-    // the type is generated for the built-in type by the data type manager
-    throw new UnsupportedOperationException();
-  }
+public interface IBuilder<T extends IBuilder<T>> {
+  void build(
+      @NonNull ObjectNode object,
+      @NonNull IJsonGenerationState state);
 }

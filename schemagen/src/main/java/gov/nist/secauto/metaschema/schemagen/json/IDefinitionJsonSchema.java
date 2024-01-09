@@ -24,66 +24,23 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model;
+package gov.nist.secauto.metaschema.schemagen.json;
 
-import java.util.Collection;
+import gov.nist.secauto.metaschema.core.model.IDefinition;
+
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFeatureContainerModelGrouped<
-    NMI extends INamedModelInstanceGrouped,
-    FI extends IFieldInstanceGrouped,
-    AI extends IAssemblyInstanceGrouped>
-    extends IContainerModelGrouped, IFeatureContainerModel<NMI, NMI, FI, AI> {
-  /**
-   * Lazy initialize the model instances associated with this choice group.
-   *
-   * @return the model container
-   */
-  @Override
+public interface IDefinitionJsonSchema<D extends IDefinition>
+    extends IDefineableJsonSchema {
   @NonNull
-  IContainerModelSupport<NMI, NMI, FI, AI> getModelContainer();
+  D getDefinition();
 
-  @Override
-  default boolean hasChildren() {
-    return !getModelContainer().getModelInstances().isEmpty();
-  }
+  void gatherDefinitions(
+      @NonNull Map<IKey, IDefinitionJsonSchema<?>> gatheredDefinitions,
+      @NonNull IJsonGenerationState state);
 
-  @Override
-  default Collection<NMI> getModelInstances() {
-    return getModelContainer().getModelInstances();
-  }
-
-  @Override
-  default NMI getNamedModelInstanceByName(String name) {
-    return getModelContainer().getNamedModelInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<NMI> getNamedModelInstances() {
-    return getModelContainer().getNamedModelInstanceMap().values();
-  }
-
-  @Override
-  default FI getFieldInstanceByName(String name) {
-    return getModelContainer().getFieldInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<FI> getFieldInstances() {
-    return getModelContainer().getFieldInstanceMap().values();
-  }
-
-  @Override
-  default AI getAssemblyInstanceByName(String name) {
-    return getModelContainer().getAssemblyInstanceMap().get(name);
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  default Collection<AI> getAssemblyInstances() {
-    return getModelContainer().getAssemblyInstanceMap().values();
-  }
+  @NonNull
+  IKey getKey();
 }

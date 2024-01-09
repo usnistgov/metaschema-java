@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.schemagen.xml.schematype;
 
-import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
@@ -59,11 +58,11 @@ public abstract class AbstractXmlComplexType<D extends IModelDefinition>
   }
 
   @Override
-  public void generateType(@NonNull XmlGenerationState state, boolean anonymous) {
+  public void generate(@NonNull XmlGenerationState state) {
     try {
       state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "complexType", XmlSchemaGenerator.NS_XML_SCHEMA);
 
-      if (!anonymous) {
+      if (!isInline(state)) {
         state.writeAttribute("name", getTypeName());
       }
 
@@ -89,14 +88,11 @@ public abstract class AbstractXmlComplexType<D extends IModelDefinition>
       state.writeAttribute("use", "required");
     }
 
-    IFlagDefinition definition = instance.getDefinition();
-
-    IXmlType type = state.getTypeForDefinition(definition);
-
-    if (state.isInline(definition) && type.isGeneratedType(state)) {
+    IXmlType type = state.getXmlForDefinition(instance.getDefinition());
+    if (type.isGeneratedType(state) && type.isInline(state)) {
       DocumentationGenerator.generateDocumentation(instance, state);
 
-      type.generateType(state, true);
+      type.generate(state);
     } else {
       state.writeAttribute("type", type.getTypeReference());
 

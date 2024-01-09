@@ -85,12 +85,6 @@ public interface IBoundInstanceModelFieldScalar
   }
 
   @Override
-  default String getJsonKeyFlagName() {
-    // no flags
-    return null;
-  }
-
-  @Override
   IBoundInstanceFlag getJsonKeyFlagInstance();
 
   @Override

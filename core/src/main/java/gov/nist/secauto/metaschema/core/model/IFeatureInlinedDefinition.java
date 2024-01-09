@@ -85,9 +85,25 @@ public interface IFeatureInlinedDefinition<DEFINITION extends IDefinition, INSTA
     return getDefaultValue();
   }
 
+  /**
+   * Generates a "coordinate" string for the provided information element
+   * instance.
+   *
+   * A coordinate consists of the element's:
+   * <ul>
+   * <li>containing Metaschema module's short name</li>
+   * <li>model type</li>
+   * <li>name</li>
+   * </ul>
+   *
+   * @return the coordinate
+   */
   @Override
   default String toCoordinates() {
-    // Ensure classes that implement INamedInstance and IDefinition use this
-    return INamedInstance.super.toCoordinates();
+    IModule module = getContainingModule();
+    return String.format("%s:%s:%s",
+        module.getShortName(),
+        getModelType(),
+        getEffectiveName());
   }
 }

@@ -75,9 +75,6 @@ public interface IBoundInstanceModelChoiceGroup
   }
 
   @Override
-  String getJsonKeyFlagName();
-
-  @Override
   @NonNull
   IBoundDefinitionModelAssembly getOwningDefinition();
 

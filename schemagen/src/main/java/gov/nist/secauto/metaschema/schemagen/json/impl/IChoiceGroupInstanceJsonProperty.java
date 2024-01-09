@@ -23,9 +23,12 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
-/**
- * Support for managing Module data type implementations aligned with the JSON
- * schema format for use in schema generation.
- */
 
-package gov.nist.secauto.metaschema.schemagen.json.datatype;
+package gov.nist.secauto.metaschema.schemagen.json.impl;
+
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+
+public interface IChoiceGroupInstanceJsonProperty
+    extends IJsonProperty<IChoiceGroupInstance> {
+  // no additional methods
+}

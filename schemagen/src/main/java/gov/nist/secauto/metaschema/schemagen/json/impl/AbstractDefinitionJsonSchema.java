@@ -24,48 +24,48 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.schemagen.json.schema;
+package gov.nist.secauto.metaschema.schemagen.json.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
-import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
+import gov.nist.secauto.metaschema.schemagen.json.IDefinitionJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractDefinitionJsonSchema<D extends IDefinition>
-    extends AbstractDefineableJsonSchema {
+    extends AbstractDefineableJsonSchema
+    implements IDefinitionJsonSchema<D> {
   @NonNull
   private final D definition;
 
-  protected AbstractDefinitionJsonSchema(@NonNull D definition) {
-    this.definition = definition;
-  }
-
-  @NonNull
-  protected D getDefinition() {
+  @Override
+  public D getDefinition() {
     return definition;
   }
 
+  protected AbstractDefinitionJsonSchema(
+      @NonNull D definition) {
+    this.definition = definition;
+  }
+
   @Override
-  public boolean isInline(JsonGenerationState state) {
+  public boolean isInline(IJsonGenerationState state) {
     return state.isInline(getDefinition());
   }
 
-  @Override
-  protected String generateDefinitionName(JsonGenerationState state) {
-    return state.getTypeNameForDefinition(definition, null);
-  }
-
-  protected abstract void generateBody(@NonNull JsonGenerationState state, @NonNull ObjectNode obj) throws IOException;
+  protected abstract void generateBody(
+      @NonNull IJsonGenerationState state,
+      @NonNull ObjectNode obj) throws IOException;
 
   @Override
-  public void generateSchema(JsonGenerationState state, ObjectNode obj) {
+  public void generateInlineSchema(ObjectNode obj, IJsonGenerationState state) {
     D definition = getDefinition();
 
     try {
@@ -79,31 +79,67 @@ public abstract class AbstractDefinitionJsonSchema<D extends IDefinition>
   }
 
   public static void generateTitle(@NonNull IDefinition definition, @NonNull ObjectNode obj) {
-    String formalName = definition.getEffectiveFormalName();
-    if (formalName != null) {
-      obj.put("title", formalName);
-    }
+    MetadataUtils.generateTitle(definition, obj);
   }
 
   public static void generateDescription(@NonNull IDefinition definition, @NonNull ObjectNode obj) {
-    MarkupLine description = definition.getDescription();
+    MetadataUtils.generateDescription(definition, obj);
+  }
 
-    StringBuilder retval = null;
-    if (description != null) {
-      retval = new StringBuilder().append(description.toMarkdown());
+  @Override
+  public void gatherDefinitions(
+      @NonNull Map<IKey, IDefinitionJsonSchema<?>> gatheredDefinitions,
+      @NonNull IJsonGenerationState state) {
+    gatheredDefinitions.put(getKey(), this);
+  }
+
+  public static class SimpleKey implements IKey {
+    @NonNull
+    private final IDefinition definition;
+
+    public SimpleKey(@NonNull IDefinition definition) {
+      this.definition = definition;
     }
 
-    MarkupMultiline remarks = definition.getRemarks();
-    if (remarks != null) {
-      if (retval == null) {
-        retval = new StringBuilder();
-      } else {
-        retval.append("\n\n");
+    @Override
+    public IDefinition getDefinition() {
+      return definition;
+    }
+
+    @Override
+    public String getJsonKeyFlagName() {
+      return null;
+    }
+
+    @Override
+    public String getDiscriminatorProperty() {
+      return null;
+    }
+
+    @Override
+    public String getDiscriminatorValue() {
+      return null;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(definition, null, null, null);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
       }
-      retval.append(remarks.toMarkdown());
-    }
-    if (retval != null) {
-      obj.put("description", retval.toString());
+      if (!(obj instanceof IKey)) {
+        return false;
+      }
+      IKey other = (IKey) obj;
+      return Objects.equals(definition, other.getDefinition())
+          && Objects.equals(null, other.getJsonKeyFlagName())
+          && Objects.equals(null, other.getDiscriminatorProperty())
+          && Objects.equals(null, other.getDiscriminatorValue());
     }
   }
+
 }

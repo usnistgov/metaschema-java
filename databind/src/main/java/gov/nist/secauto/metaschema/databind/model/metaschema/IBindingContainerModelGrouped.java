@@ -36,7 +36,7 @@ public interface IBindingContainerModelGrouped extends IContainerModelGrouped {
   IBindingDefinitionAssembly getOwningDefinition();
 
   @Override
-  default Collection<? extends IBindingInstanceModel> getModelInstances() {
+  default Collection<? extends IBindingInstanceModelNamedGrouped> getModelInstances() {
     return getNamedModelInstances();
   }
 
