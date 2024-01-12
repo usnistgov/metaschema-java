@@ -82,7 +82,8 @@ predicate : OB expr CB ;
 // lookup : QM keyspecifier ;
 // keyspecifier : NCName | IntegerLiteral | parenthesizedexpr | STAR ;
 // [55]
-arrowfunctionspecifier : eqname | varref | parenthesizedexpr ;
+//arrowfunctionspecifier : eqname | varref | parenthesizedexpr ;
+arrowfunctionspecifier : eqname;
 // primaryexpr : literal | varref | parenthesizedexpr | contextitemexpr | functioncall | functionitemexpr | mapconstructor | arrayconstructor | unarylookup ;
 primaryexpr : literal | varref | parenthesizedexpr | contextitemexpr | functioncall ;
 literal : numericliteral | StringLiteral ;
