@@ -223,7 +223,7 @@ public abstract class AbstractCollectionBuilder<T extends AbstractCollectionBuil
     }
   }
 
-  private static class AbsoluteType
+  private static final class AbsoluteType
       extends Type<INamedModelInstanceAbsolute> {
 
     private AbsoluteType(@NonNull INamedModelInstanceAbsolute namedModelInstance) {
@@ -231,7 +231,7 @@ public abstract class AbstractCollectionBuilder<T extends AbstractCollectionBuil
     }
   }
 
-  private static class GroupedType
+  private static final class GroupedType
       extends Type<INamedModelInstanceGrouped> {
 
     private GroupedType(@NonNull INamedModelInstanceGrouped namedModelInstance) {

@@ -34,7 +34,6 @@ public class ChoiceNotInlineStrategy implements IInlineStrategy {
   public boolean isInline(
       IDefinition definition,
       ModuleIndex metaschemaIndex) {
-    ModuleIndex.DefinitionEntry entry = metaschemaIndex.getEntry(definition);
     // allow inline if the definition is inline and not part of definition with a
     // choice
     return definition.isInline() && !(definition.getInlineInstance().getParentContainer() instanceof IChoiceInstance);

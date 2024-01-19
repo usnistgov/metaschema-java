@@ -131,7 +131,7 @@ class JsonSuiteTest
 
   @Disabled
   @Test
-  void testOSCALComplete() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
+  void testOscalComplete() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     BindingModuleLoader loader = new BindingModuleLoader();
     loader.allowEntityResolution();
 

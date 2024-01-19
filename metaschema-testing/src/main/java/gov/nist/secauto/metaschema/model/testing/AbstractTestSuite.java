@@ -380,8 +380,7 @@ public abstract class AbstractTestSuite {
       throw new JUnitException("Unable to create schema temp file", ex);
     }
 
-    @SuppressWarnings("rawtypes")
-    ISerializer serializer
+    @SuppressWarnings("rawtypes") ISerializer serializer
         = context.newSerializer(getRequiredContentFormat(), object.getClass());
     serializer.serialize(object, convertedContetPath, getWriteOpenOptions());
 

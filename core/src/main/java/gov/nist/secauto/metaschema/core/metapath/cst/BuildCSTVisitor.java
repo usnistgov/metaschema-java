@@ -753,8 +753,7 @@ public class BuildCSTVisitor
 
   @Override
   protected IExpression handleLet(LetexprContext context) {
-    @NonNull
-    IExpression retval = ObjectUtils.notNull(context.exprsingle().accept(this));
+    @NonNull IExpression retval = ObjectUtils.notNull(context.exprsingle().accept(this));
 
     SimpleletclauseContext letClause = context.simpleletclause();
     List<SimpleletbindingContext> clauses = letClause.simpleletbinding();

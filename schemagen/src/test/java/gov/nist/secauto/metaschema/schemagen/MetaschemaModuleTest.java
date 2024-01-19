@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.metaschema.BindingModuleLoader;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
@@ -49,13 +48,13 @@ import java.nio.file.StandardOpenOption;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class MetaschemaModuleTest {
+class MetaschemaModuleTest {
   @NonNull
   private static final Path METASCHEMA_FILE
       = ObjectUtils.notNull(Paths.get("../core/metaschema/schema/metaschema/metaschema-module-metaschema.xml"));
 
   @Test
-  void testMetaschemaMetaschema() throws MetaschemaException, IOException, ClassNotFoundException, BindingException {
+  void testMetaschemaMetaschema() throws MetaschemaException, IOException {
     BindingModuleLoader loader = new BindingModuleLoader();
 
     IBindingModule module = loader.load(METASCHEMA_FILE);

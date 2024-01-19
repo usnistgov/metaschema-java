@@ -167,8 +167,7 @@ public final class FunctionUtils {
    */
   @Nullable
   public static <ITEM extends IItem> ITEM getFirstItem(@NonNull ISequence<ITEM> sequence, boolean requireSingleton) {
-    @Nullable
-    ITEM retval = null;
+    @Nullable ITEM retval = null;
     if (!sequence.isEmpty()) {
       List<ITEM> items = sequence.asList();
       if (requireSingleton && items.size() != 1) {

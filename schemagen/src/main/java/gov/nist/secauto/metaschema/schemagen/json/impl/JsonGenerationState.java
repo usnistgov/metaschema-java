@@ -98,6 +98,19 @@ public class JsonGenerationState
     return ObjectUtils.asType(ObjectUtils.requireNonNull(retval));
   }
 
+  @Override
+  @NonNull
+  public IDataTypeJsonSchema getSchema(@NonNull IDataTypeAdapter<?> datatype) {
+    IDataTypeJsonSchema retval = dataTypeToSchemaMap.get(datatype);
+    if (retval == null) {
+      retval = new DataTypeJsonSchema(
+          getDatatypeManager().getTypeNameForDatatype(datatype),
+          datatype);
+      dataTypeToSchemaMap.put(datatype, retval);
+    }
+    return retval;
+  }
+
   /**
    * Get the JSON schema info for the provided definition.
    *
@@ -179,22 +192,8 @@ public class JsonGenerationState
     return retval;
   }
 
-  @Override
-  @NonNull
-  public IDataTypeJsonSchema getSchema(@NonNull IDataTypeAdapter<?> datatype) {
-    IDataTypeJsonSchema retval = dataTypeToSchemaMap.get(datatype);
-    if (retval == null) {
-      retval = new DataTypeJsonSchema(
-          getDatatypeManager().getTypeNameForDatatype(datatype),
-          datatype);
-      dataTypeToSchemaMap.put(datatype, retval);
-    }
-    return retval;
-  }
-
   public ObjectNode generateDefinitions() {
-    @NonNull
-    Map<IKey, IDefinitionJsonSchema<?>> gatheredDefinitions = new HashMap<>();
+    @NonNull Map<IKey, IDefinitionJsonSchema<?>> gatheredDefinitions = new HashMap<>();
 
     getMetaschemaIndex().getDefinitions().stream()
         .filter(entry -> entry.isRoot())

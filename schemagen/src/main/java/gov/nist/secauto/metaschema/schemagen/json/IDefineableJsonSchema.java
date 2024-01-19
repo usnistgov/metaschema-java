@@ -74,12 +74,6 @@ public interface IDefineableJsonSchema {
    *          the JSON object to populate
    * @param state
    *          the schema generation state used for context and writing
-   * @param jsonKeyFlagName
-   *          the name of the flag to use as the JSON key, or @{code null} if no
-   *          flag is used as the JSON key
-   * @param discriminator
-   *          the name to use as the choice group discriminator, or @{code null}
-   *          if no choice group discriminator is used
    * @throws SchemaGenerationException
    *           if an error occurred while writing the type
    */
@@ -123,12 +117,6 @@ public interface IDefineableJsonSchema {
    *          the JSON object to populate
    * @param state
    *          the schema generation state used for context and writing
-   * @param jsonKeyFlagName
-   *          the name of the flag to use as the JSON key, or @{code null} if no
-   *          flag is used as the JSON key
-   * @param discriminator
-   *          the name to use as the choice group discriminator, or @{code null}
-   *          if no choice group discriminator is used
    * @throws SchemaGenerationException
    *           if an error occurred while writing the type
    */
@@ -164,7 +152,7 @@ public interface IDefineableJsonSchema {
     generateInlineSchema(definitionObj, state);
   }
 
-  public interface IKey extends Comparable<IKey> {
+  interface IKey extends Comparable<IKey> {
     Comparator<IKey> KEY_COMPARATOR = Comparator
         .<IKey, String>comparing(key -> key.getDefinition().getContainingModule().getShortName())
         .thenComparing(key -> key.getDefinition().getEffectiveName())

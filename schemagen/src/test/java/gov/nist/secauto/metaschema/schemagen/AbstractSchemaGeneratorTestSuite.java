@@ -46,8 +46,6 @@ import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
 import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.platform.commons.JUnitException;
 import org.xml.sax.SAXException;
 
@@ -72,7 +70,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractSchemaGeneratorTestSuite
     extends AbstractTestSuite {
-  private static final Logger LOGGER = LogManager.getLogger(AbstractTestSuite.class);
   @NonNull
   protected static final ISchemaGenerator XML_SCHEMA_GENERATOR = new XmlSchemaGenerator();
   @NonNull
@@ -137,12 +134,10 @@ public abstract class AbstractSchemaGeneratorTestSuite
     }
 
     @SuppressWarnings("null")
-    @NonNull
-    Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
+    @NonNull Function<Path, XmlSchemaContentValidator> xmlContentValidatorProvider = (path) -> {
       try {
         URL schemaResource = path.toUri().toURL();
-        @SuppressWarnings("resource")
-        StreamSource source
+        @SuppressWarnings("resource") StreamSource source
             = new StreamSource(schemaResource.openStream(), schemaResource.toString());
         List<? extends Source> schemaSources = Collections.singletonList(source);
         return new XmlSchemaContentValidator(schemaSources);
@@ -152,8 +147,7 @@ public abstract class AbstractSchemaGeneratorTestSuite
     };
     XML_CONTENT_VALIDATOR_PROVIDER = xmlContentValidatorProvider;
 
-    @NonNull
-    Function<Path, JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
+    @NonNull Function<Path, JsonSchemaContentValidator> jsonContentValidatorProvider = (path) -> {
       try (InputStream is = Files.newInputStream(path, StandardOpenOption.READ)) {
         assert is != null;
         return new JsonSchemaContentValidator(is);

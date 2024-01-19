@@ -637,8 +637,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   protected void updateValueStatus(@NonNull INodeItem targetItem, @NonNull IAllowedValuesConstraint allowedValues) {
     // constraint.getAllowedValues().containsKey(value)
 
-    @Nullable
-    ValueStatus valueStatus = valueMap.get(targetItem);
+    @Nullable ValueStatus valueStatus = valueMap.get(targetItem);
     if (valueStatus == null) {
       valueStatus = new ValueStatus(targetItem);
       valueMap.put(targetItem, valueStatus);

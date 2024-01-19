@@ -52,20 +52,9 @@ public class ChoiceGroupInstanceJsonProperty
     super(instance);
     this.collectionBuilder = IModelInstanceBuilder.newCollectionBuilder(instance);
 
-    String jsonKeyFlagName = instance.getJsonKeyFlagName();
-    String discriminatorProperty = instance.getJsonDiscriminatorProperty();
-
     for (INamedModelInstanceGrouped groupedInstance : instance.getNamedModelInstances()) {
       assert groupedInstance != null;
       this.collectionBuilder.addItemType(groupedInstance);
-      //
-      // String discriminatorValue = groupedInstance.getEffectiveDisciminatorValue();
-      // // register definition
-      // state.getSchema(IKey.of(
-      // groupedInstance.getDefinition(),
-      // jsonKeyFlagName,
-      // discriminatorProperty,
-      // discriminatorValue));
     }
   }
 

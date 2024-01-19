@@ -105,8 +105,7 @@ public abstract class AbstractSchemaGenerator<
       IConfiguration<SchemaGenerationFeature<?>> configuration) {
     try {
       // avoid automatically closing streams not owned by the generator
-      @SuppressWarnings({ "PMD.CloseResource", "resource" })
-      T schemaWriter = newWriter(out);
+      @SuppressWarnings({ "PMD.CloseResource", "resource" }) T schemaWriter = newWriter(out);
       S generationState = newGenerationState(metaschema, schemaWriter, configuration);
       generateSchema(generationState);
       generationState.flushWriter();

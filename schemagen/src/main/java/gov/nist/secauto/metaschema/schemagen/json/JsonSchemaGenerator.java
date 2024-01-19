@@ -131,8 +131,7 @@ public class JsonSchemaGenerator
           })
           .collect(Collectors.toUnmodifiableList());
 
-      @SuppressWarnings("resource")
-      JsonGenerator writer = state.getWriter(); // NOPMD not owned
+      @SuppressWarnings("resource") JsonGenerator writer = state.getWriter(); // NOPMD not owned
 
       if (rootEntries.size() == 1) {
         rootEntries.iterator().next().write(writer);

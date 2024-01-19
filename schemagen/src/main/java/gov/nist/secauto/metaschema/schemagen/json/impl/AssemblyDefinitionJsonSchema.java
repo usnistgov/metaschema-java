@@ -33,12 +33,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.ModelType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.schemagen.FlagInstanceFilter;
 import gov.nist.secauto.metaschema.schemagen.json.IDefinitionJsonSchema;
 import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
 import gov.nist.secauto.metaschema.schemagen.json.impl.IJsonProperty.PropertyCollection;
@@ -132,11 +130,6 @@ public class AssemblyDefinitionJsonSchema
 
     obj.put("type", "object");
 
-    // determine the flag instances to generate
-    IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();
-    Collection<? extends IFlagInstance> flags
-        = FlagInstanceFilter.filterFlags(definition.getFlagInstances(), jsonKeyFlag);
-
     PropertyCollection properties = new PropertyCollection();
 
     // handle possible discriminator
@@ -209,8 +202,7 @@ public class AssemblyDefinitionJsonSchema
           // iterate over the old array of choices and append new choice
           for (PropertyCollection oldInstanceProperties : retval) {
             @SuppressWarnings("null")
-            @NonNull
-            PropertyCollection newInstanceProperties = oldInstanceProperties.copy();
+            @NonNull PropertyCollection newInstanceProperties = oldInstanceProperties.copy();
 
             // add the choice
             choiceInstances.get(optionInstance)

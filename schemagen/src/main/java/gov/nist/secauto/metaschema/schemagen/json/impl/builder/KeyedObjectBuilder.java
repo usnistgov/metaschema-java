@@ -30,12 +30,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.schemagen.json.IDataTypeJsonSchema;
 import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
 
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 public class KeyedObjectBuilder
     extends AbstractCollectionBuilder<KeyedObjectBuilder> {
@@ -59,13 +56,7 @@ public class KeyedObjectBuilder
       object.put("maxProperties", getMaxOccurrence());
     }
 
-    Set<IDataTypeJsonSchema> jsonKeyDataTypeSchemas = new LinkedHashSet<>();
     List<IType> types = getTypes();
-    for (IType type : types) {
-      // handle json key
-      IDataTypeJsonSchema schema = type.getJsonKeyDataTypeSchema(state);
-      jsonKeyDataTypeSchemas.add(schema);
-    }
 
     if (!types.isEmpty()) {
       ObjectNode propertyNames = ObjectUtils.notNull(object.putObject("propertyNames"));

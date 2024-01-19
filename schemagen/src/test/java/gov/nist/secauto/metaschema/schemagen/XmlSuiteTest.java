@@ -55,7 +55,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -193,7 +192,7 @@ class XmlSuiteTest
 
     // check for missing attribute types per liboscal-java#181
     XMLInputFactory factory = XMLInputFactory.newFactory();
-    try (Reader fileReader = new FileReader(schemaPath.toFile())) {
+    try (Reader fileReader = Files.newBufferedReader(schemaPath, StandardCharsets.UTF_8)) {
       XMLEventReader reader = factory.createXMLEventReader(fileReader);
       StAXEventBuilder builder = new StAXEventBuilder();
       Document document = builder.build(reader);
@@ -229,7 +228,7 @@ class XmlSuiteTest
 
     // check for missing attribute types per liboscal-java#181
     XMLInputFactory factory = XMLInputFactory.newFactory();
-    try (Reader fileReader = new FileReader(schemaPath.toFile())) {
+    try (Reader fileReader = Files.newBufferedReader(schemaPath, StandardCharsets.UTF_8)) {
       XMLEventReader reader = factory.createXMLEventReader(fileReader);
       StAXEventBuilder builder = new StAXEventBuilder();
       Document document = builder.build(reader);

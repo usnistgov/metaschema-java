@@ -49,7 +49,7 @@ import java.math.BigInteger;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class MetadataUtils {
+public final class MetadataUtils {
   private MetadataUtils() {
     // disable construction
   }

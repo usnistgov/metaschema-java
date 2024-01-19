@@ -42,7 +42,6 @@ import gov.nist.secauto.metaschema.core.model.ModelWalker;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.JavaGenerator;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -175,7 +174,6 @@ public class ModuleIndex {
       IDefinition definition = instance.getDefinition();
       // check if this will be a new entry, which needs to be called before getEntry,
       // which will create it
-      final boolean exists = getDefaultData().hasEntry(definition);
       DefinitionEntry entry = getDefaultData().getEntry(definition);
       entry.addReference(instance);
 
@@ -197,19 +195,6 @@ public class ModuleIndex {
       IDefinition containingDefinition = instance.getContainingDefinition();
       return containingDefinition instanceof IAssemblyDefinition
           && !((IAssemblyDefinition) containingDefinition).getChoiceInstances().isEmpty();
-    }
-  }
-
-  public void log(@NonNull Level logLevel) {
-    for (ModuleIndex.DefinitionEntry entry : getDefinitions()) {
-      LOGGER.log(
-          logLevel,
-          "{}: inline:{}, references:{} jsonKey(used/without): {}/{}",
-          entry.definition.toCoordinates(),
-          entry.isInline(),
-          entry.isRoot() ? 1 : entry.getReferences().size(),
-          entry.isUsedAsJsonKey(),
-          entry.isUsedWithoutJsonKey());
     }
   }
 
