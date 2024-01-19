@@ -676,10 +676,16 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
           try {
             List<String> key = IIndex.toKey(item, constraint.getKeyFields(), dynamicContext);
 
-            INodeItem referencedItem = index.get(key);
+            if (index == null) {
+              getConstraintValidationHandler().handleGenericValidationViolation(constraint, keyRef.getNode(), item,
+                  String.format("Key reference to undefined index with name '%s'", indexName));
+            } else {
 
-            if (referencedItem == null) {
-              getConstraintValidationHandler().handleIndexMiss(constraint, keyRef.getNode(), item, key);
+              INodeItem referencedItem = index.get(key);
+
+              if (referencedItem == null) {
+                getConstraintValidationHandler().handleIndexMiss(constraint, keyRef.getNode(), item, key);
+              }
             }
           } catch (MetapathException ex) {
             getConstraintValidationHandler().handleKeyMatchError(constraint, keyRef.getNode(), item, ex);

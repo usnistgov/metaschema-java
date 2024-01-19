@@ -355,4 +355,31 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
         constraint.getIndexName(),
         target.getMetapath());
   }
+
+  /**
+   * Construct a new generic violation message for the provided {@code constraint}
+   * applied to the {@code node}.
+   *
+   * @param constraint
+   *          the constraint the requested message pertains to
+   * @param node
+   *          the item the constraint targeted
+   * @param target
+   *          the target matching the constraint
+   * @param message
+   *          the message to be added before information about the target path
+   * @return the new message
+   */
+  @SuppressWarnings("null")
+  @NonNull
+  protected CharSequence newGenericValidationViolationMessage(
+      @NonNull IConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target,
+      @NonNull String message) {
+    return String.format("%s for constraint '%s' for item at path '%s'",
+        message,
+        Objects.requireNonNullElse(constraint.getId(), "?"),
+        target.getMetapath());
+  }
 }
