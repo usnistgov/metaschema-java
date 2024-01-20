@@ -54,7 +54,7 @@ class MetaschemaModuleTest {
       = ObjectUtils.notNull(Paths.get("../core/metaschema/schema/metaschema/metaschema-module-metaschema.xml"));
 
   @Test
-  void testMetaschemaMetaschema() throws MetaschemaException, IOException {
+  void testGenerateMetaschemaModuleJson() throws MetaschemaException, IOException {
     BindingModuleLoader loader = new BindingModuleLoader();
 
     IBindingModule module = loader.load(METASCHEMA_FILE);
@@ -76,6 +76,18 @@ class MetaschemaModuleTest {
       ISchemaGenerator schemaGenerator = new JsonSchemaGenerator();
       schemaGenerator.generateFromModule(module, writer, features);
     }
+  }
+
+  @Test
+  void testGenerateMetaschemaModuleXml() throws MetaschemaException, IOException {
+    BindingModuleLoader loader = new BindingModuleLoader();
+
+    IBindingModule module = loader.load(METASCHEMA_FILE);
+
+    IMutableConfiguration<SchemaGenerationFeature<?>> features
+        = new DefaultConfiguration<>();
+    features.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    // features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
 
     try (Writer writer = Files.newBufferedWriter(
         Path.of("target/metaschema-schema.xsd"),

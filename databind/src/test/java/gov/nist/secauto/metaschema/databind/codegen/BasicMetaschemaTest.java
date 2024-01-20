@@ -181,4 +181,5 @@ class BasicMetaschemaTest
         "gov.nist.csrc.ns.metaschema.testing.local.definitions.TopLevel",
         ObjectUtils.notNull(generationDir));
   }
+
 }

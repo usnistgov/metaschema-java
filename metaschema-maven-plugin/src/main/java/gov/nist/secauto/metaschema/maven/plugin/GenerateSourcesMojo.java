@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.maven.plugin;
 
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.JavaGenerator;
 import gov.nist.secauto.metaschema.databind.codegen.config.DefaultBindingConfiguration;
+import gov.nist.secauto.metaschema.databind.model.metaschema.BindingModuleLoader;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -157,7 +157,7 @@ public class GenerateSourcesMojo
       }
 
       // generate Java sources based on provided metaschema sources
-      final ModuleLoader loader = new ModuleLoader();
+      final BindingModuleLoader loader = new BindingModuleLoader();
       loader.allowEntityResolution();
       final Set<IModule> modules = new HashSet<>();
       for (File source : getSources().collect(Collectors.toList())) {

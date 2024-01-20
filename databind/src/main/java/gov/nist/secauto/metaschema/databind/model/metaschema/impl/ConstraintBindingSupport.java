@@ -238,7 +238,7 @@ public final class ConstraintBindingSupport {
       @NonNull ISource source) {
     IIndexHasKeyConstraint.Builder builder = IIndexHasKeyConstraint.builder()
         .name(ObjectUtils.requireNonNull(obj.getName()));
-    applyCommonValues(obj, null, source, builder);
+    applyCommonValues(obj, obj.getTarget(), source, builder);
     handleKeyConstraints(ObjectUtils.requireNonNull(obj.getKeyFields()), builder);
     return builder.build();
   }
@@ -269,7 +269,7 @@ public final class ConstraintBindingSupport {
       @NonNull TargetedMatchesConstraint obj,
       @NonNull ISource source) {
     IMatchesConstraint.Builder builder = IMatchesConstraint.builder();
-    applyCommonValues(obj, null, source, builder);
+    applyCommonValues(obj, obj.getTarget(), source, builder);
 
     Pattern regex = pattern(obj.getRegex());
     if (regex != null) {
@@ -291,7 +291,7 @@ public final class ConstraintBindingSupport {
       @NonNull ISource source) {
     IIndexConstraint.Builder builder = IIndexConstraint.builder()
         .name(ObjectUtils.requireNonNull(obj.getName()));
-    applyCommonValues(obj, null, source, builder);
+    applyCommonValues(obj, obj.getTarget(), source, builder);
     handleKeyConstraints(ObjectUtils.requireNonNull(obj.getKeyFields()), builder);
 
     return builder.build();
@@ -302,7 +302,7 @@ public final class ConstraintBindingSupport {
       @NonNull AssemblyConstraints.HasCardinality obj,
       @NonNull ISource source) {
     ICardinalityConstraint.Builder builder = ICardinalityConstraint.builder();
-    applyCommonValues(obj, null, source, builder);
+    applyCommonValues(obj, obj.getTarget(), source, builder);
 
     BigInteger minOccurs = obj.getMinOccurs();
     if (minOccurs != null) {
@@ -322,7 +322,7 @@ public final class ConstraintBindingSupport {
       @NonNull AssemblyConstraints.Unique obj,
       @NonNull ISource source) {
     IUniqueConstraint.Builder builder = IUniqueConstraint.builder();
-    applyCommonValues(obj, null, source, builder);
+    applyCommonValues(obj, obj.getTarget(), source, builder);
     handleKeyConstraints(ObjectUtils.requireNonNull(obj.getKeyFields()), builder);
 
     return builder.build();
