@@ -29,5 +29,6 @@ package gov.nist.secauto.metaschema.databind.model.metaschema;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 
 public interface IBindingInstanceModelNamedGrouped extends IBindingInstanceModelNamed, INamedModelInstanceGrouped {
-  // no additional methods
+  @Override
+  IBindingDefinitionAssembly getContainingDefinition();
 }

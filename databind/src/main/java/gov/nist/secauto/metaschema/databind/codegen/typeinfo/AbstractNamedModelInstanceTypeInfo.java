@@ -35,10 +35,10 @@ import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
@@ -112,12 +112,12 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
     INamedModelInstanceAbsolute instance = getInstance();
 
     int minOccurs = instance.getMinOccurs();
-    if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
+    if (minOccurs != IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS) {
       annotation.addMember("minOccurs", "$L", minOccurs);
     }
 
     int maxOccurs = instance.getMaxOccurs();
-    if (maxOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
+    if (maxOccurs != IGroupable.DEFAULT_GROUP_AS_MAX_OCCURS) {
       annotation.addMember("maxOccurs", "$L", maxOccurs);
     }
     if (maxOccurs == -1 || maxOccurs > 1) {

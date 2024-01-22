@@ -45,7 +45,7 @@ public @interface XmlSchema {
    * The value "##none" was chosen because ## is not a valid sequence in
    * xs:anyURI.
    */
-  String NO_LOCATION = Constants.NO_STRING_VALUE;
+  String NO_LOCATION = ModelUtil.NO_STRING_VALUE;
 
   /**
    * Defines the XML namespace URI and prefix to use for this model. If a prefix
@@ -62,7 +62,7 @@ public @interface XmlSchema {
    *
    * @return a namespace string in the form of a URI
    */
-  String namespace() default Constants.NO_STRING_VALUE;
+  String namespace() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The location of the associated XML schema.

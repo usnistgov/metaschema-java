@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.core.model.xml;
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.AbstractLoader;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
@@ -89,11 +89,11 @@ public class ConstraintLoader
   private static final Map<QName,
       Handler<Pair<ISource, List<ITargetedConstaints>>>> SCOPE_OBJECT_MAPPING = ObjectUtils.notNull(
           Map.ofEntries(
-              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "assembly"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "assembly"),
                   ConstraintLoader::handleScopedAssembly),
-              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "field"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "field"),
                   ConstraintLoader::handleScopedField),
-              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "flag"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "flag"),
                   ConstraintLoader::handleScopedFlag)));
 
   @NonNull

@@ -38,7 +38,7 @@ import gov.nist.secauto.metaschema.core.model.IContainerModel;
 import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
 import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
 import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelAssembly;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
@@ -72,7 +72,7 @@ class XmlInlineAssemblyDefinition
         IChoiceInstance,
         IChoiceGroupInstance>,
     IFeatureContainerFlag<IFlagInstance>,
-    IFeatureInlinedDefinition<IAssemblyDefinition, IAssemblyInstanceAbsolute> {
+    IFeatureDefinitionInstanceInlined<IAssemblyDefinition, IAssemblyInstanceAbsolute> {
   @NonNull
   private final InlineAssemblyDefinitionType xmlObject;
   @NonNull

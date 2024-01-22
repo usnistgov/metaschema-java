@@ -31,8 +31,8 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
 import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -61,7 +61,7 @@ public class InstanceModelAssemblyInline
         InlineDefineAssembly,
         IBindingContainerModelAbsolute>
     implements IBindingInstanceModelAssemblyAbsolute, IBindingDefinitionAssembly,
-    IFeatureInlinedDefinition<IBindingDefinitionAssembly, IBindingInstanceModelAssemblyAbsolute>,
+    IFeatureDefinitionInstanceInlined<IBindingDefinitionAssembly, IBindingInstanceModelAssemblyAbsolute>,
     IFeatureBindingContainerFlag,
     IFeatureBindingContainerModelAssembly {
   @NonNull
@@ -192,14 +192,14 @@ public class InstanceModelAssemblyInline
   @Override
   public int getMinOccurs() {
     BigInteger min = getBinding().getMinOccurs();
-    return min == null ? MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
+    return min == null ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
   }
 
   @Override
   public int getMaxOccurs() {
     String max = getBinding().getMaxOccurs();
     return max == null
-        ? MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS
+        ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS
         : ModelSupport.maxOccurs(max);
   }
 }

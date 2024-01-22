@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
+import java.util.Locale;
+
 /**
  * A marker interface for a choice of allowed instances in a Metachema.
  */
@@ -70,5 +72,15 @@ public interface IChoiceInstance extends IModelInstanceAbsolute, IContainerModel
   @Override
   default boolean isEffectiveValueWrappedInXml() {
     throw new UnsupportedOperationException("not applicable");
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default String toCoordinates() {
+    return String.format("%s:%s-instance:%s@%d",
+        getContainingDefinition().getContainingModule().getShortName(),
+        getModelType().toString().toLowerCase(Locale.ROOT),
+        getContainingDefinition().getName(),
+        hashCode());
   }
 }

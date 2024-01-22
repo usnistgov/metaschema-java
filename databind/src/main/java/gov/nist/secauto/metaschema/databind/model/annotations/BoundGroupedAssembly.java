@@ -61,7 +61,7 @@ public @interface BoundGroupedAssembly {
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
   @NonNull
-  String formalName() default Constants.NO_STRING_VALUE;
+  String formalName() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Get the documentary description of the assembly.
@@ -72,7 +72,7 @@ public @interface BoundGroupedAssembly {
    * @return a markdown string or {@code "##none"} if no description is provided
    */
   @NonNull
-  String description() default Constants.NO_STRING_VALUE;
+  String description() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The model name to use for singleton values. This name will be used for
@@ -84,7 +84,7 @@ public @interface BoundGroupedAssembly {
    * @return the name or {@code "##none"} if no use name is provided
    */
   @NonNull
-  String useName() default Constants.NO_STRING_VALUE;
+  String useName() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The binary use name of the assembly.
@@ -104,7 +104,7 @@ public @interface BoundGroupedAssembly {
    * @return the namespace
    */
   @NonNull
-  String namespace() default Constants.DEFAULT_STRING_VALUE;
+  String namespace() default ModelUtil.DEFAULT_STRING_VALUE;
 
   /**
    * Get any remarks for this field.
@@ -112,7 +112,7 @@ public @interface BoundGroupedAssembly {
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull
-  String remarks() default Constants.NO_STRING_VALUE;
+  String remarks() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Get any remarks for this field.
@@ -121,7 +121,7 @@ public @interface BoundGroupedAssembly {
    *         provided
    */
   @NonNull
-  String discriminatorValue() default Constants.NO_STRING_VALUE;
+  String discriminatorValue() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The bound class associated with this assembly.

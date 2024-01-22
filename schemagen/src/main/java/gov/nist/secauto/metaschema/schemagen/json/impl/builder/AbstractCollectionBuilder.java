@@ -31,11 +31,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.schemagen.json.IDataTypeJsonSchema;
 import gov.nist.secauto.metaschema.schemagen.json.IDefineableJsonSchema.IKey;
@@ -51,8 +51,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public abstract class AbstractCollectionBuilder<T extends AbstractCollectionBuilder<T>>
     extends AbstractBuilder<T>
     implements IModelInstanceBuilder<T> {
-  private int minOccurrence = MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
-  private int maxOccurrence = MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
+  private int minOccurrence = IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS;
+  private int maxOccurrence = IGroupable.DEFAULT_GROUP_AS_MAX_OCCURS;
 
   @NonNull
   private final List<IModelInstanceBuilder.IType> types = new LinkedList<>();

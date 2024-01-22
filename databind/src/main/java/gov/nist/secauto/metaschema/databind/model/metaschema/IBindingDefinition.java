@@ -29,5 +29,6 @@ package gov.nist.secauto.metaschema.databind.model.metaschema;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 
 public interface IBindingDefinition extends IBindingModelElement, IDefinition {
-  // no additional methods
+  @Override
+  IBindingModule getContainingModule();
 }

@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@SuppressWarnings("PMD.DataClass") // not a data class
 public final class DeserializationFeature<V>
     extends AbstractConfigurationFeature<V> {
   public static final int YAML_CODEPOINT_LIMIT_DEFAULT = Integer.MAX_VALUE - 1; // 2 GB

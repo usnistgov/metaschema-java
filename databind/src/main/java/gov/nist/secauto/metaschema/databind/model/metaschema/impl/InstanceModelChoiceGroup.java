@@ -29,9 +29,10 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IContainerModelSupport;
 import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelGrouped;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.IGroupAs;
@@ -109,14 +110,14 @@ public class InstanceModelChoiceGroup
   @Override
   public int getMinOccurs() {
     BigInteger min = getBinding().getMinOccurs();
-    return min == null ? MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
+    return min == null ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
   }
 
   @Override
   public int getMaxOccurs() {
     String max = getBinding().getMaxOccurs();
     return max == null
-        ? MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS
+        ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS
         : ModelSupport.maxOccurs(max);
   }
 
@@ -128,7 +129,7 @@ public class InstanceModelChoiceGroup
   @Override
   public String getJsonDiscriminatorProperty() {
     String discriminator = getBinding().getDiscriminator();
-    return discriminator == null ? MetaschemaModelConstants.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME : discriminator;
+    return discriminator == null ? IChoiceGroupInstance.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME : discriminator;
   }
 
   @Override

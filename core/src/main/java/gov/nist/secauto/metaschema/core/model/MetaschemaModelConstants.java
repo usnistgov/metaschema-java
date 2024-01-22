@@ -26,25 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 public final class MetaschemaModelConstants {
-  public static final boolean DEFAULT_FLAG_REQUIRED = false;
-  public static final boolean DEFAULT_FIELD_IN_XML_WRAPPED = true;
-  // REFACTOR: rename to DEFAULT_MIN_OCCURS
-  public static final int DEFAULT_GROUP_AS_MIN_OCCURS = 0;
-  // REFACTOR: rename to DEFAULT_MAX_OCCURS
-  public static final int DEFAULT_GROUP_AS_MAX_OCCURS = 1;
-  public static final int DEFAULT_CHOICE_GROUP_GROUP_AS_MAX_OCCURS = -1;
-  @NonNull
-  public static final JsonGroupAsBehavior DEFAULT_JSON_GROUP_AS_BEHAVIOR = JsonGroupAsBehavior.SINGLETON_OR_LIST;
-  @NonNull
-  public static final XmlGroupAsBehavior DEFAULT_XML_GROUP_AS_BEHAVIOR = XmlGroupAsBehavior.UNGROUPED;
-  @NonNull
-  public static final String DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME = "object-type";
-
-  public static final String XML_NAMESPACE = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";
-
   public static final String METAPATH_FUNCTION_NAMESPACE = "http://csrc.nist.gov/ns/metaschema";
 
   private MetaschemaModelConstants() {

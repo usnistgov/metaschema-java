@@ -28,12 +28,12 @@ package gov.nist.secauto.metaschema.schemagen.json.impl.builder;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
 
 public class SingletonBuilder
     extends AbstractCollectionBuilder<SingletonBuilder> {
-  private int minOccurrence = MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
+  private int minOccurrence = IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   @Override
   protected SingletonBuilder thisBuilder() {

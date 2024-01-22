@@ -29,16 +29,16 @@ package gov.nist.secauto.metaschema.schemagen.json.impl.builder;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
 
 import java.util.List;
 
 public class SingletonOrListBuilder implements IModelInstanceBuilder<SingletonOrListBuilder> {
-  private int minOccurrence = MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
+  private int minOccurrence = IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS;
   private final ArrayBuilder arrayBuilder;
   private final SingletonBuilder singletonBuilder;
 

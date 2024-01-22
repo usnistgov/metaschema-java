@@ -52,7 +52,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @param <M>
  *          the Java type of the Metaschema module loaded by this loader
  */
-// REFACTOR: make an IModuleLoader interface
 public abstract class AbstractModuleLoader<T, M extends IModuleExtended<M, ?, ?, ?, ?>>
     extends AbstractLoader<M>
     implements IModuleLoader<M> {
@@ -119,7 +118,8 @@ public abstract class AbstractModuleLoader<T, M extends IModuleExtended<M, ?, ?,
 
     // now check if this Metaschema imports other metaschema
     List<URI> imports = getImports(binding);
-    @NonNull Map<URI, M> importedModules;
+    @NonNull
+    Map<URI, M> importedModules;
     if (imports.isEmpty()) {
       importedModules = ObjectUtils.notNull(Collections.emptyMap());
     } else {

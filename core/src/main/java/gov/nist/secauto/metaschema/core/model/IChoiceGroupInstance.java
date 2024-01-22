@@ -28,10 +28,26 @@ package gov.nist.secauto.metaschema.core.model;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 
+import java.util.Locale;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IChoiceGroupInstance
     extends IModelInstanceAbsolute, IContainerModelGrouped {
+
+  int DEFAULT_CHOICE_GROUP_GROUP_AS_MAX_OCCURS = -1;
+  @NonNull
+  String DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME = "object-type";
+
+  /**
+   * {@inheritDoc}
+   *
+   * @see #DEFAULT_CHOICE_GROUP_GROUP_AS_MAX_OCCURS
+   */
+  @Override
+  default int getMaxOccurs() {
+    return DEFAULT_CHOICE_GROUP_GROUP_AS_MAX_OCCURS;
+  }
 
   /**
    * Retrieve the Metaschema assembly definition on which this instance is
@@ -58,6 +74,7 @@ public interface IChoiceGroupInstance
    * Get the JSON property to use to discriminate between JSON objects.
    *
    * @return the discriminator property
+   * @see #DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME
    */
   @NonNull
   String getJsonDiscriminatorProperty();
@@ -71,5 +88,16 @@ public interface IChoiceGroupInstance
   default MarkupMultiline getRemarks() {
     // no remarks
     return null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default String toCoordinates() {
+    return String.format("%s:%s-instance:%s/%s@%d",
+        getContainingDefinition().getContainingModule().getShortName(),
+        getModelType().toString().toLowerCase(Locale.ROOT),
+        getContainingDefinition().getName(),
+        getGroupAsName(),
+        hashCode());
   }
 }

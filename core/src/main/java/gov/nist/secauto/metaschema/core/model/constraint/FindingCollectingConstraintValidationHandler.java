@@ -59,6 +59,12 @@ public class FindingCollectingConstraintValidationHandler
     return highestLevel;
   }
 
+  /**
+   * Add a finding to the collection of findings maintained by this instance.
+   *
+   * @param finding
+   *          the finding to add
+   */
   protected void addFinding(@NonNull ConstraintValidationFinding finding) {
     findings.add(finding);
 

@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupAsType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -45,7 +45,7 @@ public final class XmlModelParser {
 
   @NonNull
   public static JsonGroupAsBehavior getJsonGroupAsBehavior(@Nullable GroupAsType groupAs) {
-    JsonGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
+    JsonGroupAsBehavior retval = IGroupable.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
     if (groupAs != null && groupAs.isSetInJson()) {
       retval = ObjectUtils.notNull(groupAs.getInJson());
     }
@@ -54,7 +54,7 @@ public final class XmlModelParser {
 
   @NonNull
   public static XmlGroupAsBehavior getXmlGroupAsBehavior(@Nullable GroupAsType groupAs) {
-    XmlGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR;
+    XmlGroupAsBehavior retval = IGroupable.DEFAULT_XML_GROUP_AS_BEHAVIOR;
     if (groupAs != null && groupAs.isSetInXml()) {
       retval = ObjectUtils.notNull(groupAs.getInXml());
     }
@@ -62,7 +62,7 @@ public final class XmlModelParser {
   }
 
   public static int getMinOccurs(@Nullable BigInteger value) {
-    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
+    int retval = IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (value != null) {
       retval = value.intValueExact();
     }
@@ -70,7 +70,7 @@ public final class XmlModelParser {
   }
 
   public static int getMaxOccurs(@Nullable Object value) {
-    int retval = MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
+    int retval = IGroupable.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (value != null) {
       if (value instanceof String) {
         // unbounded

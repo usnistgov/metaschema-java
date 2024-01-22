@@ -24,24 +24,40 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.databind.model.annotations;
+package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
-// REFACTOR:combine with ModelUtil
-public final class Constants {
-  // TODO: replace NO_STRING_VALUE with NULL_VALUE where possible. URIs will not
-  // allow NULL_VALUE.
-  public static final String NO_STRING_VALUE = "##none";
-  public static final String DEFAULT_STRING_VALUE = "##default";
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
+import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinition;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstance;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+// REFACTOR: Try to eliminate this interface in favor of IFeatureInlinedDefinitionInstance
+public interface IFeatureBindingDefinitionInline<
+    DEFINITION extends IBindingDefinition,
+    INSTANCE extends IBindingInstance & INamedInstance>
+    extends IBindingDefinition, IBindingInstance,
+    IFeatureDefinitionInstanceInlined<DEFINITION, INSTANCE> {
+
+  @Override
+  @NonNull
+  default IBindingModule getContainingModule() {
+    // this is the same as IBoundInstance, but is needed since IBoundDefinition
+    // and IBoundInstance both declare it
+    return getContainingDefinition().getContainingModule();
+  }
+
   /**
-   * A placeholder for a {@code null} value for use in annotations, which cannot
-   * be null by default.
+   * {@inheritDoc}
    * <p>
-   * Use of {@code "\u0000"} simple substitute for {@code null} to allow
-   * implementations to recognize the "no default value" state.
+   * Use the effective name of the instance.
    */
-  public static final String NULL_VALUE = "\u0000";
-
-  private Constants() {
-    // disable construction
+  @Override
+  default String getJsonName() {
+    // this is the same as INamedModelElement, but is needed since IBoundProperty
+    // also declares it
+    return getEffectiveName();
   }
 }

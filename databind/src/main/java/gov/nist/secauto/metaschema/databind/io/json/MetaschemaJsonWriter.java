@@ -117,6 +117,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
         item = fieldValue.getDefaultValue();
       }
     } else if (item.equals(fieldValue.getResolvedDefaultValue())) {
+      // same as default
       item = null;
     }
 

@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
@@ -109,28 +108,6 @@ public interface IBoundInstanceModelFieldScalar
   default IBoundInstanceFlag getJsonValueKeyFlagInstance() {
     // no bound value, no value key name
     return null;
-  }
-
-  /**
-   * Generates a "coordinate" string for the inline field instance.
-   *
-   * The coordinates consist of the:
-   * <ul>
-   * <li>containing Metaschema module's short name</li>
-   * <li>name</li>
-   * <li>hash code</li>
-   * </ul>
-   *
-   * @return the coordinate
-   */
-  @Override
-  @NonNull
-  default String toCoordinates() {
-    IDefinition definition = getDefinition();
-    return ObjectUtils.notNull(String.format("Inline Field(%s:%s:%d)",
-        getContainingDefinition().getContainingModule().getShortName(),
-        definition.getName(),
-        hashCode()));
   }
 
   /**

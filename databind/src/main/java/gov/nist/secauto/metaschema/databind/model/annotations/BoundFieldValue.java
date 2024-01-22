@@ -58,13 +58,13 @@ public @interface BoundFieldValue {
   /**
    * The default value of the field represented as a string.
    * <p>
-   * The value {@link Constants#NULL_VALUE} is used to indicate if no default
+   * The value {@link ModelUtil#NULL_VALUE} is used to indicate if no default
    * value is provided.
    *
    * @return the default value
    */
   @NonNull
-  String defaultValue() default Constants.NULL_VALUE;
+  String defaultValue() default ModelUtil.NULL_VALUE;
 
   /**
    * The name of the JSON property that contains the field's value. If this value
@@ -77,5 +77,5 @@ public @interface BoundFieldValue {
    * @return the name
    */
   @NonNull
-  String valueKeyName() default Constants.NO_STRING_VALUE;
+  String valueKeyName() default ModelUtil.NO_STRING_VALUE;
 }

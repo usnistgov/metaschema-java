@@ -47,7 +47,6 @@ public interface IContainerModel extends IContainer {
    *
    * @return the containing Metaschema module definition
    */
-  // REFACTOR: can this be removed?
   @NonNull
   IAssemblyDefinition getOwningDefinition();
 

@@ -44,9 +44,9 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.impl.AnnotationGenerator;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
-import gov.nist.secauto.metaschema.databind.model.annotations.Constants;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
+import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.util.Set;
 
@@ -100,7 +100,7 @@ public class FlagInstanceTypeInfoImpl
     String namespace = instance.getXmlNamespace();
     if (namespace != null) {
       if (namespace.equals(instance.getContainingModule().getXmlNamespace().toASCIIString())) {
-        namespace = Constants.DEFAULT_STRING_VALUE;
+        namespace = ModelUtil.DEFAULT_STRING_VALUE;
       }
       annotation.addMember("namespace", "$S", namespace);
     }

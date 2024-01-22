@@ -38,12 +38,20 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IGroupable extends IInstanceAbsolute, IKeyed {
 
+  int DEFAULT_GROUP_AS_MIN_OCCURS = 0;
+  int DEFAULT_GROUP_AS_MAX_OCCURS = 1;
+  @NonNull
+  JsonGroupAsBehavior DEFAULT_JSON_GROUP_AS_BEHAVIOR = JsonGroupAsBehavior.SINGLETON_OR_LIST;
+  @NonNull
+  XmlGroupAsBehavior DEFAULT_XML_GROUP_AS_BEHAVIOR = XmlGroupAsBehavior.UNGROUPED;
+
   /**
    * Get the minimum cardinality for this associated instance. This value must be
    * less than or equal to the maximum cardinality returned by
    * {@link #getMaxOccurs()}.
    *
    * @return {@code 0} or a positive integer value
+   * @see #DEFAULT_GROUP_AS_MIN_OCCURS
    */
   int getMinOccurs();
 
@@ -53,6 +61,7 @@ public interface IGroupable extends IInstanceAbsolute, IKeyed {
    * {@link #getMinOccurs()}, or {@code -1} if unbounded.
    *
    * @return a positive integer value or {@code -1} if unbounded
+   * @see #DEFAULT_GROUP_AS_MAX_OCCURS
    */
   int getMaxOccurs();
 
@@ -118,9 +127,15 @@ public interface IGroupable extends IInstanceAbsolute, IKeyed {
   /**
    * Gets the configured JSON group-as strategy. A JSON group-as strategy is only
    * required when {@link #getMaxOccurs()} &gt; 1.
+   * <p>
+   * The default for this method is {@link JsonGroupAsBehavior#NONE}, since the
+   * default behavior is to have no grouping. If {@link #getMaxOccurs()} is
+   * greater than {@code 1}, then the default behavior is
+   * {@code #DEFAULT_JSON_GROUP_AS_BEHAVIOR}.
    *
    * @return the JSON group-as strategy, or {@code JsonGroupAsBehavior#NONE} if
    *         {@link #getMaxOccurs()} = 1
+   * @see #DEFAULT_JSON_GROUP_AS_BEHAVIOR
    */
   @NonNull
   default JsonGroupAsBehavior getJsonGroupAsBehavior() {
@@ -133,10 +148,11 @@ public interface IGroupable extends IInstanceAbsolute, IKeyed {
    *
    * @return the JSON group-as strategy, or {@code XmlGroupAsBehavior#UNGROUPED}
    *         if {@link #getMaxOccurs()} = 1
+   * @see #DEFAULT_XML_GROUP_AS_BEHAVIOR
    */
   @NonNull
   default XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    return XmlGroupAsBehavior.UNGROUPED;
+    return DEFAULT_XML_GROUP_AS_BEHAVIOR;
   }
 
   /**

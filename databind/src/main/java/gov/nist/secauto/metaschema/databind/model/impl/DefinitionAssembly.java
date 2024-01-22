@@ -84,17 +84,13 @@ public class DefinitionAssembly
 
     String rootLocalName = ModelUtil.resolveNoneOrDefault(getAnnotation().rootName(), null);
     this.xmlRootQName = ObjectUtils.notNull(Lazy.lazy(() -> {
-      QName retval;
-      if (rootLocalName == null) {
-        retval = null;
-      } else {
+      QName retval = null;
+      if (rootLocalName != null) {
         String namespace = ModelUtil.resolveOptionalNamespace(getAnnotation().rootNamespace());
         if (namespace == null) {
           namespace = getContainingModule().getXmlNamespace().toASCIIString();
         }
-        retval = new QName(
-            namespace,
-            rootLocalName);
+        retval = new QName(namespace, rootLocalName);
       }
       return retval;
     }));

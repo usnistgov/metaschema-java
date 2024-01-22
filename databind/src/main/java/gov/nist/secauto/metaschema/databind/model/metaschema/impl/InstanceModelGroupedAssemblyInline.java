@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
 import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -58,7 +58,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 public class InstanceModelGroupedAssemblyInline
     extends AbstractInstanceModelGrouped<AssemblyModel.ChoiceGroup.DefineAssembly>
     implements IBindingInstanceModelAssemblyGrouped, IBindingDefinitionAssembly,
-    IFeatureInlinedDefinition<IBindingDefinitionAssembly, IAssemblyInstanceGrouped>,
+    IFeatureDefinitionInstanceInlined<IBindingDefinitionAssembly, IAssemblyInstanceGrouped>,
     IFeatureBindingContainerModelAssembly,
     IFeatureBindingContainerFlag {
   @NonNull

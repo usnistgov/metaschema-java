@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.core.model;
 import javax.xml.namespace.QName;
 
 public interface IFieldInstance extends IField, INamedModelInstance, IValuedInstance {
+  boolean DEFAULT_FIELD_IN_XML_WRAPPED = true;
+
   @Override
   default String getXmlNamespace() {
     return INamedModelInstance.super.getXmlNamespace();
@@ -47,6 +49,9 @@ public interface IFieldInstance extends IField, INamedModelInstance, IValuedInst
    *
    * @return {@code true} if an XML wrapper is required, or {@code false}
    *         otherwise
+   * @see #DEFAULT_FIELD_IN_XML_WRAPPED
    */
-  boolean isInXmlWrapped();
+  default boolean isInXmlWrapped() {
+    return DEFAULT_FIELD_IN_XML_WRAPPED;
+  }
 }

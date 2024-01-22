@@ -38,7 +38,6 @@ import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.impl.AnnotationGenerator;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
@@ -89,7 +88,7 @@ public class FieldInstanceTypeInfoImpl
     IFieldInstance instance = getInstance();
 
     // next build the field-specific attributes
-    if (MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED != instance.isInXmlWrapped()) {
+    if (IFieldInstance.DEFAULT_FIELD_IN_XML_WRAPPED != instance.isInXmlWrapped()) {
       annotation.addMember("inXmlWrapped", "$L", instance.isInXmlWrapped());
     }
 

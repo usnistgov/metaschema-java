@@ -106,11 +106,11 @@ public final class ConstraintSupport {
             .map(annotation -> ConstraintFactory.newIndexConstraint(annotation, source))
             .forEachOrdered(constraint -> set.addConstraint(constraint));
 
-        Arrays.stream(assemblyAnnotation.isUnique())
+        Arrays.stream(assemblyAnnotation.unique())
             .map(annotation -> ConstraintFactory.newUniqueConstraint(annotation, source))
             .forEachOrdered(constraint -> set.addConstraint(constraint));
 
-        Arrays.stream(assemblyAnnotation.hasCardinality())
+        Arrays.stream(assemblyAnnotation.cardinality())
             .map(annotation -> ConstraintFactory.newCardinalityConstraint(annotation, source))
             .forEachOrdered(constraint -> set.addConstraint(constraint));
       } catch (MetapathException ex) {

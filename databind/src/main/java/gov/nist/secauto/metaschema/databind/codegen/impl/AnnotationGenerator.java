@@ -81,7 +81,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * A variety of utility functions for creating Module annotations.
  */
 @SuppressWarnings({
-    "PMD.GodClass" // utility class
+    "PMD.GodClass", "PMD.CouplingBetweenObjects" // utility class
 })
 public final class AnnotationGenerator {
   private static final Logger LOGGER = LogManager.getLogger(AnnotationGenerator.class);
@@ -350,7 +350,7 @@ public final class AnnotationGenerator {
         constraintAnnotation.addMember("remarks", "$S", remarks.toMarkdown());
       }
 
-      annotation.addMember("isUnique", "$L", constraintAnnotation.build());
+      annotation.addMember("unique", "$L", constraintAnnotation.build());
     }
   }
 
@@ -469,7 +469,7 @@ public final class AnnotationGenerator {
         constraintAnnotation.addMember("maxOccurs", "$L", maxOccurs);
       }
 
-      annotation.addMember("hasCardinality", "$L", constraintAnnotation.build());
+      annotation.addMember("cardinality", "$L", constraintAnnotation.build());
 
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {

@@ -55,7 +55,7 @@ public @interface BoundFlag {
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
   @NonNull
-  String formalName() default Constants.NO_STRING_VALUE;
+  String formalName() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Get the documentary description of the flag.
@@ -66,7 +66,7 @@ public @interface BoundFlag {
    * @return a markdown string or {@code "##none"} if no description is provided
    */
   @NonNull
-  String description() default Constants.NO_STRING_VALUE;
+  String description() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The model name to use for singleton values. This name will be used for
@@ -78,7 +78,7 @@ public @interface BoundFlag {
    * @return the name
    */
   @NonNull
-  String name() default Constants.NO_STRING_VALUE;
+  String name() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The binary use name of the flag.
@@ -99,18 +99,18 @@ public @interface BoundFlag {
    * @return the namespace
    */
   @NonNull
-  String namespace() default Constants.NO_STRING_VALUE;
+  String namespace() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The default value of the flag represented as a string.
    * <p>
-   * The value {@link Constants#NULL_VALUE} is used to indicate if no default
+   * The value {@link ModelUtil#NULL_VALUE} is used to indicate if no default
    * value is provided.
    *
    * @return the default value
    */
   @NonNull
-  String defaultValue() default Constants.NULL_VALUE;
+  String defaultValue() default ModelUtil.NULL_VALUE;
 
   /**
    * Specifies if the XML Schema attribute is optional or required. If true, then
@@ -135,7 +135,7 @@ public @interface BoundFlag {
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull
-  String remarks() default Constants.NO_STRING_VALUE;
+  String remarks() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Get the value constraints defined for this Metaschema flag inline definition.

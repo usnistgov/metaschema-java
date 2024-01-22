@@ -34,6 +34,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFlagInstance extends IFlag, IValuedInstance, IInstanceAbsolute {
 
+  boolean DEFAULT_FLAG_REQUIRED = false;
+
   @Override
   IContainerFlag getParentContainer();
 
@@ -57,6 +59,9 @@ public interface IFlagInstance extends IFlag, IValuedInstance, IInstanceAbsolute
    * Determines if a flag value is required to be provided.
    *
    * @return {@code true} if a value is required, or {@code false} otherwise
+   * @see #DEFAULT_FLAG_REQUIRED
    */
-  boolean isRequired();
+  default boolean isRequired() {
+    return DEFAULT_FLAG_REQUIRED;
+  }
 }

@@ -40,7 +40,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 public interface IAttributable {
   @NonNull
-  String DEFAULT_PROPERY_NAMESPACE = MetaschemaModelConstants.XML_NAMESPACE;
+  String DEFAULT_PROPERY_NAMESPACE = IModule.XML_NAMESPACE;
 
   @NonNull
   Map<Key, Set<String>> EMPTY = CollectionUtil.emptyMap();

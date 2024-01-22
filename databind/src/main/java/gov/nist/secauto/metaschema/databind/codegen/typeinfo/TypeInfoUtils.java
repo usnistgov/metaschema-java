@@ -31,7 +31,7 @@ import com.squareup.javapoet.AnnotationSpec;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.annotations.Constants;
+import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -63,7 +63,7 @@ public final class TypeInfoUtils {
 
     String namespace = instance.getXmlNamespace();
     if (namespace == null) {
-      annotation.addMember("namespace", "$S", Constants.NO_STRING_VALUE);
+      annotation.addMember("namespace", "$S", ModelUtil.NO_STRING_VALUE);
     } else if (!instance.getContainingModule().getXmlNamespace().toASCIIString().equals(namespace)) {
       annotation.addMember("namespace", "$S", namespace);
     } // otherwise use the ##default

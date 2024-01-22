@@ -40,6 +40,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IModule {
 
+  String XML_NAMESPACE = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";
+
   /**
    * Retrieves the location where the Metaschema module was loaded from.
    *

@@ -294,7 +294,6 @@ public class DefinitionField
 
     @Override
     public String getJsonName() {
-      // REFACTOR: Is this correct?
       return getEffectiveJsonValueKeyName();
     }
   }

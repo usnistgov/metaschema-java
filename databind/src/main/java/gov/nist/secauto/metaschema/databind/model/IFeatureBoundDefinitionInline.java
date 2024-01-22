@@ -26,16 +26,16 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-// REFACTOR: Try to eliminate this interface in favor of IFeatureInlinedDefinition
+// REFACTOR: Try to eliminate this interface in favor of IFeatureInlinedDefinitionInstance
 public interface IFeatureBoundDefinitionInline<
     DEFINITION extends IBoundDefinition,
     INSTANCE extends IBoundInstanceNamed>
     extends IBoundDefinition, IBoundInstanceNamed,
-    IFeatureInlinedDefinition<DEFINITION, INSTANCE> {
+    IFeatureDefinitionInstanceInlined<DEFINITION, INSTANCE> {
   //
   // @Override
   // default Object getEffectiveDefaultValue() {

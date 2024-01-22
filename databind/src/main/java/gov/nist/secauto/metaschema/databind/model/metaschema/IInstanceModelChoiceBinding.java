@@ -33,4 +33,7 @@ public interface IInstanceModelChoiceBinding
 
   @Override
   IBindingDefinitionAssembly getOwningDefinition();
+
+  @Override
+  IBindingDefinitionAssembly getContainingDefinition();
 }

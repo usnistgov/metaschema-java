@@ -69,5 +69,5 @@ public @interface Module {
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull
-  String remarks() default Constants.NO_STRING_VALUE;
+  String remarks() default ModelUtil.NO_STRING_VALUE;
 }

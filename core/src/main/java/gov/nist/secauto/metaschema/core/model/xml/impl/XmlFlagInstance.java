@@ -34,7 +34,6 @@ import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstanc
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FlagReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -151,7 +150,7 @@ class XmlFlagInstance
   @Override
   public boolean isRequired() {
     return getXmlObject().isSetRequired() ? getXmlObject().getRequired()
-        : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
+        : IFlagInstance.DEFAULT_FLAG_REQUIRED;
   }
 
   // -------------------------------------

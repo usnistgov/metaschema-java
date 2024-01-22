@@ -41,6 +41,19 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class ModelUtil {
+  // TODO: replace NO_STRING_VALUE with NULL_VALUE where possible. URIs will not
+  // allow NULL_VALUE.
+  public static final String NO_STRING_VALUE = "##none";
+  public static final String DEFAULT_STRING_VALUE = "##default";
+  /**
+   * A placeholder for a {@code null} value for use in annotations, which cannot
+   * be null by default.
+   * <p>
+   * Use of {@code "\u0000"} simple substitute for {@code null} to allow
+   * implementations to recognize the "no default value" state.
+   */
+  public static final String NULL_VALUE = "\u0000";
+
   private ModelUtil() {
     // disable construction
   }
@@ -87,9 +100,9 @@ public final class ModelUtil {
   @Nullable
   public static String resolveNoneOrDefault(@Nullable String value, @Nullable String defaultValue) {
     String retval;
-    if (value == null || Constants.DEFAULT_STRING_VALUE.equals(value)) {
+    if (value == null || DEFAULT_STRING_VALUE.equals(value)) {
       retval = defaultValue;
-    } else if (Constants.NO_STRING_VALUE.equals(value)) {
+    } else if (NO_STRING_VALUE.equals(value)) {
       retval = null; // NOPMD - intentional
     } else {
       retval = value;
@@ -123,10 +136,10 @@ public final class ModelUtil {
    */
   private static String resolveNamespace(String value, boolean allowNone) {
     String retval;
-    if (value == null || Constants.DEFAULT_STRING_VALUE.equals(value)) {
+    if (value == null || DEFAULT_STRING_VALUE.equals(value)) {
       // get namespace from the metaschema
       retval = null;
-    } else if (allowNone && Constants.NO_STRING_VALUE.equals(value)) {
+    } else if (allowNone && NO_STRING_VALUE.equals(value)) {
       retval = ""; // NOPMD - intentional
     } else {
       retval = value;
@@ -144,7 +157,7 @@ public final class ModelUtil {
    */
   @Nullable
   public static String resolveNoneOrValue(@NonNull String value) {
-    return Constants.NO_STRING_VALUE.equals(value) ? null : value;
+    return NO_STRING_VALUE.equals(value) ? null : value;
   }
 
   /**
@@ -189,7 +202,7 @@ public final class ModelUtil {
   @Nullable
   public static Object resolveDefaultValue(@NonNull String defaultValue, IDataTypeAdapter<?> adapter) {
     Object retval = null;
-    if (!Constants.NULL_VALUE.equals(defaultValue)) {
+    if (!NULL_VALUE.equals(defaultValue)) {
       retval = adapter.parse(defaultValue);
     }
     return retval;
@@ -202,14 +215,14 @@ public final class ModelUtil {
   public static Object resolveNullOrValue(
       @NonNull String defaultValue,
       @NonNull IDataTypeAdapter<?> javaTypeAdapter) {
-    return Constants.NULL_VALUE.equals(defaultValue)
+    return NULL_VALUE.equals(defaultValue)
         ? null
         : javaTypeAdapter.parse(defaultValue);
   }
 
   @NonNull
   public static IGroupAs groupAs(@NonNull GroupAs groupAs) {
-    return Constants.NULL_VALUE.equals(groupAs.name())
+    return NULL_VALUE.equals(groupAs.name())
         ? IGroupAs.SINGLETON_GROUP_AS
         : new DefaultGroupAs(groupAs);
   }

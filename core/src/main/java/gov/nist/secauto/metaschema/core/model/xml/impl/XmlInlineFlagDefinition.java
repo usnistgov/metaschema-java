@@ -32,11 +32,10 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractInstance;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
@@ -54,7 +53,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 class XmlInlineFlagDefinition
     extends AbstractInstance<IModelDefinition>
     implements IFlagInstance, IFlagDefinition,
-    IFeatureInlinedDefinition<IFlagDefinition, IFlagInstance> {
+    IFeatureDefinitionInstanceInlined<IFlagDefinition, IFlagInstance> {
   @NonNull
   private final InlineFlagDefinitionType xmlFlag;
   @Nullable
@@ -170,7 +169,7 @@ class XmlInlineFlagDefinition
   @Override
   public boolean isRequired() {
     return getXmlObject().isSetRequired() ? getXmlObject().getRequired()
-        : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
+        : IFlagInstance.DEFAULT_FLAG_REQUIRED;
   }
 
   @SuppressWarnings("null")

@@ -38,7 +38,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Locale;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -102,15 +101,6 @@ public abstract class AbstractBoundDefinitionModelComplex<A extends Annotation>
 
   @Override
   @NonNull
-  public String toCoordinates() {
-    return ObjectUtils.notNull(String.format("%s(%s) bound as %s",
-        getModelType().name().toLowerCase(Locale.ROOT),
-        getName(),
-        getBoundClass().getName()));
-  }
-
-  @Override
-  @NonNull
   public IBindingContext getBindingContext() {
     return bindingContext;
   }
@@ -130,7 +120,8 @@ public abstract class AbstractBoundDefinitionModelComplex<A extends Annotation>
   public <CLASS> CLASS newInstance() {
     Class<?> clazz = getBoundClass();
     try {
-      @SuppressWarnings("unchecked") Constructor<CLASS> constructor
+      @SuppressWarnings("unchecked")
+      Constructor<CLASS> constructor
           = (Constructor<CLASS>) clazz.getDeclaredConstructor();
       return ObjectUtils.notNull(constructor.newInstance());
     } catch (NoSuchMethodException ex) {

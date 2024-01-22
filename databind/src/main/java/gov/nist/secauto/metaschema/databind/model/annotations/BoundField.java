@@ -31,7 +31,8 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -72,7 +73,7 @@ public @interface BoundField {
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
   @NonNull
-  String formalName() default Constants.NO_STRING_VALUE;
+  String formalName() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Get the documentary description of the field.
@@ -83,7 +84,7 @@ public @interface BoundField {
    * @return a markdown string or {@code "##none"} if no description is provided
    */
   @NonNull
-  String description() default Constants.NO_STRING_VALUE;
+  String description() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The model name to use for JSON/YAML singleton values and associated XML
@@ -96,7 +97,7 @@ public @interface BoundField {
    * @return the name
    */
   @NonNull
-  String useName() default Constants.NO_STRING_VALUE;
+  String useName() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The binary use name of the field.
@@ -118,13 +119,13 @@ public @interface BoundField {
   /**
    * The default value of the field represented as a string.
    * <p>
-   * The value {@link Constants#NULL_VALUE} is used to indicate if no default
+   * The value {@link ModelUtil#NULL_VALUE} is used to indicate if no default
    * value is provided.
    *
    * @return the default value
    */
   @NonNull
-  String defaultValue() default Constants.NULL_VALUE;
+  String defaultValue() default ModelUtil.NULL_VALUE;
 
   /**
    * The namespace to use for associated XML elements.
@@ -134,7 +135,7 @@ public @interface BoundField {
    *
    * @return the namespace
    */
-  String namespace() default Constants.DEFAULT_STRING_VALUE;
+  String namespace() default ModelUtil.DEFAULT_STRING_VALUE;
 
   /**
    * If the data type allows it, determines if the field's value must be wrapped
@@ -142,7 +143,7 @@ public @interface BoundField {
    *
    * @return {@code true} if the field must be wrapped, or {@code false} otherwise
    */
-  boolean inXmlWrapped() default MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
+  boolean inXmlWrapped() default IFieldInstance.DEFAULT_FIELD_IN_XML_WRAPPED;
 
   /**
    * A non-negative number that indicates the minimum occurrence of the model
@@ -150,14 +151,14 @@ public @interface BoundField {
    *
    * @return a non-negative number
    */
-  int minOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
+  int minOccurs() default IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   /**
    * A number that indicates the maximum occurrence of the model instance.
    *
    * @return a positive number or {@code -1} to indicate "unbounded"
    */
-  int maxOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
+  int maxOccurs() default IGroupable.DEFAULT_GROUP_AS_MAX_OCCURS;
 
   /**
    * Get any remarks for this field.
@@ -165,7 +166,7 @@ public @interface BoundField {
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull
-  String remarks() default Constants.NO_STRING_VALUE;
+  String remarks() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Used to provide grouping information.
@@ -177,7 +178,7 @@ public @interface BoundField {
    *         {@code null} {@link GroupAs#name()}
    */
   @NonNull
-  GroupAs groupAs() default @GroupAs(name = Constants.NULL_VALUE);
+  GroupAs groupAs() default @GroupAs(name = ModelUtil.NULL_VALUE);
 
   /**
    * Get the value constraints defined for this Metaschema field inline

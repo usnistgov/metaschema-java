@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -124,28 +123,6 @@ public interface IBoundInstanceFlag
   default IBoundInstanceFlag getInlineInstance() {
     // always inline
     return this;
-  }
-
-  /**
-   * Generates a "coordinate" string for the inline flag instance.
-   *
-   * The coordinates consist of the:
-   * <ul>
-   * <li>containing Metaschema module's short name</li>
-   * <li>name</li>
-   * <li>hash code</li>
-   * </ul>
-   *
-   * @return the coordinate
-   */
-  @Override
-  @NonNull
-  default String toCoordinates() {
-    IDefinition definition = getDefinition();
-    return ObjectUtils.notNull(String.format("Inline Flag(%s:%s:%d)",
-        getContainingDefinition().getContainingModule().getShortName(),
-        definition.getName(),
-        hashCode()));
   }
 
   @Override

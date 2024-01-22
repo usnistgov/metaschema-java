@@ -30,9 +30,9 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
@@ -57,7 +57,7 @@ public class InstanceModelFieldInline
     extends AbstractInstanceModelNamedInline<InlineDefineField,
         IBindingContainerModelAbsolute>
     implements IBindingInstanceModelFieldAbsolute, IBindingDefinitionModelField,
-    IFeatureInlinedDefinition<IBindingDefinitionModelField, IBindingInstanceModelFieldAbsolute>,
+    IFeatureDefinitionInstanceInlined<IBindingDefinitionModelField, IBindingInstanceModelFieldAbsolute>,
     IFeatureBindingContainerFlag {
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
@@ -167,14 +167,14 @@ public class InstanceModelFieldInline
   @Override
   public int getMinOccurs() {
     BigInteger min = getBinding().getMinOccurs();
-    return min == null ? MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
+    return min == null ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
   }
 
   @Override
   public int getMaxOccurs() {
     String max = getBinding().getMaxOccurs();
     return max == null
-        ? MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS
+        ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS
         : ModelSupport.maxOccurs(max);
   }
 

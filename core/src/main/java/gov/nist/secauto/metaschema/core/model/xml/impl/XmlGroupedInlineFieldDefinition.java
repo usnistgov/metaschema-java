@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.core.model.AbstractNamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
@@ -54,7 +54,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 public class XmlGroupedInlineFieldDefinition
     extends AbstractNamedModelInstanceGrouped
     implements IFieldInstanceGrouped, IFieldDefinition,
-    IFeatureInlinedDefinition<IFieldDefinition, IFieldInstanceGrouped>,
+    IFeatureDefinitionInstanceInlined<IFieldDefinition, IFieldInstanceGrouped>,
     IFeatureContainerFlag<IFlagInstance> {
 
   @NonNull

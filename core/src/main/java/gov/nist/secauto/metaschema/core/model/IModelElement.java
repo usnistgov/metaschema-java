@@ -52,7 +52,6 @@ public interface IModelElement extends IDefaultable {
    *
    * @return the coordinates
    */
-  // REFACTOR: reduce implementations
   @NonNull
   String toCoordinates();
 

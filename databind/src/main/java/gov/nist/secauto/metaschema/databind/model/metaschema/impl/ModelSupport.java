@@ -31,8 +31,9 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -164,7 +165,7 @@ public final class ModelSupport {
   }
 
   public static boolean fieldInXml(@Nullable String inXml) {
-    boolean retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
+    boolean retval = IFieldInstance.DEFAULT_FIELD_IN_XML_WRAPPED;
     if (inXml != null) {
       switch (inXml) {
       case "WRAPPED":
@@ -188,7 +189,7 @@ public final class ModelSupport {
 
   @NonNull
   public static JsonGroupAsBehavior groupAsJsonBehavior(@Nullable String inJson) {
-    JsonGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
+    JsonGroupAsBehavior retval = IGroupable.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
     if (inJson != null) {
       switch (inJson) {
       case "ARRAY":
@@ -201,7 +202,7 @@ public final class ModelSupport {
         retval = JsonGroupAsBehavior.KEYED;
         break;
       default:
-        retval = MetaschemaModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
+        retval = IGroupable.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
         break;
       }
     }
@@ -210,7 +211,7 @@ public final class ModelSupport {
 
   @NonNull
   public static XmlGroupAsBehavior groupAsXmlBehavior(@Nullable String inXml) {
-    XmlGroupAsBehavior retval = MetaschemaModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR;
+    XmlGroupAsBehavior retval = IGroupable.DEFAULT_XML_GROUP_AS_BEHAVIOR;
     if (inXml != null) {
       switch (inXml) {
       case "GROUPED":
@@ -220,7 +221,7 @@ public final class ModelSupport {
         retval = XmlGroupAsBehavior.UNGROUPED;
         break;
       default:
-        retval = MetaschemaModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR;
+        retval = IGroupable.DEFAULT_XML_GROUP_AS_BEHAVIOR;
         break;
       }
     }

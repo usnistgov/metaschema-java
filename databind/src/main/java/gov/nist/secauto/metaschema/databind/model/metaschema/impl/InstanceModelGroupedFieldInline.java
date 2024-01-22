@@ -30,7 +30,7 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -53,7 +53,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 public class InstanceModelGroupedFieldInline
     extends AbstractInstanceModelGrouped<AssemblyModel.ChoiceGroup.DefineField>
     implements IBindingInstanceModelFieldGrouped, IBindingDefinitionModelField,
-    IFeatureInlinedDefinition<IBindingDefinitionModelField, IFieldInstanceGrouped>,
+    IFeatureDefinitionInstanceInlined<IBindingDefinitionModelField, IFieldInstanceGrouped>,
     IFeatureBindingContainerFlag {
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;

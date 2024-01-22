@@ -30,7 +30,8 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -55,7 +56,7 @@ public @interface BoundChoiceGroup {
    * @return the discriminator property name
    */
   @NonNull
-  String discriminator() default MetaschemaModelConstants.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME;
+  String discriminator() default IChoiceGroupInstance.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME;
 
   /**
    * A non-negative number that indicates the minimum occurrence of the model
@@ -63,14 +64,14 @@ public @interface BoundChoiceGroup {
    *
    * @return a non-negative number
    */
-  int minOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
+  int minOccurs() default IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   /**
    * A number that indicates the maximum occurrence of the model instance.
    *
    * @return a positive number or {@code -1} to indicate "unbounded"
    */
-  int maxOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
+  int maxOccurs() default IGroupable.DEFAULT_GROUP_AS_MAX_OCCURS;
 
   /**
    * Used to provide grouping information.
@@ -82,17 +83,17 @@ public @interface BoundChoiceGroup {
    *         {@code null} {@link GroupAs#name()}
    */
   @NonNull
-  GroupAs groupAs() default @GroupAs(name = Constants.NULL_VALUE);
+  GroupAs groupAs() default @GroupAs(name = ModelUtil.NULL_VALUE);
 
   /**
    * The name of a common flag to use as the JSON key that appears on all
    * associated {@link #assemblies()} and {@link #fields()}.
    *
    * @return the configured JSON key flag name or
-   *         {@link Constants#NO_STRING_VALUE} if no JSON key is configured
+   *         {@link ModelUtil#NO_STRING_VALUE} if no JSON key is configured
    */
   @NonNull
-  String jsonKey() default Constants.NO_STRING_VALUE;
+  String jsonKey() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The the assemblies that may occur within this choice group.

@@ -32,7 +32,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
@@ -54,7 +54,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
 public class InstanceFlagInline
     extends AbstractInstance<InlineDefineFlag>
     implements IBindingInstanceFlag, IBindingDefinitionFlag,
-    IFeatureInlinedDefinition<IBindingDefinitionFlag, IBindingInstanceFlag> {
+    IFeatureDefinitionInstanceInlined<IBindingDefinitionFlag, IBindingInstanceFlag> {
   @NonNull
   private final Map<IAttributable.Key, Set<String>> properties;
   @NonNull

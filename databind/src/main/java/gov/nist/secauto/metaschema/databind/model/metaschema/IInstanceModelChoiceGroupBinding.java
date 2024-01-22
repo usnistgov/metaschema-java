@@ -32,4 +32,7 @@ public interface IInstanceModelChoiceGroupBinding extends IBindingInstanceModelA
 
   @Override
   IBindingDefinitionAssembly getOwningDefinition();
+
+  @Override
+  IBindingDefinitionAssembly getContainingDefinition();
 }

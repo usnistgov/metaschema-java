@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.core.model;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 
+import java.util.Locale;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -40,8 +42,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * @param <INSTANCE>
  *          the associated instance Java type
  */
-// REFACTOR: rename to IFeatureInlinedDefinitionInstance
-public interface IFeatureInlinedDefinition<DEFINITION extends IDefinition, INSTANCE extends INamedInstance>
+public interface IFeatureDefinitionInstanceInlined<DEFINITION extends IDefinition, INSTANCE extends INamedInstance>
     extends IDefinition, INamedInstance {
   @Override
   default boolean isInline() {
@@ -86,24 +87,26 @@ public interface IFeatureInlinedDefinition<DEFINITION extends IDefinition, INSTA
   }
 
   /**
-   * Generates a "coordinate" string for the provided information element
-   * instance.
+   * Generates a "coordinate" string for the provided inline definition instance.
    *
    * A coordinate consists of the element's:
    * <ul>
    * <li>containing Metaschema module's short name</li>
    * <li>model type</li>
-   * <li>name</li>
+   * <li>definition name</li>
+   * <li>hash code</li>
    * </ul>
    *
    * @return the coordinate
    */
+  @SuppressWarnings("null")
   @Override
   default String toCoordinates() {
     IModule module = getContainingModule();
-    return String.format("%s:%s:%s",
+    return String.format("%s:%s-inline-definition:%s@%d",
         module.getShortName(),
-        getModelType(),
-        getEffectiveName());
+        getModelType().toString().toLowerCase(Locale.ROOT),
+        getContainingDefinition().getName(),
+        hashCode());
   }
 }

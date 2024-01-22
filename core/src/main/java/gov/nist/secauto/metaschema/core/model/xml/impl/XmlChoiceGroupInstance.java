@@ -33,9 +33,9 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelGrouped;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedAssemblyReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedChoiceType;
@@ -108,7 +108,7 @@ class XmlChoiceGroupInstance
   public String getJsonDiscriminatorProperty() {
     return getXmlObject().isSetDiscriminator()
         ? ObjectUtils.requireNonNull(getXmlObject().getDiscriminator())
-        : MetaschemaModelConstants.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME;
+        : IChoiceGroupInstance.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME;
   }
 
   @Override
@@ -156,13 +156,13 @@ class XmlChoiceGroupInstance
   private static final XmlObjectParser<Pair<IChoiceGroupInstance, XmlModelContainer>> XML_MODEL_PARSER
       = new XmlObjectParser<>(ObjectUtils.notNull(
           Map.ofEntries(
-              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "assembly"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "assembly"),
                   XmlChoiceGroupInstance::handleAssembly),
-              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "define-assembly"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "define-assembly"),
                   XmlChoiceGroupInstance::handleDefineAssembly),
-              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "field"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "field"),
                   XmlChoiceGroupInstance::handleField),
-              Map.entry(new QName(MetaschemaModelConstants.XML_NAMESPACE, "define-field"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "define-field"),
                   XmlChoiceGroupInstance::handleDefineField)))) {
 
         @Override

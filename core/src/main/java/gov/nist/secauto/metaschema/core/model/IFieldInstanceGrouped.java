@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-// REFACTOR: check that instances cannot have a data type that allows unwrapped
 public interface IFieldInstanceGrouped extends INamedModelInstanceGrouped, IFieldInstance {
 
   /**

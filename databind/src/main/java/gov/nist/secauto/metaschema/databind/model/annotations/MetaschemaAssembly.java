@@ -53,7 +53,7 @@ public @interface MetaschemaAssembly {
    * @return a Markdown string or {@code "##none"} if no formal name is provided
    */
   @NonNull
-  String formalName() default Constants.NO_STRING_VALUE;
+  String formalName() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Get the documentary description of the assembly.
@@ -64,7 +64,7 @@ public @interface MetaschemaAssembly {
    * @return a markdown string or {@code "##none"} if no description is provided
    */
   @NonNull
-  String description() default Constants.NO_STRING_VALUE;
+  String description() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Get the Metaschema module class that "owns" this assembly, which is the
@@ -100,7 +100,7 @@ public @interface MetaschemaAssembly {
    * @return the name
    */
   @NonNull
-  String rootName() default Constants.NO_STRING_VALUE;
+  String rootName() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The binary root name of the assembly.
@@ -120,7 +120,7 @@ public @interface MetaschemaAssembly {
    * @return the namespace
    */
   @NonNull
-  String rootNamespace() default Constants.DEFAULT_STRING_VALUE;
+  String rootNamespace() default ModelUtil.DEFAULT_STRING_VALUE;
 
   /**
    * Get any remarks for this assembly.
@@ -128,7 +128,7 @@ public @interface MetaschemaAssembly {
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull
-  String remarks() default Constants.NO_STRING_VALUE;
+  String remarks() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Get the value constraints defined for this Metaschema assembly definition.

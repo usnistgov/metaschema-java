@@ -72,12 +72,5 @@ public interface IInstance extends IModelElement {
    */
   @SuppressWarnings("null")
   @Override
-  default String toCoordinates() {
-    IModule module = getContainingModule();
-
-    // TODO: revisit this to add more context i.e. the containing definition
-    return String.format("%s:%s",
-        module.getShortName(),
-        getModelType());
-  }
+  String toCoordinates();
 }

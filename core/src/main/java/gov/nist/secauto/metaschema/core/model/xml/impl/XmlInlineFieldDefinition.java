@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.core.model.AbstractInstance;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IContainerModel;
 import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
-import gov.nist.secauto.metaschema.core.model.IFeatureInlinedDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
@@ -58,7 +58,7 @@ class XmlInlineFieldDefinition
     extends AbstractInstance<IContainerModel>
     implements IFieldInstanceAbsolute, IFieldDefinition,
     IFeatureContainerFlag<IFlagInstance>,
-    IFeatureInlinedDefinition<IFieldDefinition, IFieldInstanceAbsolute> {
+    IFeatureDefinitionInstanceInlined<IFieldDefinition, IFieldInstanceAbsolute> {
   @NonNull
   private final InlineFieldDefinitionType xmlObject;
   @Nullable

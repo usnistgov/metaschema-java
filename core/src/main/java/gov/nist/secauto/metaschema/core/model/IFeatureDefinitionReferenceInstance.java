@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.core.model;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 
+import java.util.Locale;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -39,6 +41,11 @@ public interface IFeatureDefinitionReferenceInstance<
   @Override
   DEFINITION getDefinition();
 
+  /**
+   * Get the instance this definition is combined with.
+   *
+   * @return the instance or {@code null} if the definition is not inline
+   */
   @Nullable
   default INSTANCE getInlineInstance() {
     return null;
@@ -107,7 +114,7 @@ public interface IFeatureDefinitionReferenceInstance<
    * <li>model type</li>
    * <li>name</li>
    * <li>hash code</li>
-   * <li>the hash code of the definition</li>
+   * <li>the hash code of the referenced definition</li>
    * </ul>
    *
    * @return the coordinate
@@ -116,11 +123,11 @@ public interface IFeatureDefinitionReferenceInstance<
   @Override
   default String toCoordinates() {
     IDefinition definition = getDefinition();
-    return String.format("%s:%s:%s@%d(%d)",
+    return String.format("%s:%s-instance:%s@%d(%d)",
         getContainingDefinition().getContainingModule().getShortName(),
-        getModelType(),
+        getModelType().toString().toLowerCase(Locale.ROOT),
         definition.getName(),
         hashCode(),
-        definition.isInline() ? 0 : definition.hashCode());
+        definition.hashCode());
   }
 }

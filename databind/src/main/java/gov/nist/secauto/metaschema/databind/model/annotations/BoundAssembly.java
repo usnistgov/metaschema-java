@@ -31,7 +31,7 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -63,7 +63,7 @@ public @interface BoundAssembly {
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
   @NonNull
-  String formalName() default Constants.NO_STRING_VALUE;
+  String formalName() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Get the documentary description of the assembly.
@@ -74,7 +74,7 @@ public @interface BoundAssembly {
    * @return a markdown string or {@code "##none"} if no description is provided
    */
   @NonNull
-  String description() default Constants.NO_STRING_VALUE;
+  String description() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The model name to use for singleton values. This name will be used for
@@ -86,7 +86,7 @@ public @interface BoundAssembly {
    * @return the name or {@code "##none"} if no use name is provided
    */
   @NonNull
-  String useName() default Constants.NO_STRING_VALUE;
+  String useName() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The binary use name of the assembly.
@@ -106,7 +106,7 @@ public @interface BoundAssembly {
    * @return the namespace
    */
   @NonNull
-  String namespace() default Constants.DEFAULT_STRING_VALUE;
+  String namespace() default ModelUtil.DEFAULT_STRING_VALUE;
 
   /**
    * A non-negative number that indicates the minimum occurrence of the model
@@ -114,14 +114,14 @@ public @interface BoundAssembly {
    *
    * @return a non-negative number
    */
-  int minOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
+  int minOccurs() default IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   /**
    * A number that indicates the maximum occurrence of the model instance.
    *
    * @return a positive number or {@code -1} to indicate "unbounded"
    */
-  int maxOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
+  int maxOccurs() default IGroupable.DEFAULT_GROUP_AS_MAX_OCCURS;
 
   /**
    * Get any remarks for this field.
@@ -129,7 +129,7 @@ public @interface BoundAssembly {
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull
-  String remarks() default Constants.NO_STRING_VALUE;
+  String remarks() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Used to provide grouping information.
@@ -141,5 +141,5 @@ public @interface BoundAssembly {
    *         {@code null} {@link GroupAs#name()}
    */
   @NonNull
-  GroupAs groupAs() default @GroupAs(name = Constants.NULL_VALUE);
+  GroupAs groupAs() default @GroupAs(name = ModelUtil.NULL_VALUE);
 }

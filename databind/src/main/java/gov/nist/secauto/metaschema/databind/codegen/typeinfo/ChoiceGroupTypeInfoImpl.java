@@ -33,9 +33,9 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
@@ -79,17 +79,17 @@ public class ChoiceGroupTypeInfoImpl
     IChoiceGroupInstance choiceGroup = getInstance();
 
     String discriminator = choiceGroup.getJsonDiscriminatorProperty();
-    if (!MetaschemaModelConstants.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME.equals(discriminator)) {
+    if (!IChoiceGroupInstance.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME.equals(discriminator)) {
       annotation.addMember("discriminator", "$S", discriminator);
     }
 
     int minOccurs = choiceGroup.getMinOccurs();
-    if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
+    if (minOccurs != IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS) {
       annotation.addMember("minOccurs", "$L", minOccurs);
     }
 
     int maxOccurs = choiceGroup.getMaxOccurs();
-    if (maxOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
+    if (maxOccurs != IGroupable.DEFAULT_GROUP_AS_MAX_OCCURS) {
       annotation.addMember("maxOccurs", "$L", maxOccurs);
     }
 
