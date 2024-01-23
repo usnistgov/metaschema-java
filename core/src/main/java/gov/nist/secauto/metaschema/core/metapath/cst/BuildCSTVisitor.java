@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AdditiveexprCo
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AndexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ArgumentlistContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ArrowexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ArrowfunctionspecifierContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AxisstepContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ComparisonexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ContextitemexprContext;
@@ -838,18 +839,21 @@ public class BuildCSTVisitor
   @Override
   protected IExpression handleArrowexpr(ArrowexprContext context) {
     // TODO: handle additional syntax for varef and parenthesized
-    return handleGroupedNAiry(context, 0, 2, (ctx, idx, left) -> {
+    return handleGroupedNAiry(context, 0, 3, (ctx, idx, left) -> {
       // the next child is "=>"
       assert "=>".equals(ctx.getChild(idx).getText());
 
-      FunctioncallContext fcCtx = ctx.getChild(FunctioncallContext.class, idx + 1);
+      int offset = (idx - 1) / 3;
+
+      ArrowfunctionspecifierContext fcCtx = ctx.getChild(ArrowfunctionspecifierContext.class, offset);
+      ArgumentlistContext argumentCtx = ctx.getChild(ArgumentlistContext.class, offset);
       // QName name = toQName(
       String name = fcCtx.eqname().getText();
       assert name != null;
 
       try (Stream<IExpression> args = Stream.concat(
           Stream.of(left),
-          parseArgumentList(ObjectUtils.notNull(fcCtx.argumentlist())))) {
+          parseArgumentList(ObjectUtils.notNull(argumentCtx)))) {
         assert args != null;
 
         return new FunctionCall(name, ObjectUtils.notNull(args.collect(Collectors.toUnmodifiableList())));

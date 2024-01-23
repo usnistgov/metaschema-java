@@ -401,15 +401,7 @@ public final class OperationFunctions { // NOPMD - intentional
   @NonNull
   public static INumericItem opNumericAdd(@NonNull INumericItem left, @NonNull INumericItem right) {
     INumericItem retval;
-    if (left instanceof IDecimalItem || right instanceof IDecimalItem) {
-      // create a decimal result
-      BigDecimal decimalLeft = left.asDecimal();
-      BigDecimal decimalRight = right.asDecimal();
-
-      @SuppressWarnings("null")
-      @NonNull BigDecimal result = decimalLeft.add(decimalRight, FunctionUtils.MATH_CONTEXT);
-      retval = IDecimalItem.valueOf(result);
-    } else {
+    if (left instanceof IIntegerItem || right instanceof IIntegerItem) {
       // create an integer result
       BigInteger integerLeft = left.asInteger();
       BigInteger integerRight = right.asInteger();
@@ -417,6 +409,14 @@ public final class OperationFunctions { // NOPMD - intentional
       @SuppressWarnings("null")
       @NonNull BigInteger result = integerLeft.add(integerRight);
       retval = IIntegerItem.valueOf(result);
+    } else {
+      // create a decimal result
+      BigDecimal decimalLeft = left.asDecimal();
+      BigDecimal decimalRight = right.asDecimal();
+
+      @SuppressWarnings("null")
+      @NonNull BigDecimal result = decimalLeft.add(decimalRight, FunctionUtils.MATH_CONTEXT);
+      retval = IDecimalItem.valueOf(result);
     }
     return retval;
   }
@@ -424,15 +424,7 @@ public final class OperationFunctions { // NOPMD - intentional
   @NonNull
   public static INumericItem opNumericSubtract(@NonNull INumericItem left, @NonNull INumericItem right) {
     INumericItem retval;
-    if (left instanceof IDecimalItem || right instanceof IDecimalItem) {
-      // create a decimal result
-      BigDecimal decimalLeft = left.asDecimal();
-      BigDecimal decimalRight = right.asDecimal();
-
-      @SuppressWarnings("null")
-      @NonNull BigDecimal result = decimalLeft.subtract(decimalRight, FunctionUtils.MATH_CONTEXT);
-      retval = IDecimalItem.valueOf(result);
-    } else {
+    if (left instanceof IIntegerItem || right instanceof IIntegerItem) {
       // create an integer result
       BigInteger integerLeft = left.asInteger();
       BigInteger integerRight = right.asInteger();
@@ -440,6 +432,14 @@ public final class OperationFunctions { // NOPMD - intentional
       @SuppressWarnings("null")
       @NonNull BigInteger result = integerLeft.subtract(integerRight);
       retval = IIntegerItem.valueOf(result);
+    } else {
+      // create a decimal result
+      BigDecimal decimalLeft = left.asDecimal();
+      BigDecimal decimalRight = right.asDecimal();
+
+      @SuppressWarnings("null")
+      @NonNull BigDecimal result = decimalLeft.subtract(decimalRight, FunctionUtils.MATH_CONTEXT);
+      retval = IDecimalItem.valueOf(result);
     }
     return retval;
   }
@@ -447,7 +447,12 @@ public final class OperationFunctions { // NOPMD - intentional
   @NonNull
   public static INumericItem opNumericMultiply(@NonNull INumericItem left, @NonNull INumericItem right) {
     INumericItem retval;
-    if (left instanceof IDecimalItem || right instanceof IDecimalItem) {
+    if (left instanceof IIntegerItem || right instanceof IIntegerItem) {
+      // create an integer result
+      @SuppressWarnings("null")
+      @NonNull BigInteger result = left.asInteger().multiply(right.asInteger());
+      retval = IIntegerItem.valueOf(result);
+    } else {
       // create a decimal result
       BigDecimal decimalLeft = left.asDecimal();
       BigDecimal decimalRight = right.asDecimal();
@@ -455,11 +460,6 @@ public final class OperationFunctions { // NOPMD - intentional
       @SuppressWarnings("null")
       @NonNull BigDecimal result = decimalLeft.multiply(decimalRight, FunctionUtils.MATH_CONTEXT);
       retval = IDecimalItem.valueOf(result);
-    } else {
-      // create an integer result
-      @SuppressWarnings("null")
-      @NonNull BigInteger result = left.asInteger().multiply(right.asInteger());
-      retval = IIntegerItem.valueOf(result);
     }
     return retval;
   }
@@ -484,7 +484,19 @@ public final class OperationFunctions { // NOPMD - intentional
   @NonNull
   public static IIntegerItem opNumericIntegerDivide(@NonNull INumericItem dividend, @NonNull INumericItem divisor) {
     IIntegerItem retval;
-    if (dividend instanceof IDecimalItem || divisor instanceof IDecimalItem) {
+    if (dividend instanceof IIntegerItem || divisor instanceof IIntegerItem) {
+      // create an integer result
+      BigInteger integerDivisor = divisor.asInteger();
+
+      if (BigInteger.ZERO.equals(integerDivisor)) {
+        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
+            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
+      }
+
+      @SuppressWarnings("null")
+      @NonNull BigInteger result = dividend.asInteger().divide(integerDivisor);
+      retval = IIntegerItem.valueOf(result);
+    } else {
       // create a decimal result
       BigDecimal decimalDivisor = divisor.asDecimal();
 
@@ -498,18 +510,6 @@ public final class OperationFunctions { // NOPMD - intentional
       @SuppressWarnings("null")
       @NonNull BigInteger result
           = decimalDividend.divideToIntegralValue(decimalDivisor, FunctionUtils.MATH_CONTEXT).toBigInteger();
-      retval = IIntegerItem.valueOf(result);
-    } else {
-      // create an integer result
-      BigInteger integerDivisor = divisor.asInteger();
-
-      if (BigInteger.ZERO.equals(integerDivisor)) {
-        throw new ArithmeticFunctionException(ArithmeticFunctionException.DIVISION_BY_ZERO,
-            ArithmeticFunctionException.DIVISION_BY_ZERO_MESSAGE);
-      }
-
-      @SuppressWarnings("null")
-      @NonNull BigInteger result = dividend.asInteger().divide(integerDivisor);
       retval = IIntegerItem.valueOf(result);
     }
     return retval;
@@ -550,20 +550,20 @@ public final class OperationFunctions { // NOPMD - intentional
   @NonNull
   public static INumericItem opNumericUnaryMinus(@NonNull INumericItem item) {
     INumericItem retval;
-    if (item instanceof IDecimalItem) {
-      // create a decimal result
-      BigDecimal decimal = item.asDecimal();
-
-      @SuppressWarnings("null")
-      @NonNull BigDecimal result = decimal.negate(FunctionUtils.MATH_CONTEXT);
-      retval = IDecimalItem.valueOf(result);
-    } else if (item instanceof IIntegerItem) {
+    if (item instanceof IIntegerItem) {
       // create a decimal result
       BigInteger integer = item.asInteger();
 
       @SuppressWarnings("null")
       @NonNull BigInteger result = integer.negate();
       retval = IIntegerItem.valueOf(result);
+    } else if (item instanceof IDecimalItem) {
+      // create a decimal result
+      BigDecimal decimal = item.asDecimal();
+
+      @SuppressWarnings("null")
+      @NonNull BigDecimal result = decimal.negate(FunctionUtils.MATH_CONTEXT);
+      retval = IDecimalItem.valueOf(result);
     } else {
       throw new InvalidTypeMetapathException(item);
     }
@@ -575,10 +575,10 @@ public final class OperationFunctions { // NOPMD - intentional
     IBooleanItem retval;
     if (arg1 == null || arg2 == null) {
       retval = IBooleanItem.FALSE;
-    } else if (arg1 instanceof IDecimalItem || arg2 instanceof IDecimalItem) {
-      retval = IBooleanItem.valueOf(arg1.asDecimal().equals(arg2.asDecimal()));
-    } else {
+    } else if (arg1 instanceof IIntegerItem || arg2 instanceof IIntegerItem) {
       retval = IBooleanItem.valueOf(arg1.asInteger().equals(arg2.asInteger()));
+    } else {
+      retval = IBooleanItem.valueOf(arg1.asDecimal().equals(arg2.asDecimal()));
     }
     return retval;
   }
@@ -588,11 +588,11 @@ public final class OperationFunctions { // NOPMD - intentional
     IBooleanItem retval;
     if (arg1 == null || arg2 == null) {
       retval = IBooleanItem.FALSE;
-    } else if (arg1 instanceof IDecimalItem || arg2 instanceof IDecimalItem) {
-      int result = arg1.asDecimal().compareTo(arg2.asDecimal());
+    } else if (arg1 instanceof IIntegerItem || arg2 instanceof IIntegerItem) {
+      int result = arg1.asInteger().compareTo(arg2.asInteger());
       retval = IBooleanItem.valueOf(result > 0);
     } else {
-      int result = arg1.asInteger().compareTo(arg2.asInteger());
+      int result = arg1.asDecimal().compareTo(arg2.asDecimal());
       retval = IBooleanItem.valueOf(result > 0);
     }
     return retval;
@@ -603,11 +603,11 @@ public final class OperationFunctions { // NOPMD - intentional
     IBooleanItem retval;
     if (arg1 == null || arg2 == null) {
       retval = IBooleanItem.FALSE;
-    } else if (arg1 instanceof IDecimalItem || arg2 instanceof IDecimalItem) {
-      int result = arg1.asDecimal().compareTo(arg2.asDecimal());
+    } else if (arg1 instanceof IIntegerItem || arg2 instanceof IIntegerItem) {
+      int result = arg1.asInteger().compareTo(arg2.asInteger());
       retval = IBooleanItem.valueOf(result < 0);
     } else {
-      int result = arg1.asInteger().compareTo(arg2.asInteger());
+      int result = arg1.asDecimal().compareTo(arg2.asDecimal());
       retval = IBooleanItem.valueOf(result < 0);
     }
     return retval;

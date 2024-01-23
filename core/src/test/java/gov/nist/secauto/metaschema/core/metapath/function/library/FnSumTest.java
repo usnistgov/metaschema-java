@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.core.metapath.function.library;
 
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.dayTimeDuration;
-import static gov.nist.secauto.metaschema.core.metapath.TestUtils.decimal;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.integer;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.string;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.yearMonthDuration;
@@ -64,7 +63,7 @@ class FnSumTest
 
     return Stream.of(
         Arguments.of(integer(0), new IAnyAtomicItem[] {}),
-        Arguments.of(decimal("12"), new IAnyAtomicItem[] { integer(3), integer(4), integer(5) }),
+        Arguments.of(integer(12), new IAnyAtomicItem[] { integer(3), integer(4), integer(5) }),
         Arguments.of(null, new IAnyAtomicItem[] { integer(3), integer(4), string("test") }),
         Arguments.of(dayTimeDuration("P3DT12H"), new IAnyAtomicItem[] { dayTime1, dayTime2 }),
         Arguments.of(null, new IAnyAtomicItem[] { dayTime1, dayTime2, integer(1) }),
