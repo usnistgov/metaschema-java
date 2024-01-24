@@ -26,12 +26,9 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This marker interface indicates that the instance has a flag, field, or
@@ -39,8 +36,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * identify the data.
  *
  */
-public interface INamedInstance extends IInstance, INamedModelElement {
-
+public interface INamedInstance extends INamed, IAttributable, IInstance {
   /**
    * Retrieve the definition of this instance.
    *
@@ -48,42 +44,6 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    */
   @NonNull
   IDefinition getDefinition();
-
-  @Override
-  @NonNull
-  default String getEffectiveName() {
-    String result = getUseName();
-    if (result == null) {
-      // fall back to the definition
-      IDefinition def = getDefinition();
-      result = def.getEffectiveName();
-    }
-    return result;
-  }
-
-  @Override
-  @Nullable
-  default Integer getEffectiveIndex() {
-    Integer result = getUseIndex();
-    if (result == null) {
-      // fall back to the definition
-      IDefinition def = getDefinition();
-      result = def.getEffectiveIndex();
-    }
-    return result;
-  }
-
-  @Override
-  default String getEffectiveFormalName() {
-    String result = getFormalName();
-    return result == null ? getDefinition().getEffectiveFormalName() : result;
-  }
-
-  @Override
-  default MarkupLine getEffectiveDescription() {
-    MarkupLine result = getDescription();
-    return result == null ? getDefinition().getEffectiveDescription() : result;
-  }
 
   /**
    * Get the XML qualified name to use in XML.
@@ -101,46 +61,5 @@ public interface INamedInstance extends IInstance, INamedModelElement {
    */
   default String getXmlNamespace() {
     return getContainingModule().getXmlNamespace().toASCIIString();
-  }
-
-  /**
-   * Get the current value from the provided {@code parentInstance} object. The
-   * provided object must be of the type associated with the definition containing
-   * this property.
-   *
-   * @param parentInstance
-   *          the object associated with the definition containing this property
-   * @return the value if available, or {@code null} otherwise
-   */
-  default Object getValue(@NonNull Object parentInstance) {
-    // no value by default
-    return null;
-  }
-
-  /**
-   * Generates a "coordinate" string for the provided information element
-   * instance.
-   *
-   * A coordinate consists of the element's:
-   * <ul>
-   * <li>containing Metaschema module's short name</li>
-   * <li>model type</li>
-   * <li>name</li>
-   * <li>hash code</li>
-   * <li>the hash code of the definition</li>
-   * </ul>
-   *
-   * @return the coordinate
-   */
-  @SuppressWarnings("null")
-  @Override
-  default String toCoordinates() {
-    IDefinition definition = getDefinition();
-    return String.format("%s:%s:%s@%d(%d)",
-        getContainingDefinition().getContainingModule().getShortName(),
-        getModelType(),
-        definition.getName(),
-        hashCode(),
-        definition.isInline() ? 0 : definition.hashCode());
   }
 }

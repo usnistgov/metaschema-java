@@ -28,13 +28,16 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.net.URI;
@@ -57,8 +60,7 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
   }
 
   @Override
-  public IModuleNodeItem newModuleNodeItem(
-      IModule module) {
+  public IModuleNodeItem newModuleNodeItem(IModule module) {
     return new ModuleNodeItemImpl(
         module,
         this);
@@ -191,7 +193,7 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
    *          the item to use as the parent item for the created node item
    * @param position
    *          the data item's position in the sequence of data items for the
-   *          instance
+   *          instance, which is {@code 0} based
    * @param value
    *          the data item's value
    * @return the created node item
@@ -247,18 +249,18 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
    * @return the stream of descendant instances
    */
   @NonNull
-  protected Stream<INamedModelInstance> getNamedModelInstances(@NonNull IModelContainer container) {
+  protected Stream<INamedModelInstanceAbsolute> getNamedModelInstances(@NonNull IContainerModelAbsolute container) {
     return ObjectUtils.notNull(container.getModelInstances().stream()
         .flatMap(instance -> {
-          Stream<INamedModelInstance> retval;
-          if (instance instanceof IAssemblyInstance || instance instanceof IFieldInstance) {
-            retval = Stream.of((INamedModelInstance) instance);
+          Stream<INamedModelInstanceAbsolute> retval;
+          if (instance instanceof IAssemblyInstanceAbsolute || instance instanceof IFieldInstanceAbsolute) {
+            retval = Stream.of((INamedModelInstanceAbsolute) instance);
           } else if (instance instanceof IChoiceInstance) {
             // descend into the choice
             retval = getNamedModelInstances((IChoiceInstance) instance);
           } else if (instance instanceof IChoiceGroupInstance) {
-            // descend into the choice group
-            retval = getNamedModelInstances((IChoiceGroupInstance) instance);
+            throw new UnsupportedOperationException("implement");
+            // retval = Stream.of(instance);
           } else {
             throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
           }

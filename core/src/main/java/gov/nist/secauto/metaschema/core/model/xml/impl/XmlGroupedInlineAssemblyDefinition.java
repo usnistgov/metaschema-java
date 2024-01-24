@@ -28,15 +28,21 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractNamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFeatureGroupedModelInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
-import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelAssembly;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -47,25 +53,34 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class XmlGroupedInlineAssemblyDefinition
-    extends AbstractAssemblyInstance
-    implements IAssemblyDefinition,
-    IFeatureStandardModelContainer,
-    IFeatureFlagContainer<IFlagInstance>,
-    IFeatureInlinedDefinition<IAssemblyDefinition, IAssemblyInstance>,
-    IFeatureGroupedModelInstance {
+    extends AbstractNamedModelInstanceGrouped
+    implements IAssemblyInstanceGrouped, IAssemblyDefinition,
+    IFeatureContainerModelAssembly<
+        IModelInstanceAbsolute,
+        INamedModelInstanceAbsolute,
+        IFieldInstanceAbsolute,
+        IAssemblyInstanceAbsolute,
+        IChoiceInstance,
+        IChoiceGroupInstance>,
+    IFeatureContainerFlag<IFlagInstance>,
+    IFeatureDefinitionInstanceInlined<IAssemblyDefinition, IAssemblyInstanceGrouped> {
 
   @NonNull
   private final GroupedInlineAssemblyDefinitionType xmlObject;
   @NonNull
   private final Lazy<XmlFlagContainerSupport> flagContainer;
   @NonNull
-  private final Lazy<IStandardModelContainerSupport> modelContainer;
+  private final Lazy<IContainerModelAssemblySupport<
+      IModelInstanceAbsolute,
+      INamedModelInstanceAbsolute,
+      IFieldInstanceAbsolute,
+      IAssemblyInstanceAbsolute,
+      IChoiceInstance,
+      IChoiceGroupInstance>> modelContainer;
   @NonNull
   private final Lazy<IModelConstrained> constraints;
 
@@ -81,17 +96,12 @@ public class XmlGroupedInlineAssemblyDefinition
   @SuppressWarnings("PMD.NullAssignment")
   public XmlGroupedInlineAssemblyDefinition(
       @NonNull GroupedInlineAssemblyDefinitionType xmlObject,
-      @NonNull IModelContainer parent) {
+      @NonNull IChoiceGroupInstance parent) {
     super(parent);
     this.xmlObject = xmlObject;
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
-    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
-      if (xmlObject.isSetModel()) {
-        XmlModelParser.parseModel(ObjectUtils.notNull(xmlObject.getModel()), this, retval);
-      }
-      return retval;
-    }));
+    this.modelContainer = ObjectUtils.notNull(
+        Lazy.lazy(() -> XmlAssemblyModelContainer.of(xmlObject.getModel(), this)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IModelConstrained retval = new AssemblyConstraintSet();
       if (getXmlObject().isSetConstraint()) {
@@ -108,18 +118,24 @@ public class XmlGroupedInlineAssemblyDefinition
   }
 
   @Override
-  public IAssemblyInstance getInlineInstance() {
+  public IAssemblyInstanceGrouped getInlineInstance() {
     return this;
   }
 
   @Override
-  public IFlagContainerSupport<IFlagInstance> getFlagContainer() {
+  public XmlFlagContainerSupport getFlagContainer() {
     return ObjectUtils.notNull(flagContainer.get());
   }
 
   @SuppressWarnings("null")
   @Override
-  public IStandardModelContainerSupport getModelContainer() {
+  public IContainerModelAssemblySupport<
+      IModelInstanceAbsolute,
+      INamedModelInstanceAbsolute,
+      IFieldInstanceAbsolute,
+      IAssemblyInstanceAbsolute,
+      IChoiceInstance,
+      IChoiceGroupInstance> getModelContainer() {
     return modelContainer.get();
   }
 
@@ -128,27 +144,14 @@ public class XmlGroupedInlineAssemblyDefinition
     return ObjectUtils.notNull(constraints.get());
   }
 
+  @Override
+  public IFlagInstance getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
+  }
+
   // ----------------------------------------
   // - Start XmlBeans driven code - CPD-OFF -
   // ----------------------------------------
-
-  @Override
-  public boolean isRoot() {
-    // never a root
-    return false;
-  }
-
-  @Override
-  public String getRootName() {
-    // never a root
-    return null;
-  }
-
-  @Override
-  public Integer getRootIndex() {
-    // never a root
-    return null;
-  }
 
   /**
    * Get the underlying XML model.
@@ -172,7 +175,7 @@ public class XmlGroupedInlineAssemblyDefinition
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 

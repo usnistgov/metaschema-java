@@ -38,14 +38,11 @@ import nl.talsmasoftware.lazy4j.Lazy;
  * an associated value.
  */
 class AssemblyInstanceNodeItemImpl
-    extends AbstractModelInstanceNodeItem<
-        IAssemblyDefinition,
-        IAssemblyInstance>
+    extends AbstractInstanceNodeItem<IAssemblyDefinition, IAssemblyInstance, IAssemblyNodeItem>
     implements IAssemblyNodeItem,
     IFeatureModelContainerItem {
 
   private final int position;
-
   @NonNull
   private final Lazy<ModelContainer> model;
   @NonNull

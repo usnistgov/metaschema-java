@@ -109,7 +109,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * <a href="https://www.antlr.org/">ANTLRv4</a> into a compact syntax tree
  * (CST).
  */
-@SuppressWarnings({ "PMD.GodClass", "PMD.CyclomaticComplexity" }) // acceptable complexity
+@SuppressWarnings({
+    "PMD.GodClass", "PMD.CyclomaticComplexity", // acceptable complexity
+    "PMD.CouplingBetweenObjects" // needed
+})
 public class BuildCSTVisitor
     extends AbstractCSTVisitorBase {
 

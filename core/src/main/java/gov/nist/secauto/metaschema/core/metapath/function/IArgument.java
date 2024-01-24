@@ -74,7 +74,7 @@ public interface IArgument {
   /**
    * Used to create an argument's signature using a builder pattern.
    */
-  class Builder {
+  final class Builder {
     private String name;
     private Class<? extends IItem> type = IItem.class;
     private Occurrence occurrence = Occurrence.ONE;

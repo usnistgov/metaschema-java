@@ -29,8 +29,8 @@ package gov.nist.secauto.metaschema.databind.model.annotations;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -57,7 +57,7 @@ public @interface MetaschemaField {
    * @return a markdown string or {@code "##none"} if no formal name is provided
    */
   @NonNull
-  String formalName() default Constants.NO_STRING_VALUE;
+  String formalName() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Get the documentary description of the field.
@@ -68,7 +68,7 @@ public @interface MetaschemaField {
    * @return a markdown string or {@code "##none"} if no description is provided
    */
   @NonNull
-  String description() default Constants.NO_STRING_VALUE;
+  String description() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Name of the field.
@@ -88,7 +88,7 @@ public @interface MetaschemaField {
   int index() default Integer.MIN_VALUE;
 
   @NonNull
-  String useName() default Constants.NO_STRING_VALUE;
+  String useName() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The binary use name of the assembly.
@@ -103,9 +103,10 @@ public @interface MetaschemaField {
    * Get the metaschema class that "owns" this assembly, which is the concrete
    * implementation of the metaschema containing the assembly.
    *
-   * @return the class that extends {@link IModule}
+   * @return the class that extends {@link IBoundModule}
    */
-  Class<? extends IModule> moduleClass();
+  @NonNull
+  Class<? extends IBoundModule> moduleClass();
 
   /**
    * If the data type allows it, determines if the field's value must be wrapped
@@ -114,7 +115,7 @@ public @interface MetaschemaField {
    *
    * @return {@code true} if the field must be wrapped, or {@code false} otherwise
    */
-  boolean inXmlWrapped() default MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
+  boolean inXmlWrapped() default IFieldInstance.DEFAULT_FIELD_IN_XML_WRAPPED;
 
   /**
    * Get any remarks for this field.
@@ -122,7 +123,7 @@ public @interface MetaschemaField {
    * @return a markdown string or {@code "##none"} if no remarks are provided
    */
   @NonNull
-  String remarks() default Constants.NO_STRING_VALUE;
+  String remarks() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * Get the value constraints defined for this Metaschema field definition.
@@ -130,5 +131,4 @@ public @interface MetaschemaField {
    * @return the value constraints
    */
   ValueConstraints valueConstraints() default @ValueConstraints;
-
 }

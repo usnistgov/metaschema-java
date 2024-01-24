@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 
 public interface IFieldInstanceTypeInfo extends INamedModelInstanceTypeInfo {
   @Override
-  IFieldInstance getInstance();
+  IFieldInstanceAbsolute getInstance();
 }

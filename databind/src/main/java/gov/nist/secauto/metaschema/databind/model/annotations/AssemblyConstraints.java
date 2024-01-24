@@ -55,7 +55,7 @@ public @interface AssemblyConstraints {
    *         defined
    */
   @NonNull
-  IsUnique[] isUnique() default {};
+  IsUnique[] unique() default {};
 
   /**
    * Get the cardinality constraints for this assembly.
@@ -64,5 +64,5 @@ public @interface AssemblyConstraints {
    *         constraints are defined
    */
   @NonNull
-  HasCardinality[] hasCardinality() default {};
+  HasCardinality[] cardinality() default {};
 }

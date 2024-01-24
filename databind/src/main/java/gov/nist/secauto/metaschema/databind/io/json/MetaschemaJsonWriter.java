@@ -28,29 +28,37 @@ package gov.nist.secauto.metaschema.databind.io.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
-import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
+import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
+import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceWriteHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class MetaschemaJsonWriter implements IJsonWritingContext {
-  private static final Logger LOGGER = LogManager.getLogger(MetaschemaJsonWriter.class);
-
   @NonNull
   private final JsonGenerator writer;
+  @NonNull
+  private final ItemWriter itemWriter = new ItemWriter();
 
   /**
    * Construct a new Module-aware JSON writer.
@@ -59,8 +67,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
    *          the JSON generator to write with
    * @see DefaultJsonProblemHandler
    */
-  public MetaschemaJsonWriter(
-      @NonNull JsonGenerator generator) {
+  public MetaschemaJsonWriter(@NonNull JsonGenerator generator) {
     this.writer = generator;
   }
 
@@ -69,172 +76,303 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
     return writer;
   }
 
-  /**
-   * Writes data in a bound object to JSON. This assembly must be a root assembly
-   * for which a call to {@link IAssemblyClassBinding#isRoot()} will return
-   * {@code true}.
-   *
-   * @param targetDefinition
-   *          the definition describing the root element data to write
-   * @param targetObject
-   *          the bound object
-   * @throws IOException
-   *           if an error occurred while reading the JSON
-   */
-  public void write(
-      @NonNull IAssemblyClassBinding targetDefinition,
-      @NonNull Object targetObject) throws IOException {
-    if (!targetDefinition.isRoot()) {
-      throw new UnsupportedOperationException(
-          String.format("The assembly '%s' is not a root assembly.", targetDefinition.getBoundClass().getName()));
-    }
-    // first write the initial START_OBJECT
-    writer.writeStartObject();
-
-    writer.writeFieldName(targetDefinition.getRootJsonName());
-
-    // Make a temporary data type handler for the root class
-    IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(targetDefinition);
-    dataTypeHandler.writeItem(targetObject, this);
-
-    // end of root object
-    writer.writeEndObject();
+  @NonNull
+  protected ItemWriter getItemWriter() {
+    return itemWriter;
   }
 
   @Override
-  public void writeDefinitionValue(
-      IClassBinding targetDefinition,
-      Object targetObject,
-      Map<String, ? extends IBoundNamedInstance> instances) throws IOException {
-    for (IBoundNamedInstance property : instances.values()) {
-      assert property != null;
-      writeInstance(property, targetObject);
-    }
+  public void writeItemFlag(Object parentItem, IBoundInstanceFlag instance) throws IOException {
+    writeInstance(instance, parentItem);
+  }
 
-    if (targetDefinition instanceof IFieldClassBinding) {
-      IFieldClassBinding fieldDefinition = (IFieldClassBinding) targetDefinition;
-      IBoundFieldValueInstance fieldValueInstance = fieldDefinition.getFieldValueInstance();
-      Object fieldValue = fieldValueInstance.getValue(targetObject);
-      if (fieldValue != null) {
-        String valueKeyName;
-        IBoundFlagInstance jsonValueKey = fieldDefinition.getJsonValueKeyFlagInstance();
-        if (jsonValueKey != null) {
-          valueKeyName = jsonValueKey.getValueAsString(jsonValueKey.getValue(targetObject));
-        } else {
-          valueKeyName = fieldValueInstance.getJsonValueKeyName();
-        }
-        writer.writeFieldName(valueKeyName);
-        fieldValueInstance.getJavaTypeAdapter().writeJsonValue(fieldValue, writer);
+  @Override
+  public void writeItemField(Object parentItem, IBoundInstanceModelFieldScalar instance) throws IOException {
+    writeModelInstance(instance, parentItem);
+  }
+
+  @Override
+  public void writeItemField(Object parentItem, IBoundInstanceModelFieldComplex instance) throws IOException {
+    writeModelInstance(instance, parentItem);
+  }
+
+  @Override
+  public void writeItemField(Object parentItem, IBoundInstanceModelGroupedField instance) throws IOException {
+    throw new UnsupportedOperationException("not needed");
+  }
+
+  @Override
+  public void writeItemField(Object item, IBoundDefinitionModelFieldComplex definition) throws IOException {
+    definition.writeItem(item, getItemWriter());
+  }
+
+  @Override
+  public void writeItemFieldValue(Object parentItem, IBoundFieldValue fieldValue) throws IOException {
+    Object item = fieldValue.getValue(parentItem);
+
+    // handle json value key
+    IBoundInstanceFlag jsonValueKey = fieldValue.getParentFieldDefinition().getJsonValueKeyFlagInstance();
+    if (item == null) {
+      if (jsonValueKey != null) {
+        item = fieldValue.getDefaultValue();
       }
+    } else if (item.equals(fieldValue.getResolvedDefaultValue())) {
+      // same as default
+      item = null;
     }
-  }
 
-  /**
-   * Write the instance data contained in the {@code parentObject} based on the
-   * structure described by the {@code targetInstance}.
-   *
-   * @param targetInstance
-   *          the instance to write data for
-   * @param parentObject
-   *          the Java object containing the instance data to write
-   * @throws IOException
-   *           if an error occurred while writing the data
-   */
-  protected void writeInstance(
-      @NonNull IBoundNamedInstance targetInstance,
-      @NonNull Object parentObject)
-      throws IOException {
-    if (targetInstance instanceof IBoundFlagInstance) {
-      writeFlagInstanceValue((IBoundFlagInstance) targetInstance, parentObject);
-    } else if (targetInstance instanceof IBoundNamedModelInstance) {
-      writeModelInstanceValues((IBoundNamedModelInstance) targetInstance, parentObject);
-    } else if (targetInstance instanceof IBoundFieldValueInstance) {
-      writeFieldValueInstanceValue((IBoundFieldValueInstance) targetInstance, parentObject);
-    } else {
-      throw new UnsupportedOperationException(
-          String.format("Unsupported class binding type: %s", targetInstance.getClass().getName()));
-    }
-  }
-
-  /**
-   * Write the instance data contained in the {@code parentObject} based on the
-   * structure described by the {@code targetInstance}.
-   *
-   * @param targetInstance
-   *          the instance to write data for
-   * @param parentObject
-   *          the Java object containing the instance data to write
-   * @throws IOException
-   *           if an error occurred while writing the data
-   */
-  protected void writeFlagInstanceValue(
-      @NonNull IBoundFlagInstance targetInstance,
-      @NonNull Object parentObject) throws IOException {
-    Object value = targetInstance.getValue(parentObject);
-    if (value != null) {
-      // write the field name
-      writer.writeFieldName(targetInstance.getJsonName());
-
-      // write the value
-      targetInstance.getDefinition().getJavaTypeAdapter().writeJsonValue(value, writer);
-    }
-  }
-
-  /**
-   * Write the instance data contained in the {@code parentObject} based on the
-   * structure described by the {@code targetInstance}.
-   *
-   * @param targetInstance
-   *          the instance to write data for
-   * @param parentObject
-   *          the Java object containing the instance data to write
-   * @throws IOException
-   *           if an error occurred while writing the data
-   */
-  protected void writeModelInstanceValues(
-      @NonNull IBoundNamedModelInstance targetInstance,
-      @NonNull Object parentObject) throws IOException {
-    IModelPropertyInfo propertyInfo = targetInstance.getPropertyInfo();
-    if (propertyInfo.isValueSet(parentObject)) {
-      // write the field name
-      writer.writeFieldName(targetInstance.getJsonName());
-
-      // dispatch to the property info implementation to address cardinality
-      propertyInfo.writeValues(parentObject, this);
-    }
-  }
-
-  /**
-   * Write the instance data contained in the {@code parentObject} based on the
-   * structure described by the {@code targetInstance}.
-   *
-   * @param targetInstance
-   *          the instance to write data for
-   * @param parentObject
-   *          the Java object containing the instance data to write
-   * @throws IOException
-   *           if an error occurred while writing the data
-   */
-  protected void writeFieldValueInstanceValue(
-      @NonNull IBoundFieldValueInstance targetInstance,
-      @NonNull Object parentObject) throws IOException {
-    Object value = targetInstance.getValue(parentObject);
-    if (value != null) {
+    if (item != null) {
       // There are two modes:
       // 1) use of a JSON value key, or
       // 2) a simple value named "value"
-      IBoundFlagInstance jsonValueKey = targetInstance.getParentClassBinding().getJsonValueKeyFlagInstance();
 
       String valueKeyName;
       if (jsonValueKey != null) {
         // this is the JSON value key case
-        valueKeyName = jsonValueKey.getValue(parentObject).toString();
+        valueKeyName = ObjectUtils.requireNonNull(jsonValueKey.getValue(parentItem)).toString();
       } else {
-        valueKeyName = targetInstance.getJsonValueKeyName();
+        valueKeyName = fieldValue.getParentFieldDefinition().getEffectiveJsonValueKeyName();
       }
       writer.writeFieldName(valueKeyName);
-      LOGGER.info("FIELD: {}", valueKeyName);
-      targetInstance.getJavaTypeAdapter().writeJsonValue(value, writer);
+      // LOGGER.info("FIELD: {}", valueKeyName);
+
+      getItemWriter().writeItemFieldValue(item, fieldValue);
+    }
+  }
+
+  @Override
+  public void writeItemAssembly(Object parentItem, IBoundInstanceModelAssembly instance) throws IOException {
+    writeModelInstance(instance, parentItem);
+  }
+
+  @Override
+  public void writeItemAssembly(Object parentItem, IBoundInstanceModelGroupedAssembly instance) throws IOException {
+    throw new UnsupportedOperationException("not needed");
+  }
+
+  @Override
+  public void writeItemAssembly(Object item, IBoundDefinitionModelAssembly definition) throws IOException {
+    definition.writeItem(item, getItemWriter());
+  }
+
+  @Override
+  public void writeChoiceGroupItem(Object parentItem, IBoundInstanceModelChoiceGroup instance) throws IOException {
+    writeModelInstance(instance, parentItem);
+  }
+
+  private void writeInstance(
+      @NonNull IBoundProperty instance,
+      @NonNull Object parentItem) throws IOException {
+    Object value = instance.getValue(parentItem);
+    if (!(value == null || value.equals(instance.getResolvedDefaultValue()))) {
+      writer.writeFieldName(instance.getJsonName());
+      instance.writeItem(value, getItemWriter());
+    }
+  }
+
+  private void writeModelInstance(
+      @NonNull IBoundInstanceModel instance,
+      @NonNull Object parentItem) throws IOException {
+    Object value = instance.getValue(parentItem);
+    if (value != null) {
+      // this if is not strictly needed, since isEmpty will return false on a null
+      // value
+      // checking null here potentially avoids the expensive operation of instatiating
+      IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
+      if (!collectionInfo.isEmpty(value)) {
+        writer.writeFieldName(instance.getJsonName());
+        collectionInfo.writeItems(new ModelInstanceWriteHandler(instance), value);
+      }
+    }
+  }
+
+  private final class ItemWriter implements IItemWriteHandler {
+    @Override
+    public void writeItemFlag(Object item, IBoundInstanceFlag instance) throws IOException {
+      writeScalarItem(item, instance);
+    }
+
+    @Override
+    public void writeItemField(Object item, IBoundInstanceModelFieldScalar instance) throws IOException {
+      writeScalarItem(item, instance);
+    }
+
+    @Override
+    public void writeItemField(Object item, IBoundInstanceModelFieldComplex instance) throws IOException {
+      writeModelObject(
+          instance,
+          item,
+          this::writeObjectProperties);
+    }
+
+    @Override
+    public void writeItemField(Object item, IBoundInstanceModelGroupedField instance) throws IOException {
+      writeGroupedModelObject(
+          instance,
+          item,
+          ((ObjectWriter<IBoundInstanceModelGroupedField>) this::writeDiscriminatorProperty)
+              .andThen(this::writeObjectProperties));
+    }
+
+    @Override
+    public void writeItemField(Object item, IBoundDefinitionModelFieldComplex definition) throws IOException {
+      writeDefinitionObject(
+          definition,
+          item,
+          (ObjectWriter<IBoundDefinitionModelFieldComplex>) this::writeObjectProperties);
+    }
+
+    @Override
+    public void writeItemFieldValue(Object item, IBoundFieldValue fieldValue) throws IOException {
+      fieldValue.getJavaTypeAdapter().writeJsonValue(item, writer);
+    }
+
+    @Override
+    public void writeItemAssembly(Object item, IBoundInstanceModelAssembly instance) throws IOException {
+      writeModelObject(instance, item, this::writeObjectProperties);
+    }
+
+    @Override
+    public void writeItemAssembly(Object item, IBoundInstanceModelGroupedAssembly instance) throws IOException {
+      writeGroupedModelObject(
+          instance,
+          item,
+          ((ObjectWriter<IBoundInstanceModelGroupedAssembly>) this::writeDiscriminatorProperty)
+              .andThen(this::writeObjectProperties));
+    }
+
+    @Override
+    public void writeItemAssembly(Object item, IBoundDefinitionModelAssembly definition) throws IOException {
+      writeDefinitionObject(definition, item, this::writeObjectProperties);
+    }
+
+    @Override
+    public void writeChoiceGroupItem(Object item, IBoundInstanceModelChoiceGroup instance) throws IOException {
+      IBoundInstanceModelGroupedNamed actualInstance = instance.getItemInstance(item);
+      assert actualInstance != null;
+      actualInstance.writeItem(item, this);
+    }
+
+    private void writeScalarItem(Object item, IFeatureScalarItemValueHandler handler) throws IOException {
+      handler.getJavaTypeAdapter().writeJsonValue(ObjectUtils.requireNonNull(item), writer);
+    }
+
+    private <T extends IBoundInstanceModelGroupedNamed> void writeDiscriminatorProperty(
+        @NonNull Object parentItem,
+        @NonNull T instance) throws IOException {
+
+      IBoundInstanceModelChoiceGroup choiceGroup = instance.getParentContainer();
+
+      // write JSON object discriminator
+      String discriminatorProperty = choiceGroup.getJsonDiscriminatorProperty();
+      String discriminatorValue = instance.getEffectiveDisciminatorValue();
+
+      writer.writeStringField(discriminatorProperty, discriminatorValue);
+    }
+
+    private <T extends IFeatureComplexItemValueHandler> void writeObjectProperties(
+        @NonNull Object parentItem,
+        @NonNull T handler) throws IOException {
+      for (IBoundProperty instance : handler.getJsonProperties().values()) {
+        assert instance != null;
+        instance.writeItem(parentItem, MetaschemaJsonWriter.this);
+      }
+    }
+
+    private <T extends IFeatureComplexItemValueHandler> void writeDefinitionObject(
+        @NonNull T handler,
+        @NonNull Object parentItem,
+        @NonNull ObjectWriter<T> propertyWriter) throws IOException {
+      writer.writeStartObject();
+
+      propertyWriter.accept(parentItem, handler);
+      writer.writeEndObject();
+    }
+
+    private <T extends IFeatureComplexItemValueHandler & IBoundInstanceModel> void writeModelObject(
+        @NonNull T handler,
+        @NonNull Object parentItem,
+        @NonNull ObjectWriter<T> propertyWriter) throws IOException {
+      writer.writeStartObject();
+
+      IBoundInstanceFlag jsonKey = handler.getItemJsonKey(parentItem);
+      if (jsonKey != null) {
+        // the field will be the JSON key value
+        String key = jsonKey.getJavaTypeAdapter().asString(ObjectUtils.requireNonNull(jsonKey.getValue(parentItem)));
+        writer.writeFieldName(key);
+
+        // next the value will be a start object
+        writer.writeStartObject();
+      }
+
+      propertyWriter.accept(parentItem, handler);
+
+      if (jsonKey != null) {
+        // next the value will be a start object
+        writer.writeEndObject();
+      }
+      writer.writeEndObject();
+    }
+
+    private <T extends IFeatureComplexItemValueHandler & IBoundInstanceModelGroupedNamed> void writeGroupedModelObject(
+        @NonNull T handler,
+        @NonNull Object parentItem,
+        @NonNull ObjectWriter<T> propertyWriter) throws IOException {
+      writer.writeStartObject();
+
+      IBoundInstanceModelChoiceGroup choiceGroup = handler.getParentContainer();
+      IBoundInstanceFlag jsonKey = choiceGroup.getItemJsonKey(parentItem);
+      if (jsonKey != null) {
+        // the field will be the JSON key value
+        String key = jsonKey.getJavaTypeAdapter().asString(ObjectUtils.requireNonNull(jsonKey.getValue(parentItem)));
+        writer.writeFieldName(key);
+
+        // next the value will be a start object
+        writer.writeStartObject();
+      }
+
+      propertyWriter.accept(parentItem, handler);
+
+      if (jsonKey != null) {
+        // next the value will be a start object
+        writer.writeEndObject();
+      }
+      writer.writeEndObject();
+    }
+  }
+
+  private class ModelInstanceWriteHandler
+      extends AbstractModelInstanceWriteHandler {
+    public ModelInstanceWriteHandler(
+        @NonNull IBoundInstanceModel instance) {
+      super(instance);
+    }
+
+    @Override
+    public void writeList(List<?> items) throws IOException {
+      IBoundInstanceModel instance = getCollectionInfo().getInstance();
+
+      boolean writeArray = false;
+      if (JsonGroupAsBehavior.LIST.equals(instance.getJsonGroupAsBehavior())
+          || JsonGroupAsBehavior.SINGLETON_OR_LIST.equals(instance.getJsonGroupAsBehavior())
+              && items.size() > 1) {
+        // write array, then items
+        writeArray = true;
+        writer.writeStartArray();
+      } // only other option is a singleton value, write item
+
+      super.writeList(items);
+
+      if (writeArray) {
+        // write the end array
+        writer.writeEndArray();
+      }
+    }
+
+    @Override
+    public void writeItem(Object item) throws IOException {
+      IBoundInstanceModel instance = getInstance();
+      instance.writeItem(item, getItemWriter());
     }
   }
 }

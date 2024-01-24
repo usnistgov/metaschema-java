@@ -98,7 +98,7 @@ public class MetaConstraintLoader
       metapaths = ObjectUtils.notNull(contextObj.getMetaschemaMetapathList().stream()
           .map(path -> path.getTarget())
           .flatMap(childPath -> {
-            return (Stream<String>) parentMetapaths.stream()
+            return parentMetapaths.stream()
                 .map(parentPath -> parentPath + '/' + childPath);
           })
           .collect(Collectors.toList()));
@@ -224,7 +224,7 @@ public class MetaConstraintLoader
     }
   }
 
-  private static class MetaConstraintSet implements IConstraintSet {
+  private static final class MetaConstraintSet implements IConstraintSet {
     @NonNull
     private final List<ITargetedConstaints> targetedConstraints;
 

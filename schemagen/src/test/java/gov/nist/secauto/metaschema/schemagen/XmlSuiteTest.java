@@ -34,8 +34,9 @@ import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.validation.IContentValidator;
 import gov.nist.secauto.metaschema.core.model.validation.XmlSchemaContentValidator;
-import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.databind.io.Format;
+import gov.nist.secauto.metaschema.databind.model.metaschema.BindingModuleLoader;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
 import org.jdom2.Document;
@@ -54,7 +55,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -75,7 +75,7 @@ import javax.xml.stream.XMLStreamException;
 class XmlSuiteTest
     extends AbstractSchemaGeneratorTestSuite {
   // private static final XmlSchemaContentValidator SCHEMA_VALIDATOR;
-
+  //
   // static {
   // URL schemaResource =
   // ModuleLoader.class.getResource("/schema/xml/XMLSchema.xsd");
@@ -90,8 +90,8 @@ class XmlSuiteTest
 
   @Override
   protected Supplier<IContentValidator> getSchemaValidatorSupplier() {
-    return null;
     // return () -> SCHEMA_VALIDATOR;
+    return null;
   }
 
   @Override
@@ -138,7 +138,6 @@ class XmlSuiteTest
         contentCase(Format.JSON, "collapsible_test_singleton_PASS.json", true));
   }
 
-  @Disabled
   @Test
   void testByKey() throws IOException, MetaschemaException { // NOPMD - delegated to doTest
     doTest(
@@ -174,10 +173,10 @@ class XmlSuiteTest
 
   @Test
   void testliboscalJavaIssue181() throws IOException, MetaschemaException, XMLStreamException, JDOMException {
-    ModuleLoader loader = new ModuleLoader();
+    BindingModuleLoader loader = new BindingModuleLoader();
     loader.allowEntityResolution();
 
-    IModule module = loader.load(new URL(
+    IBindingModule module = loader.load(new URL(
         // "https://raw.githubusercontent.com/usnistgov/OSCAL/develop/src/metaschema/oscal_complete_metaschema.xml"));
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.1.1/src/metaschema/oscal_catalog_metaschema.xml"));
     ISchemaGenerator schemaGenerator = new XmlSchemaGenerator();
@@ -193,7 +192,7 @@ class XmlSuiteTest
 
     // check for missing attribute types per liboscal-java#181
     XMLInputFactory factory = XMLInputFactory.newFactory();
-    try (Reader fileReader = new FileReader(schemaPath.toFile())) {
+    try (Reader fileReader = Files.newBufferedReader(schemaPath, StandardCharsets.UTF_8)) {
       XMLEventReader reader = factory.createXMLEventReader(fileReader);
       StAXEventBuilder builder = new StAXEventBuilder();
       Document document = builder.build(reader);
@@ -211,10 +210,10 @@ class XmlSuiteTest
 
   @Test
   void testLiboscalJavaIssue181() throws IOException, MetaschemaException, XMLStreamException, JDOMException {
-    ModuleLoader loader = new ModuleLoader();
+    BindingModuleLoader loader = new BindingModuleLoader();
     loader.allowEntityResolution();
 
-    IModule module = loader.load(new URL(
+    IBindingModule module = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.1.1/src/metaschema/oscal_catalog_metaschema.xml"));
     ISchemaGenerator schemaGenerator = new XmlSchemaGenerator();
     IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
@@ -229,7 +228,7 @@ class XmlSuiteTest
 
     // check for missing attribute types per liboscal-java#181
     XMLInputFactory factory = XMLInputFactory.newFactory();
-    try (Reader fileReader = new FileReader(schemaPath.toFile())) {
+    try (Reader fileReader = Files.newBufferedReader(schemaPath, StandardCharsets.UTF_8)) {
       XMLEventReader reader = factory.createXMLEventReader(fileReader);
       StAXEventBuilder builder = new StAXEventBuilder();
       Document document = builder.build(reader);

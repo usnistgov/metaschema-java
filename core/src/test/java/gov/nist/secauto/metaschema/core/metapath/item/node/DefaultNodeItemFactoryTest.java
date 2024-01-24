@@ -78,9 +78,9 @@ class DefaultNodeItemFactoryTest
       { // NOPMD - intentional
         allowing(assembly.getFlagInstanceByName("flag1")).getValue(assemblyValue);
         will(returnValue(flagValue));
-        allowing(assembly.getModelInstanceByName("field1")).getValue(assemblyValue);
+        allowing(assembly.getNamedModelInstanceByName("field1")).getValue(assemblyValue);
         will(returnValue(fieldValue));
-        allowing(assembly.getModelInstanceByName("field1")).getItemValues(fieldValue);
+        allowing(assembly.getNamedModelInstanceByName("field1")).getItemValues(fieldValue);
         will(returnValue(List.of(fieldValue)));
       }
     });

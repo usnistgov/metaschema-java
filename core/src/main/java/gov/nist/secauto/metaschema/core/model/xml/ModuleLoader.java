@@ -26,12 +26,11 @@
 
 package gov.nist.secauto.metaschema.core.model.xml;
 
-import gov.nist.secauto.metaschema.core.model.AbstractLoader;
-import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.AbstractModuleLoader;
+import gov.nist.secauto.metaschema.core.model.IModuleLoader;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.xml.impl.XmlModule;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.METASCHEMADocument;
-import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MetaschemaImportType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -44,13 +43,8 @@ import org.xml.sax.XMLReader;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
@@ -66,11 +60,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * every use. Any Metaschema imported is also loaded and cached automatically.
  */
 public class ModuleLoader
-    extends AbstractLoader<IModule> {
+    extends AbstractModuleLoader<METASCHEMADocument, IXmlModule> {
   private boolean resolveEntities; // = false;
-
-  @NonNull
-  private final List<IModulePostProcessor> modulePostProcessors;
 
   /**
    * Construct a new Metaschema loader.
@@ -87,18 +78,8 @@ public class ModuleLoader
    *          post processors to perform additional module customization when
    *          loading
    */
-  public ModuleLoader(@NonNull List<IModulePostProcessor> modulePostProcessors) {
-    this.modulePostProcessors = CollectionUtil.unmodifiableList(new ArrayList<>(modulePostProcessors));
-  }
-
-  /**
-   * Get the set of additional constraints associated with this loader.
-   *
-   * @return the set of constraints
-   */
-  @NonNull
-  protected List<IModulePostProcessor> getModulePostProcessors() {
-    return modulePostProcessors;
+  public ModuleLoader(@NonNull List<IModuleLoader.IModulePostProcessor> modulePostProcessors) {
+    super(modulePostProcessors);
   }
 
   /**
@@ -110,63 +91,17 @@ public class ModuleLoader
     resolveEntities = true;
   }
 
-  /**
-   * Parse the {@code resource} based on the provided {@code xmlObject}.
-   *
-   * @param resource
-   *          the URI of the resource being parsed
-   * @param xmlObject
-   *          the XML beans object to parse
-   * @param importedModules
-   *          previously parsed Metaschema modules imported by the provided
-   *          {@code resource}
-   * @return the parsed resource as a Metaschema module
-   * @throws MetaschemaException
-   *           if an error occurred while parsing the XML beans object
-   */
-  protected IModule newXmlMetaschema(
-      @NonNull URI resource,
-      @NonNull METASCHEMADocument xmlObject,
-      @NonNull List<IModule> importedModules) throws MetaschemaException {
-    IModule retval = new XmlModule(resource, xmlObject, importedModules);
-
-    for (IModulePostProcessor postProcessor : getModulePostProcessors()) {
-      postProcessor.processModule(retval);
-    }
-    return retval;
+  @Override
+  protected IXmlModule newModule(URI resource, METASCHEMADocument binding, List<IXmlModule> importedModules)
+      throws MetaschemaException {
+    return new XmlModule(resource, binding, importedModules);
   }
 
   @Override
-  protected IModule parseResource(@NonNull URI resource, @NonNull Deque<URI> visitedResources)
-      throws IOException {
-    // parse this Metaschema module
-    METASCHEMADocument xmlObject = parseModule(resource);
-
-    // now check if this Metaschema imports other metaschema
-    int size = xmlObject.getMETASCHEMA().sizeOfImportArray();
-    @NonNull Map<URI, IModule> importedModules;
-    if (size == 0) {
-      importedModules = ObjectUtils.notNull(Collections.emptyMap());
-    } else {
-      try {
-        importedModules = new LinkedHashMap<>();
-        for (MetaschemaImportType imported : xmlObject.getMETASCHEMA().getImportList()) {
-          URI importedResource = URI.create(imported.getHref());
-          importedResource = ObjectUtils.notNull(resource.resolve(importedResource));
-          importedModules.put(importedResource, loadInternal(importedResource, visitedResources));
-        }
-      } catch (MetaschemaException ex) {
-        throw new IOException(ex);
-      }
-    }
-
-    // now create this metaschema
-    Collection<IModule> values = importedModules.values();
-    try {
-      return newXmlMetaschema(resource, xmlObject, new ArrayList<>(values));
-    } catch (MetaschemaException ex) {
-      throw new IOException(ex);
-    }
+  protected List<URI> getImports(METASCHEMADocument binding) {
+    return ObjectUtils.notNull(binding.getMETASCHEMA().getImportList().stream()
+        .map(imported -> URI.create(imported.getHref()))
+        .collect(Collectors.toList()));
   }
 
   /**
@@ -178,6 +113,7 @@ public class ModuleLoader
    * @throws IOException
    *           if a parsing error occurred
    */
+  @Override
   protected METASCHEMADocument parseModule(@NonNull URI resource) throws IOException {
     METASCHEMADocument metaschemaXml;
     try {
@@ -225,7 +161,7 @@ public class ModuleLoader
       }
       options.setBaseURI(resource);
       options.setLoadLineNumbers();
-      metaschemaXml = METASCHEMADocument.Factory.parse(resource.toURL(), options);
+      metaschemaXml = ObjectUtils.notNull(METASCHEMADocument.Factory.parse(resource.toURL(), options));
     } catch (XmlException ex) {
       throw new IOException(ex);
     }

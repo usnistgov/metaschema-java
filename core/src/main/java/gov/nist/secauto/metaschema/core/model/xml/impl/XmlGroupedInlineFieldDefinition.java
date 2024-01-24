@@ -30,14 +30,14 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFeatureGroupedModelInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractNamedModelInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFlagContainerSupport;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
@@ -48,22 +48,17 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class XmlGroupedInlineFieldDefinition
-    extends AbstractFieldInstance
-    implements IFieldDefinition,
-    IFeatureInlinedDefinition<IFieldDefinition, IFieldInstance>,
-    IFeatureFlagContainer<IFlagInstance>, IFeatureGroupedModelInstance {
+    extends AbstractNamedModelInstanceGrouped
+    implements IFieldInstanceGrouped, IFieldDefinition,
+    IFeatureDefinitionInstanceInlined<IFieldDefinition, IFieldInstanceGrouped>,
+    IFeatureContainerFlag<IFlagInstance> {
 
   @NonNull
   private final GroupedInlineFieldDefinitionType xmlObject;
-  @Nullable
-  private final Object defaultValue;
   @NonNull
   private final Lazy<XmlFlagContainerSupport> flagContainer;
   @NonNull
@@ -81,12 +76,9 @@ public class XmlGroupedInlineFieldDefinition
   @SuppressWarnings("PMD.NullAssignment")
   public XmlGroupedInlineFieldDefinition(
       @NonNull GroupedInlineFieldDefinitionType xmlObject,
-      @NonNull IModelContainer parent) {
+      @NonNull IChoiceGroupInstance parent) {
     super(parent);
     this.xmlObject = xmlObject;
-    this.defaultValue
-        = xmlObject.isSetDefault() ? getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlObject.getDefault()))
-            : null;
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
@@ -104,12 +96,12 @@ public class XmlGroupedInlineFieldDefinition
   }
 
   @Override
-  public IFieldInstance getInlineInstance() {
+  public XmlGroupedInlineFieldDefinition getInlineInstance() {
     return this;
   }
 
   @Override
-  public IFlagContainerSupport<IFlagInstance> getFlagContainer() {
+  public XmlFlagContainerSupport getFlagContainer() {
     return ObjectUtils.notNull(flagContainer.get());
   }
 
@@ -119,16 +111,9 @@ public class XmlGroupedInlineFieldDefinition
   }
 
   @Override
-  public Object getDefaultValue() {
-    return defaultValue;
+  public IFlagInstance getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
   }
-
-  @Override
-  public boolean isInXmlWrapped() {
-    // never wrapped
-    return false;
-  }
-
   // ----------------------------------------
   // - Start XmlBeans driven code - CPD-OFF -
   // ----------------------------------------
@@ -155,7 +140,7 @@ public class XmlGroupedInlineFieldDefinition
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 
@@ -203,16 +188,7 @@ public class XmlGroupedInlineFieldDefinition
 
   @Override
   public String getJsonValueKeyName() {
-    String retval = null;
-
-    if (getXmlObject().isSetJsonValueKey()) {
-      retval = getXmlObject().getJsonValueKey();
-    }
-
-    if (retval == null || retval.isEmpty()) {
-      retval = getJavaTypeAdapter().getDefaultJsonValueKey();
-    }
-    return retval;
+    return getXmlObject().getJsonValueKey();
   }
 
   // -------------------------------------

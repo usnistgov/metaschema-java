@@ -38,7 +38,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * This mixin interface indicates that the implementation is a {@link INodeItem}
  * that may have both flag and model children.
  */
-interface IFeatureModelContainerItem extends IFeatureFlagContainerItem {
+public interface IFeatureModelContainerItem extends IFeatureFlagContainerItem {
 
   @Override
   ModelContainer getModel();

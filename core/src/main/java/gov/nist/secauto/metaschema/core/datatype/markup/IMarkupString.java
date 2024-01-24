@@ -55,6 +55,8 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
   @NonNull
   Document getDocument();
 
+  boolean isEmpty();
+
   // /**
   // * Write HTML content to the provided {@code xmlStreamWriter} using the
   // provided {@code

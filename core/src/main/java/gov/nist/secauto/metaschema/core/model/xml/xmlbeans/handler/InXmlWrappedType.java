@@ -42,7 +42,7 @@ public final class InXmlWrappedType {
   public static void encodeInXmlWrappedType(Boolean obj, org.apache.xmlbeans.SimpleValue target) {
     if (obj != null) {
       if (obj) {
-        target.setStringValue("WITH_WRAPPER");
+        target.setStringValue("WRAPPED");
       } else {
         target.setStringValue("UNWRAPPED");
       }
@@ -60,7 +60,8 @@ public final class InXmlWrappedType {
     String value = obj.getStringValue();
     Boolean retval;
     switch (value) {
-    case "WITH_WRAPPER":
+    case "WRAPPED":
+    case "WITH_WRAPPER": // deprecated alias
       retval = Boolean.TRUE;
       break;
     case "UNWRAPPED":

@@ -29,11 +29,18 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelAssembly;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
@@ -46,17 +53,20 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 @SuppressWarnings("PMD.CouplingBetweenObjects")
 class XmlGlobalAssemblyDefinition
     implements IAssemblyDefinition,
-    IFeatureStandardModelContainer,
-    IFeatureFlagContainer<IFlagInstance>,
-    IFeatureGlobalDefinition<IAssemblyInstance> {
+    IFeatureContainerModelAssembly<
+        IModelInstanceAbsolute,
+        INamedModelInstanceAbsolute,
+        IFieldInstanceAbsolute,
+        IAssemblyInstanceAbsolute,
+        IChoiceInstance,
+        IChoiceGroupInstance>,
+    IFeatureContainerFlag<IFlagInstance> {
 
   @NonNull
   private final GlobalAssemblyDefinitionType xmlAssembly;
@@ -65,37 +75,38 @@ class XmlGlobalAssemblyDefinition
   @NonNull
   private final Lazy<XmlFlagContainerSupport> flagContainer;
   @NonNull
-  private final Lazy<IStandardModelContainerSupport> modelContainer;
+  private final Lazy<IContainerModelAssemblySupport<
+      IModelInstanceAbsolute,
+      INamedModelInstanceAbsolute,
+      IFieldInstanceAbsolute,
+      IAssemblyInstanceAbsolute,
+      IChoiceInstance,
+      IChoiceGroupInstance>> modelContainer;
   @NonNull
   private final Lazy<IModelConstrained> constraints;
 
   /**
-   * Constructs a new Metaschema Assembly definition from an XML representation
-   * bound to Java objects.
+   * Constructs a new global assembly definition from an XML representation bound
+   * to Java objects.
    *
-   * @param xmlAssembly
+   * @param xmlObject
    *          the XML representation bound to Java objects
-   * @param metaschema
-   *          the containing Metaschema
+   * @param module
+   *          the containing Metaschema module
    */
   public XmlGlobalAssemblyDefinition(
-      @NonNull GlobalAssemblyDefinitionType xmlAssembly,
-      @NonNull XmlModule metaschema) {
-    this.xmlAssembly = xmlAssembly;
-    this.metaschema = metaschema;
-    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlAssembly, this)));
-    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
-      if (xmlAssembly.isSetModel()) {
-        XmlModelParser.parseModel(ObjectUtils.notNull(xmlAssembly.getModel()), this, retval);
-      }
-      return retval;
-    }));
+      @NonNull GlobalAssemblyDefinitionType xmlObject,
+      @NonNull XmlModule module) {
+    this.xmlAssembly = xmlObject;
+    this.metaschema = module;
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
+    this.modelContainer = ObjectUtils.notNull(
+        Lazy.lazy(() -> XmlAssemblyModelContainer.of(xmlObject.getModel(), this)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IModelConstrained retval = new AssemblyConstraintSet();
-      if (xmlAssembly.isSetConstraint()) {
-        ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(xmlAssembly.getConstraint()),
-            ISource.modelSource(metaschema.getLocation()));
+      if (xmlObject.isSetConstraint()) {
+        ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(xmlObject.getConstraint()),
+            ISource.modelSource(module.getLocation()));
       }
       return retval;
     }));
@@ -107,7 +118,13 @@ class XmlGlobalAssemblyDefinition
   }
 
   @Override
-  public IStandardModelContainerSupport getModelContainer() {
+  public IContainerModelAssemblySupport<
+      IModelInstanceAbsolute,
+      INamedModelInstanceAbsolute,
+      IFieldInstanceAbsolute,
+      IAssemblyInstanceAbsolute,
+      IChoiceInstance,
+      IChoiceGroupInstance> getModelContainer() {
     return ObjectUtils.notNull(modelContainer.get());
   }
 
@@ -122,8 +139,8 @@ class XmlGlobalAssemblyDefinition
   }
 
   @Override
-  public IAssemblyInstance getInlineInstance() {
-    return IFeatureGlobalDefinition.super.getInlineInstance();
+  public IFlagInstance getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
   }
 
   // ----------------------------------------
@@ -180,7 +197,7 @@ class XmlGlobalAssemblyDefinition
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 

@@ -30,8 +30,8 @@ import com.squareup.javapoet.ClassName;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFlagInstanceTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
@@ -52,7 +52,7 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
    */
   @NonNull
   static IModelDefinitionTypeInfo newTypeInfo(
-      @NonNull IFlagContainer definition,
+      @NonNull IModelDefinition definition,
       @NonNull ITypeResolver typeResolver) {
     IModelDefinitionTypeInfo retval;
     switch (definition.getModelType()) {
@@ -71,7 +71,7 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
   }
 
   @Override
-  IFlagContainer getDefinition();
+  IModelDefinition getDefinition();
 
   /**
    * Get the class type information for the base class of the generated class, .

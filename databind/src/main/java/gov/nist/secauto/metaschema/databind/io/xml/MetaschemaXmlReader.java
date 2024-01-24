@@ -26,25 +26,38 @@
 
 package gov.nist.secauto.metaschema.databind.io.xml;
 
-import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.info.IPropertyCollector;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstance;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
+import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import org.codehaus.stax2.XMLEventReader2;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -79,6 +92,13 @@ public class MetaschemaXmlReader
     this(reader, new DefaultXmlProblemHandler());
   }
 
+  public Object readItem(
+      @NonNull Object item,
+      @NonNull IBoundInstance instance,
+      @NonNull StartElement start) throws IOException {
+    return instance.readItem(item, new ItemReadHandler(start));
+  }
+
   /**
    * Construct a new Module-aware parser.
    *
@@ -107,87 +127,43 @@ public class MetaschemaXmlReader
   /**
    * Parses XML into a bound object based on the provided {@code definition}.
    * <p>
-   * Parses the {@link XMLStreamConstants#START_DOCUMENT}, the root element, and
-   * the {@link XMLStreamConstants#END_DOCUMENT}.
+   * Parses the {@link XMLStreamConstants#START_DOCUMENT}, any processing
+   * instructions, and the element.
    *
    * @param <CLASS>
    *          the returned object type
-   * @param targetDefinition
-   *          the definition describing the root element data to read
+   * @param definition
+   *          the definition describing the element data to read
    * @return the parsed object
-   * @throws XMLStreamException
-   *           if an error occurred while parsing XML events
    * @throws IOException
    *           if an error occurred while parsing the input
    */
-  @NonNull
-  public <CLASS> CLASS read(@NonNull IAssemblyClassBinding targetDefinition) throws IOException, XMLStreamException {
-
-    // we may be at the START_DOCUMENT
-    if (reader.peek().isStartDocument()) {
-      XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_DOCUMENT);
-    }
-
-    XmlEventUtil.skipEvents(reader, XMLStreamConstants.CHARACTERS, XMLStreamConstants.PROCESSING_INSTRUCTION);
-
-    QName rootQName = targetDefinition.getRootXmlQName();
-    XMLEvent event = XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_ELEMENT, rootQName);
-
-    StartElement start = ObjectUtils.notNull(event.asStartElement());
-
-    CLASS retval = readDefinitionValue(targetDefinition, null, start);
-
-    XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, rootQName);
-
-    // if (reader.hasNext() && LOGGER.isDebugEnabled()) {
-    // LOGGER.debug("After Parse: {}", XmlEventUtil.toString(reader.peek()));
-    // }
-
-    return retval;
-  }
-
-  @SuppressWarnings("PMD.CyclomaticComplexity")
   @Override
-  public <T> T readDefinitionValue(
-      IClassBinding targetDefinition,
-      Object parentObject,
-      StartElement start) throws IOException, XMLStreamException {
-
-    Object targetObject;
+  @NonNull
+  public <CLASS> CLASS read(@NonNull IBoundDefinitionModelComplex definition) throws IOException {
     try {
-      targetObject = targetDefinition.newInstance();
-      targetDefinition.callBeforeDeserialize(targetObject, parentObject);
-    } catch (BindingException ex) {
+      // we may be at the START_DOCUMENT
+      if (reader.peek().isStartDocument()) {
+        XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_DOCUMENT);
+      }
+
+      // advance past any other info to get to next start element
+      XmlEventUtil.skipEvents(reader, XMLStreamConstants.CHARACTERS, XMLStreamConstants.PROCESSING_INSTRUCTION,
+          XMLStreamConstants.DTD);
+
+      XMLEvent event = ObjectUtils.requireNonNull(reader.peek());
+      if (!event.isStartElement()) {
+        throw new IOException(
+            String.format("The token '%s' is not an XML element%s.",
+                XmlEventUtil.toEventName(event),
+                XmlEventUtil.generateLocationMessage(event)));
+      }
+
+      ItemReadHandler handler = new ItemReadHandler(ObjectUtils.notNull(event.asStartElement()));
+      return ObjectUtils.asType(definition.readItem(null, handler));
+    } catch (XMLStreamException ex) {
       throw new IOException(ex);
     }
-
-    readFlagInstances(targetDefinition, targetObject, start);
-
-    if (targetDefinition instanceof IAssemblyClassBinding) {
-      readModelInstances((IAssemblyClassBinding) targetDefinition, targetObject, start);
-    } else if (targetDefinition instanceof IFieldClassBinding) {
-      readFieldValue((IFieldClassBinding) targetDefinition, targetObject);
-    } else {
-      throw new UnsupportedOperationException(
-          String.format("Unsupported class binding type: %s", targetDefinition.getClass().getName()));
-    }
-
-    XmlEventUtil.skipWhitespace(reader);
-
-    XMLEvent nextEvent = ObjectUtils.notNull(reader.peek());
-    if (!XmlEventUtil.isEventEndElement(nextEvent, ObjectUtils.notNull(start.getName()))) {
-      throw new IOException(
-          String.format("Unrecognized element '%s'%s.",
-              XmlEventUtil.toEventName(nextEvent),
-              XmlEventUtil.generateLocationMessage(nextEvent)));
-    }
-
-    try {
-      targetDefinition.callAfterDeserialize(targetObject, parentObject);
-    } catch (BindingException ex) {
-      throw new IOException(ex);
-    }
-    return ObjectUtils.asType(targetObject);
   }
 
   /**
@@ -206,16 +182,18 @@ public class MetaschemaXmlReader
    *           if an error occurred while parsing XML events
    */
   protected void readFlagInstances(
-      @NonNull IClassBinding targetDefinition,
+      @NonNull IBoundDefinitionModel targetDefinition,
       @NonNull Object targetObject,
       @NonNull StartElement start) throws IOException, XMLStreamException {
 
-    Map<QName, IBoundFlagInstance> flagInstanceMap = targetDefinition.getFlagInstances().stream()
-        .collect(Collectors.toMap(IBoundFlagInstance::getXmlQName, Function.identity()));
+    Map<QName, IBoundInstanceFlag> flagInstanceMap = targetDefinition.getFlagInstances().stream()
+        .collect(Collectors.toMap(
+            IBoundInstanceFlag::getXmlQName,
+            Function.identity()));
 
     for (Attribute attribute : CollectionUtil.toIterable(ObjectUtils.notNull(start.getAttributes()))) {
       QName qname = attribute.getName();
-      IBoundFlagInstance instance = flagInstanceMap.get(qname);
+      IBoundInstanceFlag instance = flagInstanceMap.get(qname);
       if (instance == null) {
         // unrecognized flag
         if (!getProblemHandler().handleUnknownAttribute(targetDefinition, targetObject, attribute, this)) {
@@ -249,50 +227,38 @@ public class MetaschemaXmlReader
    *          the Module definition that describes the syntax of the data to read
    * @param targetObject
    *          the Java object that data parsed by this method will be stored in
-   * @param start
-   *          the XML element start and attribute data previously parsed
    * @throws IOException
    *           if an error occurred while parsing the input
-   * @throws XMLStreamException
-   *           if an error occurred while parsing XML events
    */
   protected void readModelInstances(
-      @NonNull IAssemblyClassBinding targetDefinition,
-      @NonNull Object targetObject,
-      @NonNull StartElement start)
-      throws IOException, XMLStreamException {
-    Set<IBoundNamedModelInstance> unhandledProperties = new HashSet<>();
-    for (IBoundNamedModelInstance modelProperty : targetDefinition.getModelInstances()) {
-      assert modelProperty != null;
-      if (!readModelInstanceValues(modelProperty, targetObject, start)) {
-        unhandledProperties.add(modelProperty);
+      @NonNull IBoundDefinitionModelAssembly targetDefinition,
+      @NonNull Object targetObject)
+      throws IOException {
+    Collection<? extends IBoundInstanceModel> instances = targetDefinition.getModelInstances();
+    Set<IBoundInstanceModel> unhandledProperties = new HashSet<>();
+    for (IBoundInstanceModel modelInstance : instances) {
+      assert modelInstance != null;
+      if (!readItems(modelInstance, targetObject, true)) {
+        unhandledProperties.add(modelInstance);
       }
     }
 
     // process all properties that did not get a value
     getProblemHandler().handleMissingModelInstances(targetDefinition, targetObject, unhandledProperties);
-  }
 
-  /**
-   * Read the XML element and text data described by the {@code targetDefinition}
-   * and apply it to the provided {@code targetObject}.
-   *
-   * @param targetDefinition
-   *          the Module definition that describes the syntax of the data to read
-   * @param targetObject
-   *          the Java object that data parsed by this method will be stored in
-   * @throws IOException
-   *           if an error occurred while parsing the input
-   */
-  protected void readFieldValue(
-      @NonNull IFieldClassBinding targetDefinition,
-      @NonNull Object targetObject)
-      throws IOException {
-    IBoundFieldValueInstance fieldValue = targetDefinition.getFieldValueInstance();
+    // handle any
+    try {
+      if (!getReader().peek().isEndElement()) {
+        // handle any
+        XmlEventUtil.skipWhitespace(getReader());
+        XmlEventUtil.skipElement(getReader());
+        XmlEventUtil.skipWhitespace(getReader());
+      }
 
-    // parse the value
-    Object value = fieldValue.getJavaTypeAdapter().parse(reader);
-    fieldValue.setValue(targetObject, value);
+      XmlEventUtil.assertNext(getReader(), XMLStreamConstants.END_ELEMENT);
+    } catch (XMLStreamException ex) {
+      throw new IOException(ex);
+    }
   }
 
   /**
@@ -307,37 +273,20 @@ public class MetaschemaXmlReader
    */
   @SuppressWarnings("PMD.OnlyOneReturn")
   protected boolean isNextInstance(
-      @NonNull IBoundNamedModelInstance targetInstance)
+      @NonNull IBoundInstanceModel targetInstance)
       throws XMLStreamException {
 
     XmlEventUtil.skipWhitespace(reader);
 
     XMLEvent nextEvent = reader.peek();
-    if (!nextEvent.isStartElement()) {
-      return false;
-    }
 
-    QName nextQName = ObjectUtils.notNull(nextEvent.asStartElement().getName());
-
-    if (nextQName.equals(targetInstance.getXmlGroupAsQName())) {
-      // we are to parse the grouping element
-      return true;
+    boolean retval = nextEvent.isStartElement();
+    if (retval) {
+      QName qname = ObjectUtils.notNull(nextEvent.asStartElement().getName());
+      retval = qname.equals(targetInstance.getEffectiveXmlGroupAsQName()) // parse the grouping element
+          || targetInstance.canHandleXmlQName(qname); // parse the instance(s)
     }
-
-    if (nextQName.equals(targetInstance.getXmlQName())) {
-      // we are to parse the element
-      return true;
-    }
-
-    if (targetInstance instanceof IBoundFieldInstance) {
-      IBoundFieldInstance fieldInstance = (IBoundFieldInstance) targetInstance;
-      IDataTypeAdapter<?> adapter = fieldInstance.getDefinition().getJavaTypeAdapter();
-      // we are to parse the data type
-      return !fieldInstance.isInXmlWrapped()
-          && adapter.isUnrappedValueAllowedInXml()
-          && adapter.canHandleQName(nextQName);
-    }
-    return false;
+    return retval;
   }
 
   /**
@@ -348,166 +297,328 @@ public class MetaschemaXmlReader
    *          the instance to parse data for
    * @param parentObject
    *          the Java object that data parsed by this method will be stored in
-   * @param start
-   *          the XML element start and attribute data previously parsed
    * @return {@code true} if the instance was parsed, or {@code false} if the data
    *         did not contain information for this instance
    * @throws IOException
    *           if an error occurred while parsing the input
-   * @throws XMLStreamException
-   *           if an error occurred while parsing XML events
    */
-  protected boolean readModelInstanceValues(
-      @NonNull IBoundNamedModelInstance instance,
-      @NonNull Object parentObject,
-      @NonNull StartElement start)
-      throws IOException, XMLStreamException {
-    boolean handled = isNextInstance(instance);
-    if (handled) {
-      XmlEventUtil.skipWhitespace(reader);
-
-      StartElement currentStart = start;
-
-      QName groupQName = instance.getXmlGroupAsQName();
-      if (groupQName != null) {
-        // we are to parse the grouping element, if the next token matches
-        XMLEvent groupEvent = XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.START_ELEMENT, groupQName);
-        currentStart = ObjectUtils.notNull(groupEvent.asStartElement());
-      }
-
-      IPropertyCollector collector = instance.getPropertyInfo().newPropertyCollector();
-      // There are zero or more named values based on cardinality
-      instance.getPropertyInfo().readValues(collector, parentObject, currentStart, this);
-
-      Object value = collector.getValue();
-
-      // consume extra whitespace between elements
-      XmlEventUtil.skipWhitespace(reader);
-
-      if (groupQName != null) {
-        // consume the end of the group
-        XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, groupQName);
-      }
-
-      instance.setValue(parentObject, value);
-    }
-    return handled;
-  }
-
   @Override
-  public <T> T readModelInstanceValue(IBoundNamedModelInstance instance, Object parentObject, StartElement start)
-      throws XMLStreamException, IOException {
-    Object retval;
-    if (instance instanceof IBoundAssemblyInstance) {
-      retval = readModelInstanceValue((IBoundAssemblyInstance) instance, parentObject, start);
-    } else if (instance instanceof IBoundFieldInstance) {
-      retval = readModelInstanceValue((IBoundFieldInstance) instance, parentObject, start);
-    } else {
-      throw new UnsupportedOperationException(
-          String.format("Unsupported instance type: %s", instance.getClass().getName()));
+  public boolean readItems(
+      @NonNull IBoundInstanceModel instance,
+      @NonNull Object parentObject,
+      boolean parseGrouping)
+      throws IOException {
+    try {
+      boolean handled = isNextInstance(instance);
+      if (handled) {
+        // XmlEventUtil.skipWhitespace(reader);
+
+        QName groupQName = parseGrouping ? instance.getEffectiveXmlGroupAsQName() : null;
+        if (groupQName != null) {
+          // we need to parse the grouping element, if the next token matches
+          XmlEventUtil.requireStartElement(reader, groupQName);
+        }
+
+        IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
+
+        ModelInstanceReadHandler handler = new ModelInstanceReadHandler(instance, parentObject);
+
+        // let the property info decide how to parse the value
+        Object value = collectionInfo.readItems(handler);
+        instance.setValue(parentObject, value);
+
+        // consume extra whitespace between elements
+        XmlEventUtil.skipWhitespace(reader);
+
+        if (groupQName != null) {
+          // consume the end of the group
+          XmlEventUtil.requireEndElement(reader, groupQName);
+        }
+      }
+      return handled;
+    } catch (XMLStreamException ex) {
+      throw new IOException(ex);
     }
-    return ObjectUtils.asNullableType(retval);
   }
 
-  /**
-   * Read the XML data associated with the {@code instance} and apply it to the
-   * provided {@code parentObject}.
-   *
-   * @param instance
-   *          the instance to parse data for
-   * @param parentObject
-   *          the Java object that data parsed by this method will be stored in
-   * @param start
-   *          the XML element start and attribute data previously parsed
-   * @return the Java object read, or {@code null} if no data was read
-   * @throws IOException
-   *           if an error occurred while parsing the input
-   * @throws XMLStreamException
-   *           if an error occurred while parsing XML events
-   */
-  @Nullable
-  protected Object readModelInstanceValue(
-      @NonNull IBoundAssemblyInstance instance,
-      @NonNull Object parentObject,
-      @NonNull StartElement start) throws XMLStreamException, IOException {
-    // consume extra whitespace between elements
-    XmlEventUtil.skipWhitespace(reader);
+  private final class ModelInstanceReadHandler
+      extends AbstractModelInstanceReadHandler {
 
-    Object retval = null;
-    XMLEvent event = reader.peek();
-    if (event.isStartElement()) {
-      StartElement nextStart = event.asStartElement();
-      QName nextQName = nextStart.getName();
-      if (instance.getXmlQName().equals(nextQName)) {
-        // Consume the start element
-        reader.nextEvent();
+    private ModelInstanceReadHandler(
+        @NonNull IBoundInstanceModel instance,
+        @NonNull Object parentObject) {
+      super(instance, parentObject);
+    }
 
-        // consume the value
-        retval = instance.getDataTypeHandler().readItem(parentObject, nextStart, this);
+    @Override
+    public List<?> readList() throws IOException {
+      return ObjectUtils.notNull(readCollection());
+    }
+
+    @Override
+    public Map<String, ?> readMap() throws IOException {
+      IBoundInstanceModel instance = getCollectionInfo().getInstance();
+
+      return ObjectUtils.notNull(readCollection().stream()
+          .collect(Collectors.toMap(
+              item -> {
+                assert item != null;
+
+                IBoundInstanceFlag jsonKey = instance.getItemJsonKey(item);
+                assert jsonKey != null;
+                return ObjectUtils.requireNonNull(jsonKey.getValue(item)).toString();
+              },
+              Function.identity(),
+              (t, u) -> u,
+              LinkedHashMap::new)));
+    }
+
+    @NonNull
+    private List<Object> readCollection() throws IOException {
+      List<Object> retval = new LinkedList<>();
+      try {
+        // consume extra whitespace between elements
+        XmlEventUtil.skipWhitespace(reader);
+
+        IBoundInstanceModel instance = getCollectionInfo().getInstance();
+        XMLEvent event;
+        while ((event = reader.peek()).isStartElement()
+            && instance.canHandleXmlQName(ObjectUtils.notNull(event.asStartElement().getName()))) {
+
+          // Consume the start element
+          Object value = readItem();
+          retval.add(value);
+
+          // consume extra whitespace between elements
+          XmlEventUtil.skipWhitespace(reader);
+        }
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
+      }
+      return retval;
+    }
+
+    @Override
+    public Object readItem() throws IOException {
+      try {
+        return getCollectionInfo().getInstance().readItem(
+            getParentObject(),
+            new ItemReadHandler(ObjectUtils.notNull(getReader().peek().asStartElement())));
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
+      }
+    }
+  }
+
+  private final class ItemReadHandler implements IItemReadHandler {
+    @NonNull
+    private final StartElement startElement;
+
+    private ItemReadHandler(@NonNull StartElement startElement) {
+      this.startElement = startElement;
+    }
+
+    /**
+     * Get the current start element.
+     *
+     * @return the startElement
+     */
+    @NonNull
+    private StartElement getStartElement() {
+      return startElement;
+    }
+
+    @NonNull
+    private <DEF extends IBoundDefinitionModelComplex> Object readDefinitionElement(
+        @NonNull DEF definition,
+        @NonNull StartElement start,
+        @NonNull QName expectedQName,
+        @Nullable Object parent,
+        @NonNull DefinitionBodyHandler<DEF> bodyHandler) throws IOException {
+      try {
+        // consume the start element
+        XmlEventUtil.requireStartElement(reader, expectedQName);
+
+        // construct the item
+        Object item = definition.newInstance();
+
+        // call pre-parse initialization hook
+        definition.callBeforeDeserialize(item, parent);
+
+        // read the flags
+        readFlagInstances(definition, item, start);
+
+        // read the body
+        bodyHandler.accept(definition, item);
+
+        XmlEventUtil.skipWhitespace(reader);
+
+        // call post-parse initialization hook
+        definition.callAfterDeserialize(item, parent);
 
         // consume the end element
-        XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, nextQName);
+        XmlEventUtil.requireEndElement(reader, expectedQName);
+        return ObjectUtils.asType(item);
+      } catch (BindingException | XMLStreamException ex) {
+        throw new IOException(ex);
       }
     }
-    return retval;
+
+    @Override
+    public Object readItemFlag(
+        Object parent,
+        IBoundInstanceFlag flag) throws IOException {
+      throw new UnsupportedOperationException("handled by readFlagInstances()");
+    }
+
+    private void handleFieldDefinitionBody(
+        @NonNull IBoundDefinitionModelFieldComplex definition,
+        @NonNull Object item) throws IOException {
+      IBoundFieldValue fieldValue = definition.getFieldValue();
+
+      // parse the value
+      Object value = fieldValue.readItem(item, this);
+      fieldValue.setValue(item, value);
+    }
+
+    @Override
+    public Object readItemField(
+        Object parent,
+        IBoundInstanceModelFieldScalar instance)
+        throws IOException {
+
+      try {
+        QName wrapper = null;
+        if (instance.isEffectiveValueWrappedInXml()) {
+          wrapper = new QName(instance.getXmlNamespace(), instance.getEffectiveName());
+
+          XmlEventUtil.skipWhitespace(getReader());
+          XmlEventUtil.requireStartElement(getReader(), wrapper);
+        }
+
+        Object retval = readScalarItem(instance);
+
+        if (wrapper != null) {
+          XmlEventUtil.skipWhitespace(getReader());
+
+          XmlEventUtil.requireEndElement(getReader(), wrapper);
+        }
+        return retval;
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
+      }
+    }
+
+    @Override
+    public Object readItemField(
+        Object parent,
+        IBoundInstanceModelFieldComplex instance)
+        throws IOException {
+      return readDefinitionElement(
+          instance.getDefinition(),
+          getStartElement(),
+          instance.getXmlQName(),
+          parent,
+          this::handleFieldDefinitionBody);
+    }
+
+    @Override
+    public Object readItemField(Object parent, IBoundInstanceModelGroupedField instance) throws IOException {
+      return readDefinitionElement(
+          instance.getDefinition(),
+          getStartElement(),
+          instance.getXmlQName(),
+          parent,
+          this::handleFieldDefinitionBody);
+    }
+
+    @Override
+    public Object readItemField(
+        Object parent,
+        IBoundDefinitionModelFieldComplex definition) throws IOException {
+      return readDefinitionElement(
+          definition,
+          getStartElement(),
+          definition.getXmlQName(),
+          parent,
+          this::handleFieldDefinitionBody);
+    }
+
+    @Override
+    public Object readItemFieldValue(
+        Object parent,
+        IBoundFieldValue fieldValue) throws IOException {
+      return readScalarItem(fieldValue);
+    }
+
+    private void handleAssemblyDefinitionBody(
+        @NonNull IBoundDefinitionModelAssembly definition,
+        @NonNull Object item) throws IOException {
+      readModelInstances(definition, item);
+    }
+
+    @Override
+    public Object readItemAssembly(
+        Object parent,
+        IBoundInstanceModelAssembly instance) throws IOException {
+      return readDefinitionElement(
+          instance.getDefinition(),
+          getStartElement(),
+          instance.getXmlQName(),
+          parent,
+          this::handleAssemblyDefinitionBody);
+    }
+
+    @Override
+    public Object readItemAssembly(Object parent, IBoundInstanceModelGroupedAssembly instance) throws IOException {
+      return readDefinitionElement(
+          instance.getDefinition(),
+          getStartElement(),
+          instance.getXmlQName(),
+          parent,
+          this::handleAssemblyDefinitionBody);
+    }
+
+    @Override
+    public Object readItemAssembly(
+        Object parent,
+        IBoundDefinitionModelAssembly definition) throws IOException {
+      return readDefinitionElement(
+          definition,
+          getStartElement(),
+          ObjectUtils.requireNonNull(definition.getRootXmlQName()),
+          parent,
+          this::handleAssemblyDefinitionBody);
+    }
+
+    @NonNull
+    private Object readScalarItem(@NonNull IFeatureScalarItemValueHandler handler)
+        throws IOException {
+      return handler.getJavaTypeAdapter().parse(getReader());
+    }
+
+    @Override
+    public Object readChoiceGroupItem(Object parent, IBoundInstanceModelChoiceGroup instance) throws IOException {
+      try {
+        XMLEventReader2 eventReader = getReader();
+        // consume extra whitespace between elements
+        XmlEventUtil.skipWhitespace(eventReader);
+
+        XMLEvent event = eventReader.peek();
+        QName nextQName = ObjectUtils.notNull(event.asStartElement().getName());
+        IBoundInstanceModelGroupedNamed actualInstance = instance.getGroupedModelInstance(nextQName);
+        assert actualInstance != null;
+        return actualInstance.readItem(parent, this);
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
+      }
+    }
   }
 
-  /**
-   * Revise
-   * <p>
-   * Reads an individual XML item from the XML stream.
-   *
-   * @param instance
-   *          the instance to parse data for
-   * @param parentObject
-   *          the Java object that data parsed by this method will be stored in
-   * @param start
-   *          the XML element start and attribute data previously parsed
-   * @return the Java object read, or {@code null} if no data was read
-   * @throws IOException
-   *           if an error occurred while parsing the input
-   * @throws XMLStreamException
-   *           if an error occurred while parsing XML events
-   */
-  @NonNull
-  protected Object readModelInstanceValue(
-      @NonNull IBoundFieldInstance instance,
-      @NonNull Object parentObject,
-      @NonNull StartElement start) throws XMLStreamException, IOException {
-    // figure out if we need to parse the wrapper or not
-    IDataTypeAdapter<?> adapter = instance.getDefinition().getJavaTypeAdapter();
-    boolean parseWrapper = true;
-    if (!instance.isInXmlWrapped() && adapter.isUnrappedValueAllowedInXml()) {
-      parseWrapper = false;
-    }
-
-    StartElement currentStart = start;
-    if (parseWrapper) {
-      // TODO: not sure this is needed, since there is a peek just before this
-      // parse any whitespace before the element
-      XmlEventUtil.skipWhitespace(reader);
-
-      QName xmlQName = instance.getXmlQName();
-      XMLEvent event = reader.peek();
-      if (event.isStartElement() && xmlQName.equals(event.asStartElement().getName())) {
-        // Consume the start element
-        currentStart = ObjectUtils.notNull(reader.nextEvent().asStartElement());
-      } else {
-        throw new IOException(String.format("Found '%s' instead of expected element '%s'%s.",
-            event.asStartElement().getName(),
-            xmlQName,
-            XmlEventUtil.generateLocationMessage(event)));
-      }
-    }
-
-    // consume the value
-    Object retval = instance.getDataTypeHandler().readItem(parentObject, currentStart, this);
-
-    if (parseWrapper) {
-      // consume the end element
-      XmlEventUtil.consumeAndAssert(reader, XMLStreamConstants.END_ELEMENT, currentStart.getName());
-    }
-
-    return retval;
+  @FunctionalInterface
+  private interface DefinitionBodyHandler<DEF extends IBoundDefinitionModelComplex> {
+    void accept(
+        @NonNull DEF definition,
+        @NonNull Object item) throws IOException;
   }
 }

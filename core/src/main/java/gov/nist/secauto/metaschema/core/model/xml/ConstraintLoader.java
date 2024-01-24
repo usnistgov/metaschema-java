@@ -89,11 +89,11 @@ public class ConstraintLoader
   private static final Map<QName,
       Handler<Pair<ISource, List<ITargetedConstaints>>>> SCOPE_OBJECT_MAPPING = ObjectUtils.notNull(
           Map.ofEntries(
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "assembly"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "assembly"),
                   ConstraintLoader::handleScopedAssembly),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "field"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "field"),
                   ConstraintLoader::handleScopedField),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "flag"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "flag"),
                   ConstraintLoader::handleScopedFlag)));
 
   @NonNull
@@ -214,7 +214,7 @@ public class ConstraintLoader
     return CollectionUtil.unmodifiableList(scopedConstraints);
   }
 
-  private static void handleScopedAssembly(
+  private static void handleScopedAssembly( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<ISource, List<ITargetedConstaints>> state) {
     Scope.Assembly assembly = (Scope.Assembly) obj;
@@ -226,7 +226,7 @@ public class ConstraintLoader
     state.getRight().add(new AssemblyTargetedConstraints(expression, constraints));
   }
 
-  private static void handleScopedField(
+  private static void handleScopedField( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<ISource, List<ITargetedConstaints>> state) {
     Scope.Field field = (Scope.Field) obj;
@@ -238,7 +238,7 @@ public class ConstraintLoader
     state.getRight().add(new FieldTargetedConstraints(expression, constraints));
   }
 
-  private static void handleScopedFlag(
+  private static void handleScopedFlag( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<ISource, List<ITargetedConstaints>> state) {
     Scope.Flag flag = (Scope.Flag) obj;

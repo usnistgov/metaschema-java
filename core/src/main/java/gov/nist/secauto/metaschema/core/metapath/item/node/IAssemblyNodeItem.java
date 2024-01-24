@@ -54,7 +54,7 @@ public interface IAssemblyNodeItem extends IModelNodeItem<IAssemblyDefinition, I
   }
 
   @Override
-  default @NonNull String format(@NonNull IPathFormatter formatter) {
+  default String format(@NonNull IPathFormatter formatter) {
     return formatter.formatAssembly(this);
   }
 

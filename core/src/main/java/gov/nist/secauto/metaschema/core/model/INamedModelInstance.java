@@ -26,45 +26,10 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-
-import java.util.Collection;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface INamedModelInstance extends INamedInstance, IModelInstance {
+public interface INamedModelInstance extends IModelInstance, INamedInstance, IKeyed {
   @Override
   @NonNull
-  IFlagContainer getDefinition();
-
-  @Override
-  default String getJsonName() {
-    @NonNull String retval;
-    if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      @NonNull String groupAsName = ObjectUtils.requireNonNull(getGroupAsName(),
-          ObjectUtils.notNull(String.format("null group-as name in instance '%s' on definition '%s' in '%s'",
-              this.getName(),
-              this.getContainingDefinition().getName(),
-              this.getContainingModule().getLocation())));
-      retval = groupAsName;
-    } else {
-      retval = getEffectiveName();
-    }
-    return retval;
-  }
-
-  /**
-   * Get the item values for the provided {@code instanceValue}. An instance may
-   * be singular or many valued.
-   *
-   * @param instanceValue
-   *          the instance
-   * @return the item values or an empty collection if no item values exist
-   */
-  @NonNull
-  default Collection<?> getItemValues(Object instanceValue) {
-    // no item values by default
-    return CollectionUtil.emptyList();
-  }
+  IModelDefinition getDefinition();
 }

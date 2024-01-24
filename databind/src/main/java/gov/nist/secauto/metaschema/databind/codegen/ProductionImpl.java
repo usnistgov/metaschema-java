@@ -35,7 +35,9 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -98,9 +100,10 @@ class ProductionImpl implements IProduction {
   }
 
   @Override
-  public Stream<IGeneratedDefinitionClass> getGlobalDefinitionClassesAsStream() {
+  public List<IGeneratedDefinitionClass> getGlobalDefinitionClasses() {
     return ObjectUtils.notNull(getModuleProductions().stream()
-        .flatMap(metaschema -> metaschema.getGeneratedDefinitionClasses().stream()));
+        .flatMap(metaschema -> metaschema.getGeneratedDefinitionClasses().stream())
+        .collect(Collectors.toUnmodifiableList()));
   }
 
   @Override

@@ -42,6 +42,7 @@ module gov.nist.secauto.metaschema.databind {
   requires org.yaml.snakeyaml;
 
   requires flexmark.util.sequence;
+  requires transitive com.google.auto.service;
 
   exports gov.nist.secauto.metaschema.databind;
   exports gov.nist.secauto.metaschema.databind.codegen;
@@ -54,9 +55,12 @@ module gov.nist.secauto.metaschema.databind {
   exports gov.nist.secauto.metaschema.databind.model;
   exports gov.nist.secauto.metaschema.databind.model.info;
   exports gov.nist.secauto.metaschema.databind.model.annotations;
+  exports gov.nist.secauto.metaschema.databind.model.metaschema;
+  exports gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
   // need to allow access to the generated XMLBeans files
   opens org.apache.xmlbeans.metadata.system.metaschema.codegen;
   opens gov.nist.secauto.metaschema.databind.codegen.xmlbeans;
   opens gov.nist.secauto.metaschema.databind.codegen.xmlbeans.impl;
+  // opens gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 }

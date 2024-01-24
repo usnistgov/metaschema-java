@@ -87,7 +87,7 @@ public final class MarkupStringConverter {
   @NonNull
   public static MarkupLineDatatype toMarkupLineDatatype(@NonNull MarkupLine markup) {
     MarkupLineDatatype retval = ObjectUtils.notNull(MarkupLineDatatype.Factory.newInstance());
-    XmlbeansMarkupVisitor.visit(markup, IModule.METASCHEMA_XML_NS, retval);
+    XmlbeansMarkupVisitor.visit(markup, IModule.XML_NAMESPACE, retval);
     return retval;
   }
 

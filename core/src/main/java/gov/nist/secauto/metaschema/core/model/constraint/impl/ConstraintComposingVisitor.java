@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint.impl;
 
+import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyInstanceGroupedNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;
@@ -58,6 +59,12 @@ public class ConstraintComposingVisitor
 
   @Override
   public Void visitAssembly(@NonNull IAssemblyNodeItem item, ITargetedConstaints context) {
+    context.target(item.getDefinition());
+    return null;
+  }
+
+  @Override
+  public Void visitAssembly(IAssemblyInstanceGroupedNodeItem item, ITargetedConstaints context) {
     context.target(item.getDefinition());
     return null;
   }

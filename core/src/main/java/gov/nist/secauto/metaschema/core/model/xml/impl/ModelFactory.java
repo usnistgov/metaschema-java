@@ -27,12 +27,10 @@
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraintBuilder;
-import gov.nist.secauto.metaschema.core.model.constraint.DefaultLet;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
@@ -72,8 +70,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -107,19 +103,19 @@ public final class ModelFactory {
    */
   @SuppressWarnings("null")
   @NonNull
-  public static Map<QName, Set<String>> toProperties(
+  public static Map<IAttributable.Key, Set<String>> toProperties(
       @NonNull List<PropertyType> properties) {
     return properties.stream()
         .map(prop -> {
           String name = prop.getName();
-          String namespace = prop.isSetNamespace() ? prop.getNamespace() : IModule.METASCHEMA_XML_NS;
-          QName qname = new QName(namespace, name);
+          String namespace = prop.isSetNamespace() ? prop.getNamespace() : IAttributable.DEFAULT_PROPERY_NAMESPACE;
+          IAttributable.Key key = IAttributable.key(name, namespace);
           String value = prop.getValue();
 
-          return Map.entry(qname, value);
+          return Map.entry(key, value);
         })
-        .collect(Collectors.groupingBy(Map.Entry<QName, String>::getKey,
-            Collectors.mapping(Map.Entry<QName, String>::getValue, Collectors.toSet())));
+        .collect(Collectors.groupingBy(Map.Entry<IAttributable.Key, String>::getKey,
+            Collectors.mapping(Map.Entry<IAttributable.Key, String>::getValue, Collectors.toSet())));
   }
 
   /**
@@ -489,19 +485,9 @@ public final class ModelFactory {
   public static ILet newLet(
       @NonNull ConstraintLetType xmlObject,
       @NonNull ISource source) {
-    try {
-      return new DefaultLet(
-          ObjectUtils.notNull(xmlObject.getVar()),
-          ObjectUtils.notNull(xmlObject.getExpression()),
-          source);
-    } catch (MetapathException ex) {
-      throw new MetapathException(
-          String.format("Unable to compile the let expression '%s=%s'%s. %s",
-              xmlObject.getVar(),
-              xmlObject.getExpression(),
-              source.getSource() == null ? "" : " in " + source.getSource(),
-              ex.getMessage()),
-          ex);
-    }
+    return ILet.of(
+        ObjectUtils.notNull(xmlObject.getVar()),
+        ObjectUtils.notNull(xmlObject.getExpression()),
+        source);
   }
 }

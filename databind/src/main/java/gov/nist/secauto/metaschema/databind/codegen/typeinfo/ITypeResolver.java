@@ -27,18 +27,20 @@
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.TypeName;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
 
@@ -70,13 +72,13 @@ public interface ITypeResolver {
    */
   @NonNull
   default INamedModelInstanceTypeInfo getTypeInfo(
-      @NonNull INamedModelInstance instance,
+      @NonNull INamedModelInstanceAbsolute instance,
       @NonNull IAssemblyDefinitionTypeInfo parent) {
     INamedModelInstanceTypeInfo retval;
-    if (instance instanceof IAssemblyInstance) {
-      retval = new AssemblyInstanceTypeInfoImpl((IAssemblyInstance) instance, parent);
+    if (instance instanceof IAssemblyInstanceAbsolute) {
+      retval = new AssemblyInstanceTypeInfoImpl((IAssemblyInstanceAbsolute) instance, parent);
     } else if (instance instanceof IFieldInstance) {
-      retval = new FieldInstanceTypeInfoImpl((IFieldInstance) instance, parent);
+      retval = new FieldInstanceTypeInfoImpl((IFieldInstanceAbsolute) instance, parent);
     } else {
       throw new UnsupportedOperationException(instance.getClass().getName());
     }
@@ -99,6 +101,11 @@ public interface ITypeResolver {
       @NonNull IAssemblyDefinitionTypeInfo parent) {
     return new ChoiceGroupTypeInfoImpl(instance, parent);
   }
+
+  @NonNull
+  IGroupedNamedModelInstanceTypeInfo getTypeInfo(
+      @NonNull INamedModelInstanceGrouped modelInstance,
+      @NonNull IChoiceGroupTypeInfo choiceGroupTypeInfoImpl);
 
   /**
    * Get type information for the provided {@code definition}.
@@ -128,7 +135,7 @@ public interface ITypeResolver {
    * @return the type information
    */
   @NonNull
-  IModelDefinitionTypeInfo getTypeInfo(@NonNull IFlagContainer definition);
+  IModelDefinitionTypeInfo getTypeInfo(@NonNull IModelDefinition definition);
 
   /**
    * Get the name of the class associated with the provided Metaschema instance.
@@ -138,7 +145,7 @@ public interface ITypeResolver {
    * @return the class name information for the Module module
    */
   @NonNull
-  TypeName getClassName(IChoiceGroupInstance instance);
+  ClassName getClassName(IChoiceGroupInstance instance);
 
   /**
    * Get the name of the class associated with the provided Metaschema module.
@@ -158,7 +165,7 @@ public interface ITypeResolver {
    * @return the class name information for the definition
    */
   @NonNull
-  ClassName getClassName(@NonNull IFlagContainer definition);
+  ClassName getClassName(@NonNull IModelDefinition definition);
 
   /**
    * Get the name of the class associated with the provided Metaschema definition.
@@ -171,6 +178,25 @@ public interface ITypeResolver {
   ClassName getClassName(@NonNull INamedModelInstanceTypeInfo typeInfo);
 
   /**
+   * Get the name of the class associated with the provided Metaschema definition
+   * using the provided {@code postfix}. This class will be a child of the
+   * provided parent class.
+   *
+   * @param parentClass
+   *          the containing class
+   * @param suggestedClassName
+   *          the name to derive the subclass name from
+   * @param definition
+   *          the Metaschema definition to get the class name for
+   * @return the class name information for the definition
+   */
+  @NonNull
+  ClassName getSubclassName(
+      @NonNull ClassName parentClass,
+      @NonNull String suggestedClassName,
+      @NonNull IModelDefinition definition);
+
+  /**
    * Get the name of the base class to use for the class associated with the
    * provided Metaschema definition.
    *
@@ -180,7 +206,7 @@ public interface ITypeResolver {
    *         used
    */
   @Nullable
-  ClassName getBaseClassName(@NonNull IFlagContainer definition);
+  ClassName getBaseClassName(@NonNull IModelDefinition definition);
 
   /**
    * Get the Java package name to use for the provided Module module.
@@ -191,4 +217,7 @@ public interface ITypeResolver {
    */
   @NonNull
   String getPackageName(@NonNull IModule module);
+
+  @NonNull
+  String getPropertyName(@NonNull IDefinitionTypeInfo parent, @NonNull String name);
 }

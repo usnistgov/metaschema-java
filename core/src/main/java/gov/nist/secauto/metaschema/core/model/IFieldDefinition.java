@@ -29,15 +29,12 @@ package gov.nist.secauto.metaschema.core.model;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IField {
-
+public interface IFieldDefinition extends IModelDefinition, IValuedDefinition, IField {
   @Override
-  default IFieldDefinition getOwningDefinition() {
-    return this;
+  default IFieldInstance getInlineInstance() {
+    // not inline by default
+    return null;
   }
-
-  @Override
-  IFieldInstance getInlineInstance();
 
   /**
    * Retrieves the key to use as the field name for this field's value in JSON.
@@ -48,7 +45,7 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
   default Object getJsonValueKey() {
     Object retval = getJsonValueKeyFlagInstance();
     if (retval == null) {
-      retval = getJsonValueKeyName();
+      retval = getEffectiveJsonValueKeyName();
     }
     return retval;
   }
@@ -78,8 +75,23 @@ public interface IFieldDefinition extends IValuedDefinition, IFlagContainer, IFi
    *
    * @return the value key label
    */
-  @NonNull
+  @Nullable
   String getJsonValueKeyName();
+
+  /**
+   * Retrieves the configured static label to use as the value key, or the type
+   * specific name if a label is not configured.
+   *
+   * @return the value key label
+   */
+  @NonNull
+  default String getEffectiveJsonValueKeyName() {
+    String retval = getJsonValueKeyName();
+    if (retval == null || retval.isEmpty()) {
+      retval = getJavaTypeAdapter().getDefaultJsonValueKey();
+    }
+    return retval;
+  }
 
   /**
    * Get the value of the field's value from the field item object.

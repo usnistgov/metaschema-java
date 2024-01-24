@@ -27,9 +27,9 @@
 package gov.nist.secauto.metaschema.core.testing;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import org.jmock.Expectations;
@@ -78,19 +78,19 @@ public final class AssemblyBuilder
 
   @Override
   @NonNull
-  public IAssemblyInstance toInstance(
+  public IAssemblyInstanceAbsolute toInstance(
       @NonNull IAssemblyDefinition parent) {
     IAssemblyDefinition def = toDefinition();
     return toInstance(parent, def);
   }
 
   @NonNull
-  public IAssemblyInstance toInstance(
+  public IAssemblyInstanceAbsolute toInstance(
       @NonNull IAssemblyDefinition parent,
       @NonNull IAssemblyDefinition definition) {
     validate();
 
-    IAssemblyInstance retval = mock(IAssemblyInstance.class);
+    IAssemblyInstanceAbsolute retval = mock(IAssemblyInstanceAbsolute.class);
     applyNamedInstance(retval, definition, parent);
     return retval;
   }
@@ -109,10 +109,10 @@ public final class AssemblyBuilder
             IFlagInstance::getEffectiveName,
             Function.identity()));
 
-    Map<String, ? extends INamedModelInstance> modelInstances = this.modelInstances.stream()
+    Map<String, ? extends INamedModelInstanceAbsolute> modelInstances = this.modelInstances.stream()
         .map(builder -> builder.toInstance(retval))
         .collect(Collectors.toUnmodifiableMap(
-            INamedModelInstance::getEffectiveName,
+            INamedModelInstanceAbsolute::getEffectiveName,
             Function.identity()));
 
     getContext().checking(new Expectations() {
@@ -126,7 +126,7 @@ public final class AssemblyBuilder
         allowing(retval).getModelInstances();
         will(returnValue(modelInstances.values()));
         modelInstances.forEach((key, value) -> {
-          allowing(retval).getModelInstanceByName(with(key));
+          allowing(retval).getNamedModelInstanceByName(with(key));
           will(returnValue(value));
         });
       }

@@ -45,9 +45,9 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Implements <a href=
- * "https://www.w3.org/TR/xpath-functions-31/#func-data">fn:data</a>.
-*/
+ * Implements
+ * <a href= "https://www.w3.org/TR/xpath-functions-31/#func-data">fn:data</a>.
+ */
 public final class FnData {
 
   @NonNull

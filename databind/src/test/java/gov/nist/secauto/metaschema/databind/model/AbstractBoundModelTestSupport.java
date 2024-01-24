@@ -30,7 +30,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
@@ -49,7 +48,7 @@ public class AbstractBoundModelTestSupport {
   private final JUnit5Mockery context = new JUnit5Mockery();
 
   @NonNull
-  private IBindingContext bindingContext = DefaultBindingContext.instance();
+  private final IBindingContext bindingContext = DefaultBindingContext.instance();
   //
   // @BeforeAll
   // void initContext() {
@@ -76,20 +75,19 @@ public class AbstractBoundModelTestSupport {
   }
 
   @NonNull
-  protected IClassBinding registerClassBinding(@NonNull Class<?> clazz) {
-    return ObjectUtils.requireNonNull(getBindingContext().getClassBinding(clazz));
+  protected IBoundDefinitionModel registerClassBinding(@NonNull Class<?> clazz) {
+    return ObjectUtils.requireNonNull(getBindingContext().getBoundDefinitionForClass(clazz));
   }
 
   @NonNull
-  protected IModule registerModule(@NonNull Class<? extends AbstractBoundModule> clazz) {
-    return getBindingContext().getModuleByClass(clazz);
+  protected IBoundModule registerModule(@NonNull Class<? extends IBoundModule> clazz) {
+    return getBindingContext().registerModule(clazz);
   }
 
-  @SuppressWarnings("null")
   @NonNull
-  protected IAssemblyClassBinding getRootAssemblyClassBinding() {
-    return ObjectUtils.requireNonNull((IAssemblyClassBinding) getBindingContext()
-        .getClassBinding(RootBoundAssembly.class));
+  protected IBoundDefinitionModelAssembly getRootAssemblyClassBinding() {
+    return ObjectUtils.requireNonNull((IBoundDefinitionModelAssembly) getBindingContext()
+        .getBoundDefinitionForClass(RootBoundAssembly.class));
   }
 
   @SuppressWarnings("resource")

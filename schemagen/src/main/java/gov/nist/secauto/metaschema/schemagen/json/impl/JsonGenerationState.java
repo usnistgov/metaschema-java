@@ -42,94 +42,66 @@ import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.AbstractGenerationState;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;
-import gov.nist.secauto.metaschema.schemagen.json.datatype.JsonDatatypeManager;
-import gov.nist.secauto.metaschema.schemagen.json.schema.AssemblyDefinitionJsonSchema;
-import gov.nist.secauto.metaschema.schemagen.json.schema.DataTypeJsonSchema;
-import gov.nist.secauto.metaschema.schemagen.json.schema.DataTypeRestrictionDefinitionJsonSchema;
-import gov.nist.secauto.metaschema.schemagen.json.schema.FieldDefinitionJsonSchema;
-import gov.nist.secauto.metaschema.schemagen.json.schema.FlagDefinitionJsonSchema;
-import gov.nist.secauto.metaschema.schemagen.json.schema.IDefineableJsonSchema;
-import gov.nist.secauto.metaschema.schemagen.json.schema.IJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.IDataTypeJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.IDefineableJsonSchema.IKey;
+import gov.nist.secauto.metaschema.schemagen.json.IDefinitionJsonSchema;
+import gov.nist.secauto.metaschema.schemagen.json.IJsonGenerationState;
 
 import java.io.IOException;
-import java.util.LinkedHashSet;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class JsonGenerationState
-    extends AbstractGenerationState<JsonGenerator, JsonDatatypeManager> {
+    extends AbstractGenerationState<JsonGenerator, JsonDatatypeManager>
+    implements IJsonGenerationState {
 
   @NonNull
-  private final Set<IDefineableJsonSchema> definitionSchemas = new LinkedHashSet<>();
+  private final JsonNodeFactory jsonNodeFactory = new JsonNodeFactory(true);
   @NonNull
-  private final Map<IDefinition, IJsonSchema> definitionToSchemaMap = new ConcurrentHashMap<>();
+  private final Map<IKey, IDefinitionJsonSchema<?>> schemaDefinitions = new HashMap<>();
   @NonNull
-  private final Map<IValuedDefinition, IJsonSchema> definitionValueToDataTypeSchemaMap = new ConcurrentHashMap<>();
+  private final Map<IValuedDefinition, IDataTypeJsonSchema> definitionValueToDataTypeSchemaMap
+      = new ConcurrentHashMap<>();
   @NonNull
-  private final Map<IDataTypeAdapter<?>, IJsonSchema> dataTypeToSchemaMap = new ConcurrentHashMap<>();
+  private final Map<IDataTypeAdapter<?>, IDataTypeJsonSchema> dataTypeToSchemaMap = new ConcurrentHashMap<>();
 
   public JsonGenerationState(
       @NonNull IModule module,
       @NonNull JsonGenerator writer,
       @NonNull IConfiguration<SchemaGenerationFeature<?>> configuration) {
     super(module, writer, configuration, new JsonDatatypeManager());
+
+    // // seed definition schema mapping
+    // this.schemaDefinitions =
+    // ObjectUtils.notNull(getMetaschemaIndex().getDefinitions().stream()
+    // .filter(entry -> !isInline(entry.getDefinition()) &&
+    // entry.isUsedWithoutJsonKey()
+    // && !entry.isChoiceGroupMember())
+    // .map(entry -> newJsonSchema(entry.getDefinition(), null, null, null, this))
+    // .collect(Collectors.toMap(
+    // schema -> schema.getKey(),
+    // Function.identity(),
+    // (v1, v2) -> v2,
+    // ConcurrentHashMap::new)));
   }
 
+  @Override
   @NonNull
-  public IJsonSchema getDataTypeSchemaForDefinition(@NonNull IValuedDefinition definition) {
-    IJsonSchema retval = definitionValueToDataTypeSchemaMap.get(definition);
-    if (retval == null) {
-      AllowedValueCollection allowedValuesCollection = getContextIndependentEnumeratedValues(definition);
-      List<IAllowedValue> allowedValues = allowedValuesCollection.getValues();
-
-      if (allowedValues.isEmpty()) {
-        // by default, just use the built-in type
-        retval = getSchema(definition.getJavaTypeAdapter());
-      } else {
-        IDefineableJsonSchema restriction
-            = new DataTypeRestrictionDefinitionJsonSchema(definition, allowedValuesCollection);
-        registerDefinitionSchema(restriction);
-        retval = restriction;
-      }
-      definitionValueToDataTypeSchemaMap.put(definition, retval);
-      retval.resolveSubSchemas(this);
-    }
-    return retval;
+  public <DEF extends IDefinition> IDefinitionJsonSchema<DEF> getSchema(@NonNull IKey key) {
+    IDefinitionJsonSchema<?> retval = getDefinitionSchema(key, this);
+    return ObjectUtils.asType(ObjectUtils.requireNonNull(retval));
   }
 
+  @Override
   @NonNull
-  public IJsonSchema getSchema(@NonNull IDefinition definition) {
-    IJsonSchema retval = definitionToSchemaMap.get(definition);
-    if (retval == null) {
-      IDefineableJsonSchema definitionSchema;
-      switch (definition.getModelType()) {
-      case ASSEMBLY:
-        definitionSchema = new AssemblyDefinitionJsonSchema((IAssemblyDefinition) definition);
-        break;
-      case FIELD:
-        definitionSchema = new FieldDefinitionJsonSchema((IFieldDefinition) definition);
-        break;
-      case FLAG:
-        definitionSchema = new FlagDefinitionJsonSchema((IFlagDefinition) definition);
-        break;
-      default:
-        throw new UnsupportedOperationException(definition.getModelType().toString());
-      }
-      definitionToSchemaMap.put(definition, definitionSchema);
-      registerDefinitionSchema(definitionSchema);
-      definitionSchema.resolveSubSchemas(this);
-      retval = definitionSchema;
-    }
-    return retval;
-  }
-
-  @NonNull
-  public IJsonSchema getSchema(@NonNull IDataTypeAdapter<?> datatype) {
-    IJsonSchema retval = dataTypeToSchemaMap.get(datatype);
+  public IDataTypeJsonSchema getSchema(@NonNull IDataTypeAdapter<?> datatype) {
+    IDataTypeJsonSchema retval = dataTypeToSchemaMap.get(datatype);
     if (retval == null) {
       retval = new DataTypeJsonSchema(
           getDatatypeManager().getTypeNameForDatatype(datatype),
@@ -139,26 +111,137 @@ public class JsonGenerationState
     return retval;
   }
 
-  protected void registerDefinitionSchema(@NonNull IDefineableJsonSchema schema) {
-    if (schema.isDefinition(this)) {
-      synchronized (definitionSchemas) {
-        if (!definitionSchemas.contains(schema)) {
-          definitionSchemas.add(schema);
-        }
-      }
+  /**
+   * Get the JSON schema info for the provided definition.
+   *
+   * @param key
+   *          the key to use to lookup the definition schema info
+   * @return the definition's schema info
+   */
+  private IDefinitionJsonSchema<?> getDefinitionSchema(
+      @NonNull IKey key,
+      @NonNull IJsonGenerationState state) {
+    synchronized (schemaDefinitions) {
+      return schemaDefinitions.computeIfAbsent(key, (k) -> {
+        IDefinitionJsonSchema<?> retval = newJsonSchema(
+            k.getDefinition(),
+            k.getJsonKeyFlagName(),
+            k.getDiscriminatorProperty(),
+            k.getDiscriminatorValue(),
+            state);
+        assert key.equals(retval.getKey());
+        return retval;
+      });
     }
   }
 
+  @Override
+  public boolean isDefinitionRegistered(IDefinitionJsonSchema<?> schema) {
+    return schemaDefinitions.containsKey(schema.getKey());
+  }
+
+  @Override
+  public void registerDefinitionSchema(IDefinitionJsonSchema<?> schema) {
+    IDefinitionJsonSchema<?> old = schemaDefinitions.put(schema.getKey(), schema);
+    assert old == null;
+  }
+
+  /**
+   * Get the JSON schema info for the provided definition.
+   *
+   * @param definition
+   *          the definition to get the schema info for
+   * @param jsonKeyFlagName
+   *          the name of the flag to use as the JSON key, or @{code null} if no
+   *          flag is used as the JSON key
+   * @param discriminatorProperty
+   *          the property name to use as the choice group discriminator,
+   *          or @{code null} if no choice group discriminator is used
+   * @param discriminatorValue
+   *          the property value to use as the choice group discriminator,
+   *          or @{code null} if no choice group discriminator is used
+   * @return the definition's schema info
+   */
+  @NonNull
+  private static IDefinitionJsonSchema<?> newJsonSchema(
+      @NonNull IDefinition definition,
+      @Nullable String jsonKeyFlagName,
+      @Nullable String discriminatorProperty,
+      @Nullable String discriminatorValue,
+      @NonNull IJsonGenerationState state) {
+    IDefinitionJsonSchema<?> retval;
+    if (definition instanceof IFlagDefinition) {
+      retval = new FlagDefinitionJsonSchema((IFlagDefinition) definition, state);
+    } else if (definition instanceof IAssemblyDefinition) {
+      retval = new AssemblyDefinitionJsonSchema(
+          (IAssemblyDefinition) definition,
+          jsonKeyFlagName,
+          discriminatorProperty,
+          discriminatorValue,
+          state);
+    } else if (definition instanceof IFieldDefinition) {
+      retval = new FieldDefinitionJsonSchema(
+          (IFieldDefinition) definition,
+          jsonKeyFlagName,
+          discriminatorProperty,
+          discriminatorValue,
+          state);
+    } else {
+      throw new IllegalArgumentException("Unsupported definition type" + definition.getClass().getName());
+    }
+    return retval;
+  }
+
   public ObjectNode generateDefinitions() {
+    @NonNull Map<IKey, IDefinitionJsonSchema<?>> gatheredDefinitions = new HashMap<>();
+
+    getMetaschemaIndex().getDefinitions().stream()
+        .filter(entry -> entry.isRoot())
+        .map(entry -> entry.getDefinition())
+        .forEachOrdered(def -> {
+          IDefinitionJsonSchema<?> definitionSchema = getSchema(IKey.of(def));
+          assert definitionSchema != null;
+          definitionSchema.gatherDefinitions(gatheredDefinitions, this);
+        });
+
     ObjectNode definitionsObject = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
 
-    for (IDefineableJsonSchema schema : definitionSchemas) {
-      schema.generateDefinition(this, definitionsObject);
-    }
+    gatheredDefinitions.values().stream()
+        .filter(schema -> !isInline(schema.getDefinition()))
+        .sorted(Comparator.comparing(schema -> schema.getDefinitionName(this)))
+        .forEachOrdered(schema -> {
+          schema.generateDefinition(this, definitionsObject);
+        });
 
     getDatatypeManager().generateDatatypes(definitionsObject);
 
     return definitionsObject;
+  }
+
+  @Override
+  public JsonNodeFactory getJsonNodeFactory() {
+    return jsonNodeFactory;
+  }
+
+  @Override
+  @NonNull
+  public IDataTypeJsonSchema getDataTypeSchemaForDefinition(@NonNull IValuedDefinition definition) {
+    IDataTypeJsonSchema retval = definitionValueToDataTypeSchemaMap.get(definition);
+    if (retval == null) {
+      AllowedValueCollection allowedValuesCollection = getContextIndependentEnumeratedValues(definition);
+      List<IAllowedValue> allowedValues = allowedValuesCollection.getValues();
+
+      IDataTypeAdapter<?> dataTypeAdapter = definition.getJavaTypeAdapter();
+
+      // register data type use
+      retval = getSchema(dataTypeAdapter);
+      if (!allowedValues.isEmpty()) {
+        // create restriction
+        retval = new DataTypeRestrictionDefinitionJsonSchema(definition, allowedValuesCollection);
+      }
+      definitionValueToDataTypeSchemaMap.put(definition, retval);
+    }
+    return retval;
   }
 
   @SuppressWarnings("resource")
@@ -189,4 +272,5 @@ public class JsonGenerationState
   public void flushWriter() throws IOException {
     getWriter().flush();
   }
+
 }

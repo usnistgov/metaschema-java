@@ -28,9 +28,11 @@ package gov.nist.secauto.metaschema.core.model;
 
 import gov.nist.secauto.metaschema.core.model.constraint.impl.IFeatureValueConstrained;
 
+import java.util.Locale;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IDefinition extends INamedModelElement, IFeatureValueConstrained {
+public interface IDefinition extends IModelElement, INamed, IAttributable, IFeatureValueConstrained {
 
   @NonNull
   ModuleScopeEnum DEFAULT_DEFINITION_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
@@ -81,9 +83,11 @@ public interface IDefinition extends INamedModelElement, IFeatureValueConstraine
   @SuppressWarnings("null")
   @Override
   default String toCoordinates() {
-    return String.format("%s:%s:%s(%d)",
+    return String.format("%s:%s-definition:%s(%d)",
         getContainingModule().getShortName(),
-        getModelType(),
-        getName(), hashCode());
+        getModelType().toString().toUpperCase(Locale.ROOT),
+        getName(),
+        hashCode());
   }
+
 }

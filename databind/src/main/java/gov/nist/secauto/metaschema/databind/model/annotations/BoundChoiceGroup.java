@@ -30,7 +30,8 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -55,7 +56,7 @@ public @interface BoundChoiceGroup {
    * @return the discriminator property name
    */
   @NonNull
-  String discriminator() default MetaschemaModelConstants.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME;
+  String discriminator() default IChoiceGroupInstance.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME;
 
   /**
    * A non-negative number that indicates the minimum occurrence of the model
@@ -63,14 +64,14 @@ public @interface BoundChoiceGroup {
    *
    * @return a non-negative number
    */
-  int minOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS;
+  int minOccurs() default IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS;
 
   /**
    * A number that indicates the maximum occurrence of the model instance.
    *
    * @return a positive number or {@code -1} to indicate "unbounded"
    */
-  int maxOccurs() default MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS;
+  int maxOccurs() default IGroupable.DEFAULT_GROUP_AS_MAX_OCCURS;
 
   /**
    * Used to provide grouping information.
@@ -81,9 +82,18 @@ public @interface BoundChoiceGroup {
    * @return the configured {@link GroupAs} or the default value with a
    *         {@code null} {@link GroupAs#name()}
    */
-  GroupAs groupAs() default @GroupAs(name = Constants.NULL_VALUE);
+  @NonNull
+  GroupAs groupAs() default @GroupAs(name = ModelUtil.NULL_VALUE);
 
-  String jsonKey() default Constants.NO_STRING_VALUE;
+  /**
+   * The name of a common flag to use as the JSON key that appears on all
+   * associated {@link #assemblies()} and {@link #fields()}.
+   *
+   * @return the configured JSON key flag name or
+   *         {@link ModelUtil#NO_STRING_VALUE} if no JSON key is configured
+   */
+  @NonNull
+  String jsonKey() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The the assemblies that may occur within this choice group.
@@ -92,7 +102,7 @@ public @interface BoundChoiceGroup {
    *         group
    */
   @NonNull
-  BoundAssembly[] assemblies() default {};
+  BoundGroupedAssembly[] assemblies() default {};
 
   /**
    * The the fields that may occur within this choice group.
@@ -100,5 +110,5 @@ public @interface BoundChoiceGroup {
    * @return an array of field bindings which may occur within this choice group
    */
   @NonNull
-  BoundAssembly[] fields() default {};
+  BoundGroupedField[] fields() default {};
 }

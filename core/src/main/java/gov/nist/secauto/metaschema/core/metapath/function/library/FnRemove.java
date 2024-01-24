@@ -80,7 +80,8 @@ public final class FnRemove {
       IItem focus) {
     ISequence<?> target = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
     IIntegerItem position
-        = FunctionUtils.getFirstItem(FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true);
+        = ObjectUtils.requireNonNull(
+            FunctionUtils.getFirstItem(FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true));
     return ISequence.of(fnRemove(target, position));
   }
 
@@ -95,7 +96,11 @@ public final class FnRemove {
    *          the position of the item in the sequence to be removed
    * @return {@code sequence} the new sequence with the item removed
    */
-  public static <T extends IItem> List<T> fnRemove(List<T> target, IIntegerItem positionItem) {
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  @NonNull
+  public static <T extends IItem> List<T> fnRemove(
+      @NonNull List<T> target,
+      @NonNull IIntegerItem positionItem) {
     int position = positionItem.asInteger().intValue();
 
     if (position == 0) {

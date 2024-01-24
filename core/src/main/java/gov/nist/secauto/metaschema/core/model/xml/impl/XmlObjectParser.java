@@ -33,6 +33,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlCursor.XmlBookmark;
 import org.apache.xmlbeans.XmlLineNumber;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -46,6 +47,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class XmlObjectParser<T> {
+  private static final XmlOptions XML_OPTIONS = new XmlOptions().setXPathUseSaxon(false).setXPathUseXmlBeans(true);
   private final Map<QName, Handler<T>> elementNameToHandlerMap;
   private final String xpath;
 
@@ -166,15 +168,16 @@ public class XmlObjectParser<T> {
   /**
    * Parse an XmlObject element tree using the configured child element handlers.
    *
-   * @param container
+   * @param xmlObject
    *          the XmlObject container to parse
    * @param state
    *          parsing state to pass to the handlers
+   * @return the state
    */
-  public void parse(@NonNull XmlObject container, T state) {
-    try (XmlCursor cursor = container.newCursor()) {
+  public T parse(@NonNull XmlObject xmlObject, T state) {
+    try (XmlCursor cursor = xmlObject.newCursor()) {
       assert cursor != null;
-      cursor.selectPath(getXpath());
+      cursor.selectPath(getXpath(), XML_OPTIONS);
       while (cursor.toNextSelection()) {
         XmlObject obj = cursor.getObject();
         assert obj != null;
@@ -182,6 +185,7 @@ public class XmlObjectParser<T> {
         handler.handle(obj, state);
       }
     }
+    return state;
   }
 
   /**

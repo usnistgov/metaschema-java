@@ -26,9 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.metapath.function.library;
 
-import java.util.List;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
@@ -39,9 +36,13 @@ import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 /**
- * Implements <a href=
- * "https://www.w3.org/TR/xpath-functions-31/#func-tail">fn:tail</a>.
+ * Implements
+ * <a href= "https://www.w3.org/TR/xpath-functions-31/#func-tail">fn:tail</a>.
  */
 public final class FnTail {
   @NonNull
@@ -83,7 +84,10 @@ public final class FnTail {
    * @return {@code IItem} the last item in the sequence {@code null} otherwise
    *         null for no items
    */
-  public static List<? extends IItem> fnTail(List<? extends IItem> sequence) {
-    return sequence.size() <= 1 ? CollectionUtil.emptyList() : sequence.subList(1, sequence.size());
+  @NonNull
+  public static List<? extends IItem> fnTail(@NonNull List<? extends IItem> sequence) {
+    return sequence.size() <= 1
+        ? CollectionUtil.emptyList()
+        : ObjectUtils.notNull(sequence.subList(1, sequence.size()));
   }
 }

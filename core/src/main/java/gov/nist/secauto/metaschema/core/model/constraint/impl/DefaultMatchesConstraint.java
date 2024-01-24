@@ -30,14 +30,13 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.constraint.IMatchesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -84,7 +83,7 @@ public final class DefaultMatchesConstraint
       @NonNull ISource source,
       @NonNull Level level,
       @NonNull MetapathExpression target,
-      @NonNull Map<QName, Set<String>> properties,
+      @NonNull Map<IAttributable.Key, Set<String>> properties,
       @Nullable Pattern pattern,
       @Nullable IDataTypeAdapter<?> dataType,
       @Nullable MarkupMultiline remarks) {

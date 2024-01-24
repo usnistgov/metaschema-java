@@ -28,10 +28,12 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFeatureFlagContainerItem.FlagContainer;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFeatureModelContainerItem.ModelContainer;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -134,7 +136,8 @@ final class DefaultNodeItemFactory
 
     Object parentValue = parent.getValue();
     assert parentValue != null;
-    for (INamedModelInstance instance : CollectionUtil.toIterable(getNamedModelInstances(parent.getDefinition()))) {
+    for (INamedModelInstanceAbsolute instance : CollectionUtil
+        .toIterable(getNamedModelInstances(parent.getDefinition()))) {
       Object instanceValue = instance.getValue(parentValue);
 
       // the item values will be all non-null items
@@ -222,5 +225,11 @@ final class DefaultNodeItemFactory
       retval.put(instance.getEffectiveName(), Collections.singletonList(item));
     }
     return retval.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(retval);
+  }
+
+  @Override
+  public IAssemblyNodeItem newAssemblyNodeItem(IAssemblyInstanceGrouped instance, IAssemblyNodeItem parent,
+      int position, Object value) {
+    throw new UnsupportedOperationException("implement");
   }
 }

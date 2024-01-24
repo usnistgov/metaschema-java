@@ -79,22 +79,22 @@ public interface NameConverter {
   String toInterfaceName(String token);
 
   /**
-   * converts a string into an identifier suitable for properties.
-   *
-   * In general, this operation should generate "NamesLikeThis", which will be
-   * used with known prefixes like "get" or "set".
+   * Converts a string into an identifier suitable for Java properties.
+   * <p>
+   * In general, this operation should generate upper camel case "NamesLikeThis",
+   * which will be used with known prefixes like "get" or "set".
    *
    * @param token
    *          the string to convert
-   * @return the equivalent property name
+   * @return the equivalent Java property name
    */
   String toPropertyName(String token);
 
   /**
    * converts a string into an identifier suitable for constants.
-   *
-   * In the standard Java naming convention, this operation should generate
-   * "NAMES_LIKE_THIS".
+   * <p>
+   * In the standard Java naming convention, this operation should generate upper
+   * case "NAMES_LIKE_THIS".
    *
    * @param token
    *          the string to convert
@@ -104,8 +104,8 @@ public interface NameConverter {
 
   /**
    * Converts a string into an identifier suitable for variables.
-   *
-   * In general it should generate "namesLikeThis".
+   * <p>
+   * In general it should generate lower camel case "namesLikeThis".
    *
    * @param token
    *          the string to convert
@@ -116,7 +116,7 @@ public interface NameConverter {
   /**
    * Converts a namespace URI into a package name. This method should expect
    * strings like "http://foo.bar.zot/org", "urn:abc:def:ghi" "", or even "###"
-   * (basically anything) and expected to return a package name, liks
+   * (basically anything) and expected to return a package name, like
    * "org.acme.foo".
    *
    * @param namespaceUri
@@ -128,13 +128,6 @@ public interface NameConverter {
   class Standard
       extends NameUtil
       implements NameConverter {
-
-    /**
-     * Default constructor.
-     */
-    public Standard() {
-      // do nothing
-    }
 
     @Override
     public String toClassName(String token) {
@@ -241,7 +234,7 @@ public interface NameConverter {
     }
 
     private static String removeIllegalIdentifierChars(String token) {
-      StringBuilder newToken = new StringBuilder(token.length() + 1); // max expected length
+      StringBuilder newToken = new StringBuilder(token.length() * 2); // max expected length
       for (int i = 0; i < token.length(); i++) {
         char ch = token.charAt(i);
         if (i == 0 && !Character.isJavaIdentifierStart(ch)) { // ch can't be used as FIRST char
@@ -258,12 +251,11 @@ public interface NameConverter {
 
     private static List<String> tokenize(String str, String sep) {
       StringTokenizer tokens = new StringTokenizer(str, sep);
-      ArrayList<String> retval = new ArrayList<>();
+      List<String> retval = new ArrayList<>();
 
       while (tokens.hasMoreTokens()) {
         retval.add(tokens.nextToken());
       }
-
       return retval;
     }
 
@@ -273,7 +265,6 @@ public interface NameConverter {
       for (int i = list.size() - 1; i >= 0; i--) {
         rev.add(list.get(i));
       }
-
       return rev;
     }
 
@@ -281,10 +272,9 @@ public interface NameConverter {
       StringBuilder buf = new StringBuilder(tokens.get(0));
 
       for (int i = 1; i < tokens.size(); i++) {
-        buf.append(sep);
-        buf.append(tokens.get(i));
+        buf.append(sep)
+            .append(tokens.get(i));
       }
-
       return buf.toString();
     }
   }

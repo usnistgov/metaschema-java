@@ -27,81 +27,58 @@
 package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.databind.io.IParsingContext;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 
 import org.codehaus.stax2.XMLEventReader2;
-import org.codehaus.stax2.XMLStreamReader2;
 
 import java.io.IOException;
 
 import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXmlProblemHandler> {
 
+  // boolean readItems(
+  // @NonNull IBoundInstanceModel instance,
+  // @NonNull Object parentObject) throws IOException, XMLStreamException;
+
   /**
-   * Read the XML data associated with the {@code targetInstance} and apply it to
-   * the provided {@code parentObject}.
+   * Parses XML into a bound object based on the provided {@code definition}.
+   * <p>
+   * Parses the {@link XMLStreamConstants#START_DOCUMENT}, any processing
+   * instructions, and the element.
    *
-   * @param <T>
-   *          the resulting object type
-   * @param targetInstance
+   * @param <CLASS>
+   *          the returned object type
+   * @param definition
+   *          the definition describing the element data to read
+   * @return the parsed object
+   * @throws IOException
+   *           if an error occurred while parsing the input
+   */
+  <CLASS> CLASS read(@NonNull IBoundDefinitionModelComplex definition) throws IOException;
+
+  /**
+   * Read the data associated with the {@code instance} and apply it to the
+   * provided {@code parentObject}.
+   *
+   * @param instance
    *          the instance to parse data for
    * @param parentObject
    *          the Java object that data parsed by this method will be stored in
-   * @param start
-   *          the XML element start and attribute data previously parsed
-   * @return the Java object read, or {@code null} if no data was read
+   * @param parseGrouping
+   *          if {@code true} parse the instance's grouping element or
+   *          {@code false} otherwise
+   * @return {@code true} if the instance was parsed, or {@code false} if the data
+   *         did not contain information for this instance
    * @throws IOException
    *           if an error occurred while parsing the input
-   * @throws XMLStreamException
-   *           if an error occurred while parsing XML events
+   *
    */
-  @Nullable
-  <T> T readModelInstanceValue(
-      @NonNull IBoundNamedModelInstance targetInstance,
+  boolean readItems(
+      @NonNull IBoundInstanceModel instance,
       @NonNull Object parentObject,
-      @NonNull StartElement start) throws XMLStreamException, IOException;
-
-  /**
-   * Reads a XML element storing the associated data in a Java class instance,
-   * returning the resulting instance.
-   * <p>
-   * When called the next {@link XMLEvent} of the {@link XMLStreamReader2} is
-   * expected to be a {@link XMLStreamConstants#START_ELEMENT} that is the XML
-   * element associated with the Java class.
-   * <p>
-   * After returning the next {@link XMLEvent} of the {@link XMLStreamReader2} is
-   * expected to be a the next event after the
-   * {@link XMLStreamConstants#END_ELEMENT} for the XML
-   * {@link XMLStreamConstants#START_ELEMENT} element associated with the Java
-   * class.
-   *
-   * @param <T>
-   *          the resulting object type
-   * @param targetDefinition
-   *          the Module definition that describes the syntax of the data to read
-   * @param parentObject
-   *          the Java object parent of the target object, which can be
-   *          {@code null} if there is no parent
-   * @param start
-   *          the XML element start and attribute data previously parsed
-   * @return the Java object containing the data parsed by this method
-   * @throws IOException
-   *           if an error occurred while parsing the input
-   * @throws XMLStreamException
-   *           if an error occurred while parsing XML events
-   *
-   */
-  @NonNull
-  <T> T readDefinitionValue(
-      @NonNull IClassBinding targetDefinition,
-      @Nullable Object parentObject,
-      @NonNull StartElement start) throws IOException, XMLStreamException;
+      boolean parseGrouping) throws IOException;
 }

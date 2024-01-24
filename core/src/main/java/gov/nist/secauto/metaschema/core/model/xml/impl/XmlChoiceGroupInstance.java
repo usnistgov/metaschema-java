@@ -27,26 +27,42 @@
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractModelInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelGrouped;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedAssemblyReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedChoiceType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedFieldReferenceType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedInlineAssemblyDefinitionType;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedInlineFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
+
+import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlChoiceGroupInstance
-    extends AbstractModelInstance
-    implements IFeatureStandardModelContainer, IChoiceGroupInstance {
+    extends AbstractInstance<IAssemblyDefinition>
+    implements IChoiceGroupInstance,
+    IFeatureContainerModelGrouped<INamedModelInstanceGrouped, IFieldInstanceGrouped, IAssemblyInstanceGrouped> {
   @NonNull
   private final GroupedChoiceType xmlObject;
   @NonNull
-  private final Lazy<IStandardModelContainerSupport> modelContainer;
+  private final Lazy<XmlModelContainer> modelContainer;
 
   /**
    * Constructs a mutually exclusive choice between two possible objects.
@@ -58,19 +74,20 @@ class XmlChoiceGroupInstance
    */
   public XmlChoiceGroupInstance(
       @NonNull GroupedChoiceType xmlObject,
-      @NonNull IModelContainer parent) {
+      @NonNull IAssemblyDefinition parent) {
     super(parent);
     this.xmlObject = xmlObject;
-    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
-      XmlModelParser.parseChoiceGroup(xmlObject, parent, retval);
-      return retval;
-    }));
+    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlModelContainer(xmlObject, this)));
   }
 
   @Override
-  public IStandardModelContainerSupport getModelContainer() {
+  public XmlModelContainer getModelContainer() {
     return ObjectUtils.notNull(modelContainer.get());
+  }
+
+  @Override
+  public IAssemblyDefinition getOwningDefinition() {
+    return getParentContainer();
   }
 
   // ----------------------------------------
@@ -90,8 +107,8 @@ class XmlChoiceGroupInstance
   @Override
   public String getJsonDiscriminatorProperty() {
     return getXmlObject().isSetDiscriminator()
-        ? ObjectUtils.requireNonNull(getXmlObject().getDiscriminator().getInJson())
-        : MetaschemaModelConstants.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME;
+        ? ObjectUtils.requireNonNull(getXmlObject().getDiscriminator())
+        : IChoiceGroupInstance.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME;
   }
 
   @Override
@@ -133,4 +150,106 @@ class XmlChoiceGroupInstance
   // -------------------------------------
   // - End XmlBeans driven code - CPD-ON -
   // -------------------------------------
+
+  @SuppressWarnings("PMD.UseConcurrentHashMap")
+  @NonNull
+  private static final XmlObjectParser<Pair<IChoiceGroupInstance, XmlModelContainer>> XML_MODEL_PARSER
+      = new XmlObjectParser<>(ObjectUtils.notNull(
+          Map.ofEntries(
+              Map.entry(new QName(IModule.XML_NAMESPACE, "assembly"),
+                  XmlChoiceGroupInstance::handleAssembly),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "define-assembly"),
+                  XmlChoiceGroupInstance::handleDefineAssembly),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "field"),
+                  XmlChoiceGroupInstance::handleField),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "define-field"),
+                  XmlChoiceGroupInstance::handleDefineField)))) {
+
+        @Override
+        protected Handler<Pair<IChoiceGroupInstance, XmlModelContainer>>
+            identifyHandler(XmlCursor cursor, XmlObject obj) {
+          Handler<Pair<IChoiceGroupInstance, XmlModelContainer>> retval;
+          if (obj instanceof GroupedFieldReferenceType) {
+            retval = XmlChoiceGroupInstance::handleField;
+          } else if (obj instanceof GroupedInlineFieldDefinitionType) {
+            retval = XmlChoiceGroupInstance::handleDefineField;
+          } else if (obj instanceof GroupedAssemblyReferenceType) {
+            retval = XmlChoiceGroupInstance::handleAssembly;
+          } else if (obj instanceof GroupedInlineAssemblyDefinitionType) {
+            retval = XmlChoiceGroupInstance::handleDefineAssembly;
+          } else {
+            retval = super.identifyHandler(cursor, obj);
+          }
+          return retval;
+        }
+      };
+
+  private static void handleField( // NOPMD false positive
+      @NonNull XmlObject obj,
+      Pair<IChoiceGroupInstance, XmlModelContainer> state) {
+    IFieldInstanceGrouped instance = new XmlGroupedFieldInstance(
+        (GroupedFieldReferenceType) obj,
+        ObjectUtils.notNull(state.getLeft()));
+    ObjectUtils.notNull(state.getRight()).append(instance);
+  }
+
+  private static void handleDefineField( // NOPMD false positive
+      @NonNull XmlObject obj,
+      Pair<IChoiceGroupInstance, XmlModelContainer> state) {
+    IFieldInstanceGrouped instance = new XmlGroupedInlineFieldDefinition(
+        (GroupedInlineFieldDefinitionType) obj,
+        ObjectUtils.notNull(state.getLeft()));
+    ObjectUtils.notNull(state.getRight()).append(instance);
+  }
+
+  private static void handleAssembly( // NOPMD false positive
+      @NonNull XmlObject obj,
+      Pair<IChoiceGroupInstance, XmlModelContainer> state) {
+    IAssemblyInstanceGrouped instance = new XmlGroupedAssemblyInstance(
+        (GroupedAssemblyReferenceType) obj,
+        ObjectUtils.notNull(state.getLeft()));
+    ObjectUtils.notNull(state.getRight()).append(instance);
+  }
+
+  private static void handleDefineAssembly( // NOPMD false positive
+      @NonNull XmlObject obj,
+      Pair<IChoiceGroupInstance, XmlModelContainer> state) {
+    IAssemblyInstanceGrouped instance = new XmlGroupedInlineAssemblyDefinition(
+        (GroupedInlineAssemblyDefinitionType) obj,
+        ObjectUtils.notNull(state.getLeft()));
+    ObjectUtils.notNull(state.getRight()).append(instance);
+  }
+
+  private static class XmlModelContainer
+      extends DefaultGroupedModelContainerSupport<
+          INamedModelInstanceGrouped,
+          IFieldInstanceGrouped,
+          IAssemblyInstanceGrouped> {
+
+    /**
+     * Parse a choice group XMLBeans object.
+     *
+     * @param xmlObject
+     *          the XMLBeans object
+     * @param parent
+     *          the parent Metaschema node, either an assembly definition or choice
+     */
+    public XmlModelContainer(
+        @NonNull GroupedChoiceType xmlObject,
+        @NonNull IChoiceGroupInstance parent) {
+      XML_MODEL_PARSER.parse(xmlObject, Pair.of(parent, this));
+    }
+
+    public void append(@NonNull IFieldInstanceGrouped instance) {
+      String key = instance.getEffectiveName();
+      getFieldInstanceMap().put(key, instance);
+      getNamedModelInstanceMap().put(key, instance);
+    }
+
+    public void append(@NonNull IAssemblyInstanceGrouped instance) {
+      String key = instance.getEffectiveName();
+      getAssemblyInstanceMap().put(key, instance);
+      getNamedModelInstanceMap().put(key, instance);
+    }
+  }
 }

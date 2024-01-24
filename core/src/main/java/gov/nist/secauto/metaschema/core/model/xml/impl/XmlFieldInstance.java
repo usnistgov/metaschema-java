@@ -28,11 +28,14 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IContainerModel;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.FieldReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
@@ -42,13 +45,13 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlFieldInstance
-    extends AbstractFieldInstance {
+    extends AbstractInstance<IContainerModel>
+    implements IFieldInstanceAbsolute,
+    IFeatureDefinitionReferenceInstance<IFieldDefinition, IFieldInstanceAbsolute> {
   @NonNull
   private final FieldReferenceType xmlObject;
   @Nullable
@@ -66,7 +69,7 @@ class XmlFieldInstance
   @SuppressWarnings("PMD.NullAssignment")
   public XmlFieldInstance(
       @NonNull FieldReferenceType xmlObject,
-      @NonNull IModelContainer container) {
+      @NonNull IContainerModel container) {
     super(container);
     this.xmlObject = xmlObject;
     this.defaultValue = xmlObject.isSetDefault()
@@ -75,9 +78,14 @@ class XmlFieldInstance
   }
 
   @Override
-  public IFieldDefinition getDefinition() {
+  public final IFieldDefinition getDefinition() {
     // this will always be not null
     return ObjectUtils.notNull(getContainingModule().getScopedFieldDefinitionByName(getName()));
+  }
+
+  @Override
+  public IAssemblyDefinition getContainingDefinition() {
+    return getParentContainer().getOwningDefinition();
   }
 
   // ----------------------------------------
@@ -89,24 +97,13 @@ class XmlFieldInstance
    *
    * @return the underlying XML data
    */
-  protected FieldReferenceType getXmlObject() {
+  protected final FieldReferenceType getXmlObject() {
     return xmlObject;
   }
 
   @Override
   public boolean isInXmlWrapped() {
-    boolean retval;
-    if (getDefinition().getJavaTypeAdapter().isUnrappedValueAllowedInXml()) {
-      // default value
-      retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
-      if (getXmlObject().isSetInXml()) {
-        retval = getXmlObject().getInXml().booleanValue();
-      }
-    } else {
-      // All other data types get "wrapped"
-      retval = true;
-    }
-    return retval;
+    return getXmlObject().getInXml().booleanValue();
   }
 
   @Override
@@ -122,12 +119,12 @@ class XmlFieldInstance
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 
   @Override
-  public String getName() {
+  public final String getName() {
     return ObjectUtils.requireNonNull(getXmlObject().getRef());
   }
 

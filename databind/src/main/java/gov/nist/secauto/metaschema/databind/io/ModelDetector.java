@@ -178,8 +178,7 @@ public class ModelDetector {
       throw new IOException(ex);
     }
 
-    Class<?> clazz = getBindingContext().getBoundClassForXmlQName(startElementQName);
-
+    Class<?> clazz = getBindingContext().getBoundClassForRootXmlQName(startElementQName);
     if (clazz == null) {
       throw new IOException("Unrecognized element name: " + startElementQName.toString());
     }
@@ -197,14 +196,15 @@ public class ModelDetector {
         parser.nextToken();
         // JsonUtil.skipNextValue(parser);
       } else {
-        retval = getBindingContext().getBoundClassForJsonName(name);
+        IBindingContext bindingContext = getBindingContext();
+        retval = bindingContext.getBoundClassForRootJsonName(name);
         break outer;
       }
     }
     return retval;
   }
 
-  public static class Result {
+  public static final class Result {
     @NonNull
     private final Class<?> boundClass;
     @NonNull

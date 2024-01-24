@@ -47,7 +47,7 @@ public interface IExpectConstraint extends IConstraint {
 
   /**
    * A message to emit when the constraint is violated. Allows embedded Metapath
-   * expressions using the syntax {@code \{path\}}.
+   * expressions using the syntax {@code \{metapath\}}.
    *
    * @return the message if defined or {@code null} otherwise
    */
@@ -65,7 +65,7 @@ public interface IExpectConstraint extends IConstraint {
     return new Builder();
   }
 
-  class Builder
+  final class Builder
       extends AbstractConstraintBuilder<Builder, IExpectConstraint> {
     private MetapathExpression test;
     private String message;
@@ -74,11 +74,13 @@ public interface IExpectConstraint extends IConstraint {
       // disable construction
     }
 
+    @NonNull
     public Builder test(@NonNull MetapathExpression test) {
       this.test = test;
       return this;
     }
 
+    @NonNull
     public Builder message(@NonNull String message) {
       this.message = message;
       return this;

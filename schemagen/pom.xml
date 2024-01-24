@@ -23,8 +23,12 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>metaschema-databind</artifactId>
-			<scope>test</scope>
 		</dependency>
+		  <dependency>
+            <!-- for metaschema-databind -->
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service-annotations</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>metaschema-testing</artifactId>

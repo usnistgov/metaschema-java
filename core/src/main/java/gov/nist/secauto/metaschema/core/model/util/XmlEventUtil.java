@@ -26,9 +26,12 @@
 
 package gov.nist.secauto.metaschema.core.model.util;
 
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLStreamReader2;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -49,9 +52,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public final class XmlEventUtil { // NOPMD this is a set of utility methods
-  // private static final Logger LOGGER =
-  // LogManager.getLogger(XmlEventUtil.class);
-
   private static final Pattern WHITESPACE_ONLY = Pattern.compile("^\\s+$");
 
   private static final Map<Integer, String> EVENT_NAME_MAP = new HashMap<>(); // NOPMD - this value is immutable
@@ -69,7 +69,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     EVENT_NAME_MAP.put(XMLStreamConstants.ATTRIBUTE, "ATTRIBUTE");
     EVENT_NAME_MAP.put(XMLStreamConstants.DTD, "DTD");
     EVENT_NAME_MAP.put(XMLStreamConstants.CDATA, "CDATA");
-    EVENT_NAME_MAP.put(XMLStreamConstants.NAMESPACE, "NAMESPACE");
+    EVENT_NAME_MAP.put(XMLStreamConstants.NAMESPACE, "XML_NAMESPACE");
     EVENT_NAME_MAP.put(XMLStreamConstants.NOTATION_DECLARATION, "NOTATION_DECLARATION");
     EVENT_NAME_MAP.put(XMLStreamConstants.ENTITY_DECLARATION, "ENTITY_DECLARATION");
   }
@@ -294,6 +294,31 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     return xmlEvent;
   }
 
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  public static XMLEvent skipElement(@NonNull XMLEventReader2 reader) throws XMLStreamException {
+    XMLEvent xmlEvent = reader.peek();
+    if (!xmlEvent.isStartElement()) {
+      return xmlEvent;
+    }
+    // if (LOGGER.isInfoEnabled()) {
+    // LOGGER.atInfo().log(String.format("At location %s", toString(xmlEvent)));
+    // }
+
+    int depth = 0;
+    do {
+      xmlEvent = reader.nextEvent();
+      // if (LOGGER.isInfoEnabled()) {
+      // LOGGER.atInfo().log(String.format("Skipping %s", toString(xmlEvent)));
+      // }
+      if (xmlEvent.isStartElement()) {
+        depth++;
+      } else if (xmlEvent.isEndElement()) {
+        depth--;
+      }
+    } while (depth > 0 && reader.hasNext());
+    return reader.peek();
+  }
+
   /**
    * Skip over any processing instructions.
    *
@@ -433,6 +458,34 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     return retval;
   }
 
+  @NonNull
+  public static StartElement requireStartElement(
+      @NonNull XMLEventReader2 reader,
+      @NonNull QName presumedName) throws IOException, XMLStreamException {
+    XMLEvent retval = reader.nextEvent();
+    if (!(retval.isStartElement() && presumedName.equals(retval.asStartElement().getName()))) {
+      throw new IOException(generateExpectedMessage(
+          retval,
+          XMLStreamConstants.START_ELEMENT,
+          presumedName).toString());
+    }
+    return ObjectUtils.notNull(retval.asStartElement());
+  }
+
+  @NonNull
+  public static EndElement requireEndElement(
+      @NonNull XMLEventReader2 reader,
+      @NonNull QName presumedName) throws IOException, XMLStreamException {
+    XMLEvent retval = reader.nextEvent();
+    if (!(retval.isEndElement() && presumedName.equals(retval.asEndElement().getName()))) {
+      throw new IOException(generateExpectedMessage(
+          retval,
+          XMLStreamConstants.END_ELEMENT,
+          presumedName).toString());
+    }
+    return ObjectUtils.notNull(retval.asEndElement());
+  }
+
   /**
    * Assert that the next event from {@code reader} is of the type identified by
    * {@code presumedEventType}.
@@ -489,7 +542,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   }
 
   public static CharSequence generateLocationMessage(@NonNull XMLEvent event) {
-    Location location = XmlEventUtil.toLocation(event);
+    Location location = toLocation(event);
     return location == null ? "" : generateLocationMessage(location);
   }
 

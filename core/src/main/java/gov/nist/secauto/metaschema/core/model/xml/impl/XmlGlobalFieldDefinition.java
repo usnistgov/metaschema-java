@@ -30,12 +30,11 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -48,8 +47,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
@@ -57,15 +54,16 @@ import nl.talsmasoftware.lazy4j.Lazy;
 @SuppressWarnings({ "PMD.GodClass", "PMD.CouplingBetweenObjects" })
 class XmlGlobalFieldDefinition
     implements IFieldDefinition,
-    IFeatureFlagContainer<IFlagInstance>,
-    IFeatureGlobalDefinition<IFieldInstance> {
+    IFeatureContainerFlag<IFlagInstance> {
   @NonNull
   private final GlobalFieldDefinitionType xmlObject;
   @NonNull
-  private final IModule module;
+  private final XmlModule module;
   @Nullable
   private final Object defaultValue;
+  @NonNull
   private final Lazy<XmlFlagContainerSupport> flagContainer;
+  @NonNull
   private final Lazy<IValueConstrained> constraints;
 
   /**
@@ -77,7 +75,7 @@ class XmlGlobalFieldDefinition
    * @param module
    *          the containing Metaschema module
    */
-  public XmlGlobalFieldDefinition(@NonNull GlobalFieldDefinitionType xmlObject, @NonNull IModule module) {
+  public XmlGlobalFieldDefinition(@NonNull GlobalFieldDefinitionType xmlObject, @NonNull XmlModule module) {
     this.xmlObject = xmlObject;
     this.module = module;
     Object defaultValue = null;
@@ -85,15 +83,15 @@ class XmlGlobalFieldDefinition
       defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlObject.getDefault()));
     }
     this.defaultValue = defaultValue;
-    this.flagContainer = Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this));
-    this.constraints = Lazy.lazy(() -> {
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
+    this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
       if (getXmlObject().isSetConstraint()) {
         ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlObject().getConstraint()),
             ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
       }
       return retval;
-    });
+    }));
   }
 
   /**
@@ -120,7 +118,7 @@ class XmlGlobalFieldDefinition
   }
 
   @Override
-  public IModule getContainingModule() {
+  public XmlModule getContainingModule() {
     return module;
   }
 
@@ -130,8 +128,8 @@ class XmlGlobalFieldDefinition
   }
 
   @Override
-  public IFieldInstance getInlineInstance() {
-    return IFeatureGlobalDefinition.super.getInlineInstance();
+  public IFlagInstance getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
   }
 
   // ----------------------------------------
@@ -189,7 +187,7 @@ class XmlGlobalFieldDefinition
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 
@@ -215,16 +213,7 @@ class XmlGlobalFieldDefinition
 
   @Override
   public String getJsonValueKeyName() {
-    String retval = null;
-
-    if (getXmlObject().isSetJsonValueKey()) {
-      retval = getXmlObject().getJsonValueKey();
-    }
-
-    if (retval == null || retval.isEmpty()) {
-      retval = getJavaTypeAdapter().getDefaultJsonValueKey();
-    }
-    return retval;
+    return getXmlObject().getJsonValueKey();
   }
 
   @SuppressWarnings("null")

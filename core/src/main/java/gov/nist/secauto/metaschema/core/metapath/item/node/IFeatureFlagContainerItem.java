@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.metapath.item.node;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IContainerFlag;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import java.util.Collection;
@@ -38,12 +38,12 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This mixin interface indicates that the implementation is a {@link INodeItem}
- * that is based on an {@link IFlagContainer}. This means it has flag children.
+ * that is based on an {@link IContainerFlag}. This means it has flag children.
  * <p>
  * If an implementation may have flag and model children, or model children
  * only, then the {@link IFeatureModelContainerItem} should be used instead.
  */
-interface IFeatureFlagContainerItem extends INodeItem {
+public interface IFeatureFlagContainerItem extends INodeItem {
 
   @NonNull
   FlagContainer getModel();

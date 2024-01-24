@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<top-level xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://csrc.nist.gov/ns/metaschema/testing/assembly schema.xsd"
-  xmlns="http://csrc.nist.gov/ns/metaschema/testing/assembly" id="test">
+<top-level xmlns="http://csrc.nist.gov/ns/metaschema/testing/assembly" id="test">
   <child id="child1">
     <grandchild-a id="singleton-ungrouped">
       <field id="field1">value1</field>

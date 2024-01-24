@@ -26,10 +26,39 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 
-public interface IChoiceGroupInstance extends IModelInstance, IModelContainer {
+import java.util.Locale;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public interface IChoiceGroupInstance
+    extends IModelInstanceAbsolute, IContainerModelGrouped {
+
+  int DEFAULT_CHOICE_GROUP_GROUP_AS_MAX_OCCURS = -1;
+  @NonNull
+  String DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME = "object-type";
+
+  /**
+   * {@inheritDoc}
+   *
+   * @see #DEFAULT_CHOICE_GROUP_GROUP_AS_MAX_OCCURS
+   */
+  @Override
+  default int getMaxOccurs() {
+    return DEFAULT_CHOICE_GROUP_GROUP_AS_MAX_OCCURS;
+  }
+
+  /**
+   * Retrieve the Metaschema assembly definition on which this instance is
+   * declared.
+   *
+   * @return the parent Metaschema assembly definition
+   */
+  @Override
+  default IAssemblyDefinition getContainingDefinition() {
+    return getOwningDefinition();
+  }
 
   /**
    * Provides the Metaschema model type of "CHOICE".
@@ -41,19 +70,34 @@ public interface IChoiceGroupInstance extends IModelInstance, IModelContainer {
     return ModelType.CHOICE_GROUP;
   }
 
-  @Override
-  default IAssemblyDefinition getOwningDefinition() {
-    return getParentContainer().getOwningDefinition();
-  }
-
-  @Override
-  default String getGroupAsXmlNamespace() {
-    return getContainingModule().getXmlNamespace().toASCIIString();
-  }
-
+  /**
+   * Get the JSON property to use to discriminate between JSON objects.
+   *
+   * @return the discriminator property
+   * @see #DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME
+   */
   @NonNull
   String getJsonDiscriminatorProperty();
 
-  @Nullable
-  String getJsonKeyFlagName();
+  @Override
+  default boolean isEffectiveValueWrappedInXml() {
+    return true;
+  }
+
+  @Override
+  default MarkupMultiline getRemarks() {
+    // no remarks
+    return null;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default String toCoordinates() {
+    return String.format("%s:%s-instance:%s/%s@%d",
+        getContainingDefinition().getContainingModule().getShortName(),
+        getModelType().toString().toLowerCase(Locale.ROOT),
+        getContainingDefinition().getName(),
+        getGroupAsName(),
+        hashCode());
+  }
 }

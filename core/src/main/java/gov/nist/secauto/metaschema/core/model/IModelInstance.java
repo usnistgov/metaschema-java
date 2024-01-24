@@ -26,115 +26,24 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import javax.xml.namespace.QName;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
-
 /**
  * This marker interface is used to identify a field or assembly instance that
  * is a member of an assembly's model.
  */
 public interface IModelInstance extends IInstance {
   @Override
-  IModelContainer getParentContainer();
+  IContainerModel getParentContainer();
 
-  /**
-   * Retrieve the Metaschema assembly definition on which this instance is
-   * declared.
-   *
-   * @return the parent Metaschema assembly definition
-   */
   @Override
-  IAssemblyDefinition getContainingDefinition();
-
-  /**
-   * Get the name used for the associated element wrapping a collection of
-   * elements in XML. This value is required when {@link #getXmlGroupAsBehavior()}
-   * = {@link XmlGroupAsBehavior#GROUPED}. This name will be the element name
-   * wrapping a collection of elements.
-   *
-   * @return the groupAs QName or {@code null} if no name is configured, such as
-   *         when {@link #getMaxOccurs()} = 1.
-   */
-  @Nullable
-  default QName getXmlGroupAsQName() {
-    QName retval = null;
-    if (XmlGroupAsBehavior.GROUPED.equals(getXmlGroupAsBehavior())) {
-      String namespace = getGroupAsXmlNamespace();
-      if (namespace != null) {
-        retval = new QName(namespace, getGroupAsName());
-      } else {
-        retval = new QName(getGroupAsName());
-      }
-    }
-    return retval;
+  default IAssemblyDefinition getContainingDefinition() {
+    return getParentContainer().getOwningDefinition();
   }
 
   /**
-   * Get the minimum cardinality for this associated instance. This value must be
-   * less than or equal to the maximum cardinality returned by
-   * {@link #getMaxOccurs()}.
+   * Indicate if the instance allows values without an XML element wrapper.
    *
-   * @return {@code 0} or a positive integer value
+   * @return {@code true} if the underlying data type is allowed to be unwrapped,
+   *         or {@code false} otherwise
    */
-  int getMinOccurs();
-
-  /**
-   * Get the maximum cardinality for this associated instance. This value must be
-   * greater than or equal to the minimum cardinality returned by
-   * {@link #getMinOccurs()}, or {@code -1} if unbounded.
-   *
-   * @return a positive integer value or {@code -1} if unbounded
-   */
-  int getMaxOccurs();
-
-  /**
-   * Get the name provided for grouping. An instance in Metaschema must have a
-   * group name if the instance has a cardinality greater than {@code 1}.
-   *
-   * @return the group-as name or {@code null} if no name is configured, such as
-   *         when {@link #getMaxOccurs()} = 1
-   */
-  @Nullable
-  default String getGroupAsName() {
-    // no group-as by default
-    return null;
-  }
-
-  /**
-   * Retrieve the XML namespace for this group.
-   *
-   * @return the XML namespace or {@code null} if no namespace is used
-   */
-  // REFACTOR: analyze implementations to move up?
-  @Nullable
-  default String getGroupAsXmlNamespace() {
-    // no group-as by default
-    return null;
-  }
-
-  /**
-   * Gets the configured JSON group-as strategy. A JSON group-as strategy is only
-   * required when {@link #getMaxOccurs()} &gt; 1.
-   *
-   * @return the JSON group-as strategy, or {@code JsonGroupAsBehavior#NONE} if
-   *         {@link #getMaxOccurs()} = 1
-   */
-  @NonNull
-  default JsonGroupAsBehavior getJsonGroupAsBehavior() {
-    return JsonGroupAsBehavior.NONE;
-  }
-
-  /**
-   * Gets the configured XML group-as strategy. A XML group-as strategy is only
-   * required when {@link #getMaxOccurs()} &gt; 1.
-   *
-   * @return the JSON group-as strategy, or {@code XmlGroupAsBehavior#UNGROUPED}
-   *         if {@link #getMaxOccurs()} = 1
-   */
-  @NonNull
-  default XmlGroupAsBehavior getXmlGroupAsBehavior() {
-    return XmlGroupAsBehavior.UNGROUPED;
-  }
+  boolean isEffectiveValueWrappedInXml();
 }

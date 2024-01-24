@@ -39,6 +39,15 @@ import java.lang.annotation.Target;
 @Target(PACKAGE)
 public @interface XmlSchema {
   /**
+   * The default value of a schema location, which indicates that no schema will
+   * be associated.
+   * <p>
+   * The value "##none" was chosen because ## is not a valid sequence in
+   * xs:anyURI.
+   */
+  String NO_LOCATION = ModelUtil.NO_STRING_VALUE;
+
+  /**
    * Defines the XML namespace URI and prefix to use for this model. If a prefix
    * is not provided, the XML prefix will be auto-generated.
    *
@@ -53,7 +62,7 @@ public @interface XmlSchema {
    *
    * @return a namespace string in the form of a URI
    */
-  String namespace() default Constants.NO_STRING_VALUE;
+  String namespace() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The location of the associated XML schema.
@@ -82,13 +91,4 @@ public @interface XmlSchema {
    * @return the XML attribute form
    */
   XmlNsForm xmlAttributeFormDefault() default XmlNsForm.UNSET;
-
-  /**
-   * The default value of a schema location, which indicates that no schema will
-   * be associated.
-   * <p>
-   * The value "##none" was chosen because ## is not a valid sequence in
-   * xs:anyURI.
-   */
-  String NO_LOCATION = Constants.NO_STRING_VALUE;
 }

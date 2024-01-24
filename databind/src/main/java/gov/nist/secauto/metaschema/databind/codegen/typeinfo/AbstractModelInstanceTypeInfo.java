@@ -31,33 +31,37 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance, PARENT extends IDefinitionTypeInfo>
-    extends AbstractInstanceTypeInfo<INSTANCE, PARENT>
+abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstanceAbsolute>
+    extends AbstractInstanceTypeInfo<INSTANCE, IAssemblyDefinitionTypeInfo>
     implements IModelInstanceTypeInfo {
 
-  protected AbstractModelInstanceTypeInfo(@NonNull INSTANCE instance, @NonNull PARENT parentDefinition) {
+  protected AbstractModelInstanceTypeInfo(
+      @NonNull INSTANCE instance,
+      @NonNull IAssemblyDefinitionTypeInfo parentDefinition) {
     super(instance, parentDefinition);
   }
 
   @Override
   public String getBaseName() {
-    return ObjectUtils.notNull(getInstance().getGroupAsName());
+    return ObjectUtils.requireNonNull(getInstance().getGroupAsName());
   }
 
   @Override
@@ -65,7 +69,7 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance, PA
     TypeName item = getJavaItemType();
 
     @NonNull TypeName retval;
-    IModelInstance instance = getInstance();
+    IModelInstanceAbsolute instance = getInstance();
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {
       if (JsonGroupAsBehavior.KEYED.equals(instance.getJsonGroupAsBehavior())) {
@@ -85,17 +89,16 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance, PA
   protected abstract AnnotationSpec.Builder newBindingAnnotation();
 
   @Override
-  public AnnotationSpec.Builder buildBindingAnnotation() {
-    return newBindingAnnotation();
-  }
+  public Set<IModelDefinition> buildField(
+      TypeSpec.Builder typeBuilder,
+      FieldSpec.Builder fieldBuilder) {
+    Set<IModelDefinition> retval = new HashSet<>(super.buildField(typeBuilder, fieldBuilder));
 
-  @Override
-  public Set<IFlagContainer> buildField(FieldSpec.Builder builder) {
-    Set<IFlagContainer> retval = super.buildField(builder);
+    AnnotationSpec.Builder annotation = newBindingAnnotation();
 
-    AnnotationSpec.Builder annotation = buildBindingAnnotation();
+    retval.addAll(buildBindingAnnotation(typeBuilder, fieldBuilder, annotation));
 
-    builder.addAnnotation(annotation.build());
+    fieldBuilder.addAnnotation(annotation.build());
 
     return retval;
   }
@@ -104,13 +107,15 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance, PA
   protected AnnotationSpec.Builder generateGroupAsAnnotation() {
     AnnotationSpec.Builder groupAsAnnoation = AnnotationSpec.builder(GroupAs.class);
 
-    IModelInstance modelInstance = getInstance();
+    IModelInstanceAbsolute modelInstance = getInstance();
 
     groupAsAnnoation.addMember("name", "$S",
         ObjectUtils.requireNonNull(modelInstance.getGroupAsName(), "The grouping name must be non-null"));
 
     String groupAsNamespace = modelInstance.getGroupAsXmlNamespace();
     if (groupAsNamespace == null) {
+      groupAsAnnoation.addMember("namespace", "$S", "##default");
+    } else if (groupAsNamespace.isEmpty()) {
       groupAsAnnoation.addMember("namespace", "$S", "##none");
     } else if (!modelInstance.getContainingModule().getXmlNamespace().toASCIIString().equals(groupAsNamespace)) {
       groupAsAnnoation.addMember("namespace", "$S", groupAsNamespace);
@@ -118,14 +123,14 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstance, PA
 
     JsonGroupAsBehavior jsonGroupAsBehavior = modelInstance.getJsonGroupAsBehavior();
     assert jsonGroupAsBehavior != null;
-    if (!MetaschemaModelConstants.DEFAULT_JSON_GROUP_AS_BEHAVIOR.equals(jsonGroupAsBehavior)) {
+    if (!IGroupable.DEFAULT_JSON_GROUP_AS_BEHAVIOR.equals(jsonGroupAsBehavior)) {
       groupAsAnnoation.addMember("inJson", "$T.$L",
           JsonGroupAsBehavior.class, jsonGroupAsBehavior.toString());
     }
 
     XmlGroupAsBehavior xmlGroupAsBehavior = modelInstance.getXmlGroupAsBehavior();
     assert xmlGroupAsBehavior != null;
-    if (!MetaschemaModelConstants.DEFAULT_XML_GROUP_AS_BEHAVIOR.equals(xmlGroupAsBehavior)) {
+    if (!IGroupable.DEFAULT_XML_GROUP_AS_BEHAVIOR.equals(xmlGroupAsBehavior)) {
       groupAsAnnoation.addMember("inXml", "$T.$L",
           XmlGroupAsBehavior.class, xmlGroupAsBehavior.toString());
     }

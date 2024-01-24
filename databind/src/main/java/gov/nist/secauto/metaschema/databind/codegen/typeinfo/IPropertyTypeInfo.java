@@ -29,14 +29,13 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 
 import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IPropertyTypeInfo extends ITypeInfo {
-
   /**
    * Generate the Java field associated with this property.
    *
@@ -44,7 +43,7 @@ public interface IPropertyTypeInfo extends ITypeInfo {
    *          the containing class builder
    * @return the set of definitions used by this field
    */
-  Set<? extends IFlagContainer> build(@NonNull TypeSpec.Builder builder);
+  Set<? extends IModelDefinition> build(@NonNull TypeSpec.Builder builder);
 
   /**
    * Get the Javadoc description for the current property.

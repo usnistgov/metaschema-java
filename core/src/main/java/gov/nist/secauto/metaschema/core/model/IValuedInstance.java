@@ -27,26 +27,9 @@
 package gov.nist.secauto.metaschema.core.model;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IValuedInstance extends INamedInstance, IValuedModelElement {
+public interface IValuedInstance extends INamedInstance {
   @Override
   @NonNull
   IValuedDefinition getDefinition();
-
-  /**
-   * The resolved default value, which allows an instance to override a
-   * definition's default value.
-   *
-   * @return the default value or {@code null} if not defined on either the
-   *         instance or definition
-   */
-  @Nullable
-  default Object getEffectiveDefaultValue() {
-    Object retval = getDefaultValue();
-    if (retval == null) {
-      retval = getDefinition().getDefaultValue();
-    }
-    return retval;
-  }
 }

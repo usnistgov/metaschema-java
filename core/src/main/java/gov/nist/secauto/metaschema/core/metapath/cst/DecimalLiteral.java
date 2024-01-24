@@ -57,7 +57,7 @@ public class DecimalLiteral
     return visitor.visitDecimalLiteral(this, context);
   }
 
-  // REFACTOR: store decimal item value
+  // REFACTOR: store decimal item value as a field of this class
   @Override
   public ISequence<? extends IDecimalItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
     return ISequence.of(IDecimalItem.valueOf(getValue()));

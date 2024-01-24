@@ -28,13 +28,21 @@ package gov.nist.secauto.metaschema.core.model.xml.impl; // NOPMD - excessive pu
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFeatureStandardModelContainer;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IContainerModel;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelAssembly;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
@@ -47,8 +55,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
@@ -56,18 +62,29 @@ import nl.talsmasoftware.lazy4j.Lazy;
  * Represents a Metaschema assembly definition declared locally as an instance.
  */
 class XmlInlineAssemblyDefinition
-    extends AbstractAssemblyInstance
-    implements IAssemblyDefinition,
-    IFeatureStandardModelContainer,
-    IFeatureFlagContainer<IFlagInstance>,
-    IFeatureInlinedDefinition<IAssemblyDefinition, IAssemblyInstance> {
+    extends AbstractInstance<IContainerModel>
+    implements IAssemblyInstanceAbsolute, IAssemblyDefinition,
+    IFeatureContainerModelAssembly<
+        IModelInstanceAbsolute,
+        INamedModelInstanceAbsolute,
+        IFieldInstanceAbsolute,
+        IAssemblyInstanceAbsolute,
+        IChoiceInstance,
+        IChoiceGroupInstance>,
+    IFeatureContainerFlag<IFlagInstance>,
+    IFeatureDefinitionInstanceInlined<IAssemblyDefinition, IAssemblyInstanceAbsolute> {
   @NonNull
   private final InlineAssemblyDefinitionType xmlObject;
-
   @NonNull
   private final Lazy<XmlFlagContainerSupport> flagContainer;
   @NonNull
-  private final Lazy<IStandardModelContainerSupport> modelContainer;
+  private final Lazy<IContainerModelAssemblySupport<
+      IModelInstanceAbsolute,
+      INamedModelInstanceAbsolute,
+      IFieldInstanceAbsolute,
+      IAssemblyInstanceAbsolute,
+      IChoiceInstance,
+      IChoiceGroupInstance>> modelContainer;
   @NonNull
   private final Lazy<IModelConstrained> constraints;
 
@@ -82,17 +99,12 @@ class XmlInlineAssemblyDefinition
    */
   public XmlInlineAssemblyDefinition(
       @NonNull InlineAssemblyDefinitionType xmlObject,
-      @NonNull IModelContainer parent) {
+      @NonNull IContainerModel parent) {
     super(parent);
     this.xmlObject = xmlObject;
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
-    this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
-      IStandardModelContainerSupport retval = new DefaultModelContainerSupport();
-      if (xmlObject.isSetModel()) {
-        XmlModelParser.parseModel(ObjectUtils.notNull(xmlObject.getModel()), this, retval);
-      }
-      return retval;
-    }));
+    this.modelContainer
+        = ObjectUtils.notNull(Lazy.lazy(() -> XmlAssemblyModelContainer.of(xmlObject.getModel(), this)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IModelConstrained retval = new AssemblyConstraintSet();
       if (getXmlObject().isSetConstraint()) {
@@ -110,7 +122,7 @@ class XmlInlineAssemblyDefinition
 
   @Override
   @NonNull
-  public IAssemblyInstance getInlineInstance() {
+  public IAssemblyInstanceAbsolute getInlineInstance() {
     return this;
   }
 
@@ -122,7 +134,13 @@ class XmlInlineAssemblyDefinition
 
   @SuppressWarnings("null")
   @Override
-  public IStandardModelContainerSupport getModelContainer() {
+  public IContainerModelAssemblySupport<
+      IModelInstanceAbsolute,
+      INamedModelInstanceAbsolute,
+      IFieldInstanceAbsolute,
+      IAssemblyInstanceAbsolute,
+      IChoiceInstance,
+      IChoiceGroupInstance> getModelContainer() {
     return modelContainer.get();
   }
 
@@ -133,21 +151,8 @@ class XmlInlineAssemblyDefinition
   }
 
   @Override
-  public boolean isRoot() {
-    // a local assembly is never a root
-    return false;
-  }
-
-  @Override
-  public String getRootName() {
-    // a local assembly is never a root
-    return null;
-  }
-
-  @Override
-  public Integer getRootIndex() {
-    // a local assembly is never a root
-    return null;
+  public IFlagInstance getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
   }
 
   // ----------------------------------------
@@ -177,7 +182,7 @@ class XmlInlineAssemblyDefinition
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 

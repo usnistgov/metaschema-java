@@ -27,21 +27,31 @@
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class ChoiceGroupTypeInfoImpl
-    extends AbstractModelInstanceTypeInfo<IChoiceGroupInstance, IAssemblyDefinitionTypeInfo>
+    extends AbstractModelInstanceTypeInfo<IChoiceGroupInstance>
     implements IChoiceGroupTypeInfo {
 
   public ChoiceGroupTypeInfoImpl(
@@ -52,7 +62,7 @@ public class ChoiceGroupTypeInfoImpl
 
   @Override
   public TypeName getJavaItemType() {
-    return getParentDefinitionTypeInfo().getTypeResolver().getClassName(getInstance());
+    return getParentTypeInfo().getTypeResolver().getClassName(getInstance());
   }
 
   @Override
@@ -60,44 +70,111 @@ public class ChoiceGroupTypeInfoImpl
     return ObjectUtils.notNull(AnnotationSpec.builder(BoundChoiceGroup.class));
   }
 
+  @SuppressWarnings("PMD.UseConcurrentHashMap")
   @Override
-  public AnnotationSpec.Builder buildBindingAnnotation() {
-    AnnotationSpec.Builder retval = super.buildBindingAnnotation();
-
+  public Set<IModelDefinition> buildBindingAnnotation(
+      TypeSpec.Builder typeBuilder,
+      FieldSpec.Builder fieldBuilder,
+      AnnotationSpec.Builder annotation) {
     IChoiceGroupInstance choiceGroup = getInstance();
 
     String discriminator = choiceGroup.getJsonDiscriminatorProperty();
-    if (!MetaschemaModelConstants.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME.equals(discriminator)) {
-      retval.addMember("discriminator", "$S", discriminator);
+    if (!IChoiceGroupInstance.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME.equals(discriminator)) {
+      annotation.addMember("discriminator", "$S", discriminator);
     }
 
     int minOccurs = choiceGroup.getMinOccurs();
-    if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
-      retval.addMember("minOccurs", "$L", minOccurs);
+    if (minOccurs != IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS) {
+      annotation.addMember("minOccurs", "$L", minOccurs);
     }
 
     int maxOccurs = choiceGroup.getMaxOccurs();
-    if (maxOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
-      retval.addMember("maxOccurs", "$L", maxOccurs);
+    if (maxOccurs != IGroupable.DEFAULT_GROUP_AS_MAX_OCCURS) {
+      annotation.addMember("maxOccurs", "$L", maxOccurs);
     }
 
-    IAssemblyDefinitionTypeInfo parentTypeInfo = getParentDefinitionTypeInfo();
-    ITypeResolver typeResolver = parentTypeInfo.getTypeResolver();
-    for (INamedModelInstance modelInstance : getInstance().getNamedModelInstances()) {
-      assert modelInstance != null;
-      IModelInstanceTypeInfo instanceTypeInfo = typeResolver.getTypeInfo(modelInstance, parentTypeInfo);
+    String jsonKeyName = choiceGroup.getJsonKeyFlagName();
+    if (jsonKeyName != null) {
+      annotation.addMember("jsonKey", "$S", jsonKeyName);
+    }
 
-      AnnotationSpec annotation = instanceTypeInfo.buildBindingAnnotation().build();
-      if (modelInstance instanceof IFieldInstance) {
-        retval.addMember("fields", "$L", annotation);
-      } else if (modelInstance instanceof IAssemblyInstance) {
-        retval.addMember("assemblies", "$L", annotation);
+    Set<IModelDefinition> retval = new HashSet<>();
+
+    IAssemblyDefinitionTypeInfo parentTypeInfo = getParentTypeInfo();
+    ITypeResolver typeResolver = parentTypeInfo.getTypeResolver();
+
+    Map<ClassName, List<INamedModelInstanceGrouped>> referencedDefinitions = new LinkedHashMap<>();
+    Collection<? extends INamedModelInstanceGrouped> modelInstances = getInstance().getNamedModelInstances();
+    for (INamedModelInstanceGrouped modelInstance : modelInstances) {
+      ClassName className = typeResolver.getClassName(modelInstance.getDefinition());
+      List<INamedModelInstanceGrouped> instances = referencedDefinitions.get(className);
+      if (instances == null) {
+        instances = new LinkedList<>(); // NOPMD needed
+        referencedDefinitions.put(className, instances);
       }
+      instances.add(modelInstance);
+    }
+
+    for (INamedModelInstanceGrouped modelInstance : modelInstances) {
+      assert modelInstance != null;
+      IGroupedNamedModelInstanceTypeInfo instanceTypeInfo = typeResolver.getTypeInfo(modelInstance, this);
+
+      ClassName className = typeResolver.getClassName(modelInstance.getDefinition());
+      retval.addAll(instanceTypeInfo.generateMemberAnnotation(
+          annotation,
+          typeBuilder,
+          referencedDefinitions.get(className).size() > 1));
+
+      // Class<?> groupedAnnotationType;
+      // if (modelInstance instanceof IFieldInstanceGrouped) {
+      // groupedAnnotationType = BoundGroupedField.class;
+      // } else if (modelInstance instanceof IAssemblyInstanceGrouped) {
+      // groupedAnnotationType = BoundGroupedAssembly.class;
+      // } else {
+      // throw new UnsupportedOperationException(String.format("Unsuported named model
+      // instance type '%s'.",
+      // instanceTypeInfo.getClass().getName()));
+      // }
+      // AnnotationSpec.Builder memberAnnotation =
+      // ObjectUtils.notNull(AnnotationSpec.builder(groupedAnnotationType));
+
+      // instanceTypeInfo.buildBindingAnnotationCommon(memberAnnotation);
+      //
+      // IContainerFlag definition = modelInstance.getDefinition();
+      // TypeName instanceTypeName;
+      // if (definition.isInline()) {
+      // retval.add(definition);
+      // instanceTypeName = typeResolver.getClassName(definition);
+      // } else {
+      // // build the definition
+      // throw new UnsupportedOperationException("implement");
+      // // ClassName extendedClassName = typeResolver.getClassName(definition);
+      // // ClassName parentClassName = getParentDefinitionTypeInfo().getClassName();
+      // // ClassName extendingClassName =
+      // typeResolver.getSubclassName(parentClassName,
+      // // definition, modelInstance);
+      // //
+      // // IModelDefinitionTypeInfo referencedClassTypeInfo =
+      // // typeResolver.getTypeInfo(definition);
+      // // typeResolver.getSubClassName(instanceTypeInfo, );
+      // // instanceTypeName = instanceTypeInfo.getJavaItemType();
+      // }
+      //
+      // memberAnnotation.addMember("binding", "$T.class",
+      // instanceTypeInfo.getJavaItemType());
+      //
+      // if (modelInstance instanceof IFieldInstanceGrouped) {
+      // annotation.addMember("fields", "$L",
+      // instanceTypeInfo.generateMemberAnnotation().build());
+      // } else if (modelInstance instanceof IAssemblyInstanceGrouped) {
+      // annotation.addMember("assemblies", "$L",
+      // instanceTypeInfo.generateMemberAnnotation().build());
+      // }
     }
 
     if (maxOccurs == -1 || maxOccurs > 1) {
       // requires a group-as
-      retval.addMember("groupAs", "$L", generateGroupAsAnnotation().build());
+      annotation.addMember("groupAs", "$L", generateGroupAsAnnotation().build());
     }
     return retval;
   }

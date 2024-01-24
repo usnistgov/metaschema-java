@@ -52,14 +52,10 @@ public abstract class AbstractStringItem
     return asString().hashCode();
   }
 
+  @SuppressWarnings("PMD.OnlyOneReturn")
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true; // NOPMD readability
-    }
-    if (!(obj instanceof IStringItem)) {
-      return false; // NOPMD readability
-    }
-    return compareTo((IStringItem) obj) == 0;
+    return this == obj
+        || (obj instanceof IStringItem && compareTo((IStringItem) obj) == 0);
   }
 }

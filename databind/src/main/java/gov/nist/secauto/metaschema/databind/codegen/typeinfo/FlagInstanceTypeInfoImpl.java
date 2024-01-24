@@ -30,14 +30,15 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.impl.AnnotationGenerator;
@@ -45,6 +46,7 @@ import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionType
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
+import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.util.Set;
 
@@ -69,8 +71,10 @@ public class FlagInstanceTypeInfoImpl
 
   @SuppressWarnings("PMD.CyclomaticComplexity") // acceptable
   @Override
-  public Set<IFlagContainer> buildField(FieldSpec.Builder builder) {
-    super.buildField(builder);
+  public Set<IModelDefinition> buildField(
+      TypeSpec.Builder typeBuilder,
+      FieldSpec.Builder fieldBuilder) {
+    super.buildField(typeBuilder, fieldBuilder);
 
     AnnotationSpec.Builder annotation = AnnotationSpec.builder(BoundFlag.class);
 
@@ -86,15 +90,32 @@ public class FlagInstanceTypeInfoImpl
       annotation.addMember("description", "$S", description.toMarkdown());
     }
 
-    annotation.addMember("useName", "$S", instance.getEffectiveName());
+    annotation.addMember("name", "$S", instance.getEffectiveName());
 
-    if (instance.isRequired()) {
-      annotation.addMember("required", "$L", true);
+    Integer index = instance.getEffectiveIndex();
+    if (index != null) {
+      annotation.addMember("useIndex", "$L", index);
+    }
+
+    String namespace = instance.getXmlNamespace();
+    if (namespace != null) {
+      if (namespace.equals(instance.getContainingModule().getXmlNamespace().toASCIIString())) {
+        namespace = ModelUtil.DEFAULT_STRING_VALUE;
+      }
+      annotation.addMember("namespace", "$S", namespace);
     }
 
     IFlagDefinition definition = instance.getDefinition();
 
     IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
+    Object defaultValue = instance.getEffectiveDefaultValue();
+    if (defaultValue != null) {
+      annotation.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
+    }
+
+    if (instance.isRequired()) {
+      annotation.addMember("required", "$L", true);
+    }
     annotation.addMember("typeAdapter", "$T.class", valueDataType.getClass());
 
     MarkupMultiline remarks = instance.getRemarks();
@@ -104,18 +125,18 @@ public class FlagInstanceTypeInfoImpl
 
     AnnotationGenerator.buildValueConstraints(annotation, definition);
 
-    builder.addAnnotation(annotation.build());
+    fieldBuilder.addAnnotation(annotation.build());
 
-    IFlagContainer parent = instance.getContainingDefinition();
+    IModelDefinition parent = instance.getContainingDefinition();
     if (parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
-      builder.addAnnotation(JsonKey.class);
+      fieldBuilder.addAnnotation(JsonKey.class);
     }
 
     if (parent instanceof IFieldDefinition) {
       IFieldDefinition parentField = (IFieldDefinition) parent;
 
       if (parentField.hasJsonValueKeyFlagInstance() && instance.equals(parentField.getJsonValueKeyFlagInstance())) {
-        builder.addAnnotation(JsonFieldValueKeyFlag.class);
+        fieldBuilder.addAnnotation(JsonFieldValueKeyFlag.class);
       }
     }
     return CollectionUtil.emptySet();

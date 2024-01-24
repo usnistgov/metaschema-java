@@ -29,9 +29,11 @@ module gov.nist.secauto.metaschema.schemagen {
   requires java.xml;
 
   requires transitive gov.nist.secauto.metaschema.core;
+  requires transitive gov.nist.secauto.metaschema.databind;
 
   requires com.ctc.wstx;
   requires com.github.spotbugs.annotations;
+  requires nl.talsmasoftware.lazy4j;
   requires transitive org.apache.commons.lang3;
   requires org.apache.logging.log4j;
   requires org.jdom2;

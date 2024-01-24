@@ -28,10 +28,12 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureGroupedModelInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractNamedModelInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedFieldReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -40,18 +42,14 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class XmlGroupedFieldInstance
-    extends AbstractFieldInstance
-    implements IFeatureGroupedModelInstance {
+    extends AbstractNamedModelInstanceGrouped
+    implements IFieldInstanceGrouped,
+    IFeatureDefinitionReferenceInstance<IFieldDefinition, IFieldInstanceGrouped> {
   @NonNull
   private final GroupedFieldReferenceType xmlObject;
-  @Nullable
-  private final Object defaultValue;
 
   /**
    * Constructs a new Metaschema field definition from an XML representation bound
@@ -65,29 +63,15 @@ public class XmlGroupedFieldInstance
   @SuppressWarnings("PMD.NullAssignment")
   public XmlGroupedFieldInstance(
       @NonNull GroupedFieldReferenceType xmlObject,
-      @NonNull IModelContainer parent) {
+      @NonNull IChoiceGroupInstance parent) {
     super(parent);
     this.xmlObject = xmlObject;
-    this.defaultValue = xmlObject.isSetDefault()
-        ? getDefinition().getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlObject.getDefault()))
-        : null;
   }
 
   @Override
   public IFieldDefinition getDefinition() {
     // this will always be not null
     return ObjectUtils.notNull(getContainingModule().getScopedFieldDefinitionByName(getName()));
-  }
-
-  @Override
-  public Object getDefaultValue() {
-    return defaultValue;
-  }
-
-  @Override
-  public boolean isInXmlWrapped() {
-    // grouped items are never wrapped
-    return false;
   }
 
   // ----------------------------------------
@@ -116,7 +100,7 @@ public class XmlGroupedFieldInstance
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 

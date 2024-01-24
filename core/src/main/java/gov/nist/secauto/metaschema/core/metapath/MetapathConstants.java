@@ -37,6 +37,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * Provides constant values used in Metapath.
  */
+@SuppressWarnings("PMD.DataClass")
 public final class MetapathConstants {
   @NonNull
   public static final URI NS_METAPATH = ObjectUtils.requireNonNull(
@@ -51,7 +52,7 @@ public final class MetapathConstants {
   public static final URI NS_METAPATH_FUNCTIONS_MATH = ObjectUtils.requireNonNull(
       URI.create("http://csrc.nist.gov/ns/metaschema/metapath-functions/math"));
   @NonNull
-  public static final URI NS_METAPATH_FUNCTIONS_EXTENDED = NS_METAPATH_FUNCTIONS_MATH;
+  public static final URI NS_METAPATH_FUNCTIONS_EXTENDED = NS_METAPATH;
 
   @NonNull
   public static final String PREFIX_METAPATH = "mp";

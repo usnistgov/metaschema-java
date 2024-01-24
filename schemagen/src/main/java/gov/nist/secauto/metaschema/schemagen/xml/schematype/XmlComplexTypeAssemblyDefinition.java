@@ -28,12 +28,13 @@ package gov.nist.secauto.metaschema.schemagen.xml.schematype;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupDataTypeProvider;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
@@ -61,10 +62,10 @@ public class XmlComplexTypeAssemblyDefinition
   protected void generateTypeBody(XmlGenerationState state) throws XMLStreamException {
     IAssemblyDefinition definition = getDefinition();
 
-    Collection<? extends IModelInstance> modelInstances = definition.getModelInstances();
+    Collection<? extends IModelInstanceAbsolute> modelInstances = definition.getModelInstances();
     if (!modelInstances.isEmpty()) {
       state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "sequence", XmlSchemaGenerator.NS_XML_SCHEMA);
-      for (IModelInstance modelInstance : modelInstances) {
+      for (IModelInstanceAbsolute modelInstance : modelInstances) {
         assert modelInstance != null;
         generateModelInstance(modelInstance, state);
       }
@@ -81,7 +82,7 @@ public class XmlComplexTypeAssemblyDefinition
   }
 
   protected void generateModelInstance( // NOPMD acceptable complexity
-      @NonNull IModelInstance modelInstance,
+      @NonNull IModelInstanceAbsolute modelInstance,
       @NonNull XmlGenerationState state)
       throws XMLStreamException {
 
@@ -90,7 +91,7 @@ public class XmlComplexTypeAssemblyDefinition
       // handle grouping
       state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "element", XmlSchemaGenerator.NS_XML_SCHEMA);
 
-      QName groupAsQName = ObjectUtils.requireNonNull(modelInstance.getXmlGroupAsQName());
+      QName groupAsQName = ObjectUtils.requireNonNull(modelInstance.getEffectiveXmlGroupAsQName());
 
       if (state.getDefaultNS().equals(groupAsQName.getNamespaceURI())) {
         state.writeAttribute("name", ObjectUtils.requireNonNull(groupAsQName.getLocalPart()));
@@ -115,20 +116,22 @@ public class XmlComplexTypeAssemblyDefinition
 
     switch (modelInstance.getModelType()) {
     case ASSEMBLY:
-      generateNamedModelInstance((INamedModelInstance) modelInstance, grouped, state);
+      generateNamedModelInstance((INamedModelInstanceAbsolute) modelInstance, grouped, state);
       break;
     case FIELD: {
-      IFieldInstance fieldInstance = (IFieldInstance) modelInstance;
-      if (!fieldInstance.isInXmlWrapped()
-          && fieldInstance.getDefinition().getJavaTypeAdapter().isUnrappedValueAllowedInXml()) {
-        generateUnwrappedFieldInstance(fieldInstance, grouped, state);
-      } else {
+      IFieldInstanceAbsolute fieldInstance = (IFieldInstanceAbsolute) modelInstance;
+      if (fieldInstance.isEffectiveValueWrappedInXml()) {
         generateNamedModelInstance(fieldInstance, grouped, state);
+      } else {
+        generateUnwrappedFieldInstance(fieldInstance, grouped, state);
       }
       break;
     }
     case CHOICE:
       generateChoiceModelInstance((IChoiceInstance) modelInstance, state);
+      break;
+    case CHOICE_GROUP:
+      generateChoiceGroupInstance((IChoiceGroupInstance) modelInstance, state);
       break;
     default:
       throw new UnsupportedOperationException(modelInstance.getModelType().toString());
@@ -142,7 +145,7 @@ public class XmlComplexTypeAssemblyDefinition
   }
 
   protected void generateNamedModelInstance(
-      @NonNull INamedModelInstance modelInstance,
+      @NonNull INamedModelInstanceAbsolute modelInstance,
       boolean grouped,
       @NonNull XmlGenerationState state) throws XMLStreamException {
     state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "element", XmlSchemaGenerator.NS_XML_SCHEMA);
@@ -161,12 +164,10 @@ public class XmlComplexTypeAssemblyDefinition
               : ObjectUtils.notNull(Integer.toString(modelInstance.getMaxOccurs())));
     }
 
-    IFlagContainer definition = modelInstance.getDefinition();
-    IXmlType type = state.getTypeForDefinition(definition);
-
-    if (state.isInline(definition)) {
+    IXmlType type = state.getXmlForDefinition(modelInstance.getDefinition());
+    if (type.isGeneratedType(state) && type.isInline(state)) {
       DocumentationGenerator.generateDocumentation(modelInstance, state);
-      type.generateType(state, true);
+      type.generate(state);
     } else {
       state.writeAttribute("type", type.getTypeReference());
       DocumentationGenerator.generateDocumentation(modelInstance, state);
@@ -175,7 +176,7 @@ public class XmlComplexTypeAssemblyDefinition
   }
 
   protected static void generateUnwrappedFieldInstance(
-      @NonNull IFieldInstance fieldInstance,
+      @NonNull IFieldInstanceAbsolute fieldInstance,
       boolean grouped,
       @NonNull XmlGenerationState state) throws XMLStreamException {
 
@@ -208,11 +209,12 @@ public class XmlComplexTypeAssemblyDefinition
     state.writeEndElement(); // xs:group
   }
 
-  protected void generateChoiceModelInstance(@NonNull IChoiceInstance choice,
+  protected void generateChoiceModelInstance(
+      @NonNull IChoiceInstance choice,
       @NonNull XmlGenerationState state) throws XMLStreamException {
     state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "choice", XmlSchemaGenerator.NS_XML_SCHEMA);
 
-    for (IModelInstance instance : choice.getModelInstances()) {
+    for (IModelInstanceAbsolute instance : choice.getModelInstances()) {
       assert instance != null;
 
       if (instance instanceof IChoiceInstance) {
@@ -223,5 +225,50 @@ public class XmlComplexTypeAssemblyDefinition
     }
 
     state.writeEndElement(); // xs:choice
+  }
+
+  private void generateChoiceGroupInstance(IChoiceGroupInstance choiceGroup, XmlGenerationState state)
+      throws XMLStreamException {
+    state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "choice", XmlSchemaGenerator.NS_XML_SCHEMA);
+
+    int min = choiceGroup.getMinOccurs();
+    if (min != 1) {
+      state.writeAttribute("minOccurs", ObjectUtils.notNull(Integer.toString(min)));
+    }
+
+    int max = choiceGroup.getMaxOccurs();
+    if (max < 0) {
+      state.writeAttribute("maxOccurs", "unbounded");
+    } else if (max > 1) {
+      state.writeAttribute("maxOccurs", ObjectUtils.notNull(Integer.toString(max)));
+    }
+
+    for (INamedModelInstanceGrouped instance : choiceGroup.getNamedModelInstances()) {
+      assert instance != null;
+
+      generateGroupedNamedModelInstance(instance, state);
+    }
+
+    state.writeEndElement(); // xs:choice
+  }
+
+  protected void generateGroupedNamedModelInstance(
+      @NonNull INamedModelInstanceGrouped instance,
+      @NonNull XmlGenerationState state) throws XMLStreamException {
+    state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "element", XmlSchemaGenerator.NS_XML_SCHEMA);
+
+    state.writeAttribute("name", instance.getEffectiveName());
+
+    // state.generateElementNameOrRef(modelInstance);
+
+    IXmlType type = state.getXmlForDefinition(instance.getDefinition());
+    if (type.isGeneratedType(state) && type.isInline(state)) {
+      DocumentationGenerator.generateDocumentation(instance, state);
+      type.generate(state);
+    } else {
+      state.writeAttribute("type", type.getTypeReference());
+      DocumentationGenerator.generateDocumentation(instance, state);
+    }
+    state.writeEndElement(); // xs:element
   }
 }

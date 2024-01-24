@@ -199,6 +199,12 @@ public abstract class AbstractNodeItemVisitor<CONTEXT, RESULT> implements INodeI
   }
 
   @Override
+  public RESULT visitAssembly(IAssemblyInstanceGroupedNodeItem item, CONTEXT context) {
+    // this is the default behavior, which can be overridden
+    return aggregateResult(visitFlags(item, context), visitModelChildren(item, context), context);
+  }
+
+  @Override
   public RESULT visitMetaschema(IModuleNodeItem item, CONTEXT context) {
     // this is the default behavior, which can be overridden
     return aggregateResult(visitFlags(item, context), visitModelChildren(item, context), context);

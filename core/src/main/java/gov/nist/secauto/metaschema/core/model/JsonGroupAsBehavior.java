@@ -48,5 +48,5 @@ public enum JsonGroupAsBehavior {
   /**
    * In JSON, the group of instances will be represented as a single JSON object.
    */
-  NONE;
+  NONE
 }

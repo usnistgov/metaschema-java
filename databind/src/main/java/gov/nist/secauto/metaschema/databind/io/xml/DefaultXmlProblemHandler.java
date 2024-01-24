@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.io.xml;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.databind.io.AbstractProblemHandler;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,7 +62,7 @@ public class DefaultXmlProblemHandler
 
   @Override
   public boolean handleUnknownAttribute(
-      IFlagContainer parentDefinition,
+      IBoundDefinitionModel parentDefinition,
       Object targetObject,
       Attribute attribute,
       IXmlParsingContext parsingContext) {
@@ -71,7 +71,7 @@ public class DefaultXmlProblemHandler
     if (LOGGER.isWarnEnabled() && !IGNORED_QNAMES.contains(qname)) {
       LOGGER.atWarn().log("Skipping unrecognized attribute '{}'{}.",
           qname,
-          XmlEventUtil.generateLocationMessage(attribute));
+          XmlEventUtil.generateLocationMessage(attribute.getLocation()));
     }
     // always ignore
     return true;

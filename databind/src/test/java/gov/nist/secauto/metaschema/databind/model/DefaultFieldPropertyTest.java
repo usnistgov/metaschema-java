@@ -39,7 +39,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonReader;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
 import gov.nist.secauto.metaschema.databind.model.test.MultiFieldAssembly;
 import gov.nist.secauto.metaschema.databind.model.test.SimpleAssembly;
 
@@ -59,7 +58,7 @@ class DefaultFieldPropertyTest {
   @Mock
   private IModule module; // NOPMD - it's injected
   @Mock
-  private IAssemblyClassBinding classBinding; // NOPMD - it's injected
+  private IBoundDefinitionModelAssembly classBinding; // NOPMD - it's injected
   @Mock
   private IBindingContext bindingContext; // NOPMD - it's injected
 
@@ -72,12 +71,13 @@ class DefaultFieldPropertyTest {
       assert jsonParser != null;
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IAssemblyClassBinding classBinding = (IAssemblyClassBinding) bindingContext.getClassBinding(SimpleAssembly.class);
+      IBoundDefinitionModelAssembly classBinding
+          = (IBoundDefinitionModelAssembly) bindingContext.getBoundDefinitionForClass(SimpleAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
-      SimpleAssembly obj = parser.read(classBinding);
+      SimpleAssembly obj = parser.readProperty(classBinding, classBinding.getRootJsonName());
       assert obj != null;
 
       assertAll(
@@ -97,16 +97,13 @@ class DefaultFieldPropertyTest {
       jsonParser.nextToken();
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      IBoundDefinitionModelComplex classBinding = bindingContext.getBoundDefinitionForClass(MultiFieldAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
-      // Make a temporary data type handler for the top-level definition
-      IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(classBinding);
-
       // read the top-level definition
-      MultiFieldAssembly obj = dataTypeHandler.readItem(null, parser);
+      MultiFieldAssembly obj = (MultiFieldAssembly) parser.readObject(classBinding);
 
       assertAll(
           () -> assertEquals("field1value", obj.getField1()),
@@ -133,16 +130,13 @@ class DefaultFieldPropertyTest {
       jsonParser.nextToken();
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      IBoundDefinitionModelComplex classBinding = bindingContext.getBoundDefinitionForClass(MultiFieldAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
-      // Make a temporary data type handler for the top-level definition
-      IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(classBinding);
-
       // read the top-level definition
-      MultiFieldAssembly obj = dataTypeHandler.readItem(null, parser);
+      MultiFieldAssembly obj = (MultiFieldAssembly) parser.readObject(classBinding);
 
       assertAll(
           () -> assertNull(obj.getField1()),
@@ -162,16 +156,13 @@ class DefaultFieldPropertyTest {
       jsonParser.nextToken();
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      IBoundDefinitionModelComplex classBinding = bindingContext.getBoundDefinitionForClass(MultiFieldAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
-      // Make a temporary data type handler for the top-level definition
-      IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(classBinding);
-
       // read the top-level definition
-      MultiFieldAssembly obj = dataTypeHandler.readItem(null, parser);
+      MultiFieldAssembly obj = (MultiFieldAssembly) parser.readObject(classBinding);
 
       assertAll(
           () -> assertEquals("theValue", obj.getField3().getValue()));
@@ -189,16 +180,13 @@ class DefaultFieldPropertyTest {
       jsonParser.nextToken();
 
       IBindingContext bindingContext = IBindingContext.instance();
-      IClassBinding classBinding = bindingContext.getClassBinding(MultiFieldAssembly.class);
+      IBoundDefinitionModelComplex classBinding = bindingContext.getBoundDefinitionForClass(MultiFieldAssembly.class);
       assert classBinding != null;
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
-      // Make a temporary data type handler for the top-level definition
-      IDataTypeHandler dataTypeHandler = IDataTypeHandler.newDataTypeHandler(classBinding);
-
       // read the top-level definition
-      MultiFieldAssembly obj = dataTypeHandler.readItem(null, parser);
+      MultiFieldAssembly obj = (MultiFieldAssembly) parser.readObject(classBinding);
 
       assertAll(
           () -> assertEquals("theValue", obj.getField4().getValue()));

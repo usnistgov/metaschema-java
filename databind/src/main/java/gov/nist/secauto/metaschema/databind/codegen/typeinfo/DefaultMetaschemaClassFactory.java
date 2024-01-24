@@ -40,11 +40,12 @@ import com.squareup.javapoet.WildcardTypeName;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IContainerFlag;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
@@ -63,6 +64,7 @@ import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefini
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.AbstractBoundModule;
+import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaPackage;
@@ -150,14 +152,14 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     Path classFile = ObjectUtils.notNull(javaFile.writeToPath(targetDirectory));
 
     // now generate all related definition classes
-    Stream<? extends IFlagContainer> globalDefinitions = Stream.concat(
+    Stream<? extends IContainerFlag> globalDefinitions = Stream.concat(
         module.getAssemblyDefinitions().stream(),
         module.getFieldDefinitions().stream());
 
     Set<String> classNames = new HashSet<>();
 
     @SuppressWarnings("PMD.UseConcurrentHashMap") // map is unmodifiable
-    Map<IFlagContainer, IGeneratedDefinitionClass> definitionProductions
+    Map<IContainerFlag, IGeneratedDefinitionClass> definitionProductions
         = ObjectUtils.notNull(globalDefinitions
             // Get type information for assembly and field definitions.
             // Avoid field definitions without flags that don't require a generated class
@@ -173,7 +175,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
             })
             // generate the class for each type information
             .map(typeInfo -> {
-              IFlagContainer definition = typeInfo.getDefinition();
+              IModelDefinition definition = typeInfo.getDefinition();
               IGeneratedDefinitionClass generatedClass;
               try {
                 generatedClass = generateClass(typeInfo, targetDirectory);
@@ -281,7 +283,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
 
     ITypeResolver typeResolver = getTypeResolver();
     for (IFieldDefinition definition : module.getFieldDefinitions()) {
-      if (!definition.isSimple()) {
+      if (definition.hasChildren()) {
         moduleAnnotation.addMember("fields", "$T.class", typeResolver.getClassName(definition));
       }
     }
@@ -347,7 +349,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
             .addModifiers(Modifier.PUBLIC)
             .addParameter(
                 ParameterizedTypeName.get(ClassName.get(List.class),
-                    WildcardTypeName.subtypeOf(IModule.class).box()),
+                    WildcardTypeName.subtypeOf(IBoundModule.class).box()),
                 "importedModules")
             .addParameter(IBindingContext.class, "bindingContext")
             .addStatement("super($N, $N)", "importedModules", "bindingContext")
@@ -437,7 +439,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       builder.superclass(baseClassName);
     }
 
-    Set<IFlagContainer> additionalChildClasses;
+    Set<IModelDefinition> additionalChildClasses;
     if (typeInfo instanceof IAssemblyDefinitionTypeInfo) {
       additionalChildClasses = buildClass((IAssemblyDefinitionTypeInfo) typeInfo, builder);
     } else if (typeInfo instanceof IFieldDefinitionTypeInfo) {
@@ -449,7 +451,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
 
     ITypeResolver typeResolver = getTypeResolver();
 
-    for (IFlagContainer definition : additionalChildClasses) {
+    for (IModelDefinition definition : additionalChildClasses) {
       assert definition != null;
       IModelDefinitionTypeInfo childTypeInfo = typeResolver.getTypeInfo(definition);
       TypeSpec childClass = newClassBuilder(childTypeInfo, true).build();
@@ -469,10 +471,10 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
    * @return the set of additional definitions for which child classes need to be
    *         generated
    */
-  protected Set<IFlagContainer> buildClass(
+  protected Set<IModelDefinition> buildClass(
       @NonNull IAssemblyDefinitionTypeInfo typeInfo,
       @NonNull TypeSpec.Builder builder) {
-    Set<IFlagContainer> retval = new HashSet<>();
+    Set<IModelDefinition> retval = new HashSet<>();
 
     retval.addAll(buildClass((IModelDefinitionTypeInfo) typeInfo, builder));
 
@@ -508,10 +510,10 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
    * @return the set of additional definitions for which child classes need to be
    *         generated
    */
-  protected Set<IFlagContainer> buildClass(
+  protected Set<IModelDefinition> buildClass(
       @NonNull IFieldDefinitionTypeInfo typeInfo,
       @NonNull TypeSpec.Builder builder) {
-    Set<IFlagContainer> retval = new HashSet<>();
+    Set<IModelDefinition> retval = new HashSet<>();
     retval.addAll(buildClass((IModelDefinitionTypeInfo) typeInfo, builder));
 
     AnnotationSpec.Builder metaschemaField = ObjectUtils.notNull(AnnotationSpec.builder(MetaschemaField.class));
@@ -519,7 +521,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     buildCommonProperties(typeInfo, metaschemaField);
 
     IFieldDefinition definition = typeInfo.getDefinition();
-    AnnotationGenerator.buildValueConstraints(metaschemaField, (IFlagContainer) definition);
+    AnnotationGenerator.buildValueConstraints(metaschemaField, definition);
 
     builder.addAnnotation(metaschemaField.build());
     return retval;
@@ -537,7 +539,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
    *         generated
    */
   @NonNull
-  protected Set<IFlagContainer> buildClass(
+  protected Set<IModelDefinition> buildClass(
       @NonNull IModelDefinitionTypeInfo typeInfo,
       @NonNull TypeSpec.Builder builder) {
     MarkupLine description = typeInfo.getDefinition().getDescription();
@@ -545,10 +547,10 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       builder.addJavadoc(description.toHtml());
     }
 
-    Set<IFlagContainer> additionalChildClasses = new HashSet<>();
+    Set<IModelDefinition> additionalChildClasses = new HashSet<>();
 
-    // generate a no-arg constructor
-    builder.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC).build());
+    // // generate a no-arg constructor
+    // builder.addMethod(MethodSpec.constructorBuilder().addModifiers(Modifier.PUBLIC).build());
 
     // // generate a copy constructor
     // MethodSpec.Builder copyBuilder =
@@ -644,7 +646,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
       @NonNull IModelInstanceTypeInfo typeInfo,
       @NonNull TypeSpec.Builder builder,
       @NonNull FieldSpec valueField) {
-    IModelInstance instance = typeInfo.getInstance();
+    IModelInstanceAbsolute instance = typeInfo.getInstance();
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {
       TypeName itemType = typeInfo.getJavaItemType();
@@ -658,7 +660,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
               valueField);
         } else {
           // FIXME: implement choice group
-          throw new UnsupportedOperationException();
+          throw new UnsupportedOperationException("implement");
         }
       } else {
         {
@@ -691,7 +693,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
               .addJavadoc("@return {@code true} if the item was removed or {@code false} otherwise\n")
               .addStatement("$T value = $T.requireNonNull($N,\"$N cannot be null\")",
                   itemType, ObjectUtils.class, valueParam, valueParam)
-              .addStatement("return $1N == null ? false : $1N.remove(value)", valueField);
+              .addStatement("return $1N != null && $1N.remove(value)", valueField);
           builder.addMethod(method.build());
         }
       }
@@ -736,7 +738,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
           .addStatement("$1T key = $2T.requireNonNull($3N.$4N(),\"$3N key cannot be null\")",
               String.class, ObjectUtils.class, valueParam, "get" + jsonKeyTypeInfo.getPropertyName())
           .beginControlFlow("if ($N == null)", valueField)
-          .addStatement("$N = new $T<>()", valueField, LinkedHashMap.class)
+          .addStatement("$N = new $T<>()", valueField, LinkedHashMap.class) // NOPMD required
           .endControlFlow()
           .addStatement("return $N.put(key, value)", valueField);
 
@@ -755,7 +757,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
               itemType, ObjectUtils.class, valueParam)
           .addStatement("$1T key = $2T.requireNonNull($3N.$4N(),\"$3N key cannot be null\")",
               String.class, ObjectUtils.class, valueParam, "get" + jsonKeyTypeInfo.getPropertyName())
-          .addStatement("return $1N == null ? false : $1N.remove(key, value)", valueField);
+          .addStatement("return $1N != null && $1N.remove(key, value)", valueField);
       builder.addMethod(method.build());
     }
 

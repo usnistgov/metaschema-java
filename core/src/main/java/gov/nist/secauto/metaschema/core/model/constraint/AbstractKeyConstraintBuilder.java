@@ -47,6 +47,7 @@ public abstract class AbstractKeyConstraintBuilder<
    *          the key field to add
    * @return this builder
    */
+  @NonNull
   public T keyField(@NonNull IKeyField keyField) {
     this.keyFields.add(keyField);
     return getThis();

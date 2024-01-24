@@ -30,12 +30,12 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
@@ -46,15 +46,14 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlInlineFlagDefinition
-    extends AbstractFlagInstance
-    implements IFlagDefinition, IFeatureInlinedDefinition<IFlagDefinition, IFlagInstance> {
+    extends AbstractInstance<IModelDefinition>
+    implements IFlagInstance, IFlagDefinition,
+    IFeatureDefinitionInstanceInlined<IFlagDefinition, IFlagInstance> {
   @NonNull
   private final InlineFlagDefinitionType xmlFlag;
   @Nullable
@@ -73,7 +72,7 @@ class XmlInlineFlagDefinition
    *          contain flags.
    */
   @SuppressWarnings("PMD.NullAssignment")
-  public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlObject, @NonNull IFlagContainer parent) {
+  public XmlInlineFlagDefinition(@NonNull InlineFlagDefinitionType xmlObject, @NonNull IModelDefinition parent) {
     super(parent);
     this.xmlFlag = xmlObject;
     this.defaultValue = xmlObject.isSetDefault()
@@ -81,8 +80,8 @@ class XmlInlineFlagDefinition
         : null;
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
-      if (getXmlFlag().isSetConstraint()) {
-        ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlFlag().getConstraint()),
+      if (getXmlObject().isSetConstraint()) {
+        ConstraintXmlSupport.parse(retval, ObjectUtils.notNull(getXmlObject().getConstraint()),
             ISource.modelSource(ObjectUtils.requireNonNull(getContainingModule().getLocation())));
       }
       return retval;
@@ -92,12 +91,6 @@ class XmlInlineFlagDefinition
   @Override
   public IFlagDefinition getDefinition() {
     return this;
-  }
-
-  // REFACTOR: use default?
-  @Override
-  public IModule getContainingModule() {
-    return getContainingDefinition().getContainingModule();
   }
 
   @Override
@@ -121,6 +114,11 @@ class XmlInlineFlagDefinition
     return defaultValue;
   }
 
+  @Override
+  public IModelDefinition getContainingDefinition() {
+    return getParentContainer();
+  }
+
   // ----------------------------------------
   // - Start XmlBeans driven code - CPD-OFF -
   // ----------------------------------------
@@ -130,53 +128,54 @@ class XmlInlineFlagDefinition
    *
    * @return the XML model
    */
-  protected final InlineFlagDefinitionType getXmlFlag() {
+  protected final InlineFlagDefinitionType getXmlObject() {
     return xmlFlag;
   }
 
   @SuppressWarnings("null")
   @Override
-  public IDataTypeAdapter<?> getJavaTypeAdapter() {
-    return getXmlFlag().isSetAsType() ? getXmlFlag().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
+  public final IDataTypeAdapter<?> getJavaTypeAdapter() {
+    return getXmlObject().isSetAsType() ? getXmlObject().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
   }
 
   @Override
   public String getFormalName() {
-    return getXmlFlag().isSetFormalName() ? getXmlFlag().getFormalName() : null;
+    return getXmlObject().isSetFormalName() ? getXmlObject().getFormalName() : null;
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupLine getDescription() {
-    return getXmlFlag().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlFlag().getDescription())
+    return getXmlObject().isSetDescription() ? MarkupStringConverter.toMarkupString(getXmlObject().getDescription())
         : null;
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
-    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlFlag().getPropList()));
+  public Map<IAttributable.Key, Set<String>> getProperties() {
+    return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 
   @SuppressWarnings("null")
   @Override
   public String getName() {
-    return getXmlFlag().getName();
+    return getXmlObject().getName();
   }
 
   @Override
   public Integer getIndex() {
-    return getXmlFlag().isSetIndex() ? getXmlFlag().getIndex().intValue() : null;
+    return getXmlObject().isSetIndex() ? getXmlObject().getIndex().intValue() : null;
   }
 
   @Override
   public boolean isRequired() {
-    return getXmlFlag().isSetRequired() ? getXmlFlag().getRequired() : MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
+    return getXmlObject().isSetRequired() ? getXmlObject().getRequired()
+        : IFlagInstance.DEFAULT_FLAG_REQUIRED;
   }
 
   @SuppressWarnings("null")
   @Override
   public MarkupMultiline getRemarks() {
-    return getXmlFlag().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlFlag().getRemarks()) : null;
+    return getXmlObject().isSetRemarks() ? MarkupStringConverter.toMarkupString(getXmlObject().getRemarks()) : null;
   }
 
   // -------------------------------------

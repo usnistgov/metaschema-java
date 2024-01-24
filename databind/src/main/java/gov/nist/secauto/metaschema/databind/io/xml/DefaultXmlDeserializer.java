@@ -33,7 +33,8 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.util.AutoCloser;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractDeserializer;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 
 import org.codehaus.stax2.XMLEventReader2;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -43,8 +44,8 @@ import java.io.Reader;
 import java.net.URI;
 
 import javax.xml.stream.EventFilter;
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLResolver;
 import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -54,23 +55,23 @@ public class DefaultXmlDeserializer<CLASS>
   private XMLInputFactory2 xmlInputFactory;
 
   @NonNull
-  private final IAssemblyClassBinding rootDefinition;
+  private final IBoundDefinitionModelAssembly rootDefinition;
 
   /**
    * Construct a new Module binding-based deserializer that reads XML-based Module
    * content.
    *
-   * @param classBinding
+   * @param definition
    *          the assembly class binding describing the Java objects this
    *          deserializer parses data into
    */
-  public DefaultXmlDeserializer(@NonNull IAssemblyClassBinding classBinding) {
-    super(classBinding);
-    if (!classBinding.isRoot()) {
+  public DefaultXmlDeserializer(@NonNull IBoundDefinitionModelAssembly definition) {
+    super(definition);
+    if (!definition.isRoot()) {
       throw new UnsupportedOperationException(
-          String.format("The assembly '%s' is not a root assembly.", classBinding.getBoundClass().getName()));
+          String.format("The assembly '%s' is not a root assembly.", definition.getBoundClass().getName()));
     }
-    this.rootDefinition = classBinding;
+    this.rootDefinition = definition;
   }
 
   /**
@@ -83,6 +84,7 @@ public class DefaultXmlDeserializer<CLASS>
    */
   @NonNull
   private XMLInputFactory2 getXMLInputFactory() {
+
     synchronized (this) {
       if (xmlInputFactory == null) {
         xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
@@ -90,6 +92,27 @@ public class DefaultXmlDeserializer<CLASS>
         xmlInputFactory.configureForXmlConformance();
         xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, false);
         // xmlInputFactory.configureForSpeed();
+
+        if (isFeatureEnabled(DeserializationFeature.DESERIALIZE_XML_ALLOW_ENTITY_RESOLUTION)) {
+          xmlInputFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, true);
+          xmlInputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, true);
+          xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, true);
+          xmlInputFactory.setProperty(XMLInputFactory.RESOLVER, new XMLResolver() {
+
+            @Override
+            public Object resolveEntity(String publicID, String systemID, String baseURI, String namespace)
+                throws XMLStreamException {
+              URI base = URI.create(baseURI);
+              URI resource = base.resolve(systemID);
+              try {
+                return resource.toURL().openStream();
+              } catch (IOException ex) {
+                throw new XMLStreamException(ex);
+              }
+            }
+
+          });
+        }
       }
       return ObjectUtils.notNull(xmlInputFactory);
     }
@@ -109,8 +132,11 @@ public class DefaultXmlDeserializer<CLASS>
   }
 
   @NonNull
-  private XMLEventReader2 newXMLEventReader2(@NonNull Reader reader) throws XMLStreamException {
-    XMLEventReader eventReader = getXMLInputFactory().createXMLEventReader(reader);
+  private XMLEventReader2 newXMLEventReader2(
+      @NonNull URI documentUri,
+      @NonNull Reader reader) throws XMLStreamException {
+    XMLEventReader2 eventReader
+        = (XMLEventReader2) getXMLInputFactory().createXMLEventReader(documentUri.toASCIIString(), reader);
     EventFilter filter = new CommentFilter();
     return ObjectUtils.notNull((XMLEventReader2) getXMLInputFactory().createFilteredReader(eventReader, filter));
   }
@@ -125,7 +151,7 @@ public class DefaultXmlDeserializer<CLASS>
   public final CLASS deserializeToValue(Reader reader, URI documentUri) throws IOException {
     // doesn't auto close the underlying reader
     try (AutoCloser<XMLEventReader2, XMLStreamException> closer = new AutoCloser<>(
-        newXMLEventReader2(reader), event -> event.close())) {
+        newXMLEventReader2(documentUri, reader), event -> event.close())) {
       return parseXmlInternal(closer.getResource());
     } catch (XMLStreamException ex) {
       throw new IOException("Unable to create a new XMLEventReader2 instance.", ex);
@@ -140,7 +166,7 @@ public class DefaultXmlDeserializer<CLASS>
 
     try {
       return parser.read(rootDefinition);
-    } catch (IOException | XMLStreamException | AssertionError ex) {
+    } catch (IOException | AssertionError ex) {
       throw new IOException(
           String.format("An unexpected error occured during parsing: %s", ex.getMessage()),
           ex);

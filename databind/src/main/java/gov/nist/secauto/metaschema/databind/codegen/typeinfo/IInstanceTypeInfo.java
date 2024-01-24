@@ -38,5 +38,4 @@ public interface IInstanceTypeInfo extends IPropertyTypeInfo {
    */
   @NonNull
   IInstance getInstance();
-
 }

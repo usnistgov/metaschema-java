@@ -60,7 +60,7 @@ public @interface GroupAs {
    * @return the namespace
    */
   @NonNull
-  String namespace() default Constants.DEFAULT_STRING_VALUE;
+  String namespace() default ModelUtil.DEFAULT_STRING_VALUE;
 
   /**
    * Describes how to handle collections in JSON/YAML.

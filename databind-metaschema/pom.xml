@@ -97,7 +97,7 @@
 									${project.basedir}/src/main/metaschema-bindings/metaschema-metaschema-bindings.xml</config>
 							</configs>
 							<includes>
-								<include>metaschema-metaschema.xml</include>
+								<include>metaschema-module-metaschema.xml</include>
 							</includes>
 						</configuration>
 					</execution>

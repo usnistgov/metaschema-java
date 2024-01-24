@@ -28,18 +28,17 @@ package gov.nist.secauto.metaschema.core.model.xml.impl; // NOPMD - intentional
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureFlagContainer;
+import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IContainerModel;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -51,17 +50,15 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlInlineFieldDefinition
-    extends AbstractFieldInstance
-    implements IFieldDefinition,
-    IFeatureFlagContainer<IFlagInstance>,
-    IFeatureInlinedDefinition<IFieldDefinition, IFieldInstance> {
+    extends AbstractInstance<IContainerModel>
+    implements IFieldInstanceAbsolute, IFieldDefinition,
+    IFeatureContainerFlag<IFlagInstance>,
+    IFeatureDefinitionInstanceInlined<IFieldDefinition, IFieldInstanceAbsolute> {
   @NonNull
   private final InlineFieldDefinitionType xmlObject;
   @Nullable
@@ -83,7 +80,7 @@ class XmlInlineFieldDefinition
   @SuppressWarnings("PMD.NullAssignment")
   public XmlInlineFieldDefinition(
       @NonNull InlineFieldDefinitionType xmlObject,
-      @NonNull IModelContainer parent) {
+      @NonNull IContainerModel parent) {
     super(parent);
     this.xmlObject = xmlObject;
     this.defaultValue = xmlObject.isSetDefault()
@@ -121,19 +118,19 @@ class XmlInlineFieldDefinition
 
   @Override
   @NonNull
-  public IFieldInstance getInlineInstance() {
+  public IFieldInstanceAbsolute getInlineInstance() {
     return this;
-  }
-
-  @Override
-  public IModule getContainingModule() {
-    return getContainingDefinition().getContainingModule();
   }
 
   @SuppressWarnings("null")
   @Override
   public XmlFlagContainerSupport getFlagContainer() {
     return flagContainer.get();
+  }
+
+  @Override
+  public IFlagInstance getJsonKeyFlagInstance() {
+    return getFlagContainer().getJsonKeyFlagInstance();
   }
 
   /**
@@ -155,18 +152,7 @@ class XmlInlineFieldDefinition
 
   @Override
   public boolean isInXmlWrapped() {
-    boolean retval;
-    if (MarkupDataTypeProvider.MARKUP_MULTILINE.equals(getDefinition().getJavaTypeAdapter())) {
-      // default value
-      retval = MetaschemaModelConstants.DEFAULT_FIELD_IN_XML_WRAPPED;
-      if (getXmlObject().isSetInXml()) {
-        retval = getXmlObject().getInXml();
-      }
-    } else {
-      // All other data types get "wrapped"
-      retval = true;
-    }
-    return retval;
+    return getXmlObject().getInXml();
   }
 
   @Override
@@ -182,7 +168,7 @@ class XmlInlineFieldDefinition
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlObject().getPropList()));
   }
 
@@ -230,7 +216,7 @@ class XmlInlineFieldDefinition
 
   @SuppressWarnings("null")
   @Override
-  public IDataTypeAdapter<?> getJavaTypeAdapter() {
+  public final IDataTypeAdapter<?> getJavaTypeAdapter() {
     return getXmlObject().isSetAsType() ? getXmlObject().getAsType() : MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE;
   }
 
@@ -250,16 +236,7 @@ class XmlInlineFieldDefinition
 
   @Override
   public String getJsonValueKeyName() {
-    String retval = null;
-
-    if (getXmlObject().isSetJsonValueKey()) {
-      retval = getXmlObject().getJsonValueKey();
-    }
-
-    if (retval == null || retval.isEmpty()) {
-      retval = getJavaTypeAdapter().getDefaultJsonValueKey();
-    }
-    return retval;
+    return getXmlObject().getJsonValueKey();
   }
 
   // -------------------------------------

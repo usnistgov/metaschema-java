@@ -30,14 +30,13 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -93,7 +92,7 @@ public final class DefaultAllowedValuesConstraint
       @NonNull ISource source,
       @NonNull Level level,
       @NonNull MetapathExpression target,
-      @NonNull Map<QName, Set<String>> properties,
+      @NonNull Map<IAttributable.Key, Set<String>> properties,
       @NonNull Map<String, IAllowedValue> allowedValues,
       boolean allowedOther,
       @NonNull Extensible extensible,

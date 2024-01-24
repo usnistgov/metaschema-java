@@ -26,10 +26,12 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
+import java.util.Locale;
+
 /**
  * A marker interface for a choice of allowed instances in a Metachema.
  */
-public interface IChoiceInstance extends IModelInstance, IModelContainer {
+public interface IChoiceInstance extends IModelInstanceAbsolute, IContainerModelAbsolute {
 
   /**
    * Provides the Metaschema model type of "CHOICE".
@@ -41,7 +43,17 @@ public interface IChoiceInstance extends IModelInstance, IModelContainer {
     return ModelType.CHOICE;
   }
 
-  // REFACTOR: move up?
+  /**
+   * Retrieve the Metaschema assembly definition on which this instance is
+   * declared.
+   *
+   * @return the parent Metaschema assembly definition
+   */
+  @Override
+  default IAssemblyDefinition getContainingDefinition() {
+    return getParentContainer().getOwningDefinition();
+  }
+
   @Override
   default IAssemblyDefinition getOwningDefinition() {
     return getParentContainer().getOwningDefinition();
@@ -55,5 +67,20 @@ public interface IChoiceInstance extends IModelInstance, IModelContainer {
   @Override
   default int getMaxOccurs() {
     return 1;
+  }
+
+  @Override
+  default boolean isEffectiveValueWrappedInXml() {
+    throw new UnsupportedOperationException("not applicable");
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default String toCoordinates() {
+    return String.format("%s:%s-instance:%s@%d",
+        getContainingDefinition().getContainingModule().getShortName(),
+        getModelType().toString().toLowerCase(Locale.ROOT),
+        getContainingDefinition().getName(),
+        hashCode());
   }
 }

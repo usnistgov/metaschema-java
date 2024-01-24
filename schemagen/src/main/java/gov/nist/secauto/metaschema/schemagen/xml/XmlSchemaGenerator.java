@@ -176,7 +176,7 @@ public class XmlSchemaGenerator
           (entry, definition) -> {
             assert entry != null;
             assert definition != null;
-            IXmlType type = state.getTypeForDefinition(definition);
+            IXmlType type = state.getXmlForDefinition(definition);
             if (!entry.isInline()) {
               QName qname = type.getQName();
               String namespace = qname.getNamespaceURI();
@@ -272,7 +272,7 @@ public class XmlSchemaGenerator
 
     writer.writeStartElement(PREFIX_XML_SCHEMA, "element", NS_XML_SCHEMA);
     writer.writeAttribute("name", xmlQName.getLocalPart());
-    writer.writeAttribute("type", state.getTypeForDefinition(definition).getTypeReference());
+    writer.writeAttribute("type", state.getXmlForDefinition(definition).getTypeReference());
 
     writer.writeEndElement();
   }

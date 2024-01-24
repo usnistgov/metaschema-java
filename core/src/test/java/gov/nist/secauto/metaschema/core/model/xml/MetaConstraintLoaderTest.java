@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -60,7 +59,7 @@ public class MetaConstraintLoaderTest {
     ModuleLoader loader = new ModuleLoader(CollectionUtil.singletonList(postProcessor));
     URI moduleUri = ObjectUtils.notNull(
         Paths.get("metaschema/examples/computer-example.xml").toUri());
-    IModule module = loader.load(moduleUri);
+    IXmlModule module = loader.load(moduleUri);
 
     MetapathExpression expression = MetapathExpression.compile("//@id");
     IModuleNodeItem moduleItem = INodeItemFactory.instance().newModuleNodeItem(module);

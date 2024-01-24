@@ -64,7 +64,7 @@ public final class CSTPrinter {
     return new CSTPrinterVisitor().visit(expr);
   }
 
-  private static class CSTPrinterVisitor
+  private static final class CSTPrinterVisitor
       extends AbstractExpressionVisitor<String, State> {
 
     @Override

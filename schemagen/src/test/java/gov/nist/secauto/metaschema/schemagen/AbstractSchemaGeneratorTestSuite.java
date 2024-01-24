@@ -37,14 +37,15 @@ import gov.nist.secauto.metaschema.core.model.validation.JsonSchemaContentValida
 import gov.nist.secauto.metaschema.core.model.validation.XmlSchemaContentValidator;
 import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.io.Format;
+import gov.nist.secauto.metaschema.databind.model.metaschema.BindingModuleLoader;
 import gov.nist.secauto.metaschema.model.testing.AbstractTestSuite;
 import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.platform.commons.JUnitException;
 import org.xml.sax.SAXException;
 
@@ -69,7 +70,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractSchemaGeneratorTestSuite
     extends AbstractTestSuite {
-  private static final Logger LOGGER = LogManager.getLogger(AbstractTestSuite.class);
   @NonNull
   protected static final ISchemaGenerator XML_SCHEMA_GENERATOR = new XmlSchemaGenerator();
   @NonNull
@@ -92,7 +92,8 @@ public abstract class AbstractSchemaGeneratorTestSuite
 
   static {
     IMutableConfiguration<SchemaGenerationFeature<?>> features = new DefaultConfiguration<>();
-    features.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    // features.enableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
+    features.disableFeature(SchemaGenerationFeature.INLINE_DEFINITIONS);
     SCHEMA_GENERATION_CONFIG = features;
 
     BiFunction<IModule, Writer, Void> xmlProvider = (module, writer) -> {
@@ -118,7 +119,12 @@ public abstract class AbstractSchemaGeneratorTestSuite
       return null;
     };
     JSON_SCHEMA_PROVIDER = jsonProvider;
-
+    // Module module = ModuleLayer.boot()
+    // .findModule("gov.nist.secauto.metaschema.core")
+    // .orElseThrow();
+    //
+    // try (InputStream is
+    // = module.getResourceAsStream("schema.json/json-schema.json")) {
     try (InputStream is = ModuleLoader.class.getResourceAsStream("/schema/json/json-schema.json")) {
       assert is != null : "unable to get JSON schema resource";
       JsonSchemaContentValidator schemaValidator = new JsonSchemaContentValidator(is);
@@ -168,7 +174,8 @@ public abstract class AbstractSchemaGeneratorTestSuite
     return schemaPath;
   }
 
-  protected Path produceJsonSchema(@NonNull IModule module, @NonNull Path schemaPath) throws IOException {
+  protected Path produceJsonSchema(@NonNull IModule module, @NonNull Path schemaPath)
+      throws IOException {
     produceSchema(module, schemaPath, JSON_SCHEMA_PROVIDER);
     return schemaPath;
   }
@@ -184,35 +191,40 @@ public abstract class AbstractSchemaGeneratorTestSuite
     Path testSuite = Paths.get("../core/metaschema/test-suite/schema-generation/");
     Path collectionPath = testSuite.resolve(collectionName);
 
-    ModuleLoader loader = new ModuleLoader();
+    // load the metaschema module
+    BindingModuleLoader loader = new BindingModuleLoader();
+    loader.enableFeature(DeserializationFeature.DESERIALIZE_XML_ALLOW_ENTITY_RESOLUTION);
     loader.allowEntityResolution();
     Path modulePath = collectionPath.resolve(metaschemaName);
     IModule module = loader.load(modulePath);
 
-    Path jsonSchema = produceJsonSchema(module, generationDir.resolve(generatedSchemaName + ".json"));
-    assertEquals(true, validate(JSON_SCHEMA_VALIDATOR, jsonSchema),
-        String.format("JSON schema '%s' was invalid", jsonSchema.toString()));
-    Path xmlSchema = produceXmlSchema(module, generationDir.resolve(generatedSchemaName + ".xsd"));
-
+    // generate the schema
     Path schemaPath;
-    switch (getRequiredContentFormat()) {
+    Format requiredContentFormat = getRequiredContentFormat();
+    switch (requiredContentFormat) {
     case JSON:
     case YAML:
+      Path jsonSchema = produceJsonSchema(module, generationDir.resolve(generatedSchemaName + ".json"));
+      assertEquals(true, validate(JSON_SCHEMA_VALIDATOR, jsonSchema),
+          String.format("JSON schema '%s' was invalid", jsonSchema.toString()));
       schemaPath = jsonSchema;
       break;
     case XML:
-      schemaPath = xmlSchema;
+      schemaPath = produceXmlSchema(module, generationDir.resolve(generatedSchemaName + ".xsd"));
       break;
     default:
       throw new IllegalStateException();
     }
 
-    IBindingContext context = IBindingContext.instance();
+    // setup object binding
+    IBindingContext context = new DefaultBindingContext();
     context.registerModule(module, generationDir);
+
+    // create content test cases
     for (ContentCase contentCase : contentCases) {
       Path contentPath = collectionPath.resolve(contentCase.getName());
 
-      if (!getRequiredContentFormat().equals(contentCase.getActualFormat())) {
+      if (!requiredContentFormat.equals(contentCase.getActualFormat())) {
         contentPath = convertContent(contentPath.toUri(), generationDir, context);
       }
 

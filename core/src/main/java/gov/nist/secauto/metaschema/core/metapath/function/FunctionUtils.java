@@ -52,6 +52,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 /**
  * A collection of utility functions for use in implementing Metapath functions.
  */
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public final class FunctionUtils {
   public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
 

@@ -30,10 +30,9 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -46,17 +45,15 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-class XmlGlobalFlagDefinition implements IFlagDefinition, IFeatureGlobalDefinition<IFlagInstance> {
+class XmlGlobalFlagDefinition implements IFlagDefinition {
   @NonNull
   private final GlobalFlagDefinitionType xmlFlag;
   @NonNull
-  private final IModule module;
+  private final XmlModule module;
   @Nullable
   private final Object defaultValue;
   private final Lazy<IValueConstrained> constraints;
@@ -72,7 +69,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition, IFeatureGlobalDefiniti
    */
   public XmlGlobalFlagDefinition(
       @NonNull GlobalFlagDefinitionType xmlFlag,
-      @NonNull IModule module) {
+      @NonNull XmlModule module) {
     this.xmlFlag = xmlFlag;
     this.module = module;
 
@@ -104,18 +101,13 @@ class XmlGlobalFlagDefinition implements IFlagDefinition, IFeatureGlobalDefiniti
   }
 
   @Override
-  public IModule getContainingModule() {
+  public XmlModule getContainingModule() {
     return module;
   }
 
   @Override
   public Object getDefaultValue() {
     return defaultValue;
-  }
-
-  @Override
-  public IFlagInstance getInlineInstance() {
-    return IFeatureGlobalDefinition.super.getInlineInstance();
   }
 
   // ----------------------------------------
@@ -177,7 +169,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition, IFeatureGlobalDefiniti
   }
 
   @Override
-  public Map<QName, Set<String>> getProperties() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
     return ModelFactory.toProperties(CollectionUtil.listOrEmpty(getXmlFlag().getPropList()));
   }
 

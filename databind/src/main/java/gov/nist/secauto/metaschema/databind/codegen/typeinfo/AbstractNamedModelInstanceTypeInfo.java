@@ -28,20 +28,17 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.FieldSpec.Builder;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
+import gov.nist.secauto.metaschema.core.model.IGroupable;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
@@ -57,8 +54,8 @@ import javax.lang.model.element.Modifier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelInstance>
-    extends AbstractModelInstanceTypeInfo<INSTANCE, IAssemblyDefinitionTypeInfo>
+abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelInstanceAbsolute>
+    extends AbstractModelInstanceTypeInfo<INSTANCE>
     implements INamedModelInstanceTypeInfo {
   public AbstractNamedModelInstanceTypeInfo(
       @NonNull INSTANCE instance,
@@ -85,15 +82,17 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
 
   @Override
   public TypeName getJavaItemType() {
-    return getParentDefinitionTypeInfo().getTypeResolver().getClassName(this);
+    return getParentTypeInfo().getTypeResolver().getClassName(this);
   }
 
   @Override
-  public Set<IFlagContainer> buildField(Builder builder) {
-    Set<IFlagContainer> retval = super.buildField(builder);
+  public Set<IModelDefinition> buildField(
+      TypeSpec.Builder typeBuilder,
+      FieldSpec.Builder fieldBuilder) {
+    Set<IModelDefinition> retval = super.buildField(typeBuilder, fieldBuilder);
 
-    IFlagContainer definition = getInstance().getDefinition();
-    if (definition.isInline() && !(definition instanceof IFieldDefinition && definition.isSimple())) {
+    IModelDefinition definition = getInstance().getDefinition();
+    if (definition.isInline() && (definition.hasChildren() || definition instanceof IAssemblyDefinition)) {
       retval = new HashSet<>(retval);
 
       // this is an inline definition that must be built as a child class
@@ -103,58 +102,37 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
   }
 
   @Override
-  public AnnotationSpec.Builder buildBindingAnnotation() {
-    AnnotationSpec.Builder retval = super.buildBindingAnnotation();
+  public Set<IModelDefinition> buildBindingAnnotation(
+      TypeSpec.Builder typeBuilder,
+      FieldSpec.Builder fieldBuilder,
+      AnnotationSpec.Builder annotation) {
 
-    INamedModelInstance modelInstance = getInstance();
+    buildBindingAnnotationCommon(annotation);
 
-    String formalName = modelInstance.getEffectiveFormalName();
-    if (formalName != null) {
-      retval.addMember("formalName", "$S", formalName);
+    INamedModelInstanceAbsolute instance = getInstance();
+
+    int minOccurs = instance.getMinOccurs();
+    if (minOccurs != IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS) {
+      annotation.addMember("minOccurs", "$L", minOccurs);
     }
 
-    MarkupLine description = modelInstance.getEffectiveDescription();
-    if (description != null) {
-      retval.addMember("description", "$S", description.toMarkdown());
+    int maxOccurs = instance.getMaxOccurs();
+    if (maxOccurs != IGroupable.DEFAULT_GROUP_AS_MAX_OCCURS) {
+      annotation.addMember("maxOccurs", "$L", maxOccurs);
     }
-
-    retval.addMember("useName", "$S", modelInstance.getEffectiveName());
-
-    String namespace = modelInstance.getXmlNamespace();
-    if (namespace == null) {
-      retval.addMember("namespace", "$S", "##none");
-    } else if (!modelInstance.getContainingModule().getXmlNamespace().toASCIIString().equals(namespace)) {
-      retval.addMember("namespace", "$S", namespace);
-    } // otherwise use the ##default
-
-    int minOccurs = modelInstance.getMinOccurs();
-    if (minOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MIN_OCCURS) {
-      retval.addMember("minOccurs", "$L", minOccurs);
-    }
-
-    int maxOccurs = modelInstance.getMaxOccurs();
-    if (maxOccurs != MetaschemaModelConstants.DEFAULT_GROUP_AS_MAX_OCCURS) {
-      retval.addMember("maxOccurs", "$L", maxOccurs);
-    }
-
-    MarkupMultiline remarks = modelInstance.getRemarks();
-    if (remarks != null) {
-      retval.addMember("remarks", "$S", remarks.toMarkdown());
-    }
-
     if (maxOccurs == -1 || maxOccurs > 1) {
       // requires a group-as
-      retval.addMember("groupAs", "$L", generateGroupAsAnnotation().build());
+      annotation.addMember("groupAs", "$L", generateGroupAsAnnotation().build());
     }
 
-    return retval;
+    return CollectionUtil.emptySet();
   }
 
   @Override
   protected void buildExtraMethods(TypeSpec.Builder builder, FieldSpec valueField) {
     super.buildExtraMethods(builder, valueField);
 
-    INamedModelInstance instance = getInstance();
+    INamedModelInstanceAbsolute instance = getInstance();
     int maxOccurance = instance.getMaxOccurs();
     if (maxOccurance == -1 || maxOccurance > 1) {
       TypeName itemType = getJavaItemType();
@@ -170,7 +148,7 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
         }
 
         // get the json key property on the instance's definition
-        ITypeResolver typeResolver = getParentDefinitionTypeInfo().getTypeResolver();
+        ITypeResolver typeResolver = getParentTypeInfo().getTypeResolver();
         IModelDefinitionTypeInfo instanceTypeInfo = typeResolver.getTypeInfo(instance.getDefinition());
         IFlagInstanceTypeInfo jsonKeyTypeInfo = instanceTypeInfo.getFlagInstanceTypeInfo(jsonKey);
 
@@ -213,7 +191,7 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
                   itemType, ObjectUtils.class, valueParam)
               .addStatement("$1T key = $2T.requireNonNull($3N.$4N(),\"$3N key cannot be null\")",
                   String.class, ObjectUtils.class, valueParam, "get" + jsonKeyTypeInfo.getPropertyName())
-              .addStatement("return $1N == null ? false : $1N.remove(key, value)", valueField);
+              .addStatement("return $1N != null && $1N.remove(key, value)", valueField);
           builder.addMethod(method.build());
         }
       } else {
@@ -247,7 +225,7 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
               .addJavadoc("@return {@code true} if the item was removed or {@code false} otherwise\n")
               .addStatement("$T value = $T.requireNonNull($N,\"$N cannot be null\")",
                   itemType, ObjectUtils.class, valueParam, valueParam)
-              .addStatement("return $1N == null ? false : $1N.remove(value)", valueField);
+              .addStatement("return $1N != null && $1N.remove(value)", valueField);
           builder.addMethod(method.build());
         }
       }

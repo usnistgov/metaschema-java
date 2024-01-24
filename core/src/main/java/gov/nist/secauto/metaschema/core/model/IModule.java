@@ -28,74 +28,19 @@ package gov.nist.secauto.metaschema.core.model;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-/**
- * The API for accessing information about a given Metaschema.
- * <p>
- * A Metaschem module may import another Metaschema module. This import graph
- * can be accessed using {@link #getImportedModules()}.
- * <p>
- * Global scoped Metaschema definitions can be accessed using
- * {@link #getScopedAssemblyDefinitionByName(String)},
- * {@link #getScopedFieldDefinitionByName(String)}, and
- * {@link #getScopedFlagDefinitionByName(String)}. These methods take into
- * consideration the import order to provide the global definitions that are in
- * scope within the given Metschema module.
- * <p>
- * Global scoped definitions exported by this Metaschema module, available for
- * use by importing Metaschema modules, can be accessed using
- * {@link #getExportedAssemblyDefinitions()},
- * {@link #getExportedFieldDefinitions()}, and
- * {@link #getExportedFlagDefinitions()}.
- * <p>
- * Global scoped definitions defined directly within the given Metaschema module
- * can be accessed using {@link #getAssemblyDefinitions()},
- * {@link #getFieldDefinitions()}, and {@link #getFlagDefinitions()}, along with
- * similarly named access methods.
- */
-// REFACTOR: rename to IModule
 public interface IModule {
-  String METASCHEMA_XML_NS = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";
 
-  /**
-   * Get a filter that will match all definitions that are not locally defined.
-   *
-   * @param <DEF>
-   *          the type of definition
-   * @return a predicate implementing the filter
-   */
-  static <DEF extends IDefinition> Predicate<DEF> allNonLocalDefinitions() {
-    return definition -> {
-      return ModuleScopeEnum.INHERITED.equals(definition.getModuleScope())
-          || ModelType.ASSEMBLY.equals(definition.getModelType()) && ((IAssemblyDefinition) definition).isRoot();
-    };
-  }
-
-  /**
-   * Get a filter that will match all definitions that are root assemblies.
-   *
-   * @param <DEF>
-   *          the type of definition
-   * @return a predicate implementing the filter
-   */
-  static <DEF extends IDefinition> Predicate<DEF> allRootAssemblyDefinitions() {
-    return definition -> {
-      return ModelType.ASSEMBLY.equals(definition.getModelType()) && ((IAssemblyDefinition) definition).isRoot();
-    };
-  }
+  String XML_NAMESPACE = "http://csrc.nist.gov/ns/oscal/metaschema/1.0";
 
   /**
    * Retrieves the location where the Metaschema module was loaded from.
@@ -227,12 +172,9 @@ public interface IModule {
    *
    * @return a listing of assembly and field definitions
    */
+  @SuppressWarnings("unchecked")
   @NonNull
-  default List<? extends IFlagContainer> getAssemblyAndFieldDefinitions() {
-    return ObjectUtils.notNull(
-        Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
-            .collect(Collectors.toList()));
-  }
+  List<? extends IModelDefinition> getAssemblyAndFieldDefinitions();
 
   /**
    * Retrieves the top-level flag definitions in this Metaschema module.
@@ -254,17 +196,6 @@ public interface IModule {
   @Nullable
   IFlagDefinition getFlagDefinitionByName(@NonNull String name);
 
-  // /**
-  // * Retrieves the information elements matching the path.
-  // *
-  // * @param path
-  // * a MetaPath expression
-  // * @return the matching information elements or an empty collection
-  // */
-  // @NonNull
-  // Collection<@NonNull ? extends IModelElement>
-  // getInfoElementsByMetapath(@NonNull String path);
-
   /**
    * Retrieves the assembly definition with a matching name from either: 1) the
    * top-level assembly definitions from this Metaschema module, or 2) global
@@ -276,15 +207,7 @@ public interface IModule {
    * @return the assembly definition
    */
   @Nullable
-  default IAssemblyDefinition getScopedAssemblyDefinitionByName(@NonNull String name) {
-    // first try local/global top-level definitions from current metaschema module
-    IAssemblyDefinition retval = getAssemblyDefinitionByName(name);
-    if (retval == null) {
-      // try global definitions from imported Metaschema modules
-      retval = getExportedAssemblyDefinitionByName(name);
-    }
-    return retval;
-  }
+  IAssemblyDefinition getScopedAssemblyDefinitionByName(@NonNull String name);
 
   /**
    * Retrieves the field definition with a matching name from either: 1) the
@@ -296,15 +219,7 @@ public interface IModule {
    * @return the field definition
    */
   @Nullable
-  default IFieldDefinition getScopedFieldDefinitionByName(@NonNull String name) {
-    // first try local/global top-level definitions from current metaschema module
-    IFieldDefinition retval = getFieldDefinitionByName(name);
-    if (retval == null) {
-      // try global definitions from imported metaschema modules
-      retval = getExportedFieldDefinitionByName(name);
-    }
-    return retval;
-  }
+  IFieldDefinition getScopedFieldDefinitionByName(@NonNull String name);
 
   /**
    * Retrieves the flag definition with a matching name from either: 1) the
@@ -316,15 +231,7 @@ public interface IModule {
    * @return the flag definition
    */
   @Nullable
-  default IFlagDefinition getScopedFlagDefinitionByName(@NonNull String name) {
-    // first try local/global top-level definitions from current metaschema module
-    IFlagDefinition retval = getFlagDefinitionByName(name);
-    if (retval == null) {
-      // try global definitions from imported metaschema modules
-      retval = getExportedFlagDefinitionByName(name);
-    }
-    return retval;
-  }
+  IFlagDefinition getScopedFlagDefinitionByName(@NonNull String name);
 
   /**
    * Retrieves the top-level assembly definitions that are marked as roots from
@@ -333,11 +240,7 @@ public interface IModule {
    * @return a listing of assembly definitions marked as root
    */
   @NonNull
-  default Collection<? extends IAssemblyDefinition> getExportedRootAssemblyDefinitions() {
-    return ObjectUtils.notNull(getExportedAssemblyDefinitions().stream()
-        .filter(allRootAssemblyDefinitions())
-        .collect(Collectors.toList()));
-  }
+  Collection<? extends IAssemblyDefinition> getExportedRootAssemblyDefinitions();
 
   /**
    * Retrieves the top-level assembly definitions that are marked as roots from
@@ -346,11 +249,7 @@ public interface IModule {
    * @return a listing of assembly definitions marked as root
    */
   @NonNull
-  default Collection<? extends IAssemblyDefinition> getRootAssemblyDefinitions() {
-    return ObjectUtils.notNull(getAssemblyDefinitions().stream()
-        .filter(allRootAssemblyDefinitions())
-        .collect(Collectors.toList()));
-  }
+  Collection<? extends IAssemblyDefinition> getRootAssemblyDefinitions();
 
   /**
    * Retrieve the top-level flag definitions that are marked global in this

@@ -39,9 +39,7 @@ import nl.talsmasoftware.lazy4j.Lazy;
  * associated value.
  */
 class FieldInstanceNodeItemImpl
-    extends AbstractModelInstanceNodeItem<
-        IFieldDefinition,
-        IFieldInstance>
+    extends AbstractInstanceNodeItem<IFieldDefinition, IFieldInstance, IAssemblyNodeItem>
     implements IFieldNodeItem,
     IFeatureNullableAtomicValuedItem,
     IFeatureFlagContainerItem {

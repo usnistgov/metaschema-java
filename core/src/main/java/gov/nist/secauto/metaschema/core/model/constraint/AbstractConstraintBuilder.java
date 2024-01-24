@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.model.constraint;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.Level;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -37,8 +38,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -55,7 +54,7 @@ public abstract class AbstractConstraintBuilder<
   @NonNull
   private MetapathExpression target = IConstraint.DEFAULT_TARGET;
   @NonNull
-  private Map<QName, Set<String>> properties = new LinkedHashMap<>(); // NOPMD not thread safe
+  private Map<IAttributable.Key, Set<String>> properties = new LinkedHashMap<>(); // NOPMD not thread safe
   private MarkupMultiline remarks;
 
   /**
@@ -65,6 +64,7 @@ public abstract class AbstractConstraintBuilder<
    *
    * @return the builder instance
    */
+  @NonNull
   protected abstract T getThis();
 
   /**
@@ -74,6 +74,7 @@ public abstract class AbstractConstraintBuilder<
    *          the identifier to set
    * @return this builder
    */
+  @NonNull
   public T identifier(@NonNull String id) {
     this.id = id;
     return getThis();
@@ -86,6 +87,7 @@ public abstract class AbstractConstraintBuilder<
    *          the formal name to set
    * @return this builder
    */
+  @NonNull
   public T formalName(@NonNull String name) {
     this.formalName = name;
     return getThis();
@@ -98,6 +100,7 @@ public abstract class AbstractConstraintBuilder<
    *          the description to set
    * @return this builder
    */
+  @NonNull
   public T description(@NonNull MarkupLine description) {
     this.description = description;
     return getThis();
@@ -110,6 +113,7 @@ public abstract class AbstractConstraintBuilder<
    *          the source to set
    * @return this builder
    */
+  @NonNull
   public T source(@NonNull ISource source) {
     this.source = source;
     return getThis();
@@ -122,6 +126,7 @@ public abstract class AbstractConstraintBuilder<
    *          the level to set
    * @return this builder
    */
+  @NonNull
   public T level(@NonNull Level level) {
     this.level = level;
     return getThis();
@@ -135,6 +140,7 @@ public abstract class AbstractConstraintBuilder<
    *          definition it is declared on
    * @return this builder
    */
+  @NonNull
   public T target(@NonNull MetapathExpression target) {
     this.target = target;
     return getThis();
@@ -147,7 +153,8 @@ public abstract class AbstractConstraintBuilder<
    *          the properties to set
    * @return this builder
    */
-  public T properties(@NonNull Map<QName, Set<String>> properties) {
+  @NonNull
+  public T properties(@NonNull Map<IAttributable.Key, Set<String>> properties) {
     this.properties = properties;
     return getThis();
   }
@@ -156,28 +163,30 @@ public abstract class AbstractConstraintBuilder<
    * Set the values of the property with the provided {@code name} to the provided
    * {@code value}.
    *
-   * @param name
+   * @param key
    *          the property's name
    * @param value
    *          the value to set
    * @return this builder
    */
-  public T property(@NonNull QName name, @NonNull String value) {
-    return property(name, CollectionUtil.singleton(value));
+  @NonNull
+  public T property(@NonNull IAttributable.Key key, @NonNull String value) {
+    return property(key, CollectionUtil.singleton(value));
   }
 
   /**
    * Set the values of the property with the provided {@code name} to the provided
    * {@code values}.
    *
-   * @param name
+   * @param key
    *          the property's name
    * @param values
    *          the values to set
    * @return this builder
    */
-  public T property(@NonNull QName name, @NonNull Set<String> values) {
-    properties.put(name, new LinkedHashSet<>(values));
+  @NonNull
+  public T property(@NonNull IAttributable.Key key, @NonNull Set<String> values) {
+    properties.put(key, new LinkedHashSet<>(values));
     return getThis();
   }
 
@@ -188,6 +197,7 @@ public abstract class AbstractConstraintBuilder<
    *          the remarks to set
    * @return this builder
    */
+  @NonNull
   public T remarks(@NonNull MarkupMultiline remarks) {
     this.remarks = remarks;
     return getThis();
@@ -291,7 +301,7 @@ public abstract class AbstractConstraintBuilder<
    * @return the properties or an empty Map if no properties are set
    */
   @NonNull
-  protected Map<QName, Set<String>> getProperties() {
+  protected Map<IAttributable.Key, Set<String>> getProperties() {
     return properties;
   }
 

@@ -87,6 +87,18 @@ public interface INodeItemVisitor<CONTEXT, RESULT> {
   RESULT visitAssembly(@NonNull IAssemblyNodeItem item, CONTEXT context);
 
   /**
+   * This callback is called when an {@link IAssemblyInstanceGroupedNodeItem} is
+   * visited.
+   *
+   * @param item
+   *          the visited item
+   * @param context
+   *          provides contextual information for use by the visitor
+   * @return the visitation result
+   */
+  RESULT visitAssembly(@NonNull IAssemblyInstanceGroupedNodeItem item, CONTEXT context);
+
+  /**
    * This callback is called when an {@link IModuleNodeItem} is visited.
    *
    * @param item

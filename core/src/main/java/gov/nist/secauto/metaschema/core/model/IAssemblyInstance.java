@@ -26,8 +26,26 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-public interface IAssemblyInstance extends INamedModelInstance, IAssembly {
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+public interface IAssemblyInstance extends IAssembly, INamedModelInstance {
 
   @Override
   IAssemblyDefinition getDefinition();
+
+  @Override
+  @NonNull
+  default QName getXmlQName() {
+    return ObjectUtils.notNull(INamedModelInstance.super.getXmlQName());
+  }
+
+  @Override
+  default boolean isEffectiveValueWrappedInXml() {
+    // assembly instances are always wrapped
+    return true;
+  }
 }

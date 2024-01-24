@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValue;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
@@ -85,19 +86,20 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public final class ConstraintXmlSupport {
   @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
   private static final XmlObjectParser<Pair<ISource, IValueConstrained>> FLAG_PARSER
       = new XmlObjectParser<>(ObjectUtils.notNull(
           Map.ofEntries(
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "allowed-values"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "allowed-values"),
                   ConstraintXmlSupport::handleAllowedValues),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "index-has-key"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "index-has-key"),
                   ConstraintXmlSupport::handleIndexHasKey),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "matches"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "matches"),
                   ConstraintXmlSupport::handleMatches),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "expect"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "expect"),
                   ConstraintXmlSupport::handleExpect)))) {
 
         @Override
@@ -123,13 +125,13 @@ public final class ConstraintXmlSupport {
   private static final XmlObjectParser<Pair<ISource, IValueConstrained>> FIELD_PARSER
       = new XmlObjectParser<>(ObjectUtils.notNull(
           Map.ofEntries(
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "allowed-values"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "allowed-values"),
                   ConstraintXmlSupport::handleScopedAllowedValues),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "index-has-key"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "index-has-key"),
                   ConstraintXmlSupport::handleScopedIndexHasKey),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "matches"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "matches"),
                   ConstraintXmlSupport::handleScopedMatches),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "expect"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "expect"),
                   ConstraintXmlSupport::handleScopedExpect)))) {
 
         @Override
@@ -155,19 +157,19 @@ public final class ConstraintXmlSupport {
   private static final XmlObjectParser<Pair<ISource, IModelConstrained>> ASSEMBLY_PARSER
       = new XmlObjectParser<>(ObjectUtils.notNull(
           Map.ofEntries(
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "allowed-values"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "allowed-values"),
                   ConstraintXmlSupport::handleScopedAllowedValues),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "index-has-key"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "index-has-key"),
                   ConstraintXmlSupport::handleScopedIndexHasKey),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "matches"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "matches"),
                   ConstraintXmlSupport::handleScopedMatches),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "expect"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "expect"),
                   ConstraintXmlSupport::handleScopedExpect),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "index"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "index"),
                   ConstraintXmlSupport::handleScopedIndex),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "is-unique"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "is-unique"),
                   ConstraintXmlSupport::handleScopedIsUnique),
-              Map.entry(new QName(IModule.METASCHEMA_XML_NS, "has-cardinality"),
+              Map.entry(new QName(IModule.XML_NAMESPACE, "has-cardinality"),
                   ConstraintXmlSupport::handleScopedHasCardinality)))) {
 
         @Override
@@ -294,6 +296,7 @@ public final class ConstraintXmlSupport {
     }
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private static void handleAllowedValues(
       @NonNull XmlObject obj,
       Pair<ISource, IValueConstrained> state) {
@@ -303,6 +306,7 @@ public final class ConstraintXmlSupport {
     state.getRight().addConstraint(constraint);
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private static void handleScopedAllowedValues(
       @NonNull XmlObject obj,
       Pair<ISource, ? extends IValueConstrained> state) {
@@ -312,6 +316,7 @@ public final class ConstraintXmlSupport {
     state.getRight().addConstraint(constraint);
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private static void handleMatches(
       @NonNull XmlObject obj,
       Pair<ISource, IValueConstrained> state) {
@@ -321,6 +326,7 @@ public final class ConstraintXmlSupport {
     state.getRight().addConstraint(constraint);
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private static void handleScopedMatches(
       @NonNull XmlObject obj,
       Pair<ISource, ? extends IValueConstrained> state) {
@@ -330,6 +336,7 @@ public final class ConstraintXmlSupport {
     state.getRight().addConstraint(constraint);
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private static void handleIndexHasKey(
       @NonNull XmlObject obj,
       Pair<ISource, IValueConstrained> state) {
@@ -339,6 +346,7 @@ public final class ConstraintXmlSupport {
     state.getRight().addConstraint(constraint);
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private static void handleScopedIndexHasKey(
       @NonNull XmlObject obj,
       Pair<ISource, ? extends IValueConstrained> state) {
@@ -348,6 +356,7 @@ public final class ConstraintXmlSupport {
     state.getRight().addConstraint(constraint);
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private static void handleExpect(
       @NonNull XmlObject obj,
       Pair<ISource, IValueConstrained> state) {
@@ -357,6 +366,7 @@ public final class ConstraintXmlSupport {
     state.getRight().addConstraint(constraint);
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private static void handleScopedExpect(
       @NonNull XmlObject obj,
       Pair<ISource, ? extends IValueConstrained> state) {
@@ -366,6 +376,7 @@ public final class ConstraintXmlSupport {
     state.getRight().addConstraint(constraint);
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private static void handleScopedIndex(@NonNull XmlObject obj, Pair<ISource, IModelConstrained> state) {
     IIndexConstraint constraint = ModelFactory.newIndexConstraint(
         (TargetedIndexConstraintType) obj,
@@ -373,6 +384,7 @@ public final class ConstraintXmlSupport {
     state.getRight().addConstraint(constraint);
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private static void handleScopedIsUnique(@NonNull XmlObject obj, Pair<ISource, IModelConstrained> state) {
     IUniqueConstraint constraint = ModelFactory.newUniqueConstraint(
         (TargetedKeyConstraintType) obj,
@@ -380,6 +392,7 @@ public final class ConstraintXmlSupport {
     state.getRight().addConstraint(constraint);
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private static void handleScopedHasCardinality(@NonNull XmlObject obj, Pair<ISource, IModelConstrained> state) {
     ICardinalityConstraint constraint = ModelFactory.newCardinalityConstraint(
         (TargetedHasCardinalityConstraintType) obj,
@@ -434,15 +447,15 @@ public final class ConstraintXmlSupport {
         bean.setLevel(level);
       }
 
-      for (Map.Entry<QName, Set<String>> entry : constraint.getProperties().entrySet()) {
-        QName qname = entry.getKey();
+      for (Map.Entry<IAttributable.Key, Set<String>> entry : constraint.getProperties().entrySet()) {
+        IAttributable.Key key = entry.getKey();
         Set<String> values = entry.getValue();
         for (String value : values) {
           PropertyType prop = bean.addNewProp();
-          prop.setName(qname.getLocalPart());
+          prop.setName(key.getName());
 
-          String namespace = qname.getNamespaceURI();
-          if (namespace != null && !namespace.isEmpty()) {
+          String namespace = key.getNamespace();
+          if (!IAttributable.DEFAULT_PROPERY_NAMESPACE.equals(namespace)) {
             prop.setNamespace(namespace);
           }
           prop.setValue(value);
@@ -472,14 +485,14 @@ public final class ConstraintXmlSupport {
         AllowedValueType enumType = bean.addNewEnum();
         enumType.setValue(value);
 
-        XmlbeansMarkupVisitor.visit(description, IModule.METASCHEMA_XML_NS, enumType);
+        XmlbeansMarkupVisitor.visit(description, IModule.XML_NAMESPACE, enumType);
       }
 
       MarkupMultiline remarks = constraint.getRemarks();
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.XML_NAMESPACE, remarksType);
       }
       return null;
     }
@@ -504,7 +517,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.XML_NAMESPACE, remarksType);
       }
       return null;
     }
@@ -526,7 +539,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.XML_NAMESPACE, remarksType);
       }
       return null;
     }
@@ -551,7 +564,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.XML_NAMESPACE, remarksType);
       }
       return null;
     }
@@ -577,7 +590,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.XML_NAMESPACE, remarksType);
       }
     }
 
@@ -594,7 +607,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.XML_NAMESPACE, remarksType);
       }
       return null;
     }
@@ -612,7 +625,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.XML_NAMESPACE, remarksType);
       }
       return null;
     }
@@ -628,7 +641,7 @@ public final class ConstraintXmlSupport {
       if (remarks != null) {
         RemarksType remarksType = bean.addNewRemarks();
         assert remarksType != null;
-        XmlbeansMarkupVisitor.visit(remarks, IModule.METASCHEMA_XML_NS, remarksType);
+        XmlbeansMarkupVisitor.visit(remarks, IModule.XML_NAMESPACE, remarksType);
       }
       return null;
     }

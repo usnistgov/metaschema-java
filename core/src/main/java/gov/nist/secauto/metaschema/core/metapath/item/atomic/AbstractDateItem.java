@@ -49,12 +49,7 @@ public abstract class AbstractDateItem<TYPE>
   @SuppressWarnings("PMD.OnlyOneReturn")
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (!(obj instanceof IDateItem)) {
-      return false;
-    }
-    return compareTo((IDateItem) obj) == 0;
+    return this == obj
+        || (obj instanceof IDateItem && compareTo((IDateItem) obj) == 0);
   }
 }

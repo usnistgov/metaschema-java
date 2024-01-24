@@ -27,16 +27,25 @@
 package gov.nist.secauto.metaschema.databind.io.xml;
 
 import gov.nist.secauto.metaschema.databind.io.json.DefaultJsonProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IBoundAssemblyInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFieldValueInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundFlagInstance;
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedModelInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.IFieldClassBinding;
-import gov.nist.secauto.metaschema.databind.model.info.IDataTypeHandler;
-import gov.nist.secauto.metaschema.databind.model.info.IModelPropertyInfo;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelFieldScalar;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedNamed;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelNamed;
+import gov.nist.secauto.metaschema.databind.model.info.AbstractModelInstanceWriteHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
+import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import org.codehaus.stax2.XMLStreamWriter2;
 
@@ -69,186 +78,375 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     return writer;
   }
 
-  /**
-   * Writes data in a bound object to XML. This assembly must be a root assembly
-   * for which a call to {@link IAssemblyClassBinding#isRoot()} will return
-   * {@code true}.
-   *
-   * @param targetDefinition
-   *          the definition describing the root element data to write
-   * @param targetObject
-   *          the bound object
-   * @throws XMLStreamException
-   *           if an error occurred while parsing into XML
-   * @throws IOException
-   *           if an error occurred while writing the output
-   */
+  @Override
   public void write(
-      @NonNull IAssemblyClassBinding targetDefinition,
-      @NonNull Object targetObject) throws XMLStreamException, IOException {
-    writer.writeStartDocument("UTF-8", "1.0");
+      @NonNull IBoundDefinitionModelComplex definition,
+      @NonNull Object item) throws IOException {
 
-    QName rootQName = targetDefinition.getRootXmlQName();
+    QName qname = definition.getXmlQName();
 
-    NamespaceContext nsContext = writer.getNamespaceContext();
-    String prefix = nsContext.getPrefix(rootQName.getNamespaceURI());
-    if (prefix == null) {
-      prefix = "";
-    }
-
-    writer.writeStartElement(prefix, rootQName.getLocalPart(), rootQName.getNamespaceURI());
-
-    writeDefinitionValue(targetDefinition, targetObject, rootQName);
-
-    writer.writeEndElement();
+    definition.writeItem(item, new InstanceWriter(qname));
   }
 
-  @Override
-  public void writeDefinitionValue(
-      @NonNull IClassBinding targetDefinition,
-      @NonNull Object targetObject,
-      @NonNull QName parentName) throws IOException {
-    // write flags
-    for (IBoundFlagInstance flag : targetDefinition.getFlagInstances()) {
-      assert flag != null;
-      writeFlagInstance(flag, targetObject);
+  private static class ModelInstanceWriteHandler
+      extends AbstractModelInstanceWriteHandler {
+    @NonNull
+    private final ItemWriter itemWriter;
+
+    public ModelInstanceWriteHandler(
+        @NonNull IBoundInstanceModel instance,
+        @NonNull ItemWriter itemWriter) {
+      super(instance);
+      this.itemWriter = itemWriter;
     }
 
-    if (targetDefinition instanceof IAssemblyClassBinding) {
-      for (IBoundNamedModelInstance modelProperty : ((IAssemblyClassBinding) targetDefinition).getModelInstances()) {
-        assert modelProperty != null;
-        writeModelInstanceValues(modelProperty, targetObject, parentName);
-      }
-    } else if (targetDefinition instanceof IFieldClassBinding) {
-      IBoundFieldValueInstance fieldValueInstance = ((IFieldClassBinding) targetDefinition).getFieldValueInstance();
+    @Override
+    public void writeItem(Object item) throws IOException {
+      IBoundInstanceModel instance = getInstance();
+      instance.writeItem(item, itemWriter);
+    }
+  }
 
-      Object value = fieldValueInstance.getValue(targetObject);
-      if (value != null) {
+  private class InstanceWriter
+      extends AbstractItemWriter {
+
+    public InstanceWriter(@NonNull QName parentQName) {
+      super(parentQName);
+    }
+
+    @Override
+    public void writeItemFlag(Object item, IBoundInstanceFlag instance) throws IOException {
+      instance.writeItem(item, new ItemWriter(getParentQName()));
+    }
+
+    @Override
+    public void writeItemField(Object value, IBoundInstanceModelFieldScalar instance) throws IOException {
+      writeModelInstance(instance, value);
+    }
+
+    @Override
+    public void writeItemField(Object value, IBoundInstanceModelFieldComplex instance) throws IOException {
+      writeModelInstance(instance, value);
+    }
+
+    @Override
+    public void writeItemField(Object item, IBoundInstanceModelGroupedField instance) throws IOException {
+      throw new UnsupportedOperationException("not needed");
+    }
+
+    @Override
+    public void writeItemField(Object item, IBoundDefinitionModelFieldComplex definition) throws IOException {
+      definition.writeItem(item, new ItemWriter(getParentQName()));
+    }
+
+    @Override
+    public void writeItemFieldValue(Object item, IBoundFieldValue fieldValue) throws IOException {
+      throw new UnsupportedOperationException("not needed");
+    }
+
+    @Override
+    public void writeItemAssembly(Object value, IBoundInstanceModelAssembly instance) throws IOException {
+      writeModelInstance(instance, value);
+    }
+
+    @Override
+    public void writeItemAssembly(Object item, IBoundInstanceModelGroupedAssembly instance) throws IOException {
+      throw new UnsupportedOperationException("not needed");
+    }
+
+    @Override
+    public void writeItemAssembly(Object item, IBoundDefinitionModelAssembly definition) throws IOException {
+      definition.writeItem(item, new ItemWriter(getParentQName()));
+    }
+
+    @Override
+    public void writeChoiceGroupItem(Object value, IBoundInstanceModelChoiceGroup instance) throws IOException {
+      writeModelInstance(instance, value);
+    }
+
+    private void writeModelInstance(
+        @NonNull IBoundInstanceModel instance,
+        @NonNull Object value) throws IOException {
+      IModelInstanceCollectionInfo collectionInfo = instance.getCollectionInfo();
+      if (!collectionInfo.isEmpty(value)) {
+        QName currentQName = getParentQName();
+        QName groupAsQName = instance.getEffectiveXmlGroupAsQName();
         try {
-          fieldValueInstance.getJavaTypeAdapter().writeXmlValue(value, parentName, writer);
+          if (groupAsQName != null) {
+            // write the grouping element
+            writer.writeStartElement(groupAsQName.getNamespaceURI(), groupAsQName.getLocalPart());
+            currentQName = groupAsQName;
+          }
+
+          collectionInfo.writeItems(
+              new ModelInstanceWriteHandler(instance, new ItemWriter(currentQName)),
+              value);
+
+          if (groupAsQName != null) {
+            writer.writeEndElement();
+          }
         } catch (XMLStreamException ex) {
           throw new IOException(ex);
         }
       }
-    } else {
-      throw new UnsupportedOperationException(
-          String.format("Unsupported class binding type: %s", targetDefinition.getClass().getName()));
     }
   }
 
-  /**
-   * Write the data described by the provided {@code targetInstance} as an XML
-   * attribute.
-   *
-   * @param targetInstance
-   *          the model instance that describes the syntax of the data to write
-   * @param parentObject
-   *          the Java object that data written by this method is stored in
-   * @throws IOException
-   *           if an error occurred while writing the XML
-   */
-  protected void writeFlagInstance(
-      @NonNull IBoundFlagInstance targetInstance,
-      @NonNull Object parentObject)
-      throws IOException {
-    Object objectValue = targetInstance.getValue(parentObject);
-    String value
-        = objectValue == null ? null : targetInstance.getDefinition().getJavaTypeAdapter().asString(objectValue);
+  private class ItemWriter
+      extends AbstractItemWriter {
 
-    if (value != null) {
-      QName name = targetInstance.getXmlQName();
+    public ItemWriter(@NonNull QName parentQName) {
+      super(parentQName);
+    }
+
+    private <T extends IBoundInstanceModelNamed & IFeatureComplexItemValueHandler> void writeFlags(
+        @NonNull Object parentItem,
+        @NonNull T instance) throws IOException {
+      writeFlags(parentItem, instance.getDefinition());
+    }
+
+    private <T extends IBoundInstanceModelGroupedNamed & IFeatureComplexItemValueHandler> void writeFlags(
+        @NonNull Object parentItem,
+        @NonNull T instance) throws IOException {
+      writeFlags(parentItem, instance.getDefinition());
+    }
+
+    private void writeFlags(
+        @NonNull Object parentItem,
+        @NonNull IBoundDefinitionModel definition) throws IOException {
+      for (IBoundInstanceFlag flag : definition.getFlagInstances()) {
+        assert flag != null;
+
+        Object value = flag.getValue(parentItem);
+        if (value != null) {
+          writeItemFlag(value, flag);
+        }
+      }
+    }
+
+    private <T extends IBoundInstanceModelAssembly & IFeatureComplexItemValueHandler> void writeAssemblyModel(
+        @NonNull Object parentItem,
+        @NonNull T instance) throws IOException {
+      writeAssemblyModel(parentItem, instance.getDefinition());
+    }
+
+    private <T extends IBoundInstanceModelGroupedAssembly & IFeatureComplexItemValueHandler> void writeAssemblyModel(
+        @NonNull Object parentItem,
+        @NonNull T instance) throws IOException {
+      writeAssemblyModel(parentItem, instance.getDefinition());
+    }
+
+    private void writeAssemblyModel(
+        @NonNull Object parentItem,
+        @NonNull IBoundDefinitionModelAssembly definition) throws IOException {
+      for (IBoundInstanceModel modelInstance : definition.getModelInstances()) {
+        assert modelInstance != null;
+
+        Object value = modelInstance.getValue(parentItem);
+        if (value != null) {
+          modelInstance.writeItem(value, new InstanceWriter(getParentQName())); // NOPMD needed
+        }
+      }
+    }
+
+    private void writeFieldValue(
+        @NonNull Object parentItem,
+        @NonNull IBoundInstanceModelFieldComplex instance) throws IOException {
+      writeFieldValue(parentItem, instance.getDefinition());
+    }
+
+    private void writeFieldValue(
+        @NonNull Object parentItem,
+        @NonNull IBoundInstanceModelGroupedField instance) throws IOException {
+      writeFieldValue(parentItem, instance.getDefinition());
+    }
+
+    private void writeFieldValue(
+        @NonNull Object parentItem,
+        @NonNull IBoundDefinitionModelFieldComplex definition) throws IOException {
+      definition.getFieldValue().writeItem(parentItem, this);
+    }
+
+    private <T extends IFeatureComplexItemValueHandler & IBoundInstanceModelNamed> void writeModelObject(
+        @NonNull T instance,
+        @NonNull Object parentItem,
+        @NonNull ObjectWriter<T> propertyWriter) throws IOException {
+      try {
+        QName wrapperQName = instance.getXmlQName();
+        writer.writeStartElement(wrapperQName.getNamespaceURI(), wrapperQName.getLocalPart());
+
+        propertyWriter.accept(parentItem, instance);
+
+        writer.writeEndElement();
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
+      }
+    }
+
+    private <T extends IFeatureComplexItemValueHandler & IBoundInstanceModelGroupedNamed> void writeGroupedModelObject(
+        @NonNull T instance,
+        @NonNull Object parentItem,
+        @NonNull ObjectWriter<T> propertyWriter) throws IOException {
+      try {
+        QName wrapperQName = instance.getXmlQName();
+        writer.writeStartElement(wrapperQName.getNamespaceURI(), wrapperQName.getLocalPart());
+
+        propertyWriter.accept(parentItem, instance);
+
+        writer.writeEndElement();
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
+      }
+    }
+
+    private <T extends IFeatureComplexItemValueHandler & IBoundDefinitionModelComplex> void writeDefinitionObject(
+        @NonNull T instance,
+        @NonNull Object parentItem,
+        @NonNull ObjectWriter<T> propertyWriter) throws IOException {
+
+      try {
+        QName wrapperQName = instance.getXmlQName();
+        NamespaceContext nsContext = writer.getNamespaceContext();
+        String prefix = nsContext.getPrefix(wrapperQName.getNamespaceURI());
+        if (prefix == null) {
+          prefix = "";
+        }
+
+        writer.writeStartElement(prefix, wrapperQName.getLocalPart(), wrapperQName.getNamespaceURI());
+
+        propertyWriter.accept(parentItem, instance);
+
+        writer.writeEndElement();
+      } catch (XMLStreamException ex) {
+        throw new IOException(ex);
+      }
+    }
+
+    @Override
+    public void writeItemFlag(Object item, IBoundInstanceFlag instance) throws IOException {
+      String itemString = instance.getJavaTypeAdapter().asString(item);
+      QName name = instance.getXmlQName();
       try {
         if (name.getNamespaceURI().isEmpty()) {
-          writer.writeAttribute(name.getLocalPart(), value);
+          writer.writeAttribute(name.getLocalPart(), itemString);
         } else {
-          writer.writeAttribute(name.getNamespaceURI(), name.getLocalPart(), value);
+          writer.writeAttribute(name.getNamespaceURI(), name.getLocalPart(), itemString);
         }
       } catch (XMLStreamException ex) {
         throw new IOException(ex);
       }
     }
-  }
 
-  /**
-   * Write the data described by the provided {@code targetInstance} as an XML
-   * element.
-   *
-   * @param targetInstance
-   *          the model instance that describes the syntax of the data to write
-   * @param parentObject
-   *          the Java object that data written by this method is stored in
-   * @param parentName
-   *          the qualified name of the XML data's parent element
-   * @return {@code true} id the value was written or {@code false} otherwise
-   * @throws IOException
-   *           if an error occurred while writing the XML
-   */
-  protected boolean writeModelInstanceValues(
-      @NonNull IBoundNamedModelInstance targetInstance,
-      @NonNull Object parentObject,
-      @NonNull QName parentName)
-      throws IOException {
-    Object value = targetInstance.getValue(parentObject);
-    if (value == null) {
-      return false; // NOPMD - intentional
-    }
-
-    IModelPropertyInfo propertyInfo = targetInstance.getPropertyInfo();
-    if (targetInstance.getMinOccurs() > 0 || propertyInfo.getItemCount(value) > 0) {
-      // only write a property if the wrapper is required or if it has contents
-      QName currentStart = parentName;
-
+    @Override
+    public void writeItemField(Object item, IBoundInstanceModelFieldScalar instance) throws IOException {
       try {
-        QName groupQName = targetInstance.getXmlGroupAsQName();
-        if (groupQName != null) {
-          // write the grouping element
-          writer.writeStartElement(groupQName.getNamespaceURI(), groupQName.getLocalPart());
-          currentStart = groupQName;
-        }
-
-        // There are one or more named values based on cardinality
-        propertyInfo.writeValues(value, currentStart, this);
-
-        if (groupQName != null) {
+        if (instance.isEffectiveValueWrappedInXml()) {
+          QName wrapperQName = instance.getXmlQName();
+          writer.writeStartElement(wrapperQName.getNamespaceURI(), wrapperQName.getLocalPart());
+          instance.getJavaTypeAdapter().writeXmlValue(item, wrapperQName, writer);
           writer.writeEndElement();
+        } else {
+          instance.getJavaTypeAdapter().writeXmlValue(item, getParentQName(), writer);
         }
       } catch (XMLStreamException ex) {
         throw new IOException(ex);
       }
     }
-    return true;
+
+    @Override
+    public void writeItemField(Object item, IBoundInstanceModelFieldComplex instance) throws IOException {
+      ItemWriter itemWriter = new ItemWriter(instance.getXmlQName());
+      writeModelObject(
+          instance,
+          item,
+          ((ObjectWriter<IBoundInstanceModelFieldComplex>) this::writeFlags)
+              .andThen(itemWriter::writeFieldValue));
+    }
+
+    @Override
+    public void writeItemField(Object item, IBoundInstanceModelGroupedField instance) throws IOException {
+      ItemWriter itemWriter = new ItemWriter(instance.getXmlQName());
+      writeGroupedModelObject(
+          instance,
+          item,
+          ((ObjectWriter<IBoundInstanceModelGroupedField>) this::writeFlags)
+              .andThen(itemWriter::writeFieldValue));
+    }
+
+    @Override
+    public void writeItemField(Object item, IBoundDefinitionModelFieldComplex definition) throws IOException {
+      ItemWriter itemWriter = new ItemWriter(definition.getXmlQName());
+      writeDefinitionObject(
+          definition,
+          item,
+          ((ObjectWriter<IBoundDefinitionModelFieldComplex>) this::writeFlags)
+              .andThen(itemWriter::writeFieldValue));
+    }
+
+    @Override
+    public void writeItemFieldValue(Object parentItem, IBoundFieldValue fieldValue) throws IOException {
+      Object item = fieldValue.getValue(parentItem);
+      if (item != null) {
+        try {
+          fieldValue.getJavaTypeAdapter().writeXmlValue(item, getParentQName(), writer);
+        } catch (XMLStreamException ex) {
+          throw new IOException(ex);
+        }
+      }
+    }
+
+    @Override
+    public void writeItemAssembly(Object item, IBoundInstanceModelAssembly instance) throws IOException {
+      ItemWriter itemWriter = new ItemWriter(instance.getXmlQName());
+      writeModelObject(
+          instance,
+          item,
+          ((ObjectWriter<IBoundInstanceModelAssembly>) this::writeFlags)
+              .andThen(itemWriter::writeAssemblyModel));
+    }
+
+    @Override
+    public void writeItemAssembly(Object item, IBoundInstanceModelGroupedAssembly instance) throws IOException {
+      ItemWriter itemWriter = new ItemWriter(instance.getXmlQName());
+      writeGroupedModelObject(
+          instance,
+          item,
+          ((ObjectWriter<IBoundInstanceModelGroupedAssembly>) this::writeFlags)
+              .andThen(itemWriter::writeAssemblyModel));
+    }
+
+    @Override
+    public void writeItemAssembly(Object item, IBoundDefinitionModelAssembly definition) throws IOException {
+      ItemWriter itemWriter = new ItemWriter(definition.getXmlQName());
+      writeDefinitionObject(
+          definition,
+          item,
+          ((ObjectWriter<IBoundDefinitionModelAssembly>) this::writeFlags)
+              .andThen(itemWriter::writeAssemblyModel));
+    }
+
+    @Override
+    public void writeChoiceGroupItem(Object item, IBoundInstanceModelChoiceGroup instance) throws IOException {
+      IBoundInstanceModelGroupedNamed actualInstance = instance.getItemInstance(item);
+      assert actualInstance != null;
+      actualInstance.writeItem(item, this);
+    }
   }
 
-  @Override
-  public void writeInstanceValue(
-      @NonNull IBoundNamedModelInstance targetInstance,
-      @NonNull Object targetObject,
-      @NonNull QName parentName) throws IOException {
-    // figure out how to parse the item
-    IDataTypeHandler handler = targetInstance.getDataTypeHandler();
+  private abstract class AbstractItemWriter implements IItemWriteHandler {
+    @NonNull
+    private final QName parentQName;
 
-    // figure out if we need to write the wrapper or not
-    boolean writeWrapper = targetInstance instanceof IBoundAssemblyInstance
-        || ((IBoundFieldInstance) targetInstance).isInXmlWrapped()
-        || !handler.isUnwrappedValueAllowedInXml();
+    protected AbstractItemWriter(@NonNull QName parentQName) {
+      this.parentQName = parentQName;
+    }
 
-    try {
-      QName currentParentName;
-      if (writeWrapper) {
-        currentParentName = targetInstance.getXmlQName();
-        writer.writeStartElement(currentParentName.getNamespaceURI(), currentParentName.getLocalPart());
-      } else {
-        currentParentName = parentName;
-      }
-
-      // write the value
-      handler.writeItem(targetObject, currentParentName, this);
-
-      if (writeWrapper) {
-        writer.writeEndElement();
-      }
-    } catch (XMLStreamException ex) {
-      throw new IOException(ex);
+    /**
+     * @return the startElement
+     */
+    @NonNull
+    protected QName getParentQName() {
+      return parentQName;
     }
   }
 }

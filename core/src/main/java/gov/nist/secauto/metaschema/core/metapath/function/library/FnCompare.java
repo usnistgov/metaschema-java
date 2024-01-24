@@ -47,10 +47,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 public final class FnCompare {
 
-  private FnCompare() {
-    // disable construction
-  }
-
   @NonNull
   static final IFunction SIGNATURE = IFunction.builder()
       .name("compare")
@@ -72,6 +68,10 @@ public final class FnCompare {
       .returnZeroOrOne()
       .functionHandler(FnCompare::execute)
       .build();
+
+  private FnCompare() {
+    // disable construction
+  }
 
   @SuppressWarnings("unused")
   @NonNull

@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.core.metapath.item.node;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
 
-public interface IModelNodeItem<D extends IFlagContainer, I extends INamedInstance>
+public interface IModelNodeItem<D extends IModelDefinition, I extends INamedInstance>
     extends IDefinitionNodeItem<D, I> {
 
   /**

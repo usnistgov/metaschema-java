@@ -34,5 +34,5 @@ public enum XmlGroupAsBehavior {
   /**
    * In XML, child element instances will exist in an unwrapped form.
    */
-  UNGROUPED;
+  UNGROUPED
 }

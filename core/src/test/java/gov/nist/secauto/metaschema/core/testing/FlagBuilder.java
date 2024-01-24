@@ -26,10 +26,9 @@
 
 package gov.nist.secauto.metaschema.core.testing;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -52,7 +51,7 @@ public final class FlagBuilder
 
   @Override
   public FlagBuilder reset() {
-    this.required = MetaschemaModelConstants.DEFAULT_FLAG_REQUIRED;
+    this.required = IFlagInstance.DEFAULT_FLAG_REQUIRED;
     return this;
   }
 
@@ -63,14 +62,14 @@ public final class FlagBuilder
 
   @NonNull
   public IFlagInstance toInstance(
-      @NonNull IFlagContainer parent) {
+      @NonNull IModelDefinition parent) {
     IFlagDefinition def = toDefinition();
     return toInstance(parent, def);
   }
 
   @NonNull
   public IFlagInstance toInstance(
-      @NonNull IFlagContainer parent,
+      @NonNull IModelDefinition parent,
       @NonNull IFlagDefinition definition) {
     validate();
 

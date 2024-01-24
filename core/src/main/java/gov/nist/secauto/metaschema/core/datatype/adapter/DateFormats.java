@@ -30,7 +30,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
-public final class DateFormats {
+/**
+ * Provides common date formats used by the data type implementations.
+ */
+@SuppressWarnings("PMD.DataClass")
+final class DateFormats {
 
   // public static final DateTimeFormatter dateWithOptionalTZ;
   public static final DateTimeFormatter DATE_WITH_TZ;

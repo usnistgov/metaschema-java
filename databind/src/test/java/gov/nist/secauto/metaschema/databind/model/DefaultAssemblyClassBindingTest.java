@@ -31,29 +31,28 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.databind.io.json.MetaschemaJsonReader;
 
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 class DefaultAssemblyClassBindingTest
     extends AbstractBoundModelTestSupport {
   @Test
   void testMinimalJsonParse() throws JsonParseException, IOException {
-    File testContent
-        = new File(getClass().getResource("/content/minimal.json").getFile());
-    try (BufferedReader reader = Files.newBufferedReader(testContent.toPath())) {
+    Path testContent = Paths.get("src/test/resources/content/minimal.json");
+    try (BufferedReader reader = Files.newBufferedReader(testContent)) {
       assert reader != null;
 
-      IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
+      IBoundDefinitionModelAssembly classBinding = getRootAssemblyClassBinding();
 
       try (JsonParser parser = newJsonParser(reader)) {
-        Object value = new MetaschemaJsonReader(parser).read(classBinding);
+        Object value = new MetaschemaJsonReader(parser).readProperty(classBinding, classBinding.getRootJsonName());
         assertNotNull(value, "root was null");
       }
     }
@@ -61,8 +60,8 @@ class DefaultAssemblyClassBindingTest
 
   @Test
   void testModule() {
-    IAssemblyClassBinding classBinding = getRootAssemblyClassBinding();
-    IModule module = classBinding.getContainingModule();
+    IBoundDefinitionModelAssembly definition = getRootAssemblyClassBinding();
+    IBoundModule module = definition.getContainingModule();
     assertNotNull(module, "metaschema was null");
   }
 

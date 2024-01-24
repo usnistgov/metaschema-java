@@ -34,7 +34,7 @@ import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.databind.io.SerializationFeature;
-import gov.nist.secauto.metaschema.databind.model.IAssemblyClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -49,12 +49,12 @@ public class DefaultJsonSerializer<CLASS>
    * Construct a new Module binding-based deserializer that reads JSON-based
    * Module content.
    *
-   * @param classBinding
+   * @param definition
    *          the assembly class binding describing the Java objects this
    *          deserializer parses data into
    */
-  public DefaultJsonSerializer(@NonNull IAssemblyClassBinding classBinding) {
-    super(classBinding);
+  public DefaultJsonSerializer(@NonNull IBoundDefinitionModelAssembly definition) {
+    super(definition);
   }
 
   /**
@@ -100,12 +100,22 @@ public class DefaultJsonSerializer<CLASS>
   @Override
   public void serialize(CLASS data, Writer writer) throws IOException {
     try (JsonGenerator generator = newJsonGenerator(writer)) {
-      IAssemblyClassBinding classBinding = getClassBinding();
+      IBoundDefinitionModelAssembly definition = getDefinition();
+
+      boolean serializeRoot = get(SerializationFeature.SERIALIZE_ROOT);
+      if (serializeRoot) {
+        // first write the initial START_OBJECT
+        generator.writeStartObject();
+
+        generator.writeFieldName(definition.getRootJsonName());
+      }
 
       MetaschemaJsonWriter jsonWriter = new MetaschemaJsonWriter(generator);
+      definition.writeItem(data, jsonWriter);
 
-      jsonWriter.write(classBinding, data);
+      if (serializeRoot) {
+        generator.writeEndObject();
+      }
     }
   }
-
 }

@@ -33,7 +33,7 @@ import java.util.function.Supplier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-interface INodeItemGenerator {
+public interface INodeItemGenerator {
 
   @NonNull
   Supplier<FlagContainer> newDataModelSupplier(@NonNull IFieldNodeItem item);
@@ -52,5 +52,4 @@ interface INodeItemGenerator {
 
   @NonNull
   Supplier<ModelContainer> newMetaschemaModelSupplier(@NonNull IModuleNodeItem item);
-
 }

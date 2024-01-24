@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.codegen.config;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -52,7 +52,7 @@ public interface IBindingConfiguration {
    * @return a Java class name
    */
   @NonNull
-  String getClassName(@NonNull IFlagContainer definition);
+  String getClassName(@NonNull IModelDefinition definition);
 
   /**
    * Get the Java class name for the provided Module module.
@@ -74,5 +74,5 @@ public interface IBindingConfiguration {
    *         used
    */
   @Nullable
-  String getQualifiedBaseClassName(@NonNull IFlagContainer definition);
+  String getQualifiedBaseClassName(@NonNull IModelDefinition definition);
 }

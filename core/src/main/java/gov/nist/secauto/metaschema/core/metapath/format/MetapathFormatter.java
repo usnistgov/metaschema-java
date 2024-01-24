@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.metapath.format;
 
+import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyInstanceGroupedNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;
@@ -64,6 +65,12 @@ public class MetapathFormatter implements IPathFormatter {
 
   @Override
   public String formatAssembly(IAssemblyNodeItem assembly) {
+    // TODO: does it make sense to use this for an intermediate that has no parent?
+    return formatModelPathSegment(assembly);
+  }
+
+  @Override
+  public String formatAssembly(IAssemblyInstanceGroupedNodeItem assembly) {
     // TODO: does it make sense to use this for an intermediate that has no parent?
     return formatModelPathSegment(assembly);
   }

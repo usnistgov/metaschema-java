@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
-import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
 
 public interface IAssemblyInstanceTypeInfo extends INamedModelInstanceTypeInfo {
   @Override
-  IAssemblyInstance getInstance();
+  IAssemblyInstanceAbsolute getInstance();
 }

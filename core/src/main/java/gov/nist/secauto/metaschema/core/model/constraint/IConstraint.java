@@ -26,17 +26,13 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
-
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IDescribable;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -45,7 +41,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * Represents a rule constraining the model of a Metaschema assembly, field or
  * flag. Provides a common interface for all constraint definitions.
  */
-public interface IConstraint {
+public interface IConstraint extends IAttributable, IDescribable {
   /**
    * The degree to which a constraint violation is significant.
    * <p>
@@ -97,22 +93,6 @@ public interface IConstraint {
   String getId();
 
   /**
-   * Get the constraint's formal name.
-   *
-   * @return the formal name or {@code null} if no name is defined
-   */
-  @Nullable
-  MarkupLine getDescription();
-
-  /**
-   * Get the constraint's formal name.
-   *
-   * @return the formal name or {@code null} if no name is defined
-   */
-  @Nullable
-  String getFormalName();
-
-  /**
    * Get information about the source of the constraint.
    *
    * @return the source information
@@ -127,14 +107,6 @@ public interface IConstraint {
    */
   @NonNull
   Level getLevel();
-
-  /**
-   * Get the mapping of property name to value(s).
-   *
-   * @return the mapping of property name to value(s)
-   */
-  @NonNull
-  Map<QName, Set<String>> getProperties();
 
   /**
    * Retrieve the Metapath expression to use to query the targets of the

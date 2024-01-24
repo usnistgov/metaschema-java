@@ -30,8 +30,10 @@ import gov.nist.secauto.metaschema.core.model.constraint.impl.IFeatureModelConst
 
 import javax.xml.namespace.QName;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 public interface IAssemblyDefinition
-    extends IFlagContainer, IModelContainer, IAssembly, IFeatureModelConstrained {
+    extends IModelDefinition, IContainerModelAssembly, IAssembly, IFeatureModelConstrained {
 
   /**
    * Check if the assembly is a top-level root assembly.
@@ -39,7 +41,10 @@ public interface IAssemblyDefinition
    * @return {@code true} if the assembly is a top-level root, or {@code false}
    *         otherwise
    */
-  boolean isRoot();
+  default boolean isRoot() {
+    // not a root by default
+    return false;
+  }
 
   /**
    * Get the root name if this assembly is a top-level root.
@@ -47,7 +52,11 @@ public interface IAssemblyDefinition
    * @return the root name if this assembly is a top-level root, or {@code null}
    *         otherwise
    */
-  String getRootName();
+  @Nullable
+  default String getRootName() {
+    // not a root by default
+    return null;
+  }
 
   /**
    * Get the root index to use for binary data, if this assembly is a top-level
@@ -56,7 +65,11 @@ public interface IAssemblyDefinition
    * @return the root index if provided and this assembly is a top-level root, or
    *         {@code null} otherwise
    */
-  Integer getRootIndex();
+  @Nullable
+  default Integer getRootIndex() {
+    // not a root by default
+    return null;
+  }
 
   /**
    * Get the XML qualified name to use in XML as the root element.
@@ -84,7 +97,10 @@ public interface IAssemblyDefinition
   }
 
   @Override
-  IAssemblyInstance getInlineInstance();
+  default IAssemblyInstance getInlineInstance() {
+    // not inline by default
+    return null;
+  }
 
   @Override
   default IAssemblyDefinition getOwningDefinition() {
@@ -92,8 +108,7 @@ public interface IAssemblyDefinition
   }
 
   @Override
-  default boolean isSimple() {
-    return IFlagContainer.super.isSimple() && getModelInstances().isEmpty();
+  default boolean hasChildren() {
+    return IModelDefinition.super.hasChildren() || IContainerModelAssembly.super.hasChildren();
   }
-
 }

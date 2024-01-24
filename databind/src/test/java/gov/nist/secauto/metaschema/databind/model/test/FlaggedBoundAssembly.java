@@ -34,9 +34,9 @@ import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly
 @MetaschemaAssembly(name = "flagged-bound-assembly", moduleClass = TestMetaschema.class)
 public class FlaggedBoundAssembly {
   @JsonKey
-  @BoundFlag(useName = "assembly-required-flag", required = true)
+  @BoundFlag(name = "assembly-required-flag", required = true)
   private String id; // NOPMD
 
-  @BoundFlag(useName = "assembly-other-flag", typeAdapter = BooleanAdapter.class)
+  @BoundFlag(name = "assembly-other-flag", typeAdapter = BooleanAdapter.class)
   private String other; // NOPMD
 }

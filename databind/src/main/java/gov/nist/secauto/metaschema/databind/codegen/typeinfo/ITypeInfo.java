@@ -28,9 +28,13 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo;
 
 import com.squareup.javapoet.TypeName;
 
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionTypeInfo;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface ITypeInfo {
+  @NonNull
+  IDefinitionTypeInfo getParentTypeInfo();
 
   /**
    * Get the name to use for the property. If the property is a collection type,

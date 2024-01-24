@@ -1,5 +1,5 @@
 {
-    "$schema": "file:/C:/Users/davidwal/git/github/david-waltermire-nist/metaschema-java/databind/src/test/resources/metaschema/json-key/schema.json",
+    "$schema": "schema.json",
     "top": {
         "middle": [
             {"field-value": "value1"},

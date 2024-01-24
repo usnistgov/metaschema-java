@@ -28,22 +28,20 @@ package gov.nist.secauto.metaschema.databind.model.annotations;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
-import gov.nist.secauto.metaschema.databind.model.ModelUtil;
+import gov.nist.secauto.metaschema.databind.model.IGroupAs;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import nl.talsmasoftware.lazy4j.Lazy;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 class DefaultGroupAs implements IGroupAs {
   @NonNull
   private final String name;
-  @NonNull
-  private final Lazy<String> namespace;
+  @Nullable
+  private final String namespace;
   @NonNull
   private final GroupAs annotation;
 
-  DefaultGroupAs(@NonNull GroupAs annotation, @NonNull IClassBinding parentDefinition) {
+  DefaultGroupAs(@NonNull GroupAs annotation) {
     this.annotation = annotation;
     {
       String value = ModelUtil.resolveNoneOrDefault(annotation.name(), null);
@@ -55,8 +53,7 @@ class DefaultGroupAs implements IGroupAs {
       }
       this.name = value;
     }
-    this.namespace = ObjectUtils.notNull(
-        Lazy.lazy(() -> ModelUtil.resolveNamespace(annotation.namespace(), parentDefinition)));
+    this.namespace = ModelUtil.resolveOptionalNamespace(annotation.namespace());
   }
 
   @Override
@@ -66,7 +63,7 @@ class DefaultGroupAs implements IGroupAs {
 
   @Override
   public String getGroupAsXmlNamespace() {
-    return namespace.get();
+    return namespace;
   }
 
   @Override

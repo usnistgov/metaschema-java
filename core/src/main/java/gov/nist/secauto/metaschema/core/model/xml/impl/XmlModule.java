@@ -31,10 +31,10 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.AbstractModule;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
-import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.xml.IXmlModule;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFlagDefinitionType;
@@ -60,17 +60,23 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 @SuppressWarnings("PMD.CouplingBetweenObjects")
 public class XmlModule
-    extends AbstractModule {
+    extends AbstractModule<
+        IXmlModule,
+        IModelDefinition,
+        IFlagDefinition,
+        IFieldDefinition,
+        IAssemblyDefinition>
+    implements IXmlModule {
   private static final Logger LOGGER = LogManager.getLogger(XmlModule.class);
 
   @NonNull
   private final URI location;
   @NonNull
   private final METASCHEMADocument module;
-  private final Map<String, ? extends IFlagDefinition> flagDefinitions;
-  private final Map<String, ? extends IFieldDefinition> fieldDefinitions;
-  private final Map<String, ? extends IAssemblyDefinition> assemblyDefinitions;
-  private final Map<String, ? extends IAssemblyDefinition> rootAssemblyDefinitions;
+  private final Map<String, IFlagDefinition> flagDefinitions;
+  private final Map<String, IFieldDefinition> fieldDefinitions;
+  private final Map<String, IAssemblyDefinition> assemblyDefinitions;
+  private final Map<String, IAssemblyDefinition> rootAssemblyDefinitions;
 
   /**
    * Constructs a new Metaschema instance.
@@ -87,7 +93,7 @@ public class XmlModule
   public XmlModule( // NOPMD - unavoidable
       @NonNull URI resource,
       @NonNull METASCHEMADocument moduleXml,
-      @NonNull List<IModule> importedModules) throws MetaschemaException {
+      @NonNull List<IXmlModule> importedModules) throws MetaschemaException {
     super(importedModules);
     this.location = ObjectUtils.requireNonNull(resource, "resource");
     Objects.requireNonNull(moduleXml.getMETASCHEMA());
@@ -217,13 +223,13 @@ public class XmlModule
     return URI.create(getXmlModule().getJsonBaseUri());
   }
 
-  private Map<String, ? extends IAssemblyDefinition> getAssemblyDefinitionMap() {
+  private Map<String, IAssemblyDefinition> getAssemblyDefinitionMap() {
     return assemblyDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<? extends IAssemblyDefinition> getAssemblyDefinitions() {
+  public Collection<IAssemblyDefinition> getAssemblyDefinitions() {
     return getAssemblyDefinitionMap().values();
   }
 
@@ -232,13 +238,13 @@ public class XmlModule
     return getAssemblyDefinitionMap().get(name);
   }
 
-  private Map<String, ? extends IFieldDefinition> getFieldDefinitionMap() {
+  private Map<String, IFieldDefinition> getFieldDefinitionMap() {
     return fieldDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<? extends IFieldDefinition> getFieldDefinitions() {
+  public Collection<IFieldDefinition> getFieldDefinitions() {
     return getFieldDefinitionMap().values();
   }
 
@@ -249,18 +255,18 @@ public class XmlModule
 
   @SuppressWarnings("null")
   @Override
-  public List<? extends IFlagContainer> getAssemblyAndFieldDefinitions() {
+  public List<IModelDefinition> getAssemblyAndFieldDefinitions() {
     return Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
         .collect(Collectors.toList());
   }
 
-  private Map<String, ? extends IFlagDefinition> getFlagDefinitionMap() {
+  private Map<String, IFlagDefinition> getFlagDefinitionMap() {
     return flagDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<? extends IFlagDefinition> getFlagDefinitions() {
+  public Collection<IFlagDefinition> getFlagDefinitions() {
     return getFlagDefinitionMap().values();
   }
 

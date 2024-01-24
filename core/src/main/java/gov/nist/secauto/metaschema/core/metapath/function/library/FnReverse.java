@@ -79,7 +79,7 @@ public final class FnReverse {
 
   /**
    * Reverse the order of items in the {@code sequence}.
-
+   *
    * @param <T>
    *          the type for the given Metapath sequence
    * @param target
@@ -87,7 +87,9 @@ public final class FnReverse {
    * @return {@code sequence} the new sequence with items in reverse order.
    *
    */
-  public static <T extends IItem> List<T> fnReverse(List<T> target) {
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  @NonNull
+  public static <T extends IItem> List<T> fnReverse(@NonNull List<T> target) {
     if (target.size() <= 1) {
       return target;
     }

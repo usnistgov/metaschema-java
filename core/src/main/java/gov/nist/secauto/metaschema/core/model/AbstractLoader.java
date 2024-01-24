@@ -32,7 +32,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -48,17 +47,13 @@ import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractLoader<T> {
+public abstract class AbstractLoader<T> implements ILoader<T> {
   private static final Logger LOGGER = LogManager.getLogger(AbstractLoader.class);
 
   @NonNull
   private final Map<URI, T> cache = new LinkedHashMap<>(); // NOPMD - intentional
 
-  /**
-   * Retrieve the set of loaded resources.
-   *
-   * @return the set of loaded resources
-   */
+  @Override
   @NonNull
   public Collection<T> getLoadedResources() {
     return CollectionUtil.unmodifiableCollection(ObjectUtils.notNull(cache.values()));
@@ -74,17 +69,7 @@ public abstract class AbstractLoader<T> {
     return CollectionUtil.unmodifiableMap(cache);
   }
 
-  /**
-   * Load a resource from the specified URI.
-   *
-   * @param resource
-   *          the resource to load
-   * @return the loaded instance for the specified resource
-   * @throws MetaschemaException
-   *           if an error occurred while processing the resource
-   * @throws IOException
-   *           if an error occurred parsing the resource
-   */
+  @Override
   @NonNull
   public T load(@NonNull URI resource) throws MetaschemaException, IOException {
     if (!resource.isAbsolute()) {
@@ -104,25 +89,10 @@ public abstract class AbstractLoader<T> {
    * @throws IOException
    *           if an error occurred parsing the resource
    */
+  @Override
   @NonNull
   public T load(@NonNull Path path) throws MetaschemaException, IOException {
     return loadInternal(ObjectUtils.notNull(path.toAbsolutePath().normalize().toUri()), new LinkedList<>());
-  }
-
-  /**
-   * Load a resource from the specified file.
-   *
-   * @param file
-   *          the resource to load
-   * @return the loaded instance for the specified resource
-   * @throws MetaschemaException
-   *           if an error occurred while processing the resource
-   * @throws IOException
-   *           if an error occurred parsing the resource
-   */
-  @NonNull
-  public T load(@NonNull File file) throws MetaschemaException, IOException {
-    return load(ObjectUtils.notNull(file.toPath()));
   }
 
   /**
@@ -136,6 +106,7 @@ public abstract class AbstractLoader<T> {
    * @throws IOException
    *           if an error occurred parsing the resource
    */
+  @Override
   @NonNull
   public T load(@NonNull URL url) throws MetaschemaException, IOException {
     try {

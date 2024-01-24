@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model.test;
 
-import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 
 @SuppressWarnings("PMD")
 @MetaschemaField(

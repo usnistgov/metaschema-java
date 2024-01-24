@@ -32,10 +32,12 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFlagInstance extends IFlag, IValuedInstance {
+public interface IFlagInstance extends IFlag, IValuedInstance, IInstanceAbsolute {
+
+  boolean DEFAULT_FLAG_REQUIRED = false;
 
   @Override
-  IFlagContainer getParentContainer();
+  IContainerFlag getParentContainer();
 
   @Override
   default String getXmlNamespace() {
@@ -57,33 +59,9 @@ public interface IFlagInstance extends IFlag, IValuedInstance {
    * Determines if a flag value is required to be provided.
    *
    * @return {@code true} if a value is required, or {@code false} otherwise
+   * @see #DEFAULT_FLAG_REQUIRED
    */
-  boolean isRequired();
-
-  /**
-   * Determines if this flag's value is used as the property name for the JSON
-   * object that holds the remaining data based on this flag's containing
-   * definition.
-   *
-   * @return {@code true} if this flag is used as a JSON key, or {@code false}
-   *         otherwise
-   */
-  default boolean isJsonKey() {
-    IFlagInstance flagInstance = getContainingDefinition().getJsonKeyFlagInstance();
-    return this.equals(flagInstance);
-  }
-
-  /**
-   * Determines if this flag is used as a JSON "value key". A "value key" is a
-   * flag who's value is used as the property name for the containing objects
-   * value.
-   *
-   * @return {@code true} if the flag is used as a JSON "value key", or
-   *         {@code false} otherwise
-   */
-  default boolean isJsonValueKey() {
-    IFlagContainer containingDefinition = getContainingDefinition();
-    return containingDefinition instanceof IFieldDefinition
-        && this.equals(((IFieldDefinition) containingDefinition).getJsonValueKeyFlagInstance());
+  default boolean isRequired() {
+    return DEFAULT_FLAG_REQUIRED;
   }
 }

@@ -29,72 +29,93 @@ package gov.nist.secauto.metaschema.databind.codegen.typeinfo.def;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IModelContainer;
-import gov.nist.secauto.metaschema.core.model.IModelInstance;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
-import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IChoiceGroupTypeInfo;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAbsolute;
+import gov.nist.secauto.metaschema.core.model.IInstance;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.util.CustomCollectors;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IInstanceTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IModelInstanceTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IPropertyTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 class AssemblyDefinitionTypeInfoImpl
     extends AbstractModelDefinitionTypeInfo<IAssemblyDefinition>
     implements IAssemblyDefinitionTypeInfo {
+  private static final Logger LOGGER = LogManager.getLogger(AssemblyDefinitionTypeInfoImpl.class);
+
+  @NonNull
+  private final Lazy<Map<String, IPropertyTypeInfo>> propertyNameToTypeInfoMap;
+  @NonNull
+  private final Lazy<Map<IInstance, IInstanceTypeInfo>> instanceToTypeInfoMap;
 
   public AssemblyDefinitionTypeInfoImpl(@NonNull IAssemblyDefinition definition, @NonNull ITypeResolver typeResolver) {
     super(definition, typeResolver);
+    this.instanceToTypeInfoMap = ObjectUtils.notNull(Lazy.lazy(() -> Stream.concat(
+        getFlagInstanceTypeInfos().stream(),
+        processModel(definition))
+        .collect(CustomCollectors.toMap(
+            (typeInfo) -> typeInfo.getInstance(),
+            (typeInfo) -> typeInfo,
+            (key, v1, v2) -> {
+              if (LOGGER.isErrorEnabled()) {
+                LOGGER.error(String.format("Unexpected duplicate property name '%s'", key));
+              }
+              return ObjectUtils.notNull(v2);
+            },
+            LinkedHashMap::new))));
+    this.propertyNameToTypeInfoMap = ObjectUtils.notNull(Lazy.lazy(() -> getInstanceTypeInfoMap().values().stream()
+        .collect(Collectors.toMap(
+            (typeInfo) -> typeInfo.getPropertyName(),
+            (typeInfo) -> typeInfo,
+            (v1, v2) -> v2,
+            LinkedHashMap::new))));
   }
 
   @Override
-  protected boolean initInstanceTypeInfos() {
-    boolean retval = super.initInstanceTypeInfos();
-    if (retval) {
-      synchronized (this) {
-        // create properties for the model instances
-        processModel(getDefinition());
-      }
-    }
-    return retval;
+  protected Map<String, IPropertyTypeInfo> getPropertyTypeInfoMap() {
+    return ObjectUtils.notNull(propertyNameToTypeInfoMap.get());
   }
 
-  private void processModel(IModelContainer model) {
+  @Override
+  protected Map<IInstance, IInstanceTypeInfo> getInstanceTypeInfoMap() {
+    return ObjectUtils.notNull(instanceToTypeInfoMap.get());
+  }
+
+  private Stream<? extends IModelInstanceTypeInfo> processModel(
+      @NonNull IContainerModelAbsolute model) {
+    Stream<IModelInstanceTypeInfo> modelInstances = Stream.empty();
     // create model instances for the model
-    for (IModelInstance instance : model.getModelInstances()) {
+    for (IModelInstanceAbsolute instance : model.getModelInstances()) {
       assert instance != null;
 
-      if (instance instanceof IChoiceInstance) {
-        processModel((IChoiceInstance) instance);
-        continue;
-      } else if (instance instanceof IChoiceGroupInstance) {
-        processModel((IChoiceGroupInstance) instance);
-        continue;
+      if (instance instanceof IChoiceGroupInstance) {
+        modelInstances = Stream.concat(
+            modelInstances,
+            Stream.of(getTypeResolver().getTypeInfo((IChoiceGroupInstance) instance, this)));
+      } else if (instance instanceof IChoiceInstance) {
+        modelInstances = Stream.concat(
+            modelInstances,
+            processModel((IChoiceInstance) instance));
+      } else if (instance instanceof INamedModelInstanceAbsolute) {
+        // else the instance is an object model instance with a name
+        modelInstances = Stream.concat(
+            modelInstances,
+            Stream.of(getTypeResolver().getTypeInfo((INamedModelInstanceAbsolute) instance, this)));
       }
-
-      // else the instance is an object model instance with a name
-      newObjectModelInstance((INamedModelInstance) instance);
     }
-  }
-
-  private IChoiceGroupTypeInfo processModel(@NonNull IChoiceGroupInstance instance) {
-    IChoiceGroupTypeInfo retval = getTypeResolver().getTypeInfo(instance, this);
-    addPropertyTypeInfo(retval);
-    return retval;
-  }
-
-  /**
-   * Creates a new {@link IModelInstanceTypeInfo} for the provided
-   * {@link INamedModelInstance} and registers it with this class generator.
-   *
-   * @param instance
-   *          the model instance to generate the property for
-   * @return the new property generator
-   */
-  @NonNull
-  protected IModelInstanceTypeInfo newObjectModelInstance(
-      @NonNull INamedModelInstance instance) {
-    IModelInstanceTypeInfo retval = getTypeResolver().getTypeInfo(instance, this);
-    addPropertyTypeInfo(retval);
-    return retval;
+    return modelInstances;
   }
 }

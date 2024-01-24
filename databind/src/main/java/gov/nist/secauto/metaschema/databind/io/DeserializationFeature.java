@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@SuppressWarnings("PMD.DataClass") // not a data class
 public final class DeserializationFeature<V>
     extends AbstractConfigurationFeature<V> {
   public static final int YAML_CODEPOINT_LIMIT_DEFAULT = Integer.MAX_VALUE - 1; // 2 GB
@@ -44,11 +45,19 @@ public final class DeserializationFeature<V>
       = new DeserializationFeature<>(Boolean.class, true);
 
   /**
+   * If enabled, perform constraint validation on the deserialized bound objects.
+   */
+  @NonNull
+  public static final DeserializationFeature<Boolean> DESERIALIZE_XML_ALLOW_ENTITY_RESOLUTION
+      = new DeserializationFeature<>(Boolean.class, false);
+
+  /**
    * If enabled, process the next JSON node as a field, whose name must match the
    * {@link IAssemblyDefinition#getRootJsonName()}. If not enabled, the next JSON
    * node is expected to be an object containing the data of the
    * {@link IAssemblyDefinition}.
    */
+  @NonNull
   public static final DeserializationFeature<Boolean> DESERIALIZE_JSON_ROOT_PROPERTY
       = new DeserializationFeature<>(Boolean.class, true);
 

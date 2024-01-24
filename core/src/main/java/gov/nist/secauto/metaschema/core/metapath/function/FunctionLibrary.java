@@ -58,7 +58,7 @@ public class FunctionLibrary implements IFunctionLibrary {
     registerFunctionByName(function);
   }
 
-  protected void registerFunctionByQName(@NonNull IFunction function) {
+  private void registerFunctionByQName(@NonNull IFunction function) {
     QName qname = function.getQName();
     IFunction duplicate;
     synchronized (this) {
@@ -75,7 +75,7 @@ public class FunctionLibrary implements IFunctionLibrary {
     }
   }
 
-  protected void registerFunctionByName(@NonNull IFunction function) {
+  private void registerFunctionByName(@NonNull IFunction function) {
     String name = function.getName();
     synchronized (this) {
       NamedFunctionSet functions = libraryByName.get(name);
@@ -100,20 +100,24 @@ public class FunctionLibrary implements IFunctionLibrary {
 
   @Override
   public IFunction getFunction(@NonNull String name, int arity) {
-    IFunction retval;
+    IFunction retval = null;
     synchronized (this) {
       NamedFunctionSet functions = libraryByName.get(name);
-      retval = functions == null ? null : functions.getFunctionWithArity(arity);
+      if (functions != null) {
+        retval = functions.getFunctionWithArity(arity);
+      }
     }
     return retval;
   }
 
   @Override
   public IFunction getFunction(@NonNull QName name, int arity) {
-    IFunction retval;
+    IFunction retval = null;
     synchronized (this) {
       NamedFunctionSet functions = libraryByQName.get(name);
-      retval = functions == null ? null : functions.getFunctionWithArity(arity);
+      if (functions != null) {
+        retval = functions.getFunctionWithArity(arity);
+      }
     }
     return retval;
   }

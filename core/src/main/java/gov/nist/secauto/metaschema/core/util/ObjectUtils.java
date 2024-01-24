@@ -89,7 +89,7 @@ public final class ObjectUtils {
    *           if {@code obj} is {@code null}
    */
   @NonNull
-  public static <T> T requireNonNull(T obj, @NonNull String message) {
+  public static <T> T requireNonNull(T obj, String message) {
     if (obj == null) {
       throw new NullPointerException(message); // NOPMD
     }

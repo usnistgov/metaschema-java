@@ -26,9 +26,8 @@
 
 package gov.nist.secauto.metaschema.schemagen.xml.schematype;
 
-import gov.nist.secauto.metaschema.core.model.IFlagContainer;
-import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.xml.impl.DocumentationGenerator;
@@ -39,7 +38,7 @@ import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractXmlComplexType<D extends IFlagContainer>
+public abstract class AbstractXmlComplexType<D extends IModelDefinition>
     extends AbstractXmlType
     implements IXmlComplexType {
   @NonNull
@@ -59,11 +58,11 @@ public abstract class AbstractXmlComplexType<D extends IFlagContainer>
   }
 
   @Override
-  public void generateType(@NonNull XmlGenerationState state, boolean anonymous) {
+  public void generate(@NonNull XmlGenerationState state) {
     try {
       state.writeStartElement(XmlSchemaGenerator.PREFIX_XML_SCHEMA, "complexType", XmlSchemaGenerator.NS_XML_SCHEMA);
 
-      if (!anonymous) {
+      if (!isInline(state)) {
         state.writeAttribute("name", getTypeName());
       }
 
@@ -89,14 +88,11 @@ public abstract class AbstractXmlComplexType<D extends IFlagContainer>
       state.writeAttribute("use", "required");
     }
 
-    IFlagDefinition definition = instance.getDefinition();
-
-    IXmlType type = state.getTypeForDefinition(definition);
-
-    if (state.isInline(definition) && type.isGeneratedType(state)) {
+    IXmlType type = state.getXmlForDefinition(instance.getDefinition());
+    if (type.isGeneratedType(state) && type.isInline(state)) {
       DocumentationGenerator.generateDocumentation(instance, state);
 
-      type.generateType(state, true);
+      type.generate(state);
     } else {
       state.writeAttribute("type", type.getTypeReference());
 

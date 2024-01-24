@@ -33,7 +33,6 @@ import static gov.nist.secauto.metaschema.core.metapath.TestUtils.string;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.yearMonthDuration;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
@@ -82,7 +81,6 @@ class FnAvgTest
     } catch (MetapathException ex) {
       if (expected == null) {
         assertAll(
-            () -> assertNull(expected),
             () -> assertInstanceOf(InvalidArgumentFunctionException.class, ex.getCause()));
       } else {
         throw ex;

@@ -32,13 +32,14 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * This marker interface indicates that this object is an instance.
  */
 public interface IInstance extends IModelElement {
+
   /**
-   * Retrieve the Metaschema definition on which the instance was declared.
+   * Retrieve the Metaschema module definition on which the instance was declared.
    *
-   * @return the Metaschema definition on which the instance was declared
+   * @return the Metaschema module definition on which the instance was declared
    */
   @NonNull
-  IFlagContainer getContainingDefinition();
+  IModelDefinition getContainingDefinition();
 
   /**
    * Get the parent model definition that serves as the container of this
@@ -71,10 +72,5 @@ public interface IInstance extends IModelElement {
    */
   @SuppressWarnings("null")
   @Override
-  default String toCoordinates() {
-    IModule module = getContainingModule();
-
-    // TODO: revisit this to add more context i.e. the containing definition
-    return String.format("%s:%s", module.getShortName(), getModelType());
-  }
+  String toCoordinates();
 }

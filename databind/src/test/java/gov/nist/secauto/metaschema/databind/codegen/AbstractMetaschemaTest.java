@@ -28,15 +28,16 @@ package gov.nist.secauto.metaschema.databind.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.codegen.config.DefaultBindingConfiguration;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.databind.io.IDeserializer;
+import gov.nist.secauto.metaschema.databind.model.metaschema.BindingModuleLoader;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,7 +54,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 abstract class AbstractMetaschemaTest {
 
-  private static final ModuleLoader LOADER = new ModuleLoader();
+  private static final BindingModuleLoader LOADER = new BindingModuleLoader();
   private static final Logger LOGGER = LogManager.getLogger(AbstractMetaschemaTest.class);
   // @TempDir
   // Path generationDir;
@@ -61,14 +62,14 @@ abstract class AbstractMetaschemaTest {
   Path generationDir = ObjectUtils.notNull(Paths.get("target/generated-test-sources/metaschema"));
 
   @NonNull
-  private static IModule loadModule(@NonNull Path moduleFile) throws MetaschemaException, IOException {
+  private static IBindingModule loadModule(@NonNull Path moduleFile) throws MetaschemaException, IOException {
     return LOADER.load(moduleFile);
   }
 
   public static Class<?> compileModule(@NonNull Path moduleFile, @Nullable Path bindingFile,
       @NonNull String rootClassName, @NonNull Path classDir)
       throws IOException, ClassNotFoundException, MetaschemaException {
-    IModule module = loadModule(moduleFile);
+    IBindingModule module = loadModule(moduleFile);
 
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
     if (bindingFile != null && Files.exists(bindingFile) && Files.isRegularFile(bindingFile)) {
@@ -84,18 +85,23 @@ abstract class AbstractMetaschemaTest {
         .loadClass(rootClassName);
   }
 
-  private static Object read(@NonNull Format format, @NonNull Path file, @NonNull Class<?> rootClass)
+  private static Object read(
+      @NonNull Format format,
+      @NonNull Path file,
+      @NonNull Class<?> rootClass,
+      @NonNull IBindingContext context)
       throws IOException {
-    IBindingContext context = IBindingContext.instance();
-
     IDeserializer<?> deserializer = context.newDeserializer(format, rootClass);
     LOGGER.info("Reading content: {}", file);
     Object value = deserializer.deserialize(file);
     return value;
   }
 
-  private static <CLASS> void write(@NonNull Format format, @NonNull Path file, CLASS rootObject) throws IOException {
-    IBindingContext context = IBindingContext.instance();
+  private static <CLASS> void write(
+      @NonNull Format format,
+      @NonNull Path file,
+      @NonNull CLASS rootObject,
+      @NonNull IBindingContext context) throws IOException {
     @SuppressWarnings("unchecked") Class<CLASS> clazz = (Class<CLASS>) rootObject.getClass();
 
     try (Writer writer = Files.newBufferedWriter(file, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
@@ -144,25 +150,35 @@ abstract class AbstractMetaschemaTest {
     assert rootClass != null;
 
     if (examplePath != null && Files.exists(examplePath)) {
-      LOGGER.info("Testing XML file: {}", examplePath.toString());
+      IBindingContext context = new DefaultBindingContext();
+      if (LOGGER.isInfoEnabled()) {
+        LOGGER.info("Testing XML file: {}", examplePath.toString());
+      }
       String xml;
       {
-        Object root = read(Format.XML, examplePath, rootClass);
-        LOGGER.atDebug().log("Read XML: Object: {}", root.toString());
+
+        Object root = read(Format.XML, examplePath, rootClass, context);
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.atDebug().log("Read XML: Object: {}", root.toString());
+        }
         if (assertions != null) {
           assertAll("Deserialize XML", () -> {
             assertions.accept(root);
           });
         }
 
-        LOGGER.atDebug().log("Write XML:");
-        write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.xml")), root);
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.atDebug().log("Write XML:");
+        }
+        write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.xml")), root, context);
 
-        LOGGER.atDebug().log("Write JSON:");
-        write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.json")), root);
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.atDebug().log("Write JSON:");
+        }
+        write(Format.XML, ObjectUtils.notNull(Paths.get("target/out.json")), root, context);
       }
 
-      Object root = read(Format.XML, ObjectUtils.notNull(Paths.get("target/out.xml")), rootClass);
+      Object root = read(Format.XML, ObjectUtils.notNull(Paths.get("target/out.xml")), rootClass, context);
       if (assertions != null) {
         assertAll("Deserialize XML (roundtrip)", () -> assertions.accept(root));
       }

@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.io;
 
-import gov.nist.secauto.metaschema.databind.model.IBoundNamedInstance;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -38,9 +38,9 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
 
   @Override
   public void handleMissingInstances(
-      IClassBinding parentDefinition,
+      IBoundDefinitionModel parentDefinition,
       Object targetObject,
-      Collection<? extends IBoundNamedInstance> unhandledInstances) throws IOException {
+      Collection<? extends IBoundProperty> unhandledInstances) throws IOException {
     applyDefaults(targetObject, unhandledInstances);
   }
 
@@ -48,8 +48,6 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
    * A utility method for applying default values for the provided
    * {@code unhandledInstances}.
    *
-   * @param <TYPE>
-   *          the instance Java type to handle
    * @param targetObject
    *          the Java object to apply default values to
    * @param unhandledInstances
@@ -58,16 +56,11 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
    *           if an error occurred while determining the default value for an
    *           instance
    */
-  protected static <TYPE extends IBoundNamedInstance> void applyDefaults(
+  protected static void applyDefaults(
       @NonNull Object targetObject,
-      @NonNull Collection<TYPE> unhandledInstances) throws IOException {
-    for (TYPE instance : unhandledInstances) {
-      Object value;
-      try {
-        value = instance.defaultValue();
-      } catch (BindingException ex) {
-        throw new IOException(ex);
-      }
+      @NonNull Collection<? extends IBoundProperty> unhandledInstances) throws IOException {
+    for (IBoundProperty instance : unhandledInstances) {
+      Object value = instance.getResolvedDefaultValue();
       if (value != null) {
         instance.setValue(targetObject, value);
       }

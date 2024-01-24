@@ -40,7 +40,8 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.schemagen.AbstractSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationException;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;
-import gov.nist.secauto.metaschema.schemagen.json.datatype.JsonDatatypeManager;
+import gov.nist.secauto.metaschema.schemagen.json.IDefineableJsonSchema.IKey;
+import gov.nist.secauto.metaschema.schemagen.json.impl.JsonDatatypeManager;
 import gov.nist.secauto.metaschema.schemagen.json.impl.JsonGenerationState;
 
 import java.io.IOException;
@@ -93,31 +94,6 @@ public class JsonSchemaGenerator
 
   @Override
   protected void generateSchema(JsonGenerationState state) {
-    // analyze all definitions
-    List<IAssemblyDefinition> rootAssemblyDefinitions = analyzeDefinitions(
-        state,
-        (entry, definition) -> {
-          assert entry != null;
-          assert definition != null;
-
-          if (entry.isReferenced()) {
-            // ensure schema is generated
-            state.getSchema(definition);
-          }
-        });
-
-    if (rootAssemblyDefinitions.isEmpty()) {
-      throw new SchemaGenerationException("No root definitions found");
-    }
-
-    // generate the properties first to ensure all definitions are identified
-    List<RootPropertyEntry> rootEntries = rootAssemblyDefinitions.stream()
-        .map(root -> {
-          assert root != null;
-          return new RootPropertyEntry(root, state);
-        })
-        .collect(Collectors.toUnmodifiableList());
-
     IModule module = state.getModule();
     try {
       state.writeStartObject();
@@ -136,6 +112,25 @@ public class JsonSchemaGenerator
         state.writeField("definitions", definitionsObject);
       }
 
+      List<IAssemblyDefinition> rootAssemblyDefinitions = state.getMetaschemaIndex().getDefinitions().stream()
+          .map(entry -> entry.getDefinition())
+          .filter(
+              definition -> definition instanceof IAssemblyDefinition && ((IAssemblyDefinition) definition).isRoot())
+          .map(definition -> (IAssemblyDefinition) definition)
+          .collect(Collectors.toUnmodifiableList());
+
+      if (rootAssemblyDefinitions.isEmpty()) {
+        throw new SchemaGenerationException("No root definitions found");
+      }
+
+      // generate the properties first to ensure all definitions are identified
+      List<RootPropertyEntry> rootEntries = rootAssemblyDefinitions.stream()
+          .map(root -> {
+            assert root != null;
+            return new RootPropertyEntry(root, state);
+          })
+          .collect(Collectors.toUnmodifiableList());
+
       @SuppressWarnings("resource") JsonGenerator writer = state.getWriter(); // NOPMD not owned
 
       if (rootEntries.size() == 1) {
@@ -153,6 +148,7 @@ public class JsonSchemaGenerator
 
         writer.writeEndArray();
       }
+
       state.writeEndObject();
     } catch (IOException ex) {
       throw new SchemaGenerationException(ex);
@@ -170,7 +166,8 @@ public class JsonSchemaGenerator
         .put("format", "uri-reference"));
 
     ObjectNode rootObj = ObjectUtils.notNull(JsonNodeFactory.instance.objectNode());
-    state.getSchema(definition).generateSchemaOrRef(state, rootObj);
+    IDefinitionJsonSchema<IAssemblyDefinition> schema = state.getSchema(IKey.of(definition));
+    schema.generateSchemaOrRef(rootObj, state);
 
     properties.put(definition.getRootJsonName(), rootObj);
     return properties;

@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.databind;
 
-import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.xml.IModulePostProcessor;
+import gov.nist.secauto.metaschema.core.model.IModuleLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-import gov.nist.secauto.metaschema.databind.model.IClassBinding;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
+import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,29 +39,29 @@ import java.util.Set;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class PostProcessingModuleLoaderStrategy
-    extends AbstractModuleLoaderStrategy {
+    extends SimpleModuleLoaderStrategy {
   @NonNull
-  private final List<IModulePostProcessor> modulePostProcessors;
-  private final Set<IModule> resolvedModules = new HashSet<>();
+  private final List<IModuleLoader.IModulePostProcessor> modulePostProcessors;
+  private final Set<IBoundModule> resolvedModules = new HashSet<>();
 
   protected PostProcessingModuleLoaderStrategy(
       @NonNull IBindingContext bindingContext,
-      @NonNull List<IModulePostProcessor> modulePostProcessors) {
+      @NonNull List<IModuleLoader.IModulePostProcessor> modulePostProcessors) {
     super(bindingContext);
     this.modulePostProcessors = CollectionUtil.unmodifiableList(new ArrayList<>(modulePostProcessors));
   }
 
   @NonNull
-  protected List<IModulePostProcessor> getModulePostProcessors() {
+  protected List<IModuleLoader.IModulePostProcessor> getModulePostProcessors() {
     return modulePostProcessors;
   }
 
   @Override
-  public IClassBinding getClassBinding(@NonNull Class<?> clazz) {
-    IClassBinding retval = super.getClassBinding(clazz);
+  public IBoundDefinitionModelComplex getBoundDefinitionForClass(@NonNull Class<?> clazz) {
+    IBoundDefinitionModelComplex retval = super.getBoundDefinitionForClass(clazz);
     if (retval != null) {
       // force loading of metaschema information to apply constraints
-      IModule module = retval.getContainingModule();
+      IBoundModule module = retval.getContainingModule();
       synchronized (resolvedModules) {
         if (!resolvedModules.contains(module)) {
           // add first, to avoid loops
@@ -73,8 +73,8 @@ class PostProcessingModuleLoaderStrategy
     return retval;
   }
 
-  private void handleModule(@NonNull IModule module) {
-    for (IModulePostProcessor postProcessor : getModulePostProcessors()) {
+  private void handleModule(@NonNull IBoundModule module) {
+    for (IModuleLoader.IModulePostProcessor postProcessor : getModulePostProcessors()) {
       postProcessor.processModule(module);
     }
   }

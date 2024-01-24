@@ -42,6 +42,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Identifies a field on a class annotated with the {@link MetaschemaField}
  * annotation as the Module field's value.
  */
+// TODO: how are index names handled here?
 @Documented
 @Retention(RUNTIME)
 @Target({ FIELD, METHOD })
@@ -51,18 +52,19 @@ public @interface BoundFieldValue {
    *
    * @return the data type adapter
    */
+  @NonNull
   Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**
    * The default value of the field represented as a string.
    * <p>
-   * The value {@link Constants#NULL_VALUE} is used to indicate if no default
+   * The value {@link ModelUtil#NULL_VALUE} is used to indicate if no default
    * value is provided.
    *
    * @return the default value
    */
   @NonNull
-  String defaultValue() default Constants.NULL_VALUE;
+  String defaultValue() default ModelUtil.NULL_VALUE;
 
   /**
    * The name of the JSON property that contains the field's value. If this value
@@ -75,5 +77,5 @@ public @interface BoundFieldValue {
    * @return the name
    */
   @NonNull
-  String valueKeyName() default Constants.NO_STRING_VALUE;
+  String valueKeyName() default ModelUtil.NO_STRING_VALUE;
 }
