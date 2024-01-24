@@ -138,7 +138,7 @@
 		<dependency.junit5.version>5.9.0</dependency.junit5.version>
 		<dependency.junit5-platform-launcher.version>1.9.0</dependency.junit5-platform-launcher.version>
 		<dependency.log4j2.version>2.22.1</dependency.log4j2.version>
-		<dependency.moxy.version>3.0.3</dependency.moxy.version>
+		<dependency.moxy.version>4.0.2</dependency.moxy.version>
 		<dependency.plexus-utils.version>4.0.0</dependency.plexus-utils.version>
 		<dependency.plexus-build-api.version>1.2.0</dependency.plexus-build-api.version>
 		<dependency.saxon.version>12.4</dependency.saxon.version>
