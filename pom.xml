@@ -143,7 +143,7 @@
 		<dependency.plexus-build-api.version>1.2.0</dependency.plexus-build-api.version>
 		<dependency.saxon.version>12.4</dependency.saxon.version>
 		<dependency.spotbugs-annotations.version>4.8.3</dependency.spotbugs-annotations.version>
-		<dependency.stax2-api.version>4.2.1</dependency.stax2-api.version>
+		<dependency.stax2-api.version>4.2.2</dependency.stax2-api.version>
 		<dependency.thymeleaf.version>3.0.15.RELEASE</dependency.thymeleaf.version>
 		<dependency.woodstox.version>6.6.0</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.2.0</dependency.xmlbeans.version>
