@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.io.yaml;
 
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.DumperOptions;
@@ -36,11 +38,9 @@ import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -84,9 +84,9 @@ public final class YamlOperations {
    */
   @SuppressWarnings({ "unchecked", "null" })
   @NonNull
-  public static Map<String, Object> parseYaml(Path target) throws IOException {
-    try (BufferedReader reader = Files.newBufferedReader(target.toAbsolutePath(), StandardCharsets.UTF_8)) {
-      return (Map<String, Object>) YAML_PARSER.load(reader);
+  public static Map<String, Object> parseYaml(URI target) throws IOException {
+    try (InputStream is = ObjectUtils.notNull(target.toURL().openStream())) {
+      return (Map<String, Object>) YAML_PARSER.load(is);
     }
   }
 

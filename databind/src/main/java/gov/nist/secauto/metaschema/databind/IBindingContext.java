@@ -60,6 +60,7 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URI;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -346,7 +347,7 @@ public interface IBindingContext {
    *           if an error occurred when parsing the target as XML
    */
   default IValidationResult validate(
-      @NonNull Path target,
+      @NonNull URI target,
       @NonNull Format asFormat,
       @NonNull IValidationSchemaProvider schemaProvider) throws IOException, SAXException {
     IValidationResult retval;
@@ -362,7 +363,7 @@ public interface IBindingContext {
       JSONObject json = YamlOperations.yamlToJson(YamlOperations.parseYaml(target));
       assert json != null;
       retval = new JsonSchemaContentValidator(schemaProvider.getJsonSchema())
-          .validate(json, ObjectUtils.notNull(target.toUri()));
+          .validate(json, ObjectUtils.notNull(target));
       break;
     default:
       throw new UnsupportedOperationException("Unsupported format: " + asFormat.name());
@@ -385,7 +386,7 @@ public interface IBindingContext {
    * @throws IOException
    *           if an error occurred while loading the document
    */
-  default IValidationResult validateWithConstraints(@NonNull Path target) throws IOException {
+  default IValidationResult validateWithConstraints(@NonNull URI target) throws IOException {
     IBoundLoader loader = newBoundLoader();
     loader.disableFeature(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
 

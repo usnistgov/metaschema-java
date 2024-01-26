@@ -40,6 +40,7 @@ import gov.nist.secauto.metaschema.core.model.xml.ExternalConstraintsModulePostP
 import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.util.UriUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator.SchemaFormat;
@@ -51,6 +52,8 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -92,16 +95,19 @@ public class ValidateContentUsingModuleCommand
 
   @Override
   public void validateOptions(CallingContext callingContext, CommandLine cmdLine) throws InvalidArgumentException {
-    super.validateOptions(callingContext, cmdLine);
-
-    String metaschemaName = cmdLine.getOptionValue(MetaschemaCommandSupport.METASCHEMA_OPTION);
-    Path metaschema = Paths.get(metaschemaName);
-    if (!Files.exists(metaschema)) {
-      throw new InvalidArgumentException("The provided module '" + metaschema + "' does not exist.");
-    }
-    if (!Files.isReadable(metaschema)) {
-      throw new InvalidArgumentException("The provided module '" + metaschema + "' is not readable.");
-    }
+    // super.validateOptions(callingContext, cmdLine);
+    //
+    // String metaschemaName =
+    // cmdLine.getOptionValue(MetaschemaCommandSupport.METASCHEMA_OPTION);
+    // Path metaschema = Paths.get(metaschemaName);
+    // if (!Files.exists(metaschema)) {
+    // throw new InvalidArgumentException("The provided module '" + metaschema + "'
+    // does not exist.");
+    // }
+    // if (!Files.isReadable(metaschema)) {
+    // throw new InvalidArgumentException("The provided module '" + metaschema + "'
+    // is not readable.");
+    // }
   }
 
   @Override
@@ -132,17 +138,30 @@ public class ValidateContentUsingModuleCommand
     @NonNull
     private IModule getModule(@NonNull Set<IConstraintSet> constraintSets)
         throws MetaschemaException, IOException {
+      URI cwd = Paths.get("").toAbsolutePath().toUri();
+
       if (module == null) {
-        String moduleName = getCommandLine().getOptionValue(MetaschemaCommandSupport.METASCHEMA_OPTION);
-        Path modulePath = Paths.get(moduleName);
-        assert modulePath != null;
+        String moduleName
+            = ObjectUtils.requireNonNull(getCommandLine().getOptionValue(MetaschemaCommandSupport.METASCHEMA_OPTION));
+        URI moduleUri;
+
+        try {
+          moduleUri = UriUtils.toUri(moduleName, cwd);
+        } catch (URISyntaxException ex) {
+          IOException newEx = new IOException( // NOPMD - intentional
+              String.format("Cannot load module as '%s' is not a valid file or URL.", moduleName));
+          newEx.addSuppressed(ex);
+          throw newEx;
+        }
+
+        assert moduleUri != null;
 
         ExternalConstraintsModulePostProcessor postProcessor
             = new ExternalConstraintsModulePostProcessor(constraintSets);
 
         ModuleLoader loader = new ModuleLoader(CollectionUtil.singletonList(postProcessor));
         loader.allowEntityResolution();
-        module = loader.load(modulePath);
+        module = loader.load(moduleUri);
       }
       assert module != null;
       return module;

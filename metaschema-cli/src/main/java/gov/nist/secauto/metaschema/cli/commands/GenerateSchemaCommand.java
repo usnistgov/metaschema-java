@@ -42,6 +42,7 @@ import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.util.UriUtils;
 import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator.SchemaFormat;
@@ -54,6 +55,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -148,14 +151,6 @@ public class GenerateSchemaCommand
     if (extraArgs.isEmpty() || extraArgs.size() > 2) {
       throw new InvalidArgumentException("Illegal number of arguments.");
     }
-
-    Path module = Paths.get(extraArgs.get(0));
-    if (!Files.exists(module)) {
-      throw new InvalidArgumentException("The provided metaschema module '" + module + "' does not exist.");
-    }
-    if (!Files.isReadable(module)) {
-      throw new InvalidArgumentException("The provided metaschema module '" + module + "' is not readable.");
-    }
   }
 
   @Override
@@ -171,6 +166,7 @@ public class GenerateSchemaCommand
       @NonNull CallingContext callingContext,
       @NonNull CommandLine cmdLine) {
     List<String> extraArgs = cmdLine.getArgList();
+    URI cwd = Paths.get("").toAbsolutePath().toUri();
 
     Path destination = null;
     if (extraArgs.size() > 1) {
@@ -214,7 +210,15 @@ public class GenerateSchemaCommand
       }
     }
 
-    Path input = Paths.get(extraArgs.get(0));
+    URI input;
+    String inputName = extraArgs.get(0);
+
+    try {
+      input = UriUtils.toUri(extraArgs.get(0), cwd);
+    } catch (URISyntaxException ex) {
+      return ExitCode.IO_ERROR.exitMessage(
+          String.format("Unable to load '%s' as it is not a valid file or URI.", inputName)).withThrowable(ex);
+    }
     assert input != null;
     try {
       ModuleLoader loader = new ModuleLoader();

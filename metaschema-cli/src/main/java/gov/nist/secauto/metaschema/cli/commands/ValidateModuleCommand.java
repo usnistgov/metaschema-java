@@ -42,15 +42,16 @@ import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
 import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.util.UriUtils;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
@@ -103,14 +104,6 @@ public class ValidateModuleCommand
     if (extraArgs.size() != 1) {
       throw new InvalidArgumentException("The source to validate must be provided.");
     }
-
-    File target = new File(extraArgs.get(0));
-    if (!target.exists()) {
-      throw new InvalidArgumentException("The provided source file '" + target.getPath() + "' does not exist.");
-    }
-    if (!target.canRead()) {
-      throw new InvalidArgumentException("The provided source file '" + target.getPath() + "' is not readable.");
-    }
   }
 
   @Override
@@ -121,15 +114,25 @@ public class ValidateModuleCommand
   @SuppressWarnings({ "PMD.OnlyOneReturn", "unused" }) // readability
   @NonNull
   protected ExitStatus executeCommand(CallingContext callingContext, CommandLine cmdLine) {
+    URI cwd = Paths.get("").toAbsolutePath().toUri();
     List<String> extraArgs = cmdLine.getArgList();
-    Path target = Paths.get(extraArgs.get(0));
+    String targetName = extraArgs.get(0);
+    URI target;
+
+    try {
+      target = UriUtils.toUri(targetName, cwd);
+    } catch (URISyntaxException ex) {
+      return ExitCode.PROCESSING_ERROR
+          .exitMessage(String.format("The target '%s' cannot be loaded as it is not a valid file or URL.", targetName));
+    }
+
     assert target != null;
 
     IValidationResult schemaValidationResult;
     try {
       List<Source> schemaSources = getXmlSchemaSources();
       schemaValidationResult = IContentValidator.validateWithXmlSchema(
-          ObjectUtils.notNull(target.toUri()),
+          ObjectUtils.notNull(target),
           schemaSources);
     } catch (IOException | SAXException ex) {
       return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex);
