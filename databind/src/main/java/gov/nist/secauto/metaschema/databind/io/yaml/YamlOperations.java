@@ -38,8 +38,8 @@ import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 
@@ -85,7 +85,7 @@ public final class YamlOperations {
   @SuppressWarnings({ "unchecked", "null" })
   @NonNull
   public static Map<String, Object> parseYaml(URI target) throws IOException {
-    try (InputStream is = ObjectUtils.notNull(target.toURL().openStream())) {
+    try (BufferedInputStream is = new BufferedInputStream(ObjectUtils.notNull(target.toURL().openStream()))) {
       return (Map<String, Object>) YAML_PARSER.load(is);
     }
   }

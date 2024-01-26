@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.model.validation;
 import gov.nist.secauto.metaschema.core.resource.AbstractResourceResolver;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -43,7 +44,7 @@ public abstract class AbstractContentValidator
     URI resourceUri = resolve(uri);
     URL resource = resourceUri.toURL();
 
-    try (InputStream is = ObjectUtils.notNull(resource.openStream())) {
+    try (InputStream is = new BufferedInputStream(ObjectUtils.notNull(resource.openStream()))) {
       return validate(is, resourceUri);
     }
   }
