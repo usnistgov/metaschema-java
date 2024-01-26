@@ -118,6 +118,11 @@ public abstract class AbstractValidateContentCommand
   @SuppressWarnings("PMD.PreserveStackTrace") // intended
   @Override
   public void validateOptions(CallingContext callingContext, CommandLine cmdLine) throws InvalidArgumentException {
+    List<String> extraArgs = cmdLine.getArgList();
+    if (extraArgs.size() != 1) {
+      throw new InvalidArgumentException("The source to validate must be provided.");
+    }
+
     if (cmdLine.hasOption(AS_OPTION)) {
       try {
         String toFormatText = cmdLine.getOptionValue(AS_OPTION);
