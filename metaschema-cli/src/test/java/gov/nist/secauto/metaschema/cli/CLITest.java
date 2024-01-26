@@ -126,6 +126,22 @@ public class CLITest {
                 "--as=xml"
             },
             ExitCode.OK, NO_EXCEPTION_CLASS));
+        add(Arguments.of(
+            new String[] { "validate-content",
+                "-m",
+                "https://raw.githubusercontent.com/usnistgov/metaschema-java/28468999d802e69273df7e725d183c132e2b15d8/databind/src/test/resources/metaschema/simple/metaschema.xml",
+                "https://bad.domain.example.net/example.xml",
+                "--as=xml"
+            },
+            ExitCode.IO_ERROR, java.net.UnknownHostException.class));
+        add(Arguments.of(
+            new String[] { "validate-content",
+                "-m",
+                "https://raw.githubusercontent.com/usnistgov/metaschema-java/28468999d802e69273df7e725d183c132e2b15d8/databind/src/test/resources/metaschema/simple/metaschema.xml",
+                "https://nist.gov/example.xml",
+                "--as=xml"
+            },
+            ExitCode.IO_ERROR, java.io.FileNotFoundException.class));
       }
     };
 

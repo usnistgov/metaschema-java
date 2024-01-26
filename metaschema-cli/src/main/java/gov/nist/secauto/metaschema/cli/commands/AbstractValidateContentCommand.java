@@ -61,6 +61,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
@@ -233,6 +234,12 @@ public abstract class AbstractValidateContentCommand
       IValidationResult validationResult;
       try {
         validationResult = bindingContext.validate(source, asFormat, this);
+      } catch (FileNotFoundException ex) {
+        return ExitCode.IO_ERROR.exitMessage(String.format("Resource not found at '%s'", source)).withThrowable(ex);
+
+      } catch (UnknownHostException ex) {
+        return ExitCode.IO_ERROR.exitMessage(String.format("Unknown host for '%s'.", source)).withThrowable(ex);
+
       } catch (IOException | SAXException ex) {
         return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex);
       }
