@@ -40,6 +40,19 @@ public final class UriUtils {
     // disable construction
   }
 
+  /**
+   * Process a string to a local file path or remote location. If the location is
+   * convertible to a URI, return the {@link URI}. Normalize the resulting URI
+   * with the base URI, if provided.
+   *
+   * @param location
+   *          a string defining a remote or local file-based location
+   * @param baseUri
+   *          the base URI to use for URI normalization
+   * @throws URISyntaxException
+   *           an error if the location string is not convertible to URI
+   * @return a new URI
+   */
   public static URI toUri(@NonNull String location, @NonNull URI baseUri) throws URISyntaxException {
     URI asUri;
     try {
