@@ -60,14 +60,6 @@ class UriUtilsTest {
         add(Arguments.of("local/relative/path/is/invalid.txt", VALID));
         add(Arguments.of("/absolute/local/path/is/invalid.txt", VALID));
         add(Arguments.of("1;", VALID));
-        // These tests fail, they appear to be valid in Linux on GHA
-        // https://github.com/usnistgov/metaschema-java/actions/runs/7663271718/job/20885821561
-        // add(Arguments.of(":", INVALID));
-        // add(Arguments.of(">", INVALID));
-        // add(Arguments.of("<", INVALID));
-        // https://github.com/usnistgov/metaschema-java/actions/runs/7663616200/job/20886692509?pr=298
-        // add(Arguments.of(" ", INVALID));
-        // add(Arguments.of(" ?", INVALID));
       }
     };
     return values.stream();
