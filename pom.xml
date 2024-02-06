@@ -144,7 +144,7 @@
 		<dependency.saxon.version>12.4</dependency.saxon.version>
 		<dependency.spotbugs-annotations.version>4.8.3</dependency.spotbugs-annotations.version>
 		<dependency.stax2-api.version>4.2.2</dependency.stax2-api.version>
-		<dependency.thymeleaf.version>3.0.15.RELEASE</dependency.thymeleaf.version>
+		<dependency.thymeleaf.version>3.1.2.RELEASE</dependency.thymeleaf.version>
 		<dependency.woodstox.version>6.5.1</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.2.0</dependency.xmlbeans.version>
 		<dependency.xmlcalabash.version>1.5.7-120</dependency.xmlcalabash.version>
