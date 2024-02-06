@@ -87,7 +87,7 @@ public class Modulo
     if (dividend == null || divisor == null) {
       retval = ISequence.empty();
     } else {
-      INumericItem result = OperationFunctions.opNumericIntegerDivide(dividend, divisor);
+      INumericItem result = OperationFunctions.opNumericMod(dividend, divisor);
       retval = ISequence.of(result);
     }
     return retval;
