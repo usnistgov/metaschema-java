@@ -44,6 +44,7 @@ import gov.nist.secauto.metaschema.core.model.xml.ConstraintLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.util.UriUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext.IValidationSchemaProvider;
 import gov.nist.secauto.metaschema.databind.io.Format;
@@ -58,8 +59,9 @@ import org.xml.sax.SAXException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
@@ -91,7 +93,7 @@ public abstract class AbstractValidateContentCommand
   private static final Option CONSTRAINTS_OPTION = ObjectUtils.notNull(
       Option.builder("c")
           .hasArg()
-          .argName("FILE")
+          .argName("URI")
           .desc("additional constraint definitions")
           .build());
 
@@ -116,36 +118,9 @@ public abstract class AbstractValidateContentCommand
   @SuppressWarnings("PMD.PreserveStackTrace") // intended
   @Override
   public void validateOptions(CallingContext callingContext, CommandLine cmdLine) throws InvalidArgumentException {
-    if (cmdLine.hasOption(CONSTRAINTS_OPTION)) {
-      String[] args = cmdLine.getOptionValues(CONSTRAINTS_OPTION);
-      for (String arg : args) {
-        Path constraint = Paths.get(arg);
-        if (!Files.exists(constraint)) {
-          throw new InvalidArgumentException(
-              "The provided external constraint file '" + constraint + "' does not exist.");
-        }
-        if (!Files.isRegularFile(constraint)) {
-          throw new InvalidArgumentException(
-              "The provided external constraint file '" + constraint + "' is not a file.");
-        }
-        if (!Files.isReadable(constraint)) {
-          throw new InvalidArgumentException(
-              "The provided external constraint file '" + constraint + "' is not readable.");
-        }
-      }
-    }
-
     List<String> extraArgs = cmdLine.getArgList();
     if (extraArgs.size() != 1) {
       throw new InvalidArgumentException("The source to validate must be provided.");
-    }
-
-    Path source = Paths.get(extraArgs.get(0));
-    if (!Files.exists(source)) {
-      throw new InvalidArgumentException("The provided source file '" + source + "' does not exist.");
-    }
-    if (!Files.isReadable(source)) {
-      throw new InvalidArgumentException("The provided source file '" + source + "' is not readable.");
     }
 
     if (cmdLine.hasOption(AS_OPTION)) {
@@ -182,6 +157,7 @@ public abstract class AbstractValidateContentCommand
     @SuppressWarnings("PMD.OnlyOneReturn") // readability
     @Override
     public ExitStatus execute() {
+      URI cwd = Paths.get("").toAbsolutePath().toUri();
       CommandLine cmdLine = getCommandLine();
 
       Set<IConstraintSet> constraintSets;
@@ -190,11 +166,10 @@ public abstract class AbstractValidateContentCommand
         constraintSets = new LinkedHashSet<>();
         String[] args = cmdLine.getOptionValues(CONSTRAINTS_OPTION);
         for (String arg : args) {
-          Path constraintPath = Paths.get(arg);
-          assert constraintPath != null;
           try {
-            constraintSets.add(constraintLoader.load(constraintPath));
-          } catch (IOException | MetaschemaException ex) {
+            URI constraintUri = ObjectUtils.requireNonNull(UriUtils.toUri(arg, cwd));
+            constraintSets.add(constraintLoader.load(constraintUri));
+          } catch (IOException | MetaschemaException | URISyntaxException ex) {
             return ExitCode.IO_ERROR.exitMessage("Unable to load constraint set '" + arg + "'.").withThrowable(ex);
           }
         }
@@ -213,8 +188,16 @@ public abstract class AbstractValidateContentCommand
       IBoundLoader loader = bindingContext.newBoundLoader();
 
       List<String> extraArgs = cmdLine.getArgList();
-      @SuppressWarnings("null") Path source = resolvePathAgainstCWD(Paths.get(extraArgs.get(0)));
-      assert source != null;
+      // @SuppressWarnings("null")
+      String sourceName = extraArgs.get(0);
+      URI source;
+
+      try {
+        source = UriUtils.toUri(sourceName, cwd);
+      } catch (URISyntaxException ex) {
+        return ExitCode.IO_ERROR.exitMessage("Cannot load source '%s' as it is not a valid file or URI.")
+            .withThrowable(ex);
+      }
 
       Format asFormat;
       if (cmdLine.hasOption(AS_OPTION)) {
@@ -256,6 +239,12 @@ public abstract class AbstractValidateContentCommand
       IValidationResult validationResult;
       try {
         validationResult = bindingContext.validate(source, asFormat, this);
+      } catch (FileNotFoundException ex) {
+        return ExitCode.IO_ERROR.exitMessage(String.format("Resource not found at '%s'", source)).withThrowable(ex);
+
+      } catch (UnknownHostException ex) {
+        return ExitCode.IO_ERROR.exitMessage(String.format("Unknown host for '%s'.", source)).withThrowable(ex);
+
       } catch (IOException | SAXException ex) {
         return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex);
       }

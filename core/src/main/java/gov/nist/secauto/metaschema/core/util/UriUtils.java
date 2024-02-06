@@ -24,28 +24,50 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.validation;
+package gov.nist.secauto.metaschema.core.util;
 
-import gov.nist.secauto.metaschema.core.resource.AbstractResourceResolver;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
+import java.net.URISyntaxException;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-public abstract class AbstractContentValidator
-    extends AbstractResourceResolver
-    implements IContentValidator {
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-  @Override
-  public IValidationResult validate(URI uri) throws IOException {
-    URI resourceUri = resolve(uri);
-    URL resource = resourceUri.toURL();
+public final class UriUtils {
 
-    try (InputStream is = new BufferedInputStream(ObjectUtils.notNull(resource.openStream()))) {
-      return validate(is, resourceUri);
+  private UriUtils() {
+    // disable construction
+  }
+
+  /**
+   * Process a string to a local file path or remote location. If the location is
+   * convertible to a URI, return the {@link URI}. Normalize the resulting URI
+   * with the base URI, if provided.
+   *
+   * @param location
+   *          a string defining a remote or local file-based location
+   * @param baseUri
+   *          the base URI to use for URI normalization
+   * @throws URISyntaxException
+   *           an error if the location string is not convertible to URI
+   * @return a new URI
+   */
+  public static URI toUri(@NonNull String location, @NonNull URI baseUri) throws URISyntaxException {
+    URI asUri;
+    try {
+      asUri = new URI(location);
+    } catch (URISyntaxException ex) {
+      // the location is not a valid URI
+      try {
+        // try to parse the location as a local file path
+        Path path = Paths.get(location);
+        asUri = path.toUri();
+      } catch (InvalidPathException ex2) {
+        // not a local file path, so rethrow the original URI expection
+        throw ex;
+      }
     }
+    return baseUri.resolve(asUri.normalize());
   }
 }

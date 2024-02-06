@@ -37,7 +37,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -47,6 +47,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Unit test for simple CLI.
  */
 public class CLITest {
+  private static final ExitCode NO_EXPECTION_CLASS = null;
+
   void evaluateResult(@NonNull ExitStatus status, @NonNull ExitCode expectedCode) {
     status.generateMessage(true);
     assertAll(() -> assertEquals(expectedCode, status.getExitCode(), "exit code mismatch"),
@@ -63,33 +65,86 @@ public class CLITest {
   }
 
   private static Stream<Arguments> providesValues() {
-    ExitCode noExpectedExceptionClass = null;
-    List<Arguments> values = new ArrayList<>();
-    values.add(Arguments.of(new String[] {}, ExitCode.INVALID_COMMAND, noExpectedExceptionClass));
-    values.add(Arguments.of(new String[] { "-h" }, ExitCode.OK, noExpectedExceptionClass));
-    values.add(Arguments.of(new String[] { "generate-schema", "--help" }, ExitCode.INVALID_COMMAND,
-        noExpectedExceptionClass));
-    values.add(Arguments.of(new String[] { "validate", "--help" }, ExitCode.OK, noExpectedExceptionClass));
-    values.add(Arguments.of(new String[] { "validate-content", "--help" }, ExitCode.INVALID_COMMAND,
-        noExpectedExceptionClass));
-    values.add(Arguments.of(
-        new String[] { "validate",
-            "../databind/src/test/resources/metaschema/fields_with_flags/metaschema.xml" },
-        ExitCode.OK, noExpectedExceptionClass));
-    values.add(Arguments.of(new String[] { "generate-schema", "--overwrite", "--as", "JSON",
-        "../databind/src/test/resources/metaschema/fields_with_flags/metaschema.xml",
-        "target/schema-test.json" }, ExitCode.OK, noExpectedExceptionClass));
-    values.add(Arguments.of(
-        new String[] { "validate-content", "--as=xml",
-            "-m=../databind/src/test/resources/metaschema/bad_index-has-key/metaschema.xml",
-            "../databind/src/test/resources/metaschema/bad_index-has-key/example.xml",
-            "--show-stack-trace" },
-        ExitCode.FAIL, noExpectedExceptionClass));
-    values.add(Arguments.of(
-        new String[] { "validate-content", "--as=json",
-            "-m=../databind/src/test/resources/metaschema/bad_index-has-key/metaschema.xml",
-            "../databind/src/test/resources/metaschema/bad_index-has-key/example.json", "--show-stack-trace" },
-        ExitCode.FAIL, noExpectedExceptionClass));
+    ExitCode NO_EXCEPTION_CLASS = null;
+    List<Arguments> values = new LinkedList<>() {
+      {
+        add(Arguments.of(new String[] {}, ExitCode.INVALID_COMMAND, NO_EXCEPTION_CLASS));
+        add(Arguments.of(new String[] { "-h" }, ExitCode.OK, NO_EXCEPTION_CLASS));
+        add(Arguments.of(new String[] { "generate-schema", "--help" }, ExitCode.INVALID_COMMAND,
+            NO_EXCEPTION_CLASS));
+        add(Arguments.of(new String[] { "validate", "--help" }, ExitCode.OK, NO_EXCEPTION_CLASS));
+        add(Arguments.of(new String[] { "validate-content", "--help" }, ExitCode.INVALID_COMMAND,
+            NO_EXCEPTION_CLASS));
+        add(Arguments.of(
+            new String[] { "validate",
+                "../databind/src/test/resources/metaschema/fields_with_flags/metaschema.xml" },
+            ExitCode.OK, NO_EXCEPTION_CLASS));
+        add(Arguments.of(new String[] { "generate-schema", "--overwrite", "--as", "JSON",
+            "../databind/src/test/resources/metaschema/fields_with_flags/metaschema.xml",
+            "target/schema-test.json" }, ExitCode.OK, NO_EXCEPTION_CLASS));
+        add(Arguments.of(
+            new String[] { "validate-content", "--as=xml",
+                "-m=../databind/src/test/resources/metaschema/bad_index-has-key/metaschema.xml",
+                "../databind/src/test/resources/metaschema/bad_index-has-key/example.xml",
+                "--show-stack-trace" },
+            ExitCode.FAIL, NO_EXCEPTION_CLASS));
+        add(Arguments.of(
+            new String[] { "validate-content", "--as=json",
+                "-m=../databind/src/test/resources/metaschema/bad_index-has-key/metaschema.xml",
+                "../databind/src/test/resources/metaschema/bad_index-has-key/example.json", "--show-stack-trace" },
+            ExitCode.FAIL, NO_EXCEPTION_CLASS));
+        add(Arguments.of(
+            new String[] { "validate",
+                "https://raw.githubusercontent.com/usnistgov/metaschema-java/28468999d802e69273df7e725d183c132e2b15d8/databind/src/test/resources/metaschema/simple/metaschema.xml",
+                "--show-stack-trace" },
+            ExitCode.OK, NO_EXCEPTION_CLASS));
+        add(Arguments.of(
+            new String[] { "generate-schema",
+                "https://raw.githubusercontent.com/usnistgov/metaschema-java/28468999d802e69273df7e725d183c132e2b15d8/databind/src/test/resources/metaschema/simple/metaschema.xml",
+                "--as", "xml",
+            },
+            ExitCode.OK, NO_EXCEPTION_CLASS));
+        add(Arguments.of(
+            new String[] { "generate-schema",
+                "https://raw.githubusercontent.com/usnistgov/metaschema-java/28468999d802e69273df7e725d183c132e2b15d8/databind/src/test/resources/metaschema/simple/metaschema.xml",
+                "--as", "json",
+            },
+            ExitCode.OK, NO_EXCEPTION_CLASS));
+        add(Arguments.of(
+            new String[] { "validate-content",
+                "-m",
+                "https://raw.githubusercontent.com/usnistgov/metaschema-java/28468999d802e69273df7e725d183c132e2b15d8/databind/src/test/resources/metaschema/simple/metaschema.xml",
+                "https://raw.githubusercontent.com/usnistgov/metaschema-java/28468999d802e69273df7e725d183c132e2b15d8/databind/src/test/resources/metaschema/simple/example.json",
+                "--as=json"
+            },
+            ExitCode.OK, NO_EXCEPTION_CLASS));
+        add(Arguments.of(
+            new String[] { "validate-content",
+                "-m",
+                "https://raw.githubusercontent.com/usnistgov/metaschema-java/28468999d802e69273df7e725d183c132e2b15d8/databind/src/test/resources/metaschema/simple/metaschema.xml",
+                "https://raw.githubusercontent.com/usnistgov/metaschema-java/28468999d802e69273df7e725d183c132e2b15d8/databind/src/test/resources/metaschema/simple/example.xml",
+                "--as=xml"
+            },
+            ExitCode.OK, NO_EXCEPTION_CLASS));
+        add(Arguments.of(
+            new String[] { "validate-content",
+                "-m",
+                "https://raw.githubusercontent.com/usnistgov/metaschema-java/28468999d802e69273df7e725d183c132e2b15d8/databind/src/test/resources/metaschema/simple/metaschema.xml",
+                "https://bad.domain.example.net/example.xml",
+                "--as=xml"
+            },
+            ExitCode.IO_ERROR, java.net.UnknownHostException.class));
+        add(Arguments.of(
+            new String[] { "validate-content",
+                "-m",
+                "https://raw.githubusercontent.com/usnistgov/metaschema-java/28468999d802e69273df7e725d183c132e2b15d8/databind/src/test/resources/metaschema/simple/metaschema.xml",
+                "https://nist.gov/example.xml",
+                "--as=xml"
+            },
+            ExitCode.IO_ERROR, java.io.FileNotFoundException.class));
+      }
+    };
+
     return values.stream();
   }
 
@@ -97,10 +152,13 @@ public class CLITest {
   @MethodSource("providesValues")
   void testAllCommands(@NonNull String[] args, @NonNull ExitCode expectedExitCode,
       Class<? extends Throwable> expectedThrownClass) {
+    String[] defaultArgs = { "--show-stack-trace" };
+    String[] fullArgs = Stream.of(args, defaultArgs).flatMap(Stream::of)
+        .toArray(String[]::new);
     if (expectedThrownClass == null) {
-      evaluateResult(CLI.runCli(args), expectedExitCode);
+      evaluateResult(CLI.runCli(fullArgs), expectedExitCode);
     } else {
-      evaluateResult(CLI.runCli(args), expectedExitCode, expectedThrownClass);
+      evaluateResult(CLI.runCli(fullArgs), expectedExitCode, expectedThrownClass);
     }
   }
 }
