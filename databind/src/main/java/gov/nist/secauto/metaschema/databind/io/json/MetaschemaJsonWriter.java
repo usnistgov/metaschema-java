@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundFieldValue;
@@ -128,8 +127,13 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
 
       String valueKeyName;
       if (jsonValueKey != null) {
+        Object keyValue = jsonValueKey.getValue(parentItem);
+        if (keyValue == null) {
+          throw new IOException(String.format("Null JSON value key value for definition '%s'",
+              jsonValueKey.getContainingDefinition().toCoordinates()));
+        }
         // this is the JSON value key case
-        valueKeyName = ObjectUtils.requireNonNull(jsonValueKey.getValue(parentItem)).toString();
+        valueKeyName = jsonValueKey.getJavaTypeAdapter().asString(keyValue);
       } else {
         valueKeyName = fieldValue.getParentFieldDefinition().getEffectiveJsonValueKeyName();
       }
@@ -253,8 +257,9 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       actualInstance.writeItem(item, this);
     }
 
-    private void writeScalarItem(Object item, IFeatureScalarItemValueHandler handler) throws IOException {
-      handler.getJavaTypeAdapter().writeJsonValue(ObjectUtils.requireNonNull(item), writer);
+    private void writeScalarItem(@NonNull Object item, @NonNull IFeatureScalarItemValueHandler handler)
+        throws IOException {
+      handler.getJavaTypeAdapter().writeJsonValue(item, writer);
     }
 
     private <T extends IBoundInstanceModelGroupedNamed> void writeDiscriminatorProperty(
@@ -297,8 +302,14 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
 
       IBoundInstanceFlag jsonKey = handler.getItemJsonKey(parentItem);
       if (jsonKey != null) {
+        Object keyValue = jsonKey.getValue(parentItem);
+        if (keyValue == null) {
+          throw new IOException(String.format("Null JSON key value for definition '%s'",
+              jsonKey.getContainingDefinition().toCoordinates()));
+        }
+
         // the field will be the JSON key value
-        String key = jsonKey.getJavaTypeAdapter().asString(ObjectUtils.requireNonNull(jsonKey.getValue(parentItem)));
+        String key = jsonKey.getJavaTypeAdapter().asString(keyValue);
         writer.writeFieldName(key);
 
         // next the value will be a start object
@@ -323,8 +334,14 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       IBoundInstanceModelChoiceGroup choiceGroup = handler.getParentContainer();
       IBoundInstanceFlag jsonKey = choiceGroup.getItemJsonKey(parentItem);
       if (jsonKey != null) {
+        Object keyValue = jsonKey.getValue(parentItem);
+        if (keyValue == null) {
+          throw new IOException(String.format("Null JSON key value for definition '%s'",
+              jsonKey.getContainingDefinition().toCoordinates()));
+        }
+
         // the field will be the JSON key value
-        String key = jsonKey.getJavaTypeAdapter().asString(ObjectUtils.requireNonNull(jsonKey.getValue(parentItem)));
+        String key = jsonKey.getJavaTypeAdapter().asString(keyValue);
         writer.writeFieldName(key);
 
         // next the value will be a start object

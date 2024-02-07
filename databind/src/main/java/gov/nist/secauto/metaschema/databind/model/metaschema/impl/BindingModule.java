@@ -183,12 +183,20 @@ public class BindingModule
 
   @Override
   public MarkupLine getName() {
-    return ObjectUtils.requireNonNull(getBinding().getSchemaName());
+    MarkupLine retval = getBinding().getSchemaName();
+    if (retval == null) {
+      throw new IllegalStateException(String.format("The schema name is NULL for module '%s'.", getLocation()));
+    }
+    return retval;
   }
 
   @Override
   public String getVersion() {
-    return ObjectUtils.requireNonNull(getBinding().getSchemaVersion());
+    String retval = getBinding().getSchemaVersion();
+    if (retval == null) {
+      throw new IllegalStateException(String.format("The schema version is NULL for module '%s'.", getLocation()));
+    }
+    return retval;
   }
 
   @Override
@@ -198,17 +206,30 @@ public class BindingModule
 
   @Override
   public String getShortName() {
-    return ObjectUtils.requireNonNull(getBinding().getShortName());
+    String retval = getBinding().getShortName();
+    if (retval == null) {
+      throw new IllegalStateException(String.format("The schema short name is NULL for module '%s'.", getLocation()));
+    }
+    return retval;
   }
 
   @Override
   public URI getXmlNamespace() {
-    return ObjectUtils.requireNonNull(getBinding().getNamespace());
+    URI retval = getBinding().getNamespace();
+    if (retval == null) {
+      throw new IllegalStateException(
+          String.format("The XML schema namespace is NULL for module '%s'.", getLocation()));
+    }
+    return retval;
   }
 
   @Override
   public URI getJsonBaseUri() {
-    return ObjectUtils.requireNonNull(getBinding().getJsonBaseUri());
+    URI retval = getBinding().getJsonBaseUri();
+    if (retval == null) {
+      throw new IllegalStateException(String.format("The JSON schema URI is NULL for module '%s'.", getLocation()));
+    }
+    return retval;
   }
 
   @NonNull

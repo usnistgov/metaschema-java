@@ -182,7 +182,19 @@ public class XmlAssemblyModelContainer
     XmlChoiceGroupInstance instance = new XmlChoiceGroupInstance(
         (GroupedChoiceType) obj,
         ObjectUtils.notNull(state.getLeft()));
-    ObjectUtils.notNull(state.getRight()).append(instance);
+    XmlAssemblyModelContainer container = ObjectUtils.notNull(state.getRight());
+
+    String groupAsName = instance.getGroupAsName();
+    if (groupAsName == null) {
+      String location = XmlObjectParser.toLocation(obj);
+      String locationCtx = location == null ? "" : " at location " + location;
+      throw new IllegalArgumentException(
+          String.format("Missing group-as for a choice group within the definition '%s'%s.",
+              instance.getContainingDefinition().getName(),
+              locationCtx));
+    }
+    container.getChoiceGroupInstanceMap().put(groupAsName, instance);
+    container.getModelInstances().add(instance);
   }
 
   public void append(@NonNull IFieldInstanceAbsolute instance) {
@@ -201,11 +213,6 @@ public class XmlAssemblyModelContainer
 
   public void append(@NonNull IChoiceInstance instance) {
     getChoiceInstances().add(instance);
-    getModelInstances().add(instance);
-  }
-
-  public void append(@NonNull IChoiceGroupInstance instance) {
-    getChoiceGroupInstanceMap().put(ObjectUtils.requireNonNull(instance.getGroupAsName()), instance);
     getModelInstances().add(instance);
   }
 }

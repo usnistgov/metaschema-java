@@ -107,8 +107,14 @@ public class XmlObjectParser<T> {
     return xpath;
   }
 
+  @SuppressWarnings({ "resource", "null" })
   @Nullable
-  public static String getLocation(@NonNull XmlCursor cursor) {
+  public static String toLocation(@NonNull XmlObject obj) {
+    return toLocation(obj.newCursor());
+  }
+
+  @Nullable
+  public static String toLocation(@NonNull XmlCursor cursor) {
     String retval = null;
     XmlBookmark bookmark = cursor.getBookmark(XmlLineNumber.class);
     if (bookmark != null) {
@@ -150,7 +156,7 @@ public class XmlObjectParser<T> {
     QName qname = cursor.getName();
     Handler<T> retval = getElementNameToHandlerMap().get(qname);
     if (retval == null) {
-      String location = getLocation(cursor);
+      String location = toLocation(cursor);
       if (location == null) {
         location = "";
       } else {
