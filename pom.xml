@@ -127,8 +127,7 @@
 		<dependency.flexmark.version>0.64.8</dependency.flexmark.version>
 		<dependency.freemarker.version>2.3.32</dependency.freemarker.version>
 		<dependency.inject-resources-junit-jupiter.version>0.3.3</dependency.inject-resources-junit-jupiter.version>
-		<dependency.jackson.version>2.15.2</dependency.jackson.version>
-		<dependency.jackson-databind.version>2.15.2</dependency.jackson-databind.version>
+		<dependency.jackson.version>2.16.1</dependency.jackson.version>
 		<dependency.jansi.version>2.4.1</dependency.jansi.version>
 		<dependency.jaxb.version>4.0.0</dependency.jaxb.version>
 		<dependency.jaxen.version>2.0.0</dependency.jaxen.version>
@@ -144,7 +143,7 @@
 		<dependency.saxon.version>12.4</dependency.saxon.version>
 		<dependency.spotbugs-annotations.version>4.8.3</dependency.spotbugs-annotations.version>
 		<dependency.stax2-api.version>4.2.2</dependency.stax2-api.version>
-		<dependency.thymeleaf.version>3.0.15.RELEASE</dependency.thymeleaf.version>
+		<dependency.thymeleaf.version>3.1.2.RELEASE</dependency.thymeleaf.version>
 		<dependency.woodstox.version>6.5.1</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.2.0</dependency.xmlbeans.version>
 		<dependency.xmlcalabash.version>1.5.7-120</dependency.xmlcalabash.version>
@@ -375,7 +374,7 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>${dependency.jackson-databind.version}</version>
+				<version>${dependency.jackson.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.dataformat</groupId>
