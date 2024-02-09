@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
@@ -106,11 +107,14 @@ public class FlagContainerSupport implements IContainerFlagSupport<IBindingInsta
       flagInstances.merge(flag.getEffectiveName(), flag, (v1, v2) -> {
         if (LOGGER.isErrorEnabled()) {
           IModelDefinition owningDefinition = v1.getContainingDefinition();
+          IModule module = owningDefinition.getContainingModule();
           LOGGER.error(
-              String.format("Unexpected duplicate flag instance name '%s' in definition '%s' in module '%s'",
+              String.format(
+                  "Unexpected duplicate flag instance name '%s' in definition '%s' in module name '%s' at '%s'",
                   key,
                   owningDefinition.getName(),
-                  owningDefinition.getContainingModule().getShortName()));
+                  module.getShortName(),
+                  module.getLocation()));
         }
         return ObjectUtils.notNull(v2);
       });
