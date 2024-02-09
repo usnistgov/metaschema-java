@@ -223,12 +223,14 @@ class XmlChoiceInstance
       String key = instance.getEffectiveName();
       getFieldInstanceMap().put(key, instance);
       getNamedModelInstanceMap().put(key, instance);
+      getModelInstances().add(instance);
     }
 
     public void append(@NonNull IAssemblyInstanceAbsolute instance) {
       String key = instance.getEffectiveName();
       getAssemblyInstanceMap().put(key, instance);
       getNamedModelInstanceMap().put(key, instance);
+      getModelInstances().add(instance);
     }
   }
 }
