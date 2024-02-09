@@ -28,57 +28,34 @@ package gov.nist.secauto.metaschema.core.metapath.cst;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
+import gov.nist.secauto.metaschema.core.metapath.cst.Let.VariableDeclaration;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * An implementation of
- * <a href="https://www.w3.org/TR/xpath-31/#id-let-expressions">Let
- * expression</a> supporting variable value binding.
- */
 @SuppressWarnings("PMD.ShortClassName")
-public class Let implements IExpression {
+public class For implements IExpression {
   @NonNull
-  private final VariableDeclaration variable;
+  private final Let.VariableDeclaration variable;
   @NonNull
   private final IExpression returnExpression;
 
-  /**
-   * Construct a new Let CST expression.
-   *
-   * @param name
-   *          the variable name
-   * @param boundExpression
-   *          the expression bound to the variable
-   * @param returnExpression
-   *          the inner expression to evaluate with the variable in-scope
-   */
-  public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
-    this.variable = new VariableDeclaration(name, boundExpression);
-    this.returnExpression = returnExpression;
+  public For(@NonNull VariableDeclaration variable, @NonNull IExpression returnExpr) {
+    this.variable = variable;
+    this.returnExpression = returnExpr;
   }
 
-  /**
-   * Get the variable to evaluate with the variable in-scope.
-   *
-   * @return the inner expression
-   */
   @NonNull
-  public VariableDeclaration getVariable() {
+  protected Let.VariableDeclaration getVariable() {
     return variable;
   }
 
-  /**
-   * Get the inner expression to evaluate with the variable in-scope.
-   *
-   * @return the inner expression
-   */
   @NonNull
-  public IExpression getReturnExpression() {
+  protected IExpression getReturnExpression() {
     return returnExpression;
   }
 
@@ -90,58 +67,21 @@ public class Let implements IExpression {
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitLet(this, context);
+    return visitor.visitFor(this, context);
   }
 
   @Override
   public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
+    Let.VariableDeclaration variable = getVariable();
+    ISequence<?> variableResult = variable.getBoundExpression().accept(dynamicContext, focus);
+
     DynamicContext subDynamicContext = dynamicContext.subContext();
 
-    getVariable().bind(dynamicContext, focus, subDynamicContext);
-
-    return getReturnExpression().accept(subDynamicContext, focus);
-  }
-
-  public static class VariableDeclaration {
-    @NonNull
-    private final Name name;
-    @NonNull
-    private final IExpression boundExpression;
-
-    public VariableDeclaration(@NonNull Name name, @NonNull IExpression boundExpression) {
-      this.name = name;
-      this.boundExpression = boundExpression;
+    List<IItem> retval = new LinkedList<>();
+    for (IItem item : variableResult) {
+      subDynamicContext.bindVariableValue(variable.getName().getValue(), ISequence.of(item));
+      retval.addAll(getReturnExpression().accept(subDynamicContext, focus));
     }
-
-    /**
-     * Get the variable name.
-     *
-     * @return the variable name
-     */
-    @NonNull
-    public Name getName() {
-      return name;
-    }
-
-    /**
-     * Get the expression bound to the variable.
-     *
-     * @return the bound expression
-     */
-    @NonNull
-    public IExpression getBoundExpression() {
-      return boundExpression;
-    }
-
-    public void bind(
-        @NonNull DynamicContext evalContext,
-        @NonNull ISequence<?> focus,
-        @NonNull DynamicContext boundContext) {
-
-      ISequence<?> result = getBoundExpression().accept(evalContext, focus);
-
-      String name = getName().getValue();
-      boundContext.bindVariableValue(name, result);
-    }
+    return ISequence.of(retval);
   }
 }

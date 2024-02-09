@@ -340,4 +340,9 @@ public abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExp
   public RESULT visitQuantified(Quantified expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
+
+  @Override
+  public RESULT visitFor(For expr, CONTEXT context) {
+    return visitChildren(expr, context);
+  }
 }

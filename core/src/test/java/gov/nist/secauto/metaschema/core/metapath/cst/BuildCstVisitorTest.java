@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.core.metapath.cst;
 
+import static gov.nist.secauto.metaschema.core.metapath.TestUtils.bool;
+import static gov.nist.secauto.metaschema.core.metapath.TestUtils.integer;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
@@ -312,5 +314,35 @@ class BuildCstVisitorTest {
         () -> assertNotNull(resultItem),
         () -> assertThat(resultItem, instanceOf(IBooleanItem.class)),
         () -> assertEquals(expectedResult, resultItem));
+  }
+
+  static Stream<Arguments> testFor() {
+    return Stream.of(
+        Arguments.of(
+            "for $num in (1,2,3) return $num+1",
+            ISequence.of(
+                integer(2),
+                integer(3),
+                integer(4))),
+        Arguments.of(
+            "for $num in (1,2,3), $bool in (true(),false()) return ($num,$bool)",
+            ISequence.of(
+                integer(1), bool(true), integer(1), bool(false),
+                integer(2), bool(true), integer(2), bool(false),
+                integer(3), bool(true), integer(3), bool(false))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void testFor(@NonNull String metapath, @NonNull ISequence<?> expectedResult) {
+    IExpression ast = parseExpression(metapath);
+
+    IDocumentNodeItem document = newTestDocument();
+    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
+    assertAll(
+        () -> assertEquals(For.class, ast.getClass()),
+        () -> assertNotNull(result),
+        () -> assertThat(result, instanceOf(ISequence.class)),
+        () -> assertEquals(expectedResult, result));
   }
 }
