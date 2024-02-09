@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.cst;
 
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.bool;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.integer;
+import static gov.nist.secauto.metaschema.core.metapath.TestUtils.string;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
@@ -341,6 +342,33 @@ class BuildCstVisitorTest {
     ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
     assertAll(
         () -> assertEquals(For.class, ast.getClass()),
+        () -> assertNotNull(result),
+        () -> assertThat(result, instanceOf(ISequence.class)),
+        () -> assertEquals(expectedResult, result));
+  }
+
+  static Stream<Arguments> testSimpleMap() {
+    return Stream.of(
+        Arguments.of(
+            "(1,2,1)!'*'",
+            ISequence.of(string("*"), string("*"), string("*"))),
+        Arguments.of(
+            "(1,2,3) ! concat('id-',.) ! concat(.,'-suffix')",
+            ISequence.of(
+                string("id-1-suffix"),
+                string("id-2-suffix"),
+                string("id-3-suffix"))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void testSimpleMap(@NonNull String metapath, @NonNull ISequence<?> expectedResult) {
+    IExpression ast = parseExpression(metapath);
+
+    IDocumentNodeItem document = newTestDocument();
+    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
+    assertAll(
+        () -> assertEquals(SimpleMap.class, ast.getClass()),
         () -> assertNotNull(result),
         () -> assertThat(result, instanceOf(ISequence.class)),
         () -> assertEquals(expectedResult, result));

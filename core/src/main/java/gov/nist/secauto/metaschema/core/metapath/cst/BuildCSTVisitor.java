@@ -860,8 +860,14 @@ public class BuildCSTVisitor
    */
 
   @Override
-  protected IExpression handleSimplemapexpr(SimplemapexprContext ctx) {
-    throw new UnsupportedOperationException("implement");
+  protected IExpression handleSimplemapexpr(SimplemapexprContext context) {
+    return handleGroupedNAiry(context, 0, 2, (ctx, idx, left) -> {
+      // the next child is "!"
+      assert "!".equals(ctx.getChild(idx).getText());
+      IExpression right = ctx.getChild(idx + 1).accept(this);
+
+      return new SimpleMap(left, right);
+    });
   }
 
   /* =======================================================================
