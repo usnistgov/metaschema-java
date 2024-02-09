@@ -97,6 +97,7 @@ public class Name // NOPMD - intentional
         .filter(this::match));
   }
 
+  @SuppressWarnings("PMD.UnusedPrivateMethod")
   private boolean match(INodeItem item) {
     return item instanceof IDefinitionNodeItem
         && getValue().equals(((IDefinitionNodeItem<?, ?>) item).getName());

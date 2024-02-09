@@ -47,8 +47,9 @@ public final class ContextItem
    *
    * @return the singleton instance
    */
+  @SuppressWarnings("PMD.AvoidSynchronizedAtMethodLevel")
   @NonNull
-  public static ContextItem instance() {
+  public static synchronized ContextItem instance() {
     return SINGLETON;
   }
 

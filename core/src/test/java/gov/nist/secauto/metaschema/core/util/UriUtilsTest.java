@@ -35,8 +35,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -46,23 +44,19 @@ class UriUtilsTest {
   private static final boolean INVALID = false;
 
   private static Stream<Arguments> provideValuesTestToUri() {
-    List<Arguments> values = new LinkedList<>() {
-      {
-        add(Arguments.of("http://example.org/valid", VALID));
-        add(Arguments.of("https://example.org/valid", VALID));
-        add(Arguments.of("http://example.org/valid", VALID));
-        add(Arguments.of("ftp://example.org/valid", VALID));
-        add(Arguments.of("ssh://example.org/valid", VALID));
-        add(Arguments.of("example.org/good", VALID));
-        add(Arguments.of("bad.txt", VALID));
-        add(Arguments.of("relative\\windows\\path\\resource.txt", VALID));
-        add(Arguments.of("C:\\absolute\\valid.txt", VALID));
-        add(Arguments.of("local/relative/path/is/invalid.txt", VALID));
-        add(Arguments.of("/absolute/local/path/is/invalid.txt", VALID));
-        add(Arguments.of("1;", VALID));
-      }
-    };
-    return values.stream();
+    return Stream.of(
+        Arguments.of("http://example.org/valid", VALID),
+        Arguments.of("https://example.org/valid", VALID),
+        Arguments.of("http://example.org/valid", VALID),
+        Arguments.of("ftp://example.org/valid", VALID),
+        Arguments.of("ssh://example.org/valid", VALID),
+        Arguments.of("example.org/good", VALID),
+        Arguments.of("bad.txt", VALID),
+        Arguments.of("relative\\windows\\path\\resource.txt", VALID),
+        Arguments.of("C:\\absolute\\valid.txt", VALID),
+        Arguments.of("local/relative/path/is/invalid.txt", VALID),
+        Arguments.of("/absolute/local/path/is/invalid.txt", VALID),
+        Arguments.of("1;", VALID));
   }
 
   @ParameterizedTest

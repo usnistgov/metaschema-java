@@ -64,11 +64,11 @@ module gov.nist.secauto.metaschema.core {
   requires flexmark.ext.superscript;
   requires flexmark.ext.tables;
   requires transitive flexmark.ext.typographic;
-  requires flexmark.html2md.converter;
+  requires transitive flexmark.html2md.converter;
   requires transitive flexmark.util.ast;
   requires flexmark.util.builder;
   requires flexmark.util.collection;
-  requires flexmark.util.data;
+  requires transitive flexmark.util.data;
   requires flexmark.util.dependency;
   requires flexmark.util.format;
   requires flexmark.util.html;

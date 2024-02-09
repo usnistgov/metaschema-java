@@ -50,7 +50,7 @@ import javax.xml.stream.events.XMLEvent;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class XmlMarkupParser { // NOPMD - acceptable
+public final class XmlMarkupParser {
   private static final Logger LOGGER = LogManager.getLogger(XmlMarkupParser.class);
 
   @NonNull
@@ -74,9 +74,14 @@ public class XmlMarkupParser { // NOPMD - acceptable
   @NonNull
   private static final XmlMarkupParser SINGLETON = new XmlMarkupParser();
 
+  @SuppressWarnings("PMD.AvoidSynchronizedAtMethodLevel")
   @NonNull
-  public static XmlMarkupParser instance() {
+  public static synchronized XmlMarkupParser instance() {
     return SINGLETON;
+  }
+
+  private XmlMarkupParser() {
+    // disable construction
   }
 
   public MarkupLine parseMarkupline(XMLEventReader2 reader) throws XMLStreamException { // NOPMD - acceptable
@@ -97,7 +102,7 @@ public class XmlMarkupParser { // NOPMD - acceptable
     return html.isEmpty() ? null : MarkupMultiline.fromHtml(html);
   }
 
-  protected void parseToString(XMLEventReader2 reader, StringBuilder buffer) // NOPMD - acceptable
+  private void parseToString(XMLEventReader2 reader, StringBuilder buffer) // NOPMD - acceptable
       throws XMLStreamException {
     // if (LOGGER.isDebugEnabled()) {
     // LOGGER.debug("parseToString(enter): {}",
