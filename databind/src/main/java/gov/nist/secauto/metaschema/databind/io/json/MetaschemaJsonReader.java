@@ -464,7 +464,10 @@ public class MetaschemaJsonReader
       }
 
       @Override
-      public void accept(IBoundDefinitionModelComplex definition, Object parentItem, IJsonProblemHandler problemHandler)
+      public void accept(
+          IBoundDefinitionModelComplex definition,
+          Object parentItem,
+          IJsonProblemHandler problemHandler)
           throws IOException {
         @SuppressWarnings("resource") JsonParser parser = getReader();
 
@@ -504,7 +507,7 @@ public class MetaschemaJsonReader
               propertyName,
               getInstanceReader()))) {
             if (LOGGER.isWarnEnabled()) {
-              LOGGER.warn("Skipping unhandled JSON field '{}'{}.", propertyName, JsonUtil.toString(parser));
+              LOGGER.warn("Skipping unhandled JSON field '{}' {}.", propertyName, JsonUtil.toString(parser));
             }
             JsonUtil.assertAndAdvance(parser, JsonToken.FIELD_NAME);
             JsonUtil.skipNextValue(parser);

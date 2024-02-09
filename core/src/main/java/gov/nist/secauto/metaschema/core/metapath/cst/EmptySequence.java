@@ -48,9 +48,9 @@ public final class EmptySequence<RESULT_TYPE extends IItem>
    *          the Java type of the resulting empty sequence
    * @return the singleton CST node instance
    */
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "PMD.AvoidSynchronizedAtMethodLevel" })
   @NonNull
-  public static <T extends IItem> EmptySequence<T> instance() {
+  public static synchronized <T extends IItem> EmptySequence<T> instance() {
     return (EmptySequence<T>) SINGLETON;
   }
 

@@ -36,12 +36,9 @@ import com.vladsch.flexmark.util.data.DataHolder;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 @SuppressWarnings("PMD.DataClass")
-public class FlexmarkFactory {
+public final class FlexmarkFactory {
   @NonNull
   private static final FlexmarkFactory SINGLETON = new FlexmarkFactory();
-
-  @NonNull
-  private final DataHolder configuration;
   @NonNull
   private final Parser markdownParser;
   @NonNull
@@ -53,18 +50,23 @@ public class FlexmarkFactory {
   @NonNull
   final ListOptions listOptions;
 
+  @SuppressWarnings("PMD.AvoidSynchronizedAtMethodLevel")
   @NonNull
-  public static FlexmarkFactory instance() {
+  public static synchronized FlexmarkFactory instance() {
     return SINGLETON;
   }
 
-  public FlexmarkFactory() {
+  @NonNull
+  public static FlexmarkFactory newInstance(@NonNull DataHolder config) {
+    return new FlexmarkFactory(config);
+  }
+
+  private FlexmarkFactory() {
     this(FlexmarkConfiguration.FLEXMARK_CONFIG);
   }
 
   @SuppressWarnings("null")
-  public FlexmarkFactory(@SuppressWarnings("exports") @NonNull DataHolder config) {
-    this.configuration = config;
+  private FlexmarkFactory(@NonNull DataHolder config) {
     this.markdownParser = Parser.builder(config)
         .customDelimiterProcessor(new FixedEmphasisDelimiterProcessor(Parser.STRONG_WRAPS_EMPHASIS.get(config)))
         .build();
@@ -72,11 +74,6 @@ public class FlexmarkFactory {
     this.formatter = Formatter.builder(config).build();
     this.htmlConverter = FlexmarkHtmlConverter.builder(config).build();
     this.listOptions = ListOptions.get(config);
-  }
-
-  @NonNull
-  protected DataHolder getConfiguration() {
-    return configuration;
   }
 
   @NonNull
@@ -99,7 +96,6 @@ public class FlexmarkFactory {
     return formatter;
   }
 
-  @SuppressWarnings("exports")
   @NonNull
   public FlexmarkHtmlConverter getFlexmarkHtmlConverter() {
     return htmlConverter;

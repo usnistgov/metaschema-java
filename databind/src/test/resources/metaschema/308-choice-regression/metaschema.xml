@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.githubusercontent.com/usnistgov/metaschema/develop/schema/xml/metaschema.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<METASCHEMA xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0">
+    <schema-name>Example model for usnistgov/metaschema#308</schema-name>
+    <schema-version>0.1.0</schema-version>
+    <short-name>issue-308-schema</short-name>
+    <namespace>https://github.com/usnistgov/metaschema-java/issues/308</namespace>
+    <json-base-uri>https://github.com/usnistgov/metaschema-java/issues/308</json-base-uri>
+    <define-assembly name="wrapper">
+        <description>Wrapper for a choice to demonstrate the bug in this issue.</description>
+        <root-name>wrapper</root-name>
+        <model>
+            <choice>
+                <define-field name="x" as-type="positive-integer" min-occurs="1" max-occurs="1"/>
+                <define-field name="y" as-type="positive-integer" min-occurs="1" max-occurs="1"/>
+            </choice>
+        </model>
+    </define-assembly>
+</METASCHEMA>

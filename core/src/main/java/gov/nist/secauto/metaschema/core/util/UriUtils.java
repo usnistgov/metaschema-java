@@ -49,9 +49,9 @@ public final class UriUtils {
    *          a string defining a remote or local file-based location
    * @param baseUri
    *          the base URI to use for URI normalization
+   * @return a new URI
    * @throws URISyntaxException
    *           an error if the location string is not convertible to URI
-   * @return a new URI
    */
   public static URI toUri(@NonNull String location, @NonNull URI baseUri) throws URISyntaxException {
     URI asUri;

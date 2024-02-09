@@ -52,7 +52,7 @@ public class MarkupLine
   private static final DataSet FLEXMARK_CONFIG = newParserOptions();
 
   @NonNull
-  private static final FlexmarkFactory FLEXMARK_FACTORY = new FlexmarkFactory(FLEXMARK_CONFIG);
+  private static final FlexmarkFactory FLEXMARK_FACTORY = FlexmarkFactory.newInstance(FLEXMARK_CONFIG);
 
   @SuppressWarnings("null")
   @NonNull

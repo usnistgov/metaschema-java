@@ -24,53 +24,40 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.util;
+package gov.nist.secauto.metaschema.databind.io.json;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.xml.IXmlModule;
+import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
+import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
+import gov.nist.secauto.metaschema.databind.model.AbstractBoundModelTestSupport;
+import gov.nist.secauto.metaschema.databind.model.metaschema.BindingModuleLoader;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.stream.Stream;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+class JsonParserTest
+    extends AbstractBoundModelTestSupport {
+  @Test
+  void testIssue308Regression() throws IOException, MetaschemaException {
+    ModuleLoader moduleLoader = new ModuleLoader();
+    IXmlModule module
+        = moduleLoader.load(Paths.get("src/test/resources/metaschema/308-choice-regression/metaschema.xml"));
 
-class UriUtilsTest {
-  private static final boolean VALID = true;
-  private static final boolean INVALID = false;
+    IBindingContext context = IBindingContext.instance();
+    context.registerModule(module, Paths.get("target/generated-test-sources/308-choice-regression"));
 
-  private static Stream<Arguments> provideValuesTestToUri() {
-    return Stream.of(
-        Arguments.of("http://example.org/valid", VALID),
-        Arguments.of("https://example.org/valid", VALID),
-        Arguments.of("http://example.org/valid", VALID),
-        Arguments.of("ftp://example.org/valid", VALID),
-        Arguments.of("ssh://example.org/valid", VALID),
-        Arguments.of("example.org/good", VALID),
-        Arguments.of("bad.txt", VALID),
-        Arguments.of("relative\\windows\\path\\resource.txt", VALID),
-        Arguments.of("C:\\absolute\\valid.txt", VALID),
-        Arguments.of("local/relative/path/is/invalid.txt", VALID),
-        Arguments.of("/absolute/local/path/is/invalid.txt", VALID),
-        Arguments.of("1;", VALID));
-  }
-
-  @ParameterizedTest
-  @MethodSource("provideValuesTestToUri")
-  void testToUri(@NonNull String location, boolean expectedResult) {
-    boolean result = INVALID;
-    Path cwd = Paths.get("");
-    try {
-      URI uri = UriUtils.toUri(location, cwd.toAbsolutePath().toUri());
-      result = VALID;
-      System.out.println(String.format("%s -> %s", location, uri.toASCIIString()));
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    assertEquals(result, expectedResult);
+    IBoundLoader loader = context.newBoundLoader();
+    loader.enableFeature(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
+    Object obj = loader.load(Paths.get("src/test/resources/metaschema/308-choice-regression/example.json"));
+    assertNotNull(obj);
   }
 }
