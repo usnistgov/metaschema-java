@@ -79,7 +79,7 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 @SuppressWarnings("PMD.TooManyStaticImports")
-class BuildAstVisitorTest {
+class BuildCstVisitorTest {
   @RegisterExtension
   Mockery context = new JUnit5Mockery();
 
@@ -289,4 +289,28 @@ class BuildAstVisitorTest {
         () -> assertEquals(expectedResult, resultItem));
   }
 
+  static Stream<Arguments> testIf() {
+    return Stream.of(
+        Arguments.of("if (true()) then true() else false()", IBooleanItem.TRUE),
+        Arguments.of("if (false()) then true() else false()", IBooleanItem.FALSE),
+        Arguments.of("if (()) then true() else false()", IBooleanItem.FALSE),
+        Arguments.of("if (1) then true() else false()", IBooleanItem.TRUE),
+        Arguments.of("if (0) then true() else false()", IBooleanItem.FALSE),
+        Arguments.of("if (-1) then true() else false()", IBooleanItem.TRUE));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void testIf(@NonNull String metapath, @NonNull IBooleanItem expectedResult) {
+    IExpression ast = parseExpression(metapath);
+
+    IDocumentNodeItem document = newTestDocument();
+    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
+    IItem resultItem = FunctionUtils.getFirstItem(result, false);
+    assertAll(
+        () -> assertEquals(If.class, ast.getClass()),
+        () -> assertNotNull(resultItem),
+        () -> assertThat(resultItem, instanceOf(IBooleanItem.class)),
+        () -> assertEquals(expectedResult, resultItem));
+  }
 }
