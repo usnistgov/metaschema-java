@@ -108,5 +108,4 @@ public class Name // NOPMD - intentional
   public String toASTString() {
     return String.format("%s[value=%s]", getClass().getName(), getValue());
   }
-
 }
