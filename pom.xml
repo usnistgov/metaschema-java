@@ -156,7 +156,7 @@
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
 		<plugin.maven-invoker.version>3.6.0</plugin.maven-invoker.version>
 		<plugin.maven-toolchains.version>3.1.0</plugin.maven-toolchains.version>
-		<plugin.templating.version>1.0.0</plugin.templating.version>
+		<plugin.templating.version>3.0.0</plugin.templating.version>
 
 		<!-- The Surefire and Failsafe configurations override the <argLine>
 		element using the @{argLine} notation which
