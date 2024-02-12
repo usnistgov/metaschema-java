@@ -147,7 +147,7 @@
 		<dependency.woodstox.version>6.5.1</dependency.woodstox.version>
 		<dependency.xmlbeans.version>5.2.0</dependency.xmlbeans.version>
 		<dependency.xmlcalabash.version>1.5.7-120</dependency.xmlcalabash.version>
-		<dependency.xmlresolver.version>5.2.2</dependency.xmlresolver.version>
+		<dependency.xmlresolver.version>6.0.4</dependency.xmlresolver.version>
 		<dependency.xml-apis.version>2.0.2</dependency.xml-apis.version>
 
 		<plugin.antlr4test.version>1.22</plugin.antlr4test.version>
