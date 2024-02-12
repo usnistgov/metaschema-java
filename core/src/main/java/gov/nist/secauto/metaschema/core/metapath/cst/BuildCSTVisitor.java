@@ -752,8 +752,7 @@ public class BuildCSTVisitor
     // for SimpleForBinding ("," SimpleForBinding)*
     int bindingCount = simpleForClause.getChildCount() / 2;
 
-    @NonNull
-    IExpression retval = ObjectUtils.notNull(ctx.exprsingle().accept(this));
+    @NonNull IExpression retval = ObjectUtils.notNull(ctx.exprsingle().accept(this));
 
     // step through in reverse
     for (int idx = bindingCount - 1; idx >= 0; idx--) {
@@ -782,8 +781,7 @@ public class BuildCSTVisitor
 
   @Override
   protected IExpression handleLet(LetexprContext context) {
-    @NonNull
-    IExpression retval = ObjectUtils.notNull(context.exprsingle().accept(this));
+    @NonNull IExpression retval = ObjectUtils.notNull(context.exprsingle().accept(this));
 
     SimpleletclauseContext letClause = context.simpleletclause();
     List<SimpleletbindingContext> clauses = letClause.simpleletbinding();
