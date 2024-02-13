@@ -36,7 +36,8 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-
+import java.lang.Override;
+import java.lang.String;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -52,7 +53,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
     formalName = "Remarks",
     description = "Any explanatory or helpful information to be provided about the remarks parent.",
     name = "remarks",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModelModule.class)
 public class Remarks {
   /**
    * "Mark as &lsquo;XML&rsquo; for XML-only or &lsquo;JSON&rsquo; for JSON-only

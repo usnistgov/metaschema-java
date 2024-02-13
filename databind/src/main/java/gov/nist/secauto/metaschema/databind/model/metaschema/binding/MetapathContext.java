@@ -26,44 +26,41 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
-import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
-import gov.nist.secauto.metaschema.core.datatype.adapter.UriReferenceAdapter;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLineAdapter;
+import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
-import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
+import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-import java.lang.Override;
-import java.lang.String;
-import java.net.URI;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.LinkedList;
+import java.util.List;
+
 @SuppressWarnings({
     "PMD.DataClass",
-    "PMD.FieldNamingConventions"
+    "PMD.FieldNamingConventions",
 })
 @MetaschemaAssembly(
-    formalName = "Example",
-    name = "example",
+    name = "metapath-context",
     moduleClass = MetaschemaModelModule.class)
-public class Example {
-  @BoundFlag(
-      formalName = "Example Reference",
-      name = "ref",
-      typeAdapter = UriReferenceAdapter.class)
-  private URI _ref;
-
-  @BoundFlag(
-      name = "path",
-      typeAdapter = StringAdapter.class)
-  private String _path;
-
+public class MetapathContext {
   @BoundField(
-      formalName = "Example Description",
-      useName = "description",
-      typeAdapter = MarkupLineAdapter.class)
-  private MarkupLine _description;
+      description = "A Metapath expression identifying the model node that the constraints will be applied to.",
+      useName = "metapath")
+  private String _metapath;
+
+  @BoundAssembly(
+      useName = "constraints")
+  private AssemblyConstraints _constraints;
+
+  @BoundAssembly(
+      useName = "metapath-context",
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "metapath-contexts", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+  private List<MetapathContext> _metapathContexts;
 
   @BoundField(
       formalName = "Remarks",
@@ -71,28 +68,56 @@ public class Example {
       useName = "remarks")
   private Remarks _remarks;
 
-  public URI getRef() {
-    return _ref;
+  public String getMetapath() {
+    return _metapath;
   }
 
-  public void setRef(URI value) {
-    _ref = value;
+  public void setMetapath(String value) {
+    _metapath = value;
   }
 
-  public String getPath() {
-    return _path;
+  public AssemblyConstraints getConstraints() {
+    return _constraints;
   }
 
-  public void setPath(String value) {
-    _path = value;
+  public void setConstraints(AssemblyConstraints value) {
+    _constraints = value;
   }
 
-  public MarkupLine getDescription() {
-    return _description;
+  public List<MetapathContext> getMetapathContexts() {
+    return _metapathContexts;
   }
 
-  public void setDescription(MarkupLine value) {
-    _description = value;
+  public void setMetapathContexts(List<MetapathContext> value) {
+    _metapathContexts = value;
+  }
+
+  /**
+   * Add a new {@link MetapathContext} item to the underlying collection.
+   *
+   * @param item
+   *          the item to add
+   * @return {@code true}
+   */
+  public boolean addMetapathContext(MetapathContext item) {
+    MetapathContext value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    if (_metapathContexts == null) {
+      _metapathContexts = new LinkedList<>();
+    }
+    return _metapathContexts.add(value);
+  }
+
+  /**
+   * Remove the first matching {@link MetapathContext} item from the underlying
+   * collection.
+   *
+   * @param item
+   *          the item to remove
+   * @return {@code true} if the item was removed or {@code false} otherwise
+   */
+  public boolean removeMetapathContext(MetapathContext item) {
+    MetapathContext value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    return _metapathContexts != null && _metapathContexts.remove(value);
   }
 
   public Remarks getRemarks() {

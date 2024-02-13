@@ -48,13 +48,13 @@ import java.util.List;
 })
 @MetaschemaAssembly(
     name = "field-constraints",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModelModule.class)
 public class FieldConstraints implements IValueConstraintsBase {
   @BoundAssembly(
       formalName = "Constraint Let Expression",
       useName = "let",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "lets", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "lets", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
   private List<ConstraintLetExpression> _lets;
 
   @BoundChoiceGroup(
@@ -70,7 +70,7 @@ public class FieldConstraints implements IValueConstraintsBase {
           @BoundGroupedAssembly(formalName = "Value Matches Constraint", useName = "matches",
               binding = TargetedMatchesConstraint.class)
       },
-      groupAs = @GroupAs(name = "rules", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "rules", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
   private List<? extends IConstraintBase> _rules;
 
   @Override

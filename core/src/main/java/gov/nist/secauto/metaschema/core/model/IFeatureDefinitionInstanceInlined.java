@@ -103,10 +103,11 @@ public interface IFeatureDefinitionInstanceInlined<DEFINITION extends IDefinitio
   @Override
   default String toCoordinates() {
     IModule module = getContainingModule();
-    return String.format("%s:%s-inline-definition:%s@%d",
-        module.getShortName(),
+    return String.format("%s-inline-definition:%s:%s/%s@%d",
         getModelType().toString().toLowerCase(Locale.ROOT),
+        module.getShortName(),
         getContainingDefinition().getName(),
+        getName(),
         hashCode());
   }
 }

@@ -29,7 +29,8 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-
+import java.lang.Override;
+import java.lang.String;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -46,7 +47,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
     formalName = "JSON Key",
     description = "Used in JSON (and similar formats) to identify a flag that will be used as the property name in an object hold a collection of sibling objects. Requires that siblings must never share `json-key` values.",
     name = "json-key",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModelModule.class)
 public class JsonKey {
   /**
    * "References the flag that will serve as the JSON key."

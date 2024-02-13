@@ -31,11 +31,11 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFieldValue;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
-
+import java.lang.Override;
+import java.lang.String;
+import java.math.BigInteger;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import java.math.BigInteger;
 
 /**
  * Allows the name of the definition to be overridden.
@@ -48,7 +48,7 @@ import java.math.BigInteger;
     formalName = "Use Name",
     description = "Allows the name of the definition to be overridden.",
     name = "use-name",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModelModule.class)
 public class UseName {
   /**
    * "Used for binary formats instead of the textual name."

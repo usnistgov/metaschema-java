@@ -43,13 +43,14 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssemb
 import gov.nist.secauto.metaschema.databind.model.annotations.Matches;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
+import java.lang.Object;
+import java.lang.Override;
+import java.lang.String;
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -58,7 +59,7 @@ import java.util.List;
 @MetaschemaAssembly(
     formalName = "Inline Assembly Definition",
     name = "inline-define-assembly",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModelModule.class)
 public class InlineDefineAssembly {
   @BoundFlag(
       formalName = "Inline Assembly Name",
@@ -112,7 +113,7 @@ public class InlineDefineAssembly {
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
+      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props", namespace = "##default",
           inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
@@ -134,7 +135,7 @@ public class InlineDefineAssembly {
               binding = InlineDefineFlag.class),
           @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
       },
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "flags",
+      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "flags", namespace = "##default",
           inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _flags;
 
@@ -157,7 +158,7 @@ public class InlineDefineAssembly {
       useName = "example",
       maxOccurs = -1,
       groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "examples",
-          inJson = JsonGroupAsBehavior.LIST))
+          namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
   private List<Example> _examples;
 
   public String getName() {

@@ -61,7 +61,15 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstanceAbso
 
   @Override
   public String getBaseName() {
-    return ObjectUtils.requireNonNull(getInstance().getGroupAsName());
+    INSTANCE instance = getInstance();
+    String baseName = getInstance().getGroupAsName();
+    if (baseName == null) {
+      throw new IllegalStateException(String.format(
+          "Unable to derive the property name, due to missing group as name, for '%s' in the module '%s'.",
+          instance.toCoordinates(),
+          instance.getContainingModule().getLocation()));
+    }
+    return baseName;
   }
 
   @Override

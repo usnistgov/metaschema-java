@@ -93,9 +93,9 @@ public interface IChoiceGroupInstance
   @SuppressWarnings("null")
   @Override
   default String toCoordinates() {
-    return String.format("%s:%s-instance:%s/%s@%d",
-        getContainingDefinition().getContainingModule().getShortName(),
+    return String.format("%s-instance:%s:%s/%s@%d",
         getModelType().toString().toLowerCase(Locale.ROOT),
+        getContainingDefinition().getContainingModule().getShortName(),
         getContainingDefinition().getName(),
         getGroupAsName(),
         hashCode());

@@ -29,7 +29,8 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-
+import java.lang.Override;
+import java.lang.String;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -40,7 +41,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaAssembly(
     formalName = "Flag Used as the Field Value's JSON Property Name",
     name = "json-value-key-flag",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModelModule.class)
 public class JsonValueKeyFlag {
   @BoundFlag(
       formalName = "Flag Reference",
