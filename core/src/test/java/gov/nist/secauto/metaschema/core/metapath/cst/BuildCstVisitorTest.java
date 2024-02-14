@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.core.metapath.cst;
 
+import static gov.nist.secauto.metaschema.core.metapath.TestUtils.bool;
+import static gov.nist.secauto.metaschema.core.metapath.TestUtils.integer;
+import static gov.nist.secauto.metaschema.core.metapath.TestUtils.string;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
@@ -79,7 +82,7 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 @SuppressWarnings("PMD.TooManyStaticImports")
-class BuildAstVisitorTest {
+class BuildCstVisitorTest {
   @RegisterExtension
   Mockery context = new JUnit5Mockery();
 
@@ -289,4 +292,85 @@ class BuildAstVisitorTest {
         () -> assertEquals(expectedResult, resultItem));
   }
 
+  static Stream<Arguments> testIf() {
+    return Stream.of(
+        Arguments.of("if (true()) then true() else false()", IBooleanItem.TRUE),
+        Arguments.of("if (false()) then true() else false()", IBooleanItem.FALSE),
+        Arguments.of("if (()) then true() else false()", IBooleanItem.FALSE),
+        Arguments.of("if (1) then true() else false()", IBooleanItem.TRUE),
+        Arguments.of("if (0) then true() else false()", IBooleanItem.FALSE),
+        Arguments.of("if (-1) then true() else false()", IBooleanItem.TRUE));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void testIf(@NonNull String metapath, @NonNull IBooleanItem expectedResult) {
+    IExpression ast = parseExpression(metapath);
+
+    IDocumentNodeItem document = newTestDocument();
+    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
+    IItem resultItem = FunctionUtils.getFirstItem(result, false);
+    assertAll(
+        () -> assertEquals(If.class, ast.getClass()),
+        () -> assertNotNull(resultItem),
+        () -> assertThat(resultItem, instanceOf(IBooleanItem.class)),
+        () -> assertEquals(expectedResult, resultItem));
+  }
+
+  static Stream<Arguments> testFor() {
+    return Stream.of(
+        Arguments.of(
+            "for $num in (1,2,3) return $num+1",
+            ISequence.of(
+                integer(2),
+                integer(3),
+                integer(4))),
+        Arguments.of(
+            "for $num in (1,2,3), $bool in (true(),false()) return ($num,$bool)",
+            ISequence.of(
+                integer(1), bool(true), integer(1), bool(false),
+                integer(2), bool(true), integer(2), bool(false),
+                integer(3), bool(true), integer(3), bool(false))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void testFor(@NonNull String metapath, @NonNull ISequence<?> expectedResult) {
+    IExpression ast = parseExpression(metapath);
+
+    IDocumentNodeItem document = newTestDocument();
+    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
+    assertAll(
+        () -> assertEquals(For.class, ast.getClass()),
+        () -> assertNotNull(result),
+        () -> assertThat(result, instanceOf(ISequence.class)),
+        () -> assertEquals(expectedResult, result));
+  }
+
+  static Stream<Arguments> testSimpleMap() {
+    return Stream.of(
+        Arguments.of(
+            "(1,2,1)!'*'",
+            ISequence.of(string("*"), string("*"), string("*"))),
+        Arguments.of(
+            "(1,2,3) ! concat('id-',.) ! concat(.,'-suffix')",
+            ISequence.of(
+                string("id-1-suffix"),
+                string("id-2-suffix"),
+                string("id-3-suffix"))));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void testSimpleMap(@NonNull String metapath, @NonNull ISequence<?> expectedResult) {
+    IExpression ast = parseExpression(metapath);
+
+    IDocumentNodeItem document = newTestDocument();
+    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
+    assertAll(
+        () -> assertEquals(SimpleMap.class, ast.getClass()),
+        () -> assertNotNull(result),
+        () -> assertThat(result, instanceOf(ISequence.class)),
+        () -> assertEquals(expectedResult, result));
+  }
 }

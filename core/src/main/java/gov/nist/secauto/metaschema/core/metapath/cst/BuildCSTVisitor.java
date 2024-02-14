@@ -38,6 +38,7 @@ import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.Comparisonexpr
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ContextitemexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.EqnameContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ExprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ExprsingleContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ForexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ForwardstepContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.FunctioncallContext;
@@ -57,6 +58,8 @@ import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.Quantifiedexpr
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.RangeexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.RelativepathexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ReversestepContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleforbindingContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleforclauseContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleletbindingContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleletclauseContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimplemapexprContext;
@@ -64,6 +67,7 @@ import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.Stringconcatex
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.UnaryexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.UnionexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ValuecompContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.VarnameContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.VarrefContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.WildcardContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10Lexer;
@@ -743,7 +747,31 @@ public class BuildCSTVisitor
 
   @Override
   protected IExpression handleForexpr(ForexprContext ctx) {
-    throw new UnsupportedOperationException("implement");
+    SimpleforclauseContext simpleForClause = ctx.simpleforclause();
+
+    // for SimpleForBinding ("," SimpleForBinding)*
+    int bindingCount = simpleForClause.getChildCount() / 2;
+
+    @NonNull IExpression retval = ObjectUtils.notNull(ctx.exprsingle().accept(this));
+
+    // step through in reverse
+    for (int idx = bindingCount - 1; idx >= 0; idx--) {
+      SimpleforbindingContext simpleForBinding = simpleForClause.simpleforbinding(idx);
+
+      VarnameContext varName = simpleForBinding.varname();
+      ExprsingleContext exprSingle = simpleForBinding.exprsingle();
+
+      Name name = (Name) varName.accept(this);
+      IExpression boundExpression = exprSingle.accept(this);
+
+      assert name != null;
+      assert boundExpression != null;
+
+      Let.VariableDeclaration variable = new Let.VariableDeclaration(name, boundExpression);
+
+      retval = new For(variable, retval);
+    }
+    return retval;
   }
 
   /* ====================================================================
@@ -830,8 +858,14 @@ public class BuildCSTVisitor
    */
 
   @Override
-  protected IExpression handleSimplemapexpr(SimplemapexprContext ctx) {
-    throw new UnsupportedOperationException("implement");
+  protected IExpression handleSimplemapexpr(SimplemapexprContext context) {
+    return handleGroupedNAiry(context, 0, 2, (ctx, idx, left) -> {
+      // the next child is "!"
+      assert "!".equals(ctx.getChild(idx).getText());
+      IExpression right = ctx.getChild(idx + 1).accept(this);
+
+      return new SimpleMap(left, right);
+    });
   }
 
   /* =======================================================================

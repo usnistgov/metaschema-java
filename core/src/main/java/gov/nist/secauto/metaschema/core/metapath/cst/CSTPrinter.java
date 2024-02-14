@@ -323,6 +323,17 @@ public final class CSTPrinter {
     public String visitQuantified(Quantified expr, State context) {
       return appendNode(expr, super.visitQuantified(expr, context), context);
     }
+
+    @Override
+    public String visitFor(For expr, State context) {
+      return appendNode(expr, super.visitFor(expr, context), context);
+    }
+
+    @Override
+    public String visitSimpleMap(SimpleMap expr, State context) {
+      return appendNode(expr, super.visitSimpleMap(expr, context), context);
+    }
+
   }
 
   static class State {

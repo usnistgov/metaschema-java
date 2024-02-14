@@ -28,84 +28,60 @@ package gov.nist.secauto.metaschema.core.metapath.cst;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.item.ItemUtils;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.metapath.cst.Let.VariableDeclaration;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * The CST node for a Metapath
- * <a href="https://www.w3.org/TR/xpath-31/#dt-expanded-qname">expanded QName
- * name test</a>.
- */
-public class Name // NOPMD - intentional
-    implements IExpression {
+@SuppressWarnings("PMD.ShortClassName")
+public class For implements IExpression {
+  @NonNull
+  private final Let.VariableDeclaration variable;
+  @NonNull
+  private final IExpression returnExpression;
+
+  public For(@NonNull VariableDeclaration variable, @NonNull IExpression returnExpr) {
+    this.variable = variable;
+    this.returnExpression = returnExpr;
+  }
 
   @NonNull
-  private final String value;
-
-  /**
-   * Construct a new expanded QName-based literal expression.
-   *
-   * @param value
-   *          the literal value
-   */
-  public Name(@NonNull String value) {
-    this.value = value;
+  protected Let.VariableDeclaration getVariable() {
+    return variable;
   }
 
-  /**
-   * Get the string value of the name.
-   *
-   * @return the string value of the name
-   */
   @NonNull
-  public String getValue() {
-    return value;
+  protected IExpression getReturnExpression() {
+    return returnExpression;
   }
 
   @Override
-  public List<IExpression> getChildren() {
-    return CollectionUtil.emptyList();
-  }
-
-  @Override
-  public Class<INodeItem> getBaseResultType() {
-    return INodeItem.class;
-  }
-
-  @Override
-  public Class<INodeItem> getStaticResultType() {
-    return getBaseResultType();
+  public List<? extends IExpression> getChildren() {
+    return ObjectUtils.notNull(
+        List.of(returnExpression));
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitName(this, context);
+    return visitor.visitFor(this, context);
   }
 
   @Override
-  public ISequence<? extends INodeItem> accept(
-      DynamicContext dynamicContext,
-      ISequence<?> focus) {
-    return ISequence.of(focus.asStream()
-        .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
-        .filter(this::match));
-  }
+  public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
+    Let.VariableDeclaration variable = getVariable();
+    ISequence<?> variableResult = variable.getBoundExpression().accept(dynamicContext, focus);
 
-  @SuppressWarnings("PMD.UnusedPrivateMethod")
-  private boolean match(INodeItem item) {
-    return item instanceof IDefinitionNodeItem
-        && getValue().equals(((IDefinitionNodeItem<?, ?>) item).getName());
-  }
+    DynamicContext subDynamicContext = dynamicContext.subContext();
 
-  @SuppressWarnings("null")
-  @Override
-  public String toASTString() {
-    return String.format("%s[value=%s]", getClass().getName(), getValue());
+    List<IItem> retval = new LinkedList<>();
+    for (IItem item : variableResult) {
+      subDynamicContext.bindVariableValue(variable.getName().getValue(), ISequence.of(item));
+      retval.addAll(getReturnExpression().accept(subDynamicContext, focus));
+    }
+    return ISequence.of(retval);
   }
 }

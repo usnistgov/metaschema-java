@@ -40,11 +40,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * <a href="https://www.w3.org/TR/xpath-31/#id-let-expressions">Let
  * expression</a> supporting variable value binding.
  */
-public class Let implements IExpression { // NOPMD class name ok
+@SuppressWarnings("PMD.ShortClassName")
+public class Let implements IExpression {
   @NonNull
-  private final Name name;
-  @NonNull
-  private final IExpression boundExpression;
+  private final VariableDeclaration variable;
   @NonNull
   private final IExpression returnExpression;
 
@@ -59,29 +58,18 @@ public class Let implements IExpression { // NOPMD class name ok
    *          the inner expression to evaluate with the variable in-scope
    */
   public Let(@NonNull Name name, @NonNull IExpression boundExpression, @NonNull IExpression returnExpression) {
-    this.name = name;
-    this.boundExpression = boundExpression;
+    this.variable = new VariableDeclaration(name, boundExpression);
     this.returnExpression = returnExpression;
   }
 
   /**
-   * Get the variable name.
+   * Get the variable to evaluate with the variable in-scope.
    *
-   * @return the variable name
+   * @return the inner expression
    */
   @NonNull
-  public Name getName() {
-    return name;
-  }
-
-  /**
-   * Get the expression bound to the variable.
-   *
-   * @return the bound expression
-   */
-  @NonNull
-  public IExpression getBoundExpression() {
-    return boundExpression;
+  public VariableDeclaration getVariable() {
+    return variable;
   }
 
   /**
@@ -97,7 +85,7 @@ public class Let implements IExpression { // NOPMD class name ok
   @Override
   public List<? extends IExpression> getChildren() {
     return ObjectUtils.notNull(
-        List.of(boundExpression, returnExpression));
+        List.of(returnExpression));
   }
 
   @Override
@@ -107,14 +95,53 @@ public class Let implements IExpression { // NOPMD class name ok
 
   @Override
   public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    ISequence<?> result = getBoundExpression().accept(dynamicContext, focus);
-
-    String name = getName().getValue();
-
     DynamicContext subDynamicContext = dynamicContext.subContext();
 
-    subDynamicContext.bindVariableValue(name, result);
+    getVariable().bind(dynamicContext, focus, subDynamicContext);
 
     return getReturnExpression().accept(subDynamicContext, focus);
+  }
+
+  public static class VariableDeclaration {
+    @NonNull
+    private final Name name;
+    @NonNull
+    private final IExpression boundExpression;
+
+    public VariableDeclaration(@NonNull Name name, @NonNull IExpression boundExpression) {
+      this.name = name;
+      this.boundExpression = boundExpression;
+    }
+
+    /**
+     * Get the variable name.
+     *
+     * @return the variable name
+     */
+    @NonNull
+    public Name getName() {
+      return name;
+    }
+
+    /**
+     * Get the expression bound to the variable.
+     *
+     * @return the bound expression
+     */
+    @NonNull
+    public IExpression getBoundExpression() {
+      return boundExpression;
+    }
+
+    public void bind(
+        @NonNull DynamicContext evalContext,
+        @NonNull ISequence<?> focus,
+        @NonNull DynamicContext boundContext) {
+
+      ISequence<?> result = getBoundExpression().accept(evalContext, focus);
+
+      String name = getName().getValue();
+      boundContext.bindVariableValue(name, result);
+    }
   }
 }

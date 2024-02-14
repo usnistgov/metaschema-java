@@ -28,84 +28,29 @@ package gov.nist.secauto.metaschema.core.metapath.cst;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.item.ItemUtils;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-
-import java.util.List;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-/**
- * The CST node for a Metapath
- * <a href="https://www.w3.org/TR/xpath-31/#dt-expanded-qname">expanded QName
- * name test</a>.
- */
-public class Name // NOPMD - intentional
-    implements IExpression {
+public class SimpleMap
+    extends AbstractBinaryExpression<IExpression, IExpression> {
 
-  @NonNull
-  private final String value;
-
-  /**
-   * Construct a new expanded QName-based literal expression.
-   *
-   * @param value
-   *          the literal value
-   */
-  public Name(@NonNull String value) {
-    this.value = value;
-  }
-
-  /**
-   * Get the string value of the name.
-   *
-   * @return the string value of the name
-   */
-  @NonNull
-  public String getValue() {
-    return value;
+  public SimpleMap(@NonNull IExpression left, @NonNull IExpression right) {
+    super(left, right);
   }
 
   @Override
-  public List<IExpression> getChildren() {
-    return CollectionUtil.emptyList();
-  }
+  public ISequence<?> accept(DynamicContext dynamicContext, ISequence<?> focus) {
+    ISequence<?> leftResult = getLeft().accept(dynamicContext, focus);
 
-  @Override
-  public Class<INodeItem> getBaseResultType() {
-    return INodeItem.class;
-  }
-
-  @Override
-  public Class<INodeItem> getStaticResultType() {
-    return getBaseResultType();
+    IExpression right = getRight();
+    return ObjectUtils.notNull(leftResult.stream()
+        .flatMap(item -> right.accept(dynamicContext, ISequence.of(item)).asStream())
+        .collect(ISequence.toSequence()));
   }
 
   @Override
   public <RESULT, CONTEXT> RESULT accept(IExpressionVisitor<RESULT, CONTEXT> visitor, CONTEXT context) {
-    return visitor.visitName(this, context);
-  }
-
-  @Override
-  public ISequence<? extends INodeItem> accept(
-      DynamicContext dynamicContext,
-      ISequence<?> focus) {
-    return ISequence.of(focus.asStream()
-        .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
-        .filter(this::match));
-  }
-
-  @SuppressWarnings("PMD.UnusedPrivateMethod")
-  private boolean match(INodeItem item) {
-    return item instanceof IDefinitionNodeItem
-        && getValue().equals(((IDefinitionNodeItem<?, ?>) item).getName());
-  }
-
-  @SuppressWarnings("null")
-  @Override
-  public String toASTString() {
-    return String.format("%s[value=%s]", getClass().getName(), getValue());
+    return visitor.visitSimpleMap(this, context);
   }
 }
