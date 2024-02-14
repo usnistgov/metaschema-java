@@ -24,59 +24,43 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint.impl;
+package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.constraint.IScopedContraints;
-import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstaints;
-
-import java.net.URI;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class DefaultScopedContraints implements IScopedContraints {
-  @NonNull
-  private final URI namespace;
-  @NonNull
-  private final String shortName;
-  @NonNull
-  private final List<ITargetedConstaints> targetedConstraints;
+public interface IFeatureModelConstrained extends IModelConstrained, IFeatureValueConstrained {
+  @Override
+  IModelConstrained getConstraintSupport();
 
-  /**
-   * Construct a new set of scoped constraints.
-   *
-   * @param namespace
-   *          the associated Module namespace
-   * @param shortName
-   *          the associated Module short name
-   * @param targetedConstraints
-   *          the set of constraints
-   * @see IModule#getXmlNamespace()
-   * @see IModule#getShortName()
-   */
-  public DefaultScopedContraints(
-      @NonNull URI namespace,
-      @NonNull String shortName,
-      @NonNull List<ITargetedConstaints> targetedConstraints) {
-    this.namespace = namespace;
-    this.shortName = shortName;
-    this.targetedConstraints = targetedConstraints;
+  @Override
+  default List<? extends IIndexConstraint> getIndexConstraints() {
+    return getConstraintSupport().getIndexConstraints();
   }
 
   @Override
-  public URI getModuleNamespace() {
-    return namespace;
+  default List<? extends IUniqueConstraint> getUniqueConstraints() {
+    return getConstraintSupport().getUniqueConstraints();
   }
 
   @Override
-  public String getModuleShortName() {
-    return shortName;
+  default List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
+    return getConstraintSupport().getHasCardinalityConstraints();
   }
 
   @Override
-  public List<ITargetedConstaints> getTargetedContraints() {
-    return targetedConstraints;
+  default void addConstraint(@NonNull IIndexConstraint constraint) {
+    getConstraintSupport().addConstraint(constraint);
   }
 
+  @Override
+  default void addConstraint(@NonNull IUniqueConstraint constraint) {
+    getConstraintSupport().addConstraint(constraint);
+  }
+
+  @Override
+  default void addConstraint(@NonNull ICardinalityConstraint constraint) {
+    getConstraintSupport().addConstraint(constraint);
+  }
 }

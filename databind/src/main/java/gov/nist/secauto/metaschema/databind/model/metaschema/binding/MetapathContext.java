@@ -47,10 +47,13 @@ import java.util.List;
     name = "metapath-context",
     moduleClass = MetaschemaModelModule.class)
 public class MetapathContext {
-  @BoundField(
+  @BoundAssembly(
       description = "A Metapath expression identifying the model node that the constraints will be applied to.",
-      useName = "metapath")
-  private String _metapath;
+      useName = "metapath",
+      minOccurs = 1,
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "metapaths", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+  private List<MetaschemaMetapath> _metapaths;
 
   @BoundAssembly(
       useName = "constraints")
@@ -68,12 +71,40 @@ public class MetapathContext {
       useName = "remarks")
   private Remarks _remarks;
 
-  public String getMetapath() {
-    return _metapath;
+  public List<MetaschemaMetapath> getMetapaths() {
+    return _metapaths;
   }
 
-  public void setMetapath(String value) {
-    _metapath = value;
+  public void setMetapaths(List<MetaschemaMetapath> value) {
+    _metapaths = value;
+  }
+
+  /**
+   * Add a new {@link MetaschemaMetapath} item to the underlying collection.
+   *
+   * @param item
+   *          the item to add
+   * @return {@code true}
+   */
+  public boolean addMetapath(MetaschemaMetapath item) {
+    MetaschemaMetapath value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    if (_metapaths == null) {
+      _metapaths = new LinkedList<>();
+    }
+    return _metapaths.add(value);
+  }
+
+  /**
+   * Remove the first matching {@link MetaschemaMetapath} item from the underlying
+   * collection.
+   *
+   * @param item
+   *          the item to remove
+   * @return {@code true} if the item was removed or {@code false} otherwise
+   */
+  public boolean removeMetapath(MetaschemaMetapath item) {
+    MetaschemaMetapath value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    return _metapaths != null && _metapaths.remove(value);
   }
 
   public AssemblyConstraints getConstraints() {

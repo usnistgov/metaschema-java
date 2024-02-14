@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metaschema-meta-constraints xmlns="http://csrc.nist.gov/ns/oscal/metaschema/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../metaschema/schema/xml/metaschema-meta-constraints.xsd">
+    xsi:schemaLocation="http://csrc.nist.gov/ns/oscal/metaschema/1.0 ../../../../core/metaschema/schema/xml/metaschema-meta-constraints.xsd">
     <import href="test"/>
     
     <context>
-        <metaschema-metapath target="/(computer|vendor)/@id"/>
+        <metapath target="/(computer|vendor)/@id"/>
         <constraints>
             <matches target="." datatype="uuid"/>
         </constraints>

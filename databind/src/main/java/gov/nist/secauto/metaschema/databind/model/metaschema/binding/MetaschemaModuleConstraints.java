@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.UriAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.UriReferenceAdapter;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
@@ -39,6 +40,9 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IModelConstraintsBase;
+import gov.nist.secauto.metaschema.databind.model.metaschema.ITargetedConstraintBase;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IValueConstraintsBase;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -253,7 +257,7 @@ public class MetaschemaModuleConstraints {
     @MetaschemaAssembly(
         name = "flag",
         moduleClass = MetaschemaModelModule.class)
-    public static class Flag {
+    public static class Flag implements IValueConstraintsBase {
       @BoundFlag(
           formalName = "Constraint Target Metapath Expression",
           name = "target",
@@ -275,7 +279,12 @@ public class MetaschemaModuleConstraints {
                   binding = FlagMatches.class)
           },
           groupAs = @GroupAs(name = "rules", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
-      private List<Object> _rules;
+      private List<? extends ITargetedConstraintBase> _rules;
+
+      @Override
+      public List<ConstraintLetExpression> getLets() {
+        return CollectionUtil.emptyList();
+      }
 
       public String getTarget() {
         return _target;
@@ -285,11 +294,12 @@ public class MetaschemaModuleConstraints {
         _target = value;
       }
 
-      public List<Object> getRules() {
+      @Override
+      public List<? extends ITargetedConstraintBase> getRules() {
         return _rules;
       }
 
-      public void setRules(List<Object> value) {
+      public void setRules(List<? extends ITargetedConstraintBase> value) {
         _rules = value;
       }
 
@@ -302,7 +312,7 @@ public class MetaschemaModuleConstraints {
     @MetaschemaAssembly(
         name = "field",
         moduleClass = MetaschemaModelModule.class)
-    public static class Field {
+    public static class Field implements IValueConstraintsBase {
       @BoundFlag(
           formalName = "Constraint Target Metapath Expression",
           name = "target",
@@ -324,7 +334,7 @@ public class MetaschemaModuleConstraints {
                   binding = TargetedMatchesConstraint.class)
           },
           groupAs = @GroupAs(name = "rules", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
-      private List<Object> _rules;
+      private List<? extends ITargetedConstraintBase> _rules;
 
       public String getTarget() {
         return _target;
@@ -334,11 +344,17 @@ public class MetaschemaModuleConstraints {
         _target = value;
       }
 
-      public List<Object> getRules() {
+      @Override
+      public List<ConstraintLetExpression> getLets() {
+        return CollectionUtil.emptyList();
+      }
+
+      @Override
+      public List<? extends ITargetedConstraintBase> getRules() {
         return _rules;
       }
 
-      public void setRules(List<Object> value) {
+      public void setRules(List<? extends ITargetedConstraintBase> value) {
         _rules = value;
       }
 
@@ -351,7 +367,7 @@ public class MetaschemaModuleConstraints {
     @MetaschemaAssembly(
         name = "assembly",
         moduleClass = MetaschemaModelModule.class)
-    public static class Assembly {
+    public static class Assembly implements IModelConstraintsBase {
       @BoundFlag(
           formalName = "Constraint Target Metapath Expression",
           name = "target",
@@ -379,7 +395,7 @@ public class MetaschemaModuleConstraints {
                   binding = TargetedHasCardinalityConstraint.class)
           },
           groupAs = @GroupAs(name = "rules", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
-      private List<Object> _rules;
+      private List<? extends ITargetedConstraintBase> _rules;
 
       public String getTarget() {
         return _target;
@@ -389,11 +405,17 @@ public class MetaschemaModuleConstraints {
         _target = value;
       }
 
-      public List<Object> getRules() {
+      @Override
+      public List<ConstraintLetExpression> getLets() {
+        return CollectionUtil.emptyList();
+      }
+
+      @Override
+      public List<? extends ITargetedConstraintBase> getRules() {
         return _rules;
       }
 
-      public void setRules(List<Object> value) {
+      public void setRules(List<? extends ITargetedConstraintBase> value) {
         _rules = value;
       }
 

@@ -24,12 +24,9 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint.impl;
+package gov.nist.secauto.metaschema.core.model.constraint;
 
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
-import gov.nist.secauto.metaschema.core.model.constraint.IScopedContraints;
-import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstaints;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -105,7 +102,7 @@ public class DefaultConstraintSet implements IConstraintSet {
   }
 
   @Override
-  public Iterable<ITargetedConstaints> getTargetedConstraintsForModule(@NonNull IModule module) {
+  public Iterable<ITargetedConstraints> getTargetedConstraintsForModule(@NonNull IModule module) {
     QName qname = module.getQName();
 
     Map<QName, List<IScopedContraints>> map = getScopedContraints();

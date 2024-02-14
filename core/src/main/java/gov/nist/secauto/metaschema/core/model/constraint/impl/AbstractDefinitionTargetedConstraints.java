@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.constraint.AbstractTargetedConstraints;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 
 import java.util.Locale;

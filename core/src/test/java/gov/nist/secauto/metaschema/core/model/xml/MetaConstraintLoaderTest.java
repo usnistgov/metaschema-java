@@ -51,7 +51,7 @@ public class MetaConstraintLoaderTest {
   @Test
   void test() throws MetaschemaException, IOException {
 
-    IConstraintSet constraintSet = new MetaConstraintLoader()
+    IConstraintSet constraintSet = new XmlMetaConstraintLoader()
         .load(ObjectUtils.requireNonNull(Paths.get("src/test/resources/computer-metaschema-meta-constraints.xml")));
 
     ExternalConstraintsModulePostProcessor postProcessor

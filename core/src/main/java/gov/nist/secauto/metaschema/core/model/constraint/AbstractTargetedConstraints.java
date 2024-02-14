@@ -24,23 +24,25 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint.impl;
+package gov.nist.secauto.metaschema.core.model.constraint;
 
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * A set of constraints targeting a {@link IAssemblyDefinition} based on a
- * target Metapath expression.
+ * Provides an base implementation for a set of constraints that target a
+ * definition using a target Metapath expression.
  *
- * @see #getTargetExpression()
+ * @param <T>
+ *          the Java type of the constraint container
  */
-public class AssemblyTargetedConstraints
-    extends AbstractDefinitionTargetedConstraints<IAssemblyDefinition, IModelConstrained>
-    implements IFeatureModelConstrained {
+public abstract class AbstractTargetedConstraints<T extends IValueConstrained>
+    implements ITargetedConstraints, IFeatureValueConstrained {
+  @NonNull
+  private final MetapathExpression targetExpression;
+  @NonNull
+  private final T constraints;
 
   /**
    * Construct a new set of targeted constraints.
@@ -50,23 +52,20 @@ public class AssemblyTargetedConstraints
    * @param constraints
    *          the constraints to apply to matching targets
    */
-  public AssemblyTargetedConstraints(
+  protected AbstractTargetedConstraints(
       @NonNull MetapathExpression target,
-      @NonNull IModelConstrained constraints) {
-    super(target, constraints);
+      @NonNull T constraints) {
+    this.targetExpression = target;
+    this.constraints = constraints;
   }
 
   @Override
-  public void target(@NonNull IAssemblyDefinition definition) {
-    applyTo(definition);
+  public MetapathExpression getTargetExpression() {
+    return targetExpression;
   }
 
   @Override
-  @SuppressWarnings("null")
-  protected void applyTo(@NonNull IAssemblyDefinition definition) {
-    super.applyTo(definition);
-    getIndexConstraints().forEach(constraint -> definition.addConstraint(constraint));
-    getUniqueConstraints().forEach(constraint -> definition.addConstraint(constraint));
-    getHasCardinalityConstraints().forEach(constraint -> definition.addConstraint(constraint));
+  public T getConstraintSupport() {
+    return constraints;
   }
 }

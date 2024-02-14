@@ -29,17 +29,18 @@ package gov.nist.secauto.metaschema.core.model.xml;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.AbstractLoader;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IConstraintLoader;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.constraint.AbstractTargetedConstraints;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.core.model.constraint.IFeatureModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
-import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstaints;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.AbstractTargetedConstraints;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.IFeatureModelConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstraints;
 import gov.nist.secauto.metaschema.core.model.xml.impl.ConstraintXmlSupport;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MetaschemaMetaConstraintsDocument;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ModelContextType;
@@ -61,10 +62,11 @@ import java.util.stream.Stream;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public class MetaConstraintLoader
-    extends AbstractLoader<IConstraintSet> {
+public class XmlMetaConstraintLoader
+    extends AbstractLoader<IConstraintSet>
+    implements IConstraintLoader {
   // private static final Logger LOGGER =
-  // LogManager.getLogger(MetaConstraintLoader.class);
+  // LogManager.getLogger(XmlMetaConstraintLoader.class);
 
   @Override
   protected IConstraintSet parseResource(URI resource, Deque<URI> visitedResources) throws IOException {
@@ -76,7 +78,7 @@ public class MetaConstraintLoader
 
     MetaschemaMetaConstraintsDocument.MetaschemaMetaConstraints constraints = xmlObject.getMetaschemaMetaConstraints();
 
-    List<ITargetedConstaints> targetedConstraints = ObjectUtils.notNull(constraints.getContextList().stream()
+    List<ITargetedConstraints> targetedConstraints = ObjectUtils.notNull(constraints.getContextList().stream()
         .flatMap(context -> parseContext(ObjectUtils.notNull(context), null, source).getTargetedConstraints().stream())
         .collect(Collectors.toList()));
     return new MetaConstraintSet(targetedConstraints);
@@ -89,14 +91,14 @@ public class MetaConstraintLoader
 
     List<String> metapaths;
     if (parent == null) {
-      metapaths = ObjectUtils.notNull(contextObj.getMetaschemaMetapathList().stream()
-          .map(path -> path.getTarget())
+      metapaths = ObjectUtils.notNull(contextObj.getMetapathList().stream()
+          .map(metapath -> metapath.getTarget())
           .collect(Collectors.toList()));
     } else {
       List<String> parentMetapaths = parent.getMetapaths().stream()
           .collect(Collectors.toList());
-      metapaths = ObjectUtils.notNull(contextObj.getMetaschemaMetapathList().stream()
-          .map(path -> path.getTarget())
+      metapaths = ObjectUtils.notNull(contextObj.getMetapathList().stream()
+          .map(metapath -> metapath.getTarget())
           .flatMap(childPath -> {
             return parentMetapaths.stream()
                 .map(parentPath -> parentPath + '/' + childPath);
@@ -154,7 +156,7 @@ public class MetaConstraintLoader
       this.constraints = constraints;
     }
 
-    public List<ITargetedConstaints> getTargetedConstraints() {
+    public List<ITargetedConstraints> getTargetedConstraints() {
       return Stream.concat(
           getMetapaths().stream()
               .map(metapath -> MetapathExpression.compile(ObjectUtils.notNull(metapath)))
@@ -226,14 +228,14 @@ public class MetaConstraintLoader
 
   private static final class MetaConstraintSet implements IConstraintSet {
     @NonNull
-    private final List<ITargetedConstaints> targetedConstraints;
+    private final List<ITargetedConstraints> targetedConstraints;
 
-    private MetaConstraintSet(@NonNull List<ITargetedConstaints> targetedConstraints) {
+    private MetaConstraintSet(@NonNull List<ITargetedConstraints> targetedConstraints) {
       this.targetedConstraints = targetedConstraints;
     }
 
     @Override
-    public Iterable<ITargetedConstaints> getTargetedConstraintsForModule(IModule module) {
+    public Iterable<ITargetedConstraints> getTargetedConstraintsForModule(IModule module) {
       return targetedConstraints;
     }
 

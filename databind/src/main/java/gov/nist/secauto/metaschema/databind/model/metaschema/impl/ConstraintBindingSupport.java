@@ -145,7 +145,6 @@ public final class ConstraintBindingSupport {
         constraintSet.addConstraint(constraint);
       }
     }
-
   }
 
   @NonNull

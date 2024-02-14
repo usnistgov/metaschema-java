@@ -29,21 +29,22 @@ package gov.nist.secauto.metaschema.core.model.xml;
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.AbstractLoader;
+import gov.nist.secauto.metaschema.core.model.IConstraintLoader;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
+import gov.nist.secauto.metaschema.core.model.constraint.AssemblyTargetedConstraints;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultConstraintSet;
+import gov.nist.secauto.metaschema.core.model.constraint.DefaultScopedContraints;
+import gov.nist.secauto.metaschema.core.model.constraint.FieldTargetedConstraints;
+import gov.nist.secauto.metaschema.core.model.constraint.FlagTargetedConstraints;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.IScopedContraints;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
-import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstaints;
+import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstraints;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.AssemblyTargetedConstraints;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultConstraintSet;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultScopedContraints;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.FieldTargetedConstraints;
-import gov.nist.secauto.metaschema.core.model.constraint.impl.FlagTargetedConstraints;
 import gov.nist.secauto.metaschema.core.model.xml.impl.ConstraintXmlSupport;
 import gov.nist.secauto.metaschema.core.model.xml.impl.XmlObjectParser;
 import gov.nist.secauto.metaschema.core.model.xml.impl.XmlObjectParser.Handler;
@@ -81,34 +82,35 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * every use. Any constraint set imported is also loaded and cached
  * automatically.
  */
-public class ConstraintLoader
-    extends AbstractLoader<IConstraintSet> {
+public class XmlConstraintLoader
+    extends AbstractLoader<IConstraintSet>
+    implements IConstraintLoader {
 
   @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
   private static final Map<QName,
-      Handler<Pair<ISource, List<ITargetedConstaints>>>> SCOPE_OBJECT_MAPPING = ObjectUtils.notNull(
+      Handler<Pair<ISource, List<ITargetedConstraints>>>> SCOPE_OBJECT_MAPPING = ObjectUtils.notNull(
           Map.ofEntries(
               Map.entry(new QName(IModule.XML_NAMESPACE, "assembly"),
-                  ConstraintLoader::handleScopedAssembly),
+                  XmlConstraintLoader::handleScopedAssembly),
               Map.entry(new QName(IModule.XML_NAMESPACE, "field"),
-                  ConstraintLoader::handleScopedField),
+                  XmlConstraintLoader::handleScopedField),
               Map.entry(new QName(IModule.XML_NAMESPACE, "flag"),
-                  ConstraintLoader::handleScopedFlag)));
+                  XmlConstraintLoader::handleScopedFlag)));
 
   @NonNull
-  private static final XmlObjectParser<Pair<ISource, List<ITargetedConstaints>>> SCOPE_PARSER
+  private static final XmlObjectParser<Pair<ISource, List<ITargetedConstraints>>> SCOPE_PARSER
       = new XmlObjectParser<>(SCOPE_OBJECT_MAPPING) {
 
         @Override
-        protected Handler<Pair<ISource, List<ITargetedConstaints>>> identifyHandler(XmlCursor cursor, XmlObject obj) {
-          Handler<Pair<ISource, List<ITargetedConstaints>>> retval;
+        protected Handler<Pair<ISource, List<ITargetedConstraints>>> identifyHandler(XmlCursor cursor, XmlObject obj) {
+          Handler<Pair<ISource, List<ITargetedConstraints>>> retval;
           if (obj instanceof Scope.Assembly) {
-            retval = ConstraintLoader::handleScopedAssembly;
+            retval = XmlConstraintLoader::handleScopedAssembly;
           } else if (obj instanceof Scope.Field) {
-            retval = ConstraintLoader::handleScopedField;
+            retval = XmlConstraintLoader::handleScopedField;
           } else if (obj instanceof Scope.Flag) {
-            retval = ConstraintLoader::handleScopedFlag;
+            retval = XmlConstraintLoader::handleScopedFlag;
           } else {
             throw new IllegalStateException(String.format("Unhandled element type '%s'.", obj.getClass().getName()));
           }
@@ -189,7 +191,7 @@ public class ConstraintLoader
     for (Scope scope : xmlObject.getMETASCHEMACONSTRAINTS().getScopeList()) {
       assert scope != null;
 
-      List<ITargetedConstaints> targetedConstraints = new LinkedList<>(); // NOPMD - intentional
+      List<ITargetedConstraints> targetedConstraints = new LinkedList<>(); // NOPMD - intentional
       try {
         SCOPE_PARSER.parse(scope, Pair.of(constraintSource, targetedConstraints));
       } catch (MetapathException | XmlValueNotSupportedException ex) {
@@ -216,7 +218,7 @@ public class ConstraintLoader
 
   private static void handleScopedAssembly( // NOPMD false positive
       @NonNull XmlObject obj,
-      Pair<ISource, List<ITargetedConstaints>> state) {
+      Pair<ISource, List<ITargetedConstraints>> state) {
     Scope.Assembly assembly = (Scope.Assembly) obj;
     MetapathExpression expression = ObjectUtils.requireNonNull(assembly.getTarget());
 
@@ -228,7 +230,7 @@ public class ConstraintLoader
 
   private static void handleScopedField( // NOPMD false positive
       @NonNull XmlObject obj,
-      Pair<ISource, List<ITargetedConstaints>> state) {
+      Pair<ISource, List<ITargetedConstraints>> state) {
     Scope.Field field = (Scope.Field) obj;
     MetapathExpression expression = ObjectUtils.requireNonNull(field.getTarget());
 
@@ -240,7 +242,7 @@ public class ConstraintLoader
 
   private static void handleScopedFlag( // NOPMD false positive
       @NonNull XmlObject obj,
-      Pair<ISource, List<ITargetedConstaints>> state) {
+      Pair<ISource, List<ITargetedConstraints>> state) {
     Scope.Flag flag = (Scope.Flag) obj;
     MetapathExpression expression = ObjectUtils.requireNonNull(flag.getTarget());
 

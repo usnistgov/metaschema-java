@@ -36,7 +36,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.IModuleLoader;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
-import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstaints;
+import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstraints;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.ConstraintComposingVisitor;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -74,7 +74,7 @@ public class ExternalConstraintsModulePostProcessor implements IModuleLoader.IMo
     IModuleNodeItem moduleItem = INodeItemFactory.instance().newModuleNodeItem(module);
 
     for (IConstraintSet set : getRegisteredConstraintSets()) {
-      for (ITargetedConstaints targeted : set.getTargetedConstraintsForModule(module)) {
+      for (ITargetedConstraints targeted : set.getTargetedConstraintsForModule(module)) {
         // apply targeted constraints
         MetapathExpression targetExpression = targeted.getTargetExpression();
         ISequence<?> items = targetExpression.evaluateAs(moduleItem, ResultType.SEQUENCE);
