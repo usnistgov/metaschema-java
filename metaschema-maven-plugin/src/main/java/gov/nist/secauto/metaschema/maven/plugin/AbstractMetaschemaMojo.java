@@ -26,6 +26,13 @@
 
 package gov.nist.secauto.metaschema.maven.plugin;
 
+import gov.nist.secauto.metaschema.core.model.IConstraintLoader;
+import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.metaschema.BindingConstraintLoader;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugins.annotations.Component;
@@ -35,7 +42,10 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -119,9 +129,16 @@ public abstract class AbstractMetaschemaMojo
   private File metaschemaDir;
 
   /**
-   * A set of inclusion patterns used to select which metaschema are to be
+   * A list of <code>files</code> containing Metaschema module constraints files.
+   */
+  @Parameter(property = "constraints")
+  private File[] constraints;
+
+  /**
+   * A set of inclusion patterns used to select which Metaschema modules are to be
    * processed. By default, all files are processed.
    */
+
   @Parameter
   protected String[] includes;
 
@@ -223,7 +240,7 @@ public abstract class AbstractMetaschemaMojo
    *
    * @return the stream
    */
-  protected Stream<File> getSources() {
+  protected Stream<File> getModuleSources() {
     DirectoryScanner ds = new DirectoryScanner();
     ds.setBasedir(metaschemaDir);
     ds.setIncludes(includes != null && includes.length > 0 ? includes : DEFAULT_INCLUDES);
@@ -233,6 +250,15 @@ public abstract class AbstractMetaschemaMojo
     ds.setFollowSymlinks(false);
     ds.scan();
     return Stream.of(ds.getIncludedFiles()).map(filename -> new File(metaschemaDir, filename)).distinct();
+  }
+
+  protected List<IConstraintSet> getConstraints() throws MetaschemaException, IOException {
+    IConstraintLoader loader = new BindingConstraintLoader();
+    List<IConstraintSet> constraintSets = new ArrayList<>(constraints.length);
+    for (File constraint : this.constraints) {
+      constraintSets.add(loader.load(ObjectUtils.notNull(constraint)));
+    }
+    return CollectionUtil.unmodifiableList(constraintSets);
   }
 
   /**
@@ -294,7 +320,7 @@ public abstract class AbstractMetaschemaMojo
       }
 
       if (!generate) {
-        for (File sourceFile : getSources().collect(Collectors.toList())) {
+        for (File sourceFile : getModuleSources().collect(Collectors.toList())) {
           getLog().info("Source file: " + sourceFile.getPath());
           if (sourceFile.lastModified() > staleLastModified) {
             generate = true;

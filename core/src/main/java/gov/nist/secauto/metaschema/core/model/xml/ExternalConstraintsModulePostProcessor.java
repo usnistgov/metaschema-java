@@ -43,8 +43,8 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,7 +55,7 @@ public class ExternalConstraintsModulePostProcessor implements IModuleLoader.IMo
   @NonNull
   private final List<IConstraintSet> registeredConstraintSets;
 
-  public ExternalConstraintsModulePostProcessor(@NonNull Set<IConstraintSet> additionalConstraintSets) {
+  public ExternalConstraintsModulePostProcessor(@NonNull Collection<IConstraintSet> additionalConstraintSets) {
     this.registeredConstraintSets = ObjectUtils.notNull(additionalConstraintSets.stream()
         .flatMap(set -> Stream.concat(
             Stream.of(set),

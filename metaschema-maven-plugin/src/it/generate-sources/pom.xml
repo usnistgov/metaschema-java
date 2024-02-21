@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>gov.nist.secauto.metaschema.it</groupId>
+    <artifactId>generate-sources-test</artifactId>
+    <version>@project.version@</version>
+
+    <description>A simple IT verifying the basic use case.</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>@project.groupId@</groupId>
+            <artifactId>metaschema-databind</artifactId>
+            <version>@project.version@</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <version>@project.version@</version>
+                <executions>
+                    <execution>
+                        <id>generate-sources-test</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate-sources</goal>
+                        </goals>
+                        <configuration>
+                            <metaschemaDir>../../../../core/metaschema/schema/metaschema</metaschemaDir>
+                            <includes>
+                                <include>*-metaschema.xml</include>
+                            </includes>
+                            <constraints>
+                                <constraint>../../../../core/metaschema/schema/metaschema/metaschema-module-constraints.xml</constraint>
+                            </constraints>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
