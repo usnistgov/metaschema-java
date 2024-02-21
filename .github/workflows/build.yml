@@ -60,7 +60,7 @@ jobs:
         cache: 'maven'
     - name: Initialize CodeQL
       if: github.event_name == 'push'
-      uses: github/codeql-action/init@e675ced7a7522a761fc9c8eb26682c8b27c42b2b
+      uses: github/codeql-action/init@379614612a29c9e28f31f39a59013eb8012a51f0
       with:
         languages: java
     # -------------------------
@@ -81,7 +81,7 @@ jobs:
         mvn -B -e -Prelease -Preporting install
     - name: Perform CodeQL Analysis
       if: github.event_name == 'push'
-      uses: github/codeql-action/analyze@e675ced7a7522a761fc9c8eb26682c8b27c42b2b
+      uses: github/codeql-action/analyze@379614612a29c9e28f31f39a59013eb8012a51f0
       with:
         upload: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'develop' && 'always' || 'never' }}
     - name: Test Website
