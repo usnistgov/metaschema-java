@@ -31,7 +31,8 @@ import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
-
+import java.lang.Override;
+import java.lang.String;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -42,7 +43,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaAssembly(
     formalName = "Constraint Let Expression",
     name = "constraint-let-expression",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModelModule.class)
 public class ConstraintLetExpression {
   @BoundFlag(
       formalName = "Let Variable Name",

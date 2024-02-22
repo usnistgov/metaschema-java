@@ -33,44 +33,44 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemVisitor;
-import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstaints;
+import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstraints;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class ConstraintComposingVisitor
-    implements INodeItemVisitor<ITargetedConstaints, Void> {
+    implements INodeItemVisitor<ITargetedConstraints, Void> {
 
   @Override
-  public Void visitDocument(@NonNull IDocumentNodeItem item, ITargetedConstaints context) {
+  public Void visitDocument(@NonNull IDocumentNodeItem item, ITargetedConstraints context) {
     throw new UnsupportedOperationException("constraints can only apply to an assembly, field, or flag definition");
   }
 
   @Override
-  public Void visitFlag(@NonNull IFlagNodeItem item, ITargetedConstaints context) {
+  public Void visitFlag(@NonNull IFlagNodeItem item, ITargetedConstraints context) {
     context.target(item.getDefinition());
     return null;
   }
 
   @Override
-  public Void visitField(@NonNull IFieldNodeItem item, ITargetedConstaints context) {
+  public Void visitField(@NonNull IFieldNodeItem item, ITargetedConstraints context) {
     context.target(item.getDefinition());
     return null;
   }
 
   @Override
-  public Void visitAssembly(@NonNull IAssemblyNodeItem item, ITargetedConstaints context) {
+  public Void visitAssembly(@NonNull IAssemblyNodeItem item, ITargetedConstraints context) {
     context.target(item.getDefinition());
     return null;
   }
 
   @Override
-  public Void visitAssembly(IAssemblyInstanceGroupedNodeItem item, ITargetedConstaints context) {
+  public Void visitAssembly(IAssemblyInstanceGroupedNodeItem item, ITargetedConstraints context) {
     context.target(item.getDefinition());
     return null;
   }
 
   @Override
-  public Void visitMetaschema(@NonNull IModuleNodeItem item, ITargetedConstaints context) {
+  public Void visitMetaschema(@NonNull IModuleNodeItem item, ITargetedConstraints context) {
     throw new UnsupportedOperationException("constraints can only apply to an assembly, field, or flag definition");
   }
 

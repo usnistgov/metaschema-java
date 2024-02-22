@@ -24,48 +24,39 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint.impl;
+package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.model.constraint.ICardinalityConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IIndexConstraint;
-import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
-import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
-
-import java.util.List;
+import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.AbstractDefinitionTargetedConstraints;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFeatureModelConstrained extends IModelConstrained, IFeatureValueConstrained {
-  @Override
-  IModelConstrained getConstraintSupport();
+/**
+ * A set of constraints targeting a {@link IFieldDefinition} based on a target
+ * Metapath expression.
+ *
+ * @see #getTargetExpression()
+ */
+public class FieldTargetedConstraints
+    extends AbstractDefinitionTargetedConstraints<IFieldDefinition, IValueConstrained> {
 
-  @Override
-  default List<? extends IIndexConstraint> getIndexConstraints() {
-    return getConstraintSupport().getIndexConstraints();
+  /**
+   * Construct a new set of targeted constraints.
+   *
+   * @param target
+   *          the Metapath expression that can be used to find matching targets
+   * @param constraints
+   *          the constraints to apply to matching targets
+   */
+  public FieldTargetedConstraints(
+      @NonNull MetapathExpression target,
+      @NonNull IValueConstrained constraints) {
+    super(target, constraints);
   }
 
   @Override
-  default List<? extends IUniqueConstraint> getUniqueConstraints() {
-    return getConstraintSupport().getUniqueConstraints();
-  }
-
-  @Override
-  default List<? extends ICardinalityConstraint> getHasCardinalityConstraints() {
-    return getConstraintSupport().getHasCardinalityConstraints();
-  }
-
-  @Override
-  default void addConstraint(@NonNull IIndexConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  default void addConstraint(@NonNull IUniqueConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
-  }
-
-  @Override
-  default void addConstraint(@NonNull ICardinalityConstraint constraint) {
-    getConstraintSupport().addConstraint(constraint);
+  public void target(@NonNull IFieldDefinition definition) {
+    applyTo(definition);
   }
 }

@@ -37,10 +37,10 @@ import gov.nist.secauto.metaschema.cli.processor.command.AbstractTerminalCommand
 import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
 import gov.nist.secauto.metaschema.cli.util.LoggingValidationHandler;
+import gov.nist.secauto.metaschema.core.model.IConstraintLoader;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
 import gov.nist.secauto.metaschema.core.model.validation.IValidationResult;
-import gov.nist.secauto.metaschema.core.model.xml.ConstraintLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -50,6 +50,7 @@ import gov.nist.secauto.metaschema.databind.IBindingContext.IValidationSchemaPro
 import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.databind.io.FormatDetector;
 import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
+import gov.nist.secauto.metaschema.databind.model.metaschema.BindingConstraintLoader;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -162,7 +163,7 @@ public abstract class AbstractValidateContentCommand
 
       Set<IConstraintSet> constraintSets;
       if (cmdLine.hasOption(CONSTRAINTS_OPTION)) {
-        ConstraintLoader constraintLoader = new ConstraintLoader();
+        IConstraintLoader constraintLoader = new BindingConstraintLoader();
         constraintSets = new LinkedHashSet<>();
         String[] args = cmdLine.getOptionValues(CONSTRAINTS_OPTION);
         for (String arg : args) {

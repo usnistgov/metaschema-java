@@ -36,7 +36,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaAssembly(
     formalName = "Any Additional Content",
     name = "any",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModelModule.class)
 public class Any {
   @Override
   public String toString() {

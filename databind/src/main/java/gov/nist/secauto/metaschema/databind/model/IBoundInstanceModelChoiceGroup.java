@@ -128,6 +128,7 @@ public interface IBoundInstanceModelChoiceGroup
    * @return the grouped model instance or {code null} if no instance was bound to
    *         the requested item
    */
+  @Override
   @NonNull
   default IBoundInstanceModelGroupedNamed getItemInstance(Object item) {
     return ObjectUtils.requireNonNull(getGroupedModelInstance(item.getClass()));

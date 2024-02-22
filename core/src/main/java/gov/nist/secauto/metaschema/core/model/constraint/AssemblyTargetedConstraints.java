@@ -24,27 +24,23 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint.impl;
+package gov.nist.secauto.metaschema.core.model.constraint;
 
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstaints;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.AbstractDefinitionTargetedConstraints;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides an base implementation for a set of constraints that target a
- * definition using a target Metapath expression.
+ * A set of constraints targeting a {@link IAssemblyDefinition} based on a
+ * target Metapath expression.
  *
- * @param <T>
- *          the Java type of the constraint container
+ * @see #getTargetExpression()
  */
-public abstract class AbstractTargetedConstraints<T extends IValueConstrained>
-    implements ITargetedConstaints, IFeatureValueConstrained {
-  @NonNull
-  private final MetapathExpression targetExpression;
-  @NonNull
-  private final T constraints;
+public class AssemblyTargetedConstraints
+    extends AbstractDefinitionTargetedConstraints<IAssemblyDefinition, IModelConstrained>
+    implements IFeatureModelConstrained {
 
   /**
    * Construct a new set of targeted constraints.
@@ -54,20 +50,23 @@ public abstract class AbstractTargetedConstraints<T extends IValueConstrained>
    * @param constraints
    *          the constraints to apply to matching targets
    */
-  protected AbstractTargetedConstraints(
+  public AssemblyTargetedConstraints(
       @NonNull MetapathExpression target,
-      @NonNull T constraints) {
-    this.targetExpression = target;
-    this.constraints = constraints;
+      @NonNull IModelConstrained constraints) {
+    super(target, constraints);
   }
 
   @Override
-  public MetapathExpression getTargetExpression() {
-    return targetExpression;
+  public void target(@NonNull IAssemblyDefinition definition) {
+    applyTo(definition);
   }
 
   @Override
-  public T getConstraintSupport() {
-    return constraints;
+  @SuppressWarnings("null")
+  protected void applyTo(@NonNull IAssemblyDefinition definition) {
+    super.applyTo(definition);
+    getIndexConstraints().forEach(constraint -> definition.addConstraint(constraint));
+    getUniqueConstraints().forEach(constraint -> definition.addConstraint(constraint));
+    getHasCardinalityConstraints().forEach(constraint -> definition.addConstraint(constraint));
   }
 }

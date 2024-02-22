@@ -26,68 +26,8 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.model.constraint.IFeatureValueConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
 
-import java.util.Locale;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-
-public interface IDefinition extends IModelElement, INamed, IAttributable, IFeatureValueConstrained {
-
-  @NonNull
-  ModuleScopeEnum DEFAULT_DEFINITION_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
-
-  /**
-   * Retrieve the definition's scope within the context of its defining module.
-   *
-   * @return the module scope
-   */
-  @NonNull
-  default ModuleScopeEnum getModuleScope() {
-    return ModuleScopeEnum.LOCAL;
-  }
-
-  /**
-   * Determine if the definition is defined inline, meaning the definition is
-   * declared where it is used.
-   *
-   * @return {@code true} if the definition is declared inline or {@code false} if
-   *         the definition is able to be globally referenced
-   */
-  default boolean isInline() {
-    return false;
-  }
-
-  /**
-   * If {@link #isInline()} is {@code true}, return the instance the definition is
-   * inlined for.
-   *
-   * @return the instance or {@code null} otherwise
-   */
-  INamedInstance getInlineInstance();
-
-  /**
-   * Generates a coordinate string for the provided information element
-   * definition.
-   *
-   * A coordinate consists of the element's:
-   * <ul>
-   * <li>containing Metaschema's short name</li>
-   * <li>model type</li>
-   * <li>name</li>
-   * <li>hash code</li>
-   * </ul>
-   *
-   * @return the coordinate
-   */
-  @SuppressWarnings("null")
-  @Override
-  default String toCoordinates() {
-    return String.format("%s:%s-definition:%s(%d)",
-        getContainingModule().getShortName(),
-        getModelType().toString().toUpperCase(Locale.ROOT),
-        getName(),
-        hashCode());
-  }
-
+public interface IConstraintLoader extends ILoader<IConstraintSet> {
+  // no additional methods
 }

@@ -48,16 +48,21 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IConstraintBase;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IModelConstraintsBase;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IValueConstraintsBase;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyConstraints;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.ConstraintLetExpression;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.ConstraintValueEnum;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagConstraints;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagAllowedValues;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagExpect;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagIndexHasKey;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagMatches;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.KeyConstraintField;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Property;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Remarks;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedExpectConstraint;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedHasCardinalityConstraint;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedIndexConstraint;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedIsUniqueConstraint;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedMatchesConstraint;
 
 import java.math.BigInteger;
@@ -80,17 +85,17 @@ public final class ConstraintBindingSupport {
 
     // parse rules
     for (IConstraintBase ruleObj : constraints.getRules()) {
-      if (ruleObj instanceof FlagConstraints.AllowedValues) {
-        IAllowedValuesConstraint constraint = newAllowedValues((FlagConstraints.AllowedValues) ruleObj, source);
+      if (ruleObj instanceof FlagAllowedValues) {
+        IAllowedValuesConstraint constraint = newAllowedValues((FlagAllowedValues) ruleObj, source);
         constraintSet.addConstraint(constraint);
-      } else if (ruleObj instanceof FlagConstraints.Expect) {
-        IExpectConstraint constraint = newExpect((FlagConstraints.Expect) ruleObj, source);
+      } else if (ruleObj instanceof FlagExpect) {
+        IExpectConstraint constraint = newExpect((FlagExpect) ruleObj, source);
         constraintSet.addConstraint(constraint);
-      } else if (ruleObj instanceof FlagConstraints.IndexHasKey) {
-        IIndexHasKeyConstraint constraint = newIndexHasKey((FlagConstraints.IndexHasKey) ruleObj, source);
+      } else if (ruleObj instanceof FlagIndexHasKey) {
+        IIndexHasKeyConstraint constraint = newIndexHasKey((FlagIndexHasKey) ruleObj, source);
         constraintSet.addConstraint(constraint);
-      } else if (ruleObj instanceof FlagConstraints.Matches) {
-        IMatchesConstraint constraint = newMatches((FlagConstraints.Matches) ruleObj, source);
+      } else if (ruleObj instanceof FlagMatches) {
+        IMatchesConstraint constraint = newMatches((FlagMatches) ruleObj, source);
         constraintSet.addConstraint(constraint);
       }
     }
@@ -129,23 +134,22 @@ public final class ConstraintBindingSupport {
       } else if (ruleObj instanceof TargetedMatchesConstraint) {
         IMatchesConstraint constraint = newMatches((TargetedMatchesConstraint) ruleObj, source);
         constraintSet.addConstraint(constraint);
-      } else if (ruleObj instanceof AssemblyConstraints.Index) {
-        IIndexConstraint constraint = newIndex((AssemblyConstraints.Index) ruleObj, source);
+      } else if (ruleObj instanceof TargetedIndexConstraint) {
+        IIndexConstraint constraint = newIndex((TargetedIndexConstraint) ruleObj, source);
         constraintSet.addConstraint(constraint);
-      } else if (ruleObj instanceof AssemblyConstraints.HasCardinality) {
-        ICardinalityConstraint constraint = newHasCardinality((AssemblyConstraints.HasCardinality) ruleObj, source);
+      } else if (ruleObj instanceof TargetedHasCardinalityConstraint) {
+        ICardinalityConstraint constraint = newHasCardinality((TargetedHasCardinalityConstraint) ruleObj, source);
         constraintSet.addConstraint(constraint);
-      } else if (ruleObj instanceof AssemblyConstraints.Unique) {
-        IUniqueConstraint constraint = newUnique((AssemblyConstraints.Unique) ruleObj, source);
+      } else if (ruleObj instanceof TargetedIsUniqueConstraint) {
+        IUniqueConstraint constraint = newUnique((TargetedIsUniqueConstraint) ruleObj, source);
         constraintSet.addConstraint(constraint);
       }
     }
-
   }
 
   @NonNull
   private static IAllowedValuesConstraint newAllowedValues(
-      @NonNull FlagConstraints.AllowedValues obj,
+      @NonNull FlagAllowedValues obj,
       @NonNull ISource source) {
     IAllowedValuesConstraint.Builder builder = IAllowedValuesConstraint.builder()
         .allowedOther(ModelSupport.yesOrNo(obj.getAllowOther()))
@@ -175,7 +179,7 @@ public final class ConstraintBindingSupport {
 
   @NonNull
   private static IExpectConstraint newExpect(
-      @NonNull FlagConstraints.Expect obj,
+      @NonNull FlagExpect obj,
       @NonNull ISource source) {
     IExpectConstraint.Builder builder = IExpectConstraint.builder()
         .test(target(ObjectUtils.requireNonNull(obj.getTest())));
@@ -223,7 +227,7 @@ public final class ConstraintBindingSupport {
 
   @NonNull
   private static IIndexHasKeyConstraint newIndexHasKey(
-      @NonNull FlagConstraints.IndexHasKey obj,
+      @NonNull FlagIndexHasKey obj,
       @NonNull ISource source) {
     IIndexHasKeyConstraint.Builder builder = IIndexHasKeyConstraint.builder()
         .name(ObjectUtils.requireNonNull(obj.getName()));
@@ -245,7 +249,7 @@ public final class ConstraintBindingSupport {
 
   @NonNull
   private static IMatchesConstraint newMatches(
-      @NonNull FlagConstraints.Matches obj,
+      @NonNull FlagMatches obj,
       @NonNull ISource source) {
     IMatchesConstraint.Builder builder = IMatchesConstraint.builder();
     applyCommonValues(obj, null, source, builder);
@@ -287,7 +291,7 @@ public final class ConstraintBindingSupport {
 
   @NonNull
   private static IIndexConstraint newIndex(
-      @NonNull AssemblyConstraints.Index obj,
+      @NonNull TargetedIndexConstraint obj,
       @NonNull ISource source) {
     IIndexConstraint.Builder builder = IIndexConstraint.builder()
         .name(ObjectUtils.requireNonNull(obj.getName()));
@@ -299,7 +303,7 @@ public final class ConstraintBindingSupport {
 
   @NonNull
   private static ICardinalityConstraint newHasCardinality(
-      @NonNull AssemblyConstraints.HasCardinality obj,
+      @NonNull TargetedHasCardinalityConstraint obj,
       @NonNull ISource source) {
     ICardinalityConstraint.Builder builder = ICardinalityConstraint.builder();
     applyCommonValues(obj, obj.getTarget(), source, builder);
@@ -319,7 +323,7 @@ public final class ConstraintBindingSupport {
 
   @NonNull
   private static IUniqueConstraint newUnique(
-      @NonNull AssemblyConstraints.Unique obj,
+      @NonNull TargetedIsUniqueConstraint obj,
       @NonNull ISource source) {
     IUniqueConstraint.Builder builder = IUniqueConstraint.builder();
     applyCommonValues(obj, obj.getTarget(), source, builder);

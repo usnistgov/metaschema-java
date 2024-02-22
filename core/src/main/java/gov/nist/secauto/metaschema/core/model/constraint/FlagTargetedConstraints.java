@@ -24,22 +24,22 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint.impl;
+package gov.nist.secauto.metaschema.core.model.constraint;
 
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.AbstractDefinitionTargetedConstraints;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * A set of constraints targeting a {@link IFieldDefinition} based on a target
+ * A set of constraints targeting a {@link IFlagDefinition} based on a target
  * Metapath expression.
  *
  * @see #getTargetExpression()
  */
-public class FieldTargetedConstraints
-    extends AbstractDefinitionTargetedConstraints<IFieldDefinition, IValueConstrained> {
+public class FlagTargetedConstraints
+    extends AbstractDefinitionTargetedConstraints<IFlagDefinition, IValueConstrained> {
 
   /**
    * Construct a new set of targeted constraints.
@@ -49,14 +49,14 @@ public class FieldTargetedConstraints
    * @param constraints
    *          the constraints to apply to matching targets
    */
-  public FieldTargetedConstraints(
+  public FlagTargetedConstraints(
       @NonNull MetapathExpression target,
       @NonNull IValueConstrained constraints) {
     super(target, constraints);
   }
 
   @Override
-  public void target(@NonNull IFieldDefinition definition) {
+  public void target(@NonNull IFlagDefinition definition) {
     applyTo(definition);
   }
 }

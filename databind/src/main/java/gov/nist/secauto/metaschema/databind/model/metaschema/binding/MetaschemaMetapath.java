@@ -24,26 +24,44 @@
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
 
-package gov.nist.secauto.metaschema.core.model.constraint;
+package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
+import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * Represents a set of constraints that target a given definition using a target
- * Metapath expression.
+ * A Metapath expression identifying the model node that the constraints will be
+ * applied to.
  */
-public interface ITargetedConstaints extends IValueConstrained {
-  @NonNull
-  MetapathExpression getTargetExpression();
+@SuppressWarnings({
+    "PMD.DataClass",
+    "PMD.FieldNamingConventions",
+})
+@MetaschemaAssembly(
+    description = "A Metapath expression identifying the model node that the constraints will be applied to.",
+    name = "metaschema-metapath",
+    moduleClass = MetaschemaModelModule.class)
+public class MetaschemaMetapath {
+  @BoundFlag(
+      name = "target",
+      required = true,
+      typeAdapter = StringAdapter.class)
+  private String _target;
 
-  void target(@NonNull IFlagDefinition definition);
+  public String getTarget() {
+    return _target;
+  }
 
-  void target(@NonNull IFieldDefinition definition);
+  public void setTarget(String value) {
+    _target = value;
+  }
 
-  void target(@NonNull IAssemblyDefinition definition);
+  @Override
+  public String toString() {
+    return new ReflectionToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).toString();
+  }
 }

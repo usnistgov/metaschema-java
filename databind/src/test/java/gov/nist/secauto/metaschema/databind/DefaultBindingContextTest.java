@@ -30,14 +30,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IConstraintLoader;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
-import gov.nist.secauto.metaschema.core.model.xml.ConstraintLoader;
 import gov.nist.secauto.metaschema.core.model.xml.ExternalConstraintsModulePostProcessor;
+import gov.nist.secauto.metaschema.core.model.xml.XmlConstraintLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundModule;
+import gov.nist.secauto.metaschema.databind.model.metaschema.BindingConstraintLoader;
 import gov.nist.secauto.metaschema.databind.model.test.TestMetaschema;
 
 import org.junit.jupiter.api.Test;
@@ -50,7 +52,25 @@ class DefaultBindingContextTest {
 
   @Test
   void testConstraints() throws MetaschemaException, IOException { // NOPMD - intentional
-    ConstraintLoader constraintLoader = new ConstraintLoader();
+    IConstraintLoader constraintLoader = new XmlConstraintLoader();
+    IConstraintSet constraintSet = constraintLoader.load(
+        ObjectUtils.notNull(Paths.get("src/test/resources/content/constraints.xml")));
+
+    ExternalConstraintsModulePostProcessor postProcessor
+        = new ExternalConstraintsModulePostProcessor(CollectionUtil.singleton(constraintSet));
+    IBindingContext bindingContext = new DefaultBindingContext(CollectionUtil.singletonList(postProcessor));
+    IBoundModule module = bindingContext.registerModule(TestMetaschema.class);
+
+    IAssemblyDefinition root = module.getExportedAssemblyDefinitionByName("root");
+
+    assertNotNull(root, "root not found");
+    List<? extends IConstraint> constraints = root.getConstraints();
+    assertFalse(constraints.isEmpty(), "a constraint was expected");
+  }
+
+  @Test
+  void testConstraintsUsingBinding() throws MetaschemaException, IOException { // NOPMD - intentional
+    IConstraintLoader constraintLoader = new BindingConstraintLoader();
     IConstraintSet constraintSet = constraintLoader.load(
         ObjectUtils.notNull(Paths.get("src/test/resources/content/constraints.xml")));
 

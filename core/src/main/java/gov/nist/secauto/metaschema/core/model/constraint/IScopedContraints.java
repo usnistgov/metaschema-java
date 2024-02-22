@@ -39,5 +39,5 @@ public interface IScopedContraints {
   String getModuleShortName();
 
   @NonNull
-  List<ITargetedConstaints> getTargetedContraints();
+  List<ITargetedConstraints> getTargetedContraints();
 }

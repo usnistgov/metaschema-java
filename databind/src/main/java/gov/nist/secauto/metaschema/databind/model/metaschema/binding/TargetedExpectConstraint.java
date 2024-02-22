@@ -56,7 +56,7 @@ import java.util.List;
 @MetaschemaAssembly(
     formalName = "Expect Condition Constraint",
     name = "targeted-expect-constraint",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModelModule.class)
 public class TargetedExpectConstraint implements ITargetedConstraintBase {
   @BoundFlag(
       formalName = "Constraint Identifier",
@@ -111,7 +111,7 @@ public class TargetedExpectConstraint implements ITargetedConstraintBase {
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "props", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
   @BoundField(

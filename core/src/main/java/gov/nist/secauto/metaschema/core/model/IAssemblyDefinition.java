@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.model.constraint.impl.IFeatureModelConstrained;
+import gov.nist.secauto.metaschema.core.model.constraint.IFeatureModelConstrained;
 
 import javax.xml.namespace.QName;
 

@@ -36,15 +36,15 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.IModuleLoader;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
-import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstaints;
+import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstraints;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.ConstraintComposingVisitor;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,7 +55,7 @@ public class ExternalConstraintsModulePostProcessor implements IModuleLoader.IMo
   @NonNull
   private final List<IConstraintSet> registeredConstraintSets;
 
-  public ExternalConstraintsModulePostProcessor(@NonNull Set<IConstraintSet> additionalConstraintSets) {
+  public ExternalConstraintsModulePostProcessor(@NonNull Collection<IConstraintSet> additionalConstraintSets) {
     this.registeredConstraintSets = ObjectUtils.notNull(additionalConstraintSets.stream()
         .flatMap(set -> Stream.concat(
             Stream.of(set),
@@ -74,7 +74,7 @@ public class ExternalConstraintsModulePostProcessor implements IModuleLoader.IMo
     IModuleNodeItem moduleItem = INodeItemFactory.instance().newModuleNodeItem(module);
 
     for (IConstraintSet set : getRegisteredConstraintSets()) {
-      for (ITargetedConstaints targeted : set.getTargetedConstraintsForModule(module)) {
+      for (ITargetedConstraints targeted : set.getTargetedConstraintsForModule(module)) {
         // apply targeted constraints
         MetapathExpression targetExpression = targeted.getTargetExpression();
         ISequence<?> items = targetExpression.evaluateAs(moduleItem, ResultType.SEQUENCE);

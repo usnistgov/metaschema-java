@@ -28,6 +28,9 @@ package gov.nist.secauto.metaschema.maven.plugin;
 
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
+import gov.nist.secauto.metaschema.core.model.constraint.IConstraintSet;
+import gov.nist.secauto.metaschema.core.model.xml.ExternalConstraintsModulePostProcessor;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.JavaGenerator;
 import gov.nist.secauto.metaschema.databind.codegen.config.DefaultBindingConfiguration;
@@ -156,11 +159,21 @@ public class GenerateSourcesMojo
         }
       }
 
+      List<IConstraintSet> constraints;
+      try {
+        constraints = getConstraints();
+      } catch (MetaschemaException | IOException ex) {
+        throw new MojoExecutionException("Unable to load external constraints.", ex);
+      }
+
       // generate Java sources based on provided metaschema sources
-      final BindingModuleLoader loader = new BindingModuleLoader();
+      final BindingModuleLoader loader = constraints.isEmpty()
+          ? new BindingModuleLoader()
+          : new BindingModuleLoader(
+              CollectionUtil.singletonList(new ExternalConstraintsModulePostProcessor(constraints)));
       loader.allowEntityResolution();
       final Set<IModule> modules = new HashSet<>();
-      for (File source : getSources().collect(Collectors.toList())) {
+      for (File source : getModuleSources().collect(Collectors.toList())) {
         getLog().info("Using metaschema source: " + source.getPath());
         IModule module;
         try {

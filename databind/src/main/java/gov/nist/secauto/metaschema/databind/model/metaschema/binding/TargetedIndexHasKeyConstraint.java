@@ -56,7 +56,7 @@ import java.util.List;
 @MetaschemaAssembly(
     formalName = "Targeted Index Has Key Constraint",
     name = "targeted-index-has-key-constraint",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModelModule.class)
 public class TargetedIndexHasKeyConstraint implements ITargetedConstraintBase {
   @BoundFlag(
       formalName = "Constraint Identifier",
@@ -111,7 +111,7 @@ public class TargetedIndexHasKeyConstraint implements ITargetedConstraintBase {
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "props", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
   @BoundAssembly(
@@ -119,7 +119,7 @@ public class TargetedIndexHasKeyConstraint implements ITargetedConstraintBase {
       useName = "key-field",
       minOccurs = 1,
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "key-fields", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "key-fields", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
   private List<KeyConstraintField> _keyFields;
 
   @BoundField(

@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IConstraintLoader;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
@@ -78,7 +79,7 @@ class ModuleLoaderTest {
 
   @Test
   void testConstraints() throws MetaschemaException, IOException { // NOPMD - intentional
-    ConstraintLoader constraintLoader = new ConstraintLoader();
+    IConstraintLoader constraintLoader = new XmlConstraintLoader();
     IConstraintSet constraintSet = constraintLoader.load(
         ObjectUtils.notNull(Paths.get("src/test/resources/content/oscal-constraints.xml")));
 

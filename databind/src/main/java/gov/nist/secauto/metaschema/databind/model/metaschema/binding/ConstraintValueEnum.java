@@ -45,7 +45,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @MetaschemaField(
     formalName = "Allowed Value Enumeration",
     name = "constraint-value-enum",
-    moduleClass = MetaschemaModule.class)
+    moduleClass = MetaschemaModelModule.class)
 public class ConstraintValueEnum
     extends AbstractAllowedValue {
   @BoundFlag(

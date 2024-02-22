@@ -123,10 +123,11 @@ public interface IFeatureDefinitionReferenceInstance<
   @Override
   default String toCoordinates() {
     IDefinition definition = getDefinition();
-    return String.format("%s:%s-instance:%s@%d(%d)",
-        getContainingDefinition().getContainingModule().getShortName(),
+    return String.format("%s-instance:%s:%s/%s@%d(%d)",
         getModelType().toString().toLowerCase(Locale.ROOT),
+        getContainingDefinition().getContainingModule().getShortName(),
         definition.getName(),
+        getName(),
         hashCode(),
         definition.hashCode());
   }

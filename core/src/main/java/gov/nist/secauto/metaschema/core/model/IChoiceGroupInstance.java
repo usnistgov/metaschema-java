@@ -84,6 +84,18 @@ public interface IChoiceGroupInstance
     return true;
   }
 
+  /**
+   * Get the named model instance for the provided choice group item.
+   *
+   * @param item
+   *          the item to get the instance for
+   * @return the named model instance for the provided choice group item
+   */
+  @NonNull
+  default INamedModelInstanceGrouped getItemInstance(@NonNull Object item) {
+    throw new UnsupportedOperationException("no value");
+  }
+
   @Override
   default MarkupMultiline getRemarks() {
     // no remarks
@@ -93,9 +105,9 @@ public interface IChoiceGroupInstance
   @SuppressWarnings("null")
   @Override
   default String toCoordinates() {
-    return String.format("%s:%s-instance:%s/%s@%d",
-        getContainingDefinition().getContainingModule().getShortName(),
+    return String.format("%s-instance:%s:%s/%s@%d",
         getModelType().toString().toLowerCase(Locale.ROOT),
+        getContainingDefinition().getContainingModule().getShortName(),
         getContainingDefinition().getName(),
         getGroupAsName(),
         hashCode());

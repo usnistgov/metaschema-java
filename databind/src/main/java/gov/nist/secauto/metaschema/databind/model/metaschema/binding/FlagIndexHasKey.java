@@ -26,8 +26,6 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema.binding;
 
-import gov.nist.secauto.metaschema.core.datatype.adapter.PositiveIntegerAdapter;
-import gov.nist.secauto.metaschema.core.datatype.adapter.StringAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.TokenAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLineAdapter;
@@ -42,81 +40,51 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Override;
-import java.lang.String;
-import java.math.BigInteger;
-import java.util.LinkedList;
-import java.util.List;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IConstraintBase;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @SuppressWarnings({
     "PMD.DataClass",
     "PMD.FieldNamingConventions"
 })
 @MetaschemaAssembly(
-    formalName = "Inline Flag Definition",
-    name = "inline-define-flag",
+    formalName = "Index Has Key Constraint",
+    name = "flag-index-has-key",
     moduleClass = MetaschemaModelModule.class)
-public class InlineDefineFlag {
+public class FlagIndexHasKey implements IConstraintBase {
   @BoundFlag(
-      formalName = "Inline Flag Name",
+      formalName = "Constraint Identifier",
+      name = "id",
+      typeAdapter = TokenAdapter.class)
+  private String _id;
+
+  @BoundFlag(
+      formalName = "Constraint Severity Level",
+      name = "level",
+      defaultValue = "ERROR",
+      typeAdapter = TokenAdapter.class,
+      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR, values = {
+          @AllowedValue(value = "CRITICAL",
+              description = "A violation of the constraint represents a serious fault in the content that will prevent typical use of the content."),
+          @AllowedValue(value = "ERROR",
+              description = "A violation of the constraint represents a fault in the content. This may include issues around compatibility, integrity, consistency, etc."),
+          @AllowedValue(value = "WARNING",
+              description = "A violation of the constraint represents a potential issue with the content."),
+          @AllowedValue(value = "INFORMATIONAL",
+              description = "A violation of the constraint represents a point of interest.") })))
+  private String _level;
+
+  @BoundFlag(
+      formalName = "Index Name",
       name = "name",
       required = true,
       typeAdapter = TokenAdapter.class)
   private String _name;
-
-  @BoundFlag(
-      formalName = "Inline Flag Binary Name",
-      name = "index",
-      typeAdapter = PositiveIntegerAdapter.class)
-  private BigInteger _index;
-
-  @BoundFlag(
-      formalName = "Deprecated Version",
-      name = "deprecated",
-      typeAdapter = StringAdapter.class)
-  private String _deprecated;
-
-  @BoundFlag(
-      formalName = "Flag Value Data Type",
-      name = "as-type",
-      defaultValue = "string",
-      typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
-          allowOthers = true,
-          values = { @AllowedValue(value = "base64", description = ""),
-              @AllowedValue(value = "boolean", description = ""), @AllowedValue(value = "date", description = ""),
-              @AllowedValue(value = "date-time", description = ""),
-              @AllowedValue(value = "date-time-with-timezone", description = ""),
-              @AllowedValue(value = "date-with-timezone", description = ""),
-              @AllowedValue(value = "day-time-duration", description = ""),
-              @AllowedValue(value = "decimal", description = ""),
-              @AllowedValue(value = "email-address", description = ""),
-              @AllowedValue(value = "hostname", description = ""), @AllowedValue(value = "integer", description = ""),
-              @AllowedValue(value = "ip-v4-address", description = ""),
-              @AllowedValue(value = "ip-v6-address", description = ""),
-              @AllowedValue(value = "non-negative-integer", description = ""),
-              @AllowedValue(value = "positive-integer", description = ""),
-              @AllowedValue(value = "string", description = ""), @AllowedValue(value = "token", description = ""),
-              @AllowedValue(value = "uri", description = ""), @AllowedValue(value = "uri-reference", description = ""),
-              @AllowedValue(value = "uuid", description = "") })))
-  private String _asType;
-
-  @BoundFlag(
-      formalName = "Default Flag Value",
-      name = "default",
-      typeAdapter = StringAdapter.class)
-  private String _default;
-
-  @BoundFlag(
-      formalName = "Is Flag Required?",
-      name = "required",
-      defaultValue = "no",
-      typeAdapter = TokenAdapter.class,
-      valueConstraints = @ValueConstraints(allowedValues = @AllowedValues(level = IConstraint.Level.ERROR,
-          values = { @AllowedValue(value = "yes", description = ""), @AllowedValue(value = "no", description = "") })))
-  private String _required;
 
   @BoundField(
       formalName = "Formal Name",
@@ -139,8 +107,12 @@ public class InlineDefineFlag {
   private List<Property> _props;
 
   @BoundAssembly(
-      useName = "constraint")
-  private FlagConstraints _constraint;
+      formalName = "Key Constraint Field",
+      useName = "key-field",
+      minOccurs = 1,
+      maxOccurs = -1,
+      groupAs = @GroupAs(name = "key-fields", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+  private List<KeyConstraintField> _keyFields;
 
   @BoundField(
       formalName = "Remarks",
@@ -148,12 +120,23 @@ public class InlineDefineFlag {
       useName = "remarks")
   private Remarks _remarks;
 
-  @BoundAssembly(
-      formalName = "Example",
-      useName = "example",
-      maxOccurs = -1,
-      groupAs = @GroupAs(name = "examples", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
-  private List<Example> _examples;
+  @Override
+  public String getId() {
+    return _id;
+  }
+
+  public void setId(String value) {
+    _id = value;
+  }
+
+  @Override
+  public String getLevel() {
+    return _level;
+  }
+
+  public void setLevel(String value) {
+    _level = value;
+  }
 
   public String getName() {
     return _name;
@@ -163,46 +146,7 @@ public class InlineDefineFlag {
     _name = value;
   }
 
-  public BigInteger getIndex() {
-    return _index;
-  }
-
-  public void setIndex(BigInteger value) {
-    _index = value;
-  }
-
-  public String getDeprecated() {
-    return _deprecated;
-  }
-
-  public void setDeprecated(String value) {
-    _deprecated = value;
-  }
-
-  public String getAsType() {
-    return _asType;
-  }
-
-  public void setAsType(String value) {
-    _asType = value;
-  }
-
-  public String getDefault() {
-    return _default;
-  }
-
-  public void setDefault(String value) {
-    _default = value;
-  }
-
-  public String getRequired() {
-    return _required;
-  }
-
-  public void setRequired(String value) {
-    _required = value;
-  }
-
+  @Override
   public String getFormalName() {
     return _formalName;
   }
@@ -211,6 +155,7 @@ public class InlineDefineFlag {
     _formalName = value;
   }
 
+  @Override
   public MarkupLine getDescription() {
     return _description;
   }
@@ -219,6 +164,7 @@ public class InlineDefineFlag {
     _description = value;
   }
 
+  @Override
   public List<Property> getProps() {
     return _props;
   }
@@ -255,56 +201,49 @@ public class InlineDefineFlag {
     return _props != null && _props.remove(value);
   }
 
-  public FlagConstraints getConstraint() {
-    return _constraint;
+  public List<KeyConstraintField> getKeyFields() {
+    return _keyFields;
   }
 
-  public void setConstraint(FlagConstraints value) {
-    _constraint = value;
-  }
-
-  public Remarks getRemarks() {
-    return _remarks;
-  }
-
-  public void setRemarks(Remarks value) {
-    _remarks = value;
-  }
-
-  public List<Example> getExamples() {
-    return _examples;
-  }
-
-  public void setExamples(List<Example> value) {
-    _examples = value;
+  public void setKeyFields(List<KeyConstraintField> value) {
+    _keyFields = value;
   }
 
   /**
-   * Add a new {@link Example} item to the underlying collection.
+   * Add a new {@link KeyConstraintField} item to the underlying collection.
    *
    * @param item
    *          the item to add
    * @return {@code true}
    */
-  public boolean addExample(Example item) {
-    Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
-    if (_examples == null) {
-      _examples = new LinkedList<>();
+  public boolean addKeyField(KeyConstraintField item) {
+    KeyConstraintField value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    if (_keyFields == null) {
+      _keyFields = new LinkedList<>();
     }
-    return _examples.add(value);
+    return _keyFields.add(value);
   }
 
   /**
-   * Remove the first matching {@link Example} item from the underlying
+   * Remove the first matching {@link KeyConstraintField} item from the underlying
    * collection.
    *
    * @param item
    *          the item to remove
    * @return {@code true} if the item was removed or {@code false} otherwise
    */
-  public boolean removeExample(Example item) {
-    Example value = ObjectUtils.requireNonNull(item, "item cannot be null");
-    return _examples != null && _examples.remove(value);
+  public boolean removeKeyField(KeyConstraintField item) {
+    KeyConstraintField value = ObjectUtils.requireNonNull(item, "item cannot be null");
+    return _keyFields != null && _keyFields.remove(value);
+  }
+
+  @Override
+  public Remarks getRemarks() {
+    return _remarks;
+  }
+
+  public void setRemarks(Remarks value) {
+    _remarks = value;
   }
 
   @Override

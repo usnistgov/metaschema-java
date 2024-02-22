@@ -53,6 +53,7 @@ public final class UriUtils {
    * @throws URISyntaxException
    *           an error if the location string is not convertible to URI
    */
+  @SuppressWarnings("PMD.PreserveStackTrace")
   public static URI toUri(@NonNull String location, @NonNull URI baseUri) throws URISyntaxException {
     URI asUri;
     try {

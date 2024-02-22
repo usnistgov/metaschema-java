@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.core.model.IContainerModelAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IModelInstance;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
@@ -249,18 +250,44 @@ public abstract class AbstractNodeItemFactory implements INodeItemFactory, INode
    * @return the stream of descendant instances
    */
   @NonNull
-  protected Stream<INamedModelInstanceAbsolute> getNamedModelInstances(@NonNull IContainerModelAbsolute container) {
+  protected Stream<? extends INamedModelInstance> getNamedModelInstances(@NonNull IContainerModelAbsolute container) {
     return ObjectUtils.notNull(container.getModelInstances().stream()
         .flatMap(instance -> {
-          Stream<INamedModelInstanceAbsolute> retval;
+          Stream<? extends INamedModelInstance> retval;
           if (instance instanceof IAssemblyInstanceAbsolute || instance instanceof IFieldInstanceAbsolute) {
             retval = Stream.of((INamedModelInstanceAbsolute) instance);
           } else if (instance instanceof IChoiceInstance) {
             // descend into the choice
             retval = getNamedModelInstances((IChoiceInstance) instance);
           } else if (instance instanceof IChoiceGroupInstance) {
-            throw new UnsupportedOperationException("implement");
-            // retval = Stream.of(instance);
+            IChoiceGroupInstance choiceGroupInstance = (IChoiceGroupInstance) instance;
+            retval = choiceGroupInstance.getNamedModelInstances().stream();
+          } else {
+            throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
+          }
+          return retval;
+        }));
+  }
+
+  /**
+   * Get the descendant model instances of the provided {@code container}.
+   *
+   * @param container
+   *          the container to get descendant instances for
+   * @return the stream of descendant instances
+   */
+  @NonNull
+  protected Stream<? extends IModelInstance> getValuedModelInstances(@NonNull IContainerModelAbsolute container) {
+    return ObjectUtils.notNull(container.getModelInstances().stream()
+        .flatMap(instance -> {
+          Stream<? extends IModelInstance> retval;
+          if (instance instanceof IAssemblyInstanceAbsolute || instance instanceof IFieldInstanceAbsolute) {
+            retval = Stream.of((INamedModelInstanceAbsolute) instance);
+          } else if (instance instanceof IChoiceInstance) {
+            // descend into the choice
+            retval = getNamedModelInstances((IChoiceInstance) instance);
+          } else if (instance instanceof IChoiceGroupInstance) {
+            retval = Stream.of((IChoiceGroupInstance) instance);
           } else {
             throw new UnsupportedOperationException("unsupported instance type: " + instance.getClass().getName());
           }
