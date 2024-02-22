@@ -65,8 +65,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public class XmlMetaConstraintLoader
     extends AbstractLoader<IConstraintSet>
     implements IConstraintLoader {
-  // private static final Logger LOGGER =
-  // LogManager.getLogger(XmlMetaConstraintLoader.class);
 
   @Override
   protected IConstraintSet parseResource(URI resource, Deque<URI> visitedResources) throws IOException {
