@@ -344,36 +344,52 @@ public class CLIProcessor {
     public ExitStatus processCommand() {
       CommandLineParser parser = new DefaultParser();
       CommandLine cmdLine;
-      try {
-        cmdLine = parser.parse(toOptions(), getExtraArgs().toArray(new String[0]));
-      } catch (ParseException ex) {
-        String msg = ex.getMessage();
-        assert msg != null;
-        return handleInvalidCommand(msg);
-      }
 
-      if (cmdLine.hasOption(NO_COLOR_OPTION)) {
-        handleNoColor();
-      }
+      // this uses a two phase approach where:
+      // phase 1: checks if help or version are used
+      // phase 2: executes the command
 
-      if (cmdLine.hasOption(QUIET_OPTION)) {
-        handleQuiet();
-      }
-
+      // phase 1
       ExitStatus retval = null;
-      if (cmdLine.hasOption(VERSION_OPTION)) {
-        showVersion();
-        retval = ExitCode.OK.exit();
-      } else if (cmdLine.hasOption(HELP_OPTION)) {
-        showHelp();
-        retval = ExitCode.OK.exit();
-        // } else {
-        // retval = handleInvalidCommand(commandResult, options,
-        // "Invalid command arguments: " +
-        // cmdLine.getArgList().stream().collect(Collectors.joining(" ")));
+      {
+        try {
+          Options phase1Options = new Options();
+          phase1Options.addOption(HELP_OPTION);
+          phase1Options.addOption(VERSION_OPTION);
+
+          cmdLine = parser.parse(phase1Options, getExtraArgs().toArray(new String[0]), true);
+        } catch (ParseException ex) {
+          String msg = ex.getMessage();
+          assert msg != null;
+          return handleInvalidCommand(msg);
+        }
+
+        if (cmdLine.hasOption(VERSION_OPTION)) {
+          showVersion();
+          retval = ExitCode.OK.exit();
+        } else if (cmdLine.hasOption(HELP_OPTION)) {
+          showHelp();
+          retval = ExitCode.OK.exit();
+        }
       }
 
       if (retval == null) {
+        // phase 2
+        try {
+          cmdLine = parser.parse(toOptions(), getExtraArgs().toArray(new String[0]));
+        } catch (ParseException ex) {
+          String msg = ex.getMessage();
+          assert msg != null;
+          return handleInvalidCommand(msg);
+        }
+
+        if (cmdLine.hasOption(NO_COLOR_OPTION)) {
+          handleNoColor();
+        }
+
+        if (cmdLine.hasOption(QUIET_OPTION)) {
+          handleQuiet();
+        }
         retval = invokeCommand(cmdLine);
       }
 
