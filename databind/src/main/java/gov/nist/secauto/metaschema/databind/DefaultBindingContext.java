@@ -322,8 +322,7 @@ public class DefaultBindingContext implements IBindingContext {
     if (definition == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", other.getClass().getName()));
     }
-    @SuppressWarnings("unchecked")
-    CLASS retval = (CLASS) definition.deepCopyItem(other, parentInstance);
+    @SuppressWarnings("unchecked") CLASS retval = (CLASS) definition.deepCopyItem(other, parentInstance);
     return retval;
   }
 }
