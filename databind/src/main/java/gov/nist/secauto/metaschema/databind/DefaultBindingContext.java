@@ -145,10 +145,14 @@ public class DefaultBindingContext implements IBindingContext {
   @Override
   public IBindingMatcher registerBindingMatcher(@NonNull Class<?> clazz) {
     IBoundDefinitionModelComplex definition = getBoundDefinitionForClass(clazz);
+    if (definition == null) {
+      throw new IllegalArgumentException(String.format("Unable to find bound definition for class '%s'.",
+          clazz.getName()));
+    }
 
     try {
       IBoundDefinitionModelAssembly assemblyDefinition = IBoundDefinitionModelAssembly.class.cast(definition);
-      return registerBindingMatcher(ObjectUtils.requireNonNull(assemblyDefinition));
+      return registerBindingMatcher(ObjectUtils.notNull(assemblyDefinition));
     } catch (ClassCastException ex) {
       throw new IllegalArgumentException(
           String.format("The provided class '%s' is not a root assembly.", clazz.getName()), ex);
@@ -265,7 +269,7 @@ public class DefaultBindingContext implements IBindingContext {
             }
           })
           .forEachOrdered(clazz -> {
-            IBoundModule boundModule = registerModule(ObjectUtils.requireNonNull(clazz));
+            IBoundModule boundModule = registerModule(ObjectUtils.notNull(clazz));
             // force the binding matchers to load
             boundModule.getRootAssemblyDefinitions();
           });

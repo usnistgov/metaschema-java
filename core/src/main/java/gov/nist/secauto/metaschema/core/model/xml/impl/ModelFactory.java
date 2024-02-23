@@ -131,8 +131,14 @@ public final class ModelFactory {
     Map<String, IAllowedValue> allowedValues // NOPMD - intentional
         = new LinkedHashMap<>(xmlObject.sizeOfEnumArray());
     for (AllowedValueType xmlEnum : xmlObject.getEnumList()) {
+      String value = xmlEnum.getValue();
+      if (value == null) {
+        throw new IllegalStateException(String.format("Null value found in allowed value enumeration: %s",
+            xmlObject.xmlText()));
+      }
+
       IAllowedValue allowedValue = IAllowedValue.of(
-          ObjectUtils.requireNonNull(xmlEnum.getValue()),
+          value,
           MarkupStringConverter.toMarkupString(xmlEnum));
       allowedValues.put(allowedValue.getValue(), allowedValue);
     }

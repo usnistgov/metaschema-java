@@ -77,7 +77,7 @@ public final class FunctionService {
         .flatMap(library -> {
           return library.getFunctionsAsStream();
         })
-        .forEachOrdered(function -> functionLibrary.registerFunction(ObjectUtils.requireNonNull(function)));
+        .forEachOrdered(function -> functionLibrary.registerFunction(ObjectUtils.notNull(function)));
 
     synchronized (this) {
       this.library = functionLibrary;

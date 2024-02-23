@@ -126,10 +126,10 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
   @NonNull
   private final ListOptions options;
 
-  public AbstractMarkupWriter(@NonNull String namespace, @NonNull ListOptions options, T stream) {
+  public AbstractMarkupWriter(@NonNull String namespace, @NonNull ListOptions options, @NonNull T stream) {
     this.namespace = namespace;
     this.options = options;
-    this.stream = ObjectUtils.requireNonNull(stream);
+    this.stream = stream;
   }
 
   @NonNull
@@ -303,7 +303,7 @@ public abstract class AbstractMarkupWriter<T, E extends Throwable> // NOPMD not 
     }
 
     if (!node.getTitle().isBlank()) {
-      String title = ObjectUtils.requireNonNull(node.getTitle().unescape());
+      String title = ObjectUtils.notNull(node.getTitle().unescape());
       attributes.put("title", title);
     }
 

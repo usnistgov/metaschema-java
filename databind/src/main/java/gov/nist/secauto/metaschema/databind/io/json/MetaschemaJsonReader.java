@@ -394,8 +394,15 @@ public class MetaschemaJsonReader
       JsonParser parser = getReader();
       ObjectNode node = parser.readValueAsTree();
 
-      JsonNode descriminatorNode = ObjectUtils.requireNonNull(node.get(instance.getJsonDiscriminatorProperty()));
-      String discriminator = ObjectUtils.requireNonNull(descriminatorNode.asText());
+      String discriminatorProperty = instance.getJsonDiscriminatorProperty();
+      JsonNode discriminatorNode = node.get(discriminatorProperty);
+      if (discriminatorNode == null) {
+        throw new IllegalArgumentException(String.format(
+            "Unable to find discriminator property '%s' for object at '%s'.",
+            discriminatorProperty,
+            JsonUtil.toString(parser)));
+      }
+      String discriminator = ObjectUtils.requireNonNull(discriminatorNode.asText());
 
       IBoundInstanceModelGroupedNamed actualInstance = instance.getGroupedModelInstance(discriminator);
       assert actualInstance != null;
@@ -432,7 +439,8 @@ public class MetaschemaJsonReader
       @Override
       public void accept(IBoundDefinitionModelComplex definition, Object parentItem, IJsonProblemHandler problemHandler)
           throws IOException {
-        @SuppressWarnings("resource") JsonParser parser = getReader();
+        @SuppressWarnings("resource")
+        JsonParser parser = getReader();
         JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
 
         // the field will be the JSON key
@@ -469,7 +477,8 @@ public class MetaschemaJsonReader
           Object parentItem,
           IJsonProblemHandler problemHandler)
           throws IOException {
-        @SuppressWarnings("resource") JsonParser parser = getReader();
+        @SuppressWarnings("resource")
+        JsonParser parser = getReader();
 
         // advance past the start object
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
@@ -593,7 +602,8 @@ public class MetaschemaJsonReader
         if (foundJsonValueKey) {
           retval = delegate.handleUnknownProperty(definition, parentItem, fieldName, reader);
         } else {
-          @SuppressWarnings("resource") JsonParser parser = getReader();
+          @SuppressWarnings("resource")
+          JsonParser parser = getReader();
           // handle JSON value key
           String key = ObjectUtils.notNull(parser.getCurrentName());
           Object keyValue = jsonValueKyeFlag.getJavaTypeAdapter().parse(key);
@@ -693,7 +703,8 @@ public class MetaschemaJsonReader
 
       IBoundInstanceModel instance = getCollectionInfo().getInstance();
 
-      @SuppressWarnings("PMD.UseConcurrentHashMap") Map<String, Object> items = new LinkedHashMap<>();
+      @SuppressWarnings("PMD.UseConcurrentHashMap")
+      Map<String, Object> items = new LinkedHashMap<>();
 
       // A map value is always wrapped in a START_OBJECT, since fields are used for
       // the keys
@@ -711,7 +722,12 @@ public class MetaschemaJsonReader
         IBoundInstanceFlag jsonKey = instance.getItemJsonKey(item);
         assert jsonKey != null;
 
-        String key = ObjectUtils.requireNonNull(jsonKey.getValue(item)).toString();
+        Object keyValue = jsonKey.getValue(item);
+        if (keyValue == null) {
+          throw new IOException(String.format("Null value for json-key for definition '%s'",
+              jsonKey.getContainingDefinition().toCoordinates()));
+        }
+        String key = jsonKey.getJavaTypeAdapter().asString(keyValue);
         items.put(key, item);
 
         // the next item will be a FIELD_NAME, or we will encounter an END_OBJECT if all
