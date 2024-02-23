@@ -394,12 +394,12 @@ public class MetaschemaJsonReader
       JsonParser parser = getReader();
       ObjectNode node = parser.readValueAsTree();
 
-      String descriminatorProperty = instance.getJsonDiscriminatorProperty();
-      JsonNode descriminatorNode = node.get(descriminatorProperty);
-      if (descriminatorNode == null) {
+      String discriminatorProperty = instance.getJsonDiscriminatorProperty();
+      JsonNode discriminatorNode = node.get(discriminatorProperty);
+      if (discriminatorNode == null) {
         throw new IllegalArgumentException(String.format(
-            "Unable to find descriminator property '%s' for object at '%s'.",
-            descriminatorProperty,
+            "Unable to find discriminator property '%s' for object at '%s'.",
+            discriminatorProperty,
             JsonUtil.toString(parser)));
       }
       String discriminator = ObjectUtils.requireNonNull(descriminatorNode.asText());
@@ -724,7 +724,7 @@ public class MetaschemaJsonReader
 
         Object keyValue = jsonKey.getValue(item);
         if (keyValue == null) {
-          throw new IOException(String.format("Null JSON key value for definition '%s'",
+          throw new IOException(String.format("Null value for json-key for definition '%s'",
               jsonKey.getContainingDefinition().toCoordinates()));
         }
         String key = jsonKey.getJavaTypeAdapter().asString(keyValue);

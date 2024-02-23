@@ -74,7 +74,7 @@ public abstract class AbstractModelDefinitionJsonSchema<D extends IModelDefiniti
       IFlagInstance jsonKeyFlag = definition.getFlagInstanceByName(jsonKeyFlagName);
       if (jsonKeyFlag == null) {
         throw new IllegalArgumentException(
-            String.format("The referenced JSON key flag '%s' does not exist on definition '%s'.",
+            String.format("The referenced json-key flag-name '%s' does not exist on definition '%s'.",
                 jsonKeyFlagName,
                 definition.getName()));
       }

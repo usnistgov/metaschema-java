@@ -129,7 +129,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       if (jsonValueKey != null) {
         Object keyValue = jsonValueKey.getValue(parentItem);
         if (keyValue == null) {
-          throw new IOException(String.format("Null JSON value key value for definition '%s'",
+          throw new IOException(String.format("Null value for json-value-key for definition '%s'",
               jsonValueKey.getContainingDefinition().toCoordinates()));
         }
         // this is the JSON value key case
@@ -304,7 +304,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       if (jsonKey != null) {
         Object keyValue = jsonKey.getValue(parentItem);
         if (keyValue == null) {
-          throw new IOException(String.format("Null JSON key value for definition '%s'",
+          throw new IOException(String.format("Null value for json-key for definition '%s'",
               jsonKey.getContainingDefinition().toCoordinates()));
         }
 
@@ -336,7 +336,7 @@ public class MetaschemaJsonWriter implements IJsonWritingContext {
       if (jsonKey != null) {
         Object keyValue = jsonKey.getValue(parentItem);
         if (keyValue == null) {
-          throw new IOException(String.format("Null JSON key value for definition '%s'",
+          throw new IOException(String.format("Null value for json-key for definition '%s'",
               jsonKey.getContainingDefinition().toCoordinates()));
         }
 
