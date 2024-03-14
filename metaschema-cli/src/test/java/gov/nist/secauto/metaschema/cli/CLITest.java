@@ -70,10 +70,10 @@ public class CLITest {
       {
         add(Arguments.of(new String[] {}, ExitCode.INVALID_COMMAND, NO_EXCEPTION_CLASS));
         add(Arguments.of(new String[] { "-h" }, ExitCode.OK, NO_EXCEPTION_CLASS));
-        add(Arguments.of(new String[] { "generate-schema", "--help" }, ExitCode.INVALID_COMMAND,
+        add(Arguments.of(new String[] { "generate-schema", "--help" }, ExitCode.OK,
             NO_EXCEPTION_CLASS));
         add(Arguments.of(new String[] { "validate", "--help" }, ExitCode.OK, NO_EXCEPTION_CLASS));
-        add(Arguments.of(new String[] { "validate-content", "--help" }, ExitCode.INVALID_COMMAND,
+        add(Arguments.of(new String[] { "validate-content", "--help" }, ExitCode.OK,
             NO_EXCEPTION_CLASS));
         add(Arguments.of(
             new String[] { "validate",
