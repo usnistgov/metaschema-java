@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.cli;
 
 import gov.nist.secauto.metaschema.cli.commands.GenerateSchemaCommand;
+import gov.nist.secauto.metaschema.cli.commands.QueryCommand;
 import gov.nist.secauto.metaschema.cli.commands.ValidateContentUsingModuleCommand;
 import gov.nist.secauto.metaschema.cli.commands.ValidateModuleCommand;
 import gov.nist.secauto.metaschema.cli.processor.CLIProcessor;
@@ -59,6 +60,7 @@ public final class CLI {
     processor.addCommandHandler(new ValidateModuleCommand());
     processor.addCommandHandler(new GenerateSchemaCommand());
     processor.addCommandHandler(new ValidateContentUsingModuleCommand());
+    processor.addCommandHandler(new QueryCommand());
 
     CommandService.getInstance().getCommands().stream().forEach(command -> {
       assert command != null;
