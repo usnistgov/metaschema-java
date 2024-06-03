@@ -26,11 +26,14 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
+import gov.nist.secauto.metaschema.core.metapath.EQNameUtils.IEQNamePrefixResolver;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.xml.XMLConstants;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -59,6 +62,9 @@ public final class StaticContext {
     knownNamespaces.put(
         MetapathConstants.PREFIX_XPATH_FUNCTIONS_MATH,
         MetapathConstants.NS_METAPATH_FUNCTIONS_MATH);
+    knownNamespaces.put(
+        MetapathConstants.PREFIX_XPATH_FUNCTIONS_ARRAY,
+        MetapathConstants.NS_METAPATH_FUNCTIONS_ARRAY);
     WELL_KNOWN_NAMESPACES = CollectionUtil.unmodifiableMap(knownNamespaces);
   }
 
@@ -66,6 +72,10 @@ public final class StaticContext {
   private final URI baseUri;
   @NonNull
   private final Map<String, URI> knownNamespaces;
+  @Nullable
+  private final URI defaultModelNamespace;
+  @Nullable
+  private final URI defaultFunctionNamespace;
 
   /**
    * Get the mapping of prefix to namespace URI for all well-known namespaces
@@ -102,11 +112,11 @@ public final class StaticContext {
     return new Builder();
   }
 
-  private StaticContext(
-      @Nullable URI baseUri,
-      @NonNull Map<String, URI> knownNamespaces) {
-    this.baseUri = baseUri;
-    this.knownNamespaces = knownNamespaces;
+  private StaticContext(Builder builder) {
+    this.baseUri = builder.baseUri;
+    this.knownNamespaces = CollectionUtil.unmodifiableMap(Map.copyOf(builder.namespaces));
+    this.defaultModelNamespace = builder.defaultModelNamespace;
+    this.defaultFunctionNamespace = builder.defaultFunctionNamespace;
   }
 
   /**
@@ -167,22 +177,93 @@ public final class StaticContext {
   }
 
   /**
-   * Generate a new dynamic context.
+   * Get the default namespace for assembly, field, or flag references that have
+   * no namespace prefix.
    *
-   * @return the generated dynamic context
+   * @return the namespace if defined or {@code null} otherwise
    */
+  @Nullable
+  public URI getDefaultModelNamespace() {
+    return defaultModelNamespace;
+  }
+
+  /**
+   * Get the default namespace for function references that have no namespace
+   * prefix.
+   *
+   * @return the namespace if defined or {@code null} otherwise
+   */
+  @Nullable
+  public URI getDefaultFunctionNamespace() {
+    return defaultFunctionNamespace;
+  }
+
   @NonNull
-  public DynamicContext dynamicContext() {
-    return new DynamicContext(this);
+  public IEQNamePrefixResolver getFunctionPrefixResolver() {
+    return (prefix) -> {
+      String ns = lookupNamespaceForPrefix(prefix);
+      if (ns == null) {
+        URI uri = getDefaultFunctionNamespace();
+        if (uri != null) {
+          ns = uri.toASCIIString();
+        }
+      }
+      return ns == null ? XMLConstants.NULL_NS_URI : ns;
+    };
+  }
+
+  @NonNull
+  public IEQNamePrefixResolver getFlagPrefixResolver() {
+    return (prefix) -> {
+      String ns = lookupNamespaceForPrefix(prefix);
+      return ns == null ? XMLConstants.NULL_NS_URI : ns;
+    };
+  }
+
+  @NonNull
+  public IEQNamePrefixResolver getModelPrefixResolver() {
+    return (prefix) -> {
+      String ns = lookupNamespaceForPrefix(prefix);
+      if (ns == null) {
+        URI uri = getDefaultModelNamespace();
+        if (uri != null) {
+          ns = uri.toASCIIString();
+        }
+      }
+      return ns == null ? XMLConstants.NULL_NS_URI : ns;
+    };
+  }
+
+  @NonNull
+  public IEQNamePrefixResolver getVariablePrefixResolver() {
+    return (prefix) -> {
+      String ns = lookupNamespaceForPrefix(prefix);
+      return ns == null ? XMLConstants.NULL_NS_URI : ns;
+    };
+  }
+
+  @NonNull
+  public Builder buildFrom() {
+    Builder builder = new Builder();
+    builder.baseUri = this.baseUri;
+    builder.namespaces.putAll(this.knownNamespaces);
+    builder.defaultModelNamespace = this.defaultModelNamespace;
+    builder.defaultFunctionNamespace = this.defaultFunctionNamespace;
+    return builder;
   }
 
   /**
    * A builder used to generate the static context.
    */
   public static final class Builder {
+    @Nullable
     private URI baseUri;
     @NonNull
     private final Map<String, URI> namespaces = new ConcurrentHashMap<>();
+    @Nullable
+    private URI defaultModelNamespace;
+    @Nullable
+    private URI defaultFunctionNamespace = MetapathConstants.NS_METAPATH_FUNCTIONS;
 
     private Builder() {
       namespaces.put(
@@ -241,15 +322,92 @@ public final class StaticContext {
     }
 
     /**
+     * A convenience method for {@link #namespace(String, URI)}.
+     *
+     * @param prefix
+     *          the prefix to associate with the namespace, which may be
+     * @param uri
+     *          the namespace URI
+     * @return this builder
+     * @throws IllegalArgumentException
+     *           if the provided URI is invalid
+     * @see StaticContext#lookupNamespaceForPrefix(String)
+     * @see StaticContext#lookupNamespaceURIForPrefix(String)
+     * @see StaticContext#getWellKnownNamespaces()
+     */
+    @NonNull
+    public Builder namespace(@NonNull String prefix, @NonNull String uri) {
+      return namespace(prefix, URI.create(uri));
+    }
+
+    /**
+     * Defines the default namespace to use for assembly, field, or flag references
+     * that have no namespace prefix.
+     *
+     * @param uri
+     *          the namespace URI
+     * @return this builder
+     * @see StaticContext#getDefaultModelNamespace()
+     */
+    @NonNull
+    public Builder defaultModelNamespace(@NonNull URI uri) {
+      this.defaultModelNamespace = uri;
+      return this;
+    }
+
+    /**
+     * A convenience method for {@link #defaultModelNamespace(URI)}.
+     *
+     * @param uri
+     *          the namespace URI
+     * @return this builder
+     * @throws IllegalArgumentException
+     *           if the provided URI is invalid
+     * @see StaticContext#getDefaultModelNamespace()
+     */
+    @NonNull
+    public Builder defaultModelNamespace(@NonNull String uri) {
+      return defaultModelNamespace(URI.create(uri));
+    }
+
+    /**
+     * Defines the default namespace to use for assembly, field, or flag references
+     * that have no namespace prefix.
+     *
+     * @param uri
+     *          the namespace URI
+     * @return this builder
+     * @see StaticContext#getDefaultFunctionNamespace()
+     */
+    @NonNull
+    public Builder defaultFunctionNamespace(@NonNull URI uri) {
+      this.defaultFunctionNamespace = uri;
+      return this;
+    }
+
+    /**
+     * A convenience method for {@link #defaultFunctionNamespace(URI)}.
+     *
+     * @param uri
+     *          the namespace URI
+     * @return this builder
+     * @throws IllegalArgumentException
+     *           if the provided URI is invalid
+     * @see StaticContext#getDefaultFunctionNamespace()
+     */
+    @NonNull
+    public Builder defaultFunctionNamespace(@NonNull String uri) {
+      return defaultFunctionNamespace(URI.create(uri));
+    }
+
+    /**
      * Construct a new static context using the information provided to the builder.
      *
      * @return the new static context
      */
     @NonNull
     public StaticContext build() {
-      return new StaticContext(
-          baseUri,
-          CollectionUtil.unmodifiableMap(namespaces));
+      return new StaticContext(this);
     }
   }
 }

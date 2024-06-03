@@ -132,6 +132,7 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-month-from-date
     // https://www.w3.org/TR/xpath-functions-31/#func-month-from-dateTime
     // https://www.w3.org/TR/xpath-functions-31/#func-months-from-duration
+    // https://www.w3.org/TR/xpath-functions-31/#func-node-name
     // https://www.w3.org/TR/xpath-functions-31/#func-normalize-space
     // https://www.w3.org/TR/xpath-functions-31/#func-normalize-unicode
     // https://www.w3.org/TR/xpath-functions-31/#func-not
@@ -164,6 +165,7 @@ public class DefaultFunctionLibrary
     registerFunction(FnStartsWith.SIGNATURE);
     // https://www.w3.org/TR/xpath-functions-31/#func-static-base-uri
     registerFunction(FnStaticBaseUri.SIGNATURE);
+    // P0: https://www.w3.org/TR/xpath-functions-31/#func-string
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-string-join
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-string-length
     // P1: https://www.w3.org/TR/xpath-functions-31/#func-subsequence
@@ -190,6 +192,38 @@ public class DefaultFunctionLibrary
     // https://www.w3.org/TR/xpath-functions-31/#func-year-from-dateTime
     // https://www.w3.org/TR/xpath-functions-31/#func-years-from-duration
     // P2: https://www.w3.org/TR/xpath-functions-31/#func-zero-or-one
+
+    // https://www.w3.org/TR/xpath-functions-31/#func-array-get
+    registerFunction(ArrayGet.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-array-size
+    registerFunction(ArraySize.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-array-put
+    registerFunction(ArrayPut.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-array-append
+    registerFunction(ArrayAppend.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-array-subarray
+    registerFunction(ArraySubarray.SIGNATURE_TWO_ARG);
+    registerFunction(ArraySubarray.SIGNATURE_THREE_ARG);
+    // https://www.w3.org/TR/xpath-functions-31/#func-array-remove
+    registerFunction(ArrayRemove.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-array-insert-before
+    registerFunction(ArrayInsertBefore.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-array-head
+    registerFunction(ArrayHead.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-array-tail
+    registerFunction(ArrayTail.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-array-reverse
+    registerFunction(ArrayReverse.SIGNATURE);
+    // https://www.w3.org/TR/xpath-functions-31/#func-array-join
+    registerFunction(ArrayJoin.SIGNATURE);
+    // P3: https://www.w3.org/TR/xpath-functions-31/#func-array-for-each
+    // P3: https://www.w3.org/TR/xpath-functions-31/#func-array-filter
+    // P3: https://www.w3.org/TR/xpath-functions-31/#func-array-fold-left
+    // P3: https://www.w3.org/TR/xpath-functions-31/#func-array-fold-right
+    // P3: https://www.w3.org/TR/xpath-functions-31/#func-array-for-each-pair
+    // P3: https://www.w3.org/TR/xpath-functions-31/#func-array-sort
+    // https://www.w3.org/TR/xpath-functions-31/#func-array-flatten
+    registerFunction(ArrayFlatten.SIGNATURE);
 
     // xpath casting functions
     registerFunction(

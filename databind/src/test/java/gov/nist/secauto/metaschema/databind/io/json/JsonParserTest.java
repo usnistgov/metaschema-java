@@ -28,20 +28,17 @@ package gov.nist.secauto.metaschema.databind.io.json;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import gov.nist.secauto.metaschema.core.model.IMetaschemaModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.model.xml.IXmlModule;
 import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
 import gov.nist.secauto.metaschema.databind.model.AbstractBoundModelTestSupport;
-import gov.nist.secauto.metaschema.databind.model.metaschema.BindingModuleLoader;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Paths;
 
 class JsonParserTest
@@ -49,7 +46,7 @@ class JsonParserTest
   @Test
   void testIssue308Regression() throws IOException, MetaschemaException {
     ModuleLoader moduleLoader = new ModuleLoader();
-    IXmlModule module
+    IMetaschemaModule module
         = moduleLoader.load(Paths.get("src/test/resources/metaschema/308-choice-regression/metaschema.xml"));
 
     IBindingContext context = IBindingContext.instance();

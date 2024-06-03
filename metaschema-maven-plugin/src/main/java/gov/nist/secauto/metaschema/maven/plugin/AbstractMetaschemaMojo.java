@@ -227,10 +227,14 @@ public abstract class AbstractMetaschemaMojo
     if (this.encoding != null) {
       // first try to use the provided encoding
       encoding = this.encoding;
-      getLog().debug(String.format("Using configured encoding [%s].", encoding));
+      if (getLog().isDebugEnabled()) {
+        getLog().debug(String.format("Using configured encoding [%s].", encoding));
+      }
     } else {
       encoding = System.getProperty(SYSTEM_FILE_ENCODING_PROPERTY);
-      getLog().warn(String.format("Using system encoding [%s]. This build is platform dependent!", encoding));
+      if (getLog().isWarnEnabled()) {
+        getLog().warn(String.format("Using system encoding [%s]. This build is platform dependent!", encoding));
+      }
     }
     return encoding;
   }
@@ -304,7 +308,9 @@ public abstract class AbstractMetaschemaMojo
     final File staleFile = getStaleFile();
     boolean generate = !staleFile.exists();
     if (generate) {
-      getLog().info(String.format("Stale file '%s' doesn't exist! Generating source files.", staleFile.getPath()));
+      if (getLog().isInfoEnabled()) {
+        getLog().info(String.format("Stale file '%s' doesn't exist! Generating source files.", staleFile.getPath()));
+      }
       generate = true;
     } else {
       generate = false;
@@ -315,13 +321,17 @@ public abstract class AbstractMetaschemaMojo
       URI metaschemaDirRelative = getMavenProject().getBasedir().toURI().relativize(metaschemaDir.toURI());
 
       if (buildContext.isIncremental() && buildContext.hasDelta(metaschemaDirRelative.toString())) {
-        getLog().info("metaschemaDirRelative: " + metaschemaDirRelative.toString());
+        if (getLog().isInfoEnabled()) {
+          getLog().info("metaschemaDirRelative: " + metaschemaDirRelative.toString());
+        }
         generate = true;
       }
 
       if (!generate) {
         for (File sourceFile : getModuleSources().collect(Collectors.toList())) {
-          getLog().info("Source file: " + sourceFile.getPath());
+          if (getLog().isInfoEnabled()) {
+            getLog().info("Source file: " + sourceFile.getPath());
+          }
           if (sourceFile.lastModified() > staleLastModified) {
             generate = true;
           }

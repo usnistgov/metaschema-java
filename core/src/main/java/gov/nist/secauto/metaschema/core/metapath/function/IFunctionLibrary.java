@@ -40,7 +40,7 @@ public interface IFunctionLibrary {
    * @return a stream of function signatures
    */
   @NonNull
-  Stream<IFunction> getFunctionsAsStream();
+  Stream<IFunction> stream();
 
   /**
    * Determine if there is a function with the provided name that supports the

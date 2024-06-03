@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.core.model.xml;
 
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.AbstractLoader;
 import gov.nist.secauto.metaschema.core.model.IConstraintLoader;
 import gov.nist.secauto.metaschema.core.model.IModule;
@@ -220,35 +219,38 @@ public class XmlConstraintLoader
       @NonNull XmlObject obj,
       Pair<ISource, List<ITargetedConstraints>> state) {
     Scope.Assembly assembly = (Scope.Assembly) obj;
-    MetapathExpression expression = ObjectUtils.requireNonNull(assembly.getTarget());
 
     IModelConstrained constraints = new AssemblyConstraintSet();
     ConstraintXmlSupport.parse(constraints, assembly, ObjectUtils.notNull(state.getLeft()));
 
-    state.getRight().add(new AssemblyTargetedConstraints(expression, constraints));
+    state.getRight().add(new AssemblyTargetedConstraints(
+        ObjectUtils.requireNonNull(assembly.getTarget()),
+        constraints));
   }
 
   private static void handleScopedField( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<ISource, List<ITargetedConstraints>> state) {
     Scope.Field field = (Scope.Field) obj;
-    MetapathExpression expression = ObjectUtils.requireNonNull(field.getTarget());
 
     IValueConstrained constraints = new ValueConstraintSet();
     ConstraintXmlSupport.parse(constraints, field, ObjectUtils.notNull(state.getLeft()));
 
-    state.getRight().add(new FieldTargetedConstraints(expression, constraints));
+    state.getRight().add(new FieldTargetedConstraints(
+        ObjectUtils.requireNonNull(field.getTarget()),
+        constraints));
   }
 
   private static void handleScopedFlag( // NOPMD false positive
       @NonNull XmlObject obj,
       Pair<ISource, List<ITargetedConstraints>> state) {
     Scope.Flag flag = (Scope.Flag) obj;
-    MetapathExpression expression = ObjectUtils.requireNonNull(flag.getTarget());
 
     IValueConstrained constraints = new ValueConstraintSet();
     ConstraintXmlSupport.parse(constraints, flag, ObjectUtils.notNull(state.getLeft()));
 
-    state.getRight().add(new FlagTargetedConstraints(expression, constraints));
+    state.getRight().add(new FlagTargetedConstraints(
+        ObjectUtils.requireNonNull(flag.getTarget()),
+        constraints));
   }
 }

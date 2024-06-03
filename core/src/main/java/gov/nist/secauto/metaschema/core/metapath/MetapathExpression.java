@@ -88,17 +88,25 @@ public class MetapathExpression {
     /**
      * The result is expected to be an {@link INodeItem} value.
      */
-    NODE;
+    // TODO: audit use of this value, replace with ITEM where appropriate
+    NODE,
+    /**
+     * The result is expected to be an {@link IItem} value.
+     */
+    ITEM;
   }
 
   private static final Logger LOGGER = LogManager.getLogger(MetapathExpression.class);
 
   @NonNull
-  public static final MetapathExpression CONTEXT_NODE = new MetapathExpression(".", ContextItem.instance());
+  public static final MetapathExpression CONTEXT_NODE
+      = new MetapathExpression(".", ContextItem.instance(), StaticContext.instance());
 
   private final String path;
   @NonNull
-  private final IExpression node;
+  private final IExpression expression;
+  @NonNull
+  private final StaticContext staticContext;
 
   /**
    * Compiles a Metapath expression string.
@@ -111,6 +119,24 @@ public class MetapathExpression {
    */
   @NonNull
   public static MetapathExpression compile(@NonNull String path) {
+    StaticContext context = StaticContext.builder().build();
+
+    return compile(path, context);
+  }
+
+  /**
+   * Compiles a Metapath expression string using the provided static context.
+   *
+   * @param path
+   *          the metapath expression
+   * @param context
+   *          the static evaluation context
+   * @return the compiled expression object
+   * @throws MetapathException
+   *           if an error occurred while compiling the Metapath expression
+   */
+  @NonNull
+  public static MetapathExpression compile(@NonNull String path, @NonNull StaticContext context) {
     @NonNull MetapathExpression retval;
     if (".".equals(path)) {
       retval = CONTEXT_NODE;
@@ -140,12 +166,12 @@ public class MetapathExpression {
           }
         }
 
-        IExpression expr = new BuildCSTVisitor().visit(tree);
+        IExpression expr = new BuildCSTVisitor(context).visit(tree);
 
         if (LOGGER.isDebugEnabled()) {
           LOGGER.atDebug().log(String.format("Metapath CST:%n%s", CSTPrinter.toString(expr)));
         }
-        retval = new MetapathExpression(path, expr);
+        retval = new MetapathExpression(path, expr, context);
       } catch (MetapathException | ParseCancellationException ex) {
         String msg = String.format("Unable to compile Metapath '%s'", path);
         LOGGER.atError().withThrowable(ex).log(msg);
@@ -162,10 +188,13 @@ public class MetapathExpression {
    *          the Metapath as a string
    * @param expr
    *          the Metapath as a compiled abstract syntax tree (AST)
+   * @param staticContext
+   *          the static evaluation context
    */
-  protected MetapathExpression(@NonNull String path, @NonNull IExpression expr) {
+  protected MetapathExpression(@NonNull String path, @NonNull IExpression expr, @NonNull StaticContext staticContext) {
     this.path = path;
-    this.node = expr;
+    this.expression = expr;
+    this.staticContext = staticContext;
   }
 
   /**
@@ -184,7 +213,22 @@ public class MetapathExpression {
    */
   @NonNull
   protected IExpression getASTNode() {
-    return node;
+    return expression;
+  }
+
+  @NonNull
+  protected StaticContext getStaticContext() {
+    return staticContext;
+  }
+
+  /**
+   * Generate a new dynamic context.
+   *
+   * @return the generated dynamic context
+   */
+  @NonNull
+  public DynamicContext dynamicContext() {
+    return new DynamicContext(getStaticContext());
   }
 
   @Override
@@ -306,8 +350,9 @@ public class MetapathExpression {
     case BOOLEAN:
       result = FnBoolean.fnBoolean(sequence).toBoolean();
       break;
+    case ITEM:
     case NODE:
-      result = FunctionUtils.getFirstItem(sequence, true);
+      result = sequence.getFirstItem(true);
       break;
     case NUMBER:
       INumericItem numeric = FunctionUtils.toNumeric(sequence, true);
@@ -317,8 +362,8 @@ public class MetapathExpression {
       result = sequence;
       break;
     case STRING:
-      IItem item = FunctionUtils.getFirstItem(sequence, true);
-      result = item == null ? "" : FnData.fnDataItem(item).asString();
+      IAnyAtomicItem item = FnData.fnData(sequence).getFirstItem(true);
+      result = item == null ? "" : item.asString();
       break;
     default:
       throw new InvalidTypeMetapathException(null, String.format("unsupported result type '%s'", resultType.name()));
@@ -360,10 +405,7 @@ public class MetapathExpression {
   @NonNull
   public <T extends IItem> ISequence<T> evaluate(
       @Nullable IItem focus) {
-    return (ISequence<T>) evaluate(
-        focus,
-        StaticContext.builder()
-            .build().dynamicContext());
+    return (ISequence<T>) evaluate(focus, dynamicContext());
   }
 
   /**

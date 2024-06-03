@@ -37,12 +37,14 @@ import gov.nist.secauto.metaschema.core.metapath.cst.math.Subtraction;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Axis;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Flag;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.ModelInstance;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.NameTest;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RelativeDoubleSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RelativeSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RootDoubleSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashOnlyPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Step;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.Wildcard;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -188,7 +190,7 @@ public interface IExpressionVisitor<RESULT, CONTEXT> {
    *          the processing context
    * @return the visitation result or {@code null} if no result was produced
    */
-  RESULT visitFunctionCall(@NonNull FunctionCall expr, @NonNull CONTEXT context);
+  RESULT visitFunctionCall(@NonNull StaticFunctionCall expr, @NonNull CONTEXT context);
 
   /**
    * Visit the CST node.
@@ -276,7 +278,7 @@ public interface IExpressionVisitor<RESULT, CONTEXT> {
    *          the processing context
    * @return the visitation result or {@code null} if no result was produced
    */
-  RESULT visitName(@NonNull Name expr, @NonNull CONTEXT context);
+  RESULT visitName(@NonNull NameTest expr, @NonNull CONTEXT context);
 
   /**
    * Visit the CST node.
@@ -309,7 +311,7 @@ public interface IExpressionVisitor<RESULT, CONTEXT> {
    *          the processing context
    * @return the visitation result or {@code null} if no result was produced
    */
-  RESULT visitPredicate(@NonNull Predicate expr, @NonNull CONTEXT context);
+  RESULT visitPredicate(@NonNull PredicateExpression expr, @NonNull CONTEXT context);
 
   /**
    * Visit the CST node.
@@ -508,4 +510,59 @@ public interface IExpressionVisitor<RESULT, CONTEXT> {
    * @return the visitation result or {@code null} if no result was produced
    */
   RESULT visitSimpleMap(@NonNull SimpleMap expr, @NonNull CONTEXT context);
+
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitArray(@NonNull ArraySequence expr, @NonNull CONTEXT context);
+
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitArray(@NonNull ArraySquare expr, @NonNull CONTEXT context);
+
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitPostfixLookup(@NonNull PostfixLookup expr, @NonNull CONTEXT context);
+
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitFunctionCallAccessor(@NonNull FunctionCallAccessor expr, @NonNull CONTEXT context);
+
+  /**
+   * Visit the CST node.
+   *
+   * @param expr
+   *          the CST node to visit
+   * @param context
+   *          the processing context
+   * @return the visitation result or {@code null} if no result was produced
+   */
+  RESULT visitUnaryLookup(@NonNull UnaryLookup expr, @NonNull CONTEXT context);
 }

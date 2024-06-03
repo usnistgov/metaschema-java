@@ -37,12 +37,14 @@ import gov.nist.secauto.metaschema.core.metapath.cst.math.Subtraction;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Axis;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Flag;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.ModelInstance;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.NameTest;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RelativeDoubleSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RelativeSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RootDoubleSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashOnlyPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Step;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.Wildcard;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -202,7 +204,7 @@ public abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExp
   }
 
   @Override
-  public RESULT visitFunctionCall(FunctionCall expr, CONTEXT context) {
+  public RESULT visitFunctionCall(StaticFunctionCall expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
 
@@ -242,7 +244,7 @@ public abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExp
   }
 
   @Override
-  public RESULT visitName(Name expr, CONTEXT context) {
+  public RESULT visitName(NameTest expr, CONTEXT context) {
     return defaultResult();
   }
 
@@ -257,7 +259,7 @@ public abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExp
   }
 
   @Override
-  public RESULT visitPredicate(Predicate expr, CONTEXT context) {
+  public RESULT visitPredicate(PredicateExpression expr, CONTEXT context) {
     return visitChildren(expr, context);
   }
 
@@ -349,5 +351,30 @@ public abstract class AbstractExpressionVisitor<RESULT, CONTEXT> implements IExp
   @Override
   public RESULT visitSimpleMap(SimpleMap expr, CONTEXT context) {
     return visitChildren(expr, context);
+  }
+
+  @Override
+  public RESULT visitArray(ArraySequence expr, CONTEXT context) {
+    return visitChildren(expr, context);
+  }
+
+  @Override
+  public RESULT visitArray(ArraySquare expr, CONTEXT context) {
+    return visitChildren(expr, context);
+  }
+
+  @Override
+  public RESULT visitPostfixLookup(PostfixLookup expr, CONTEXT context) {
+    return visitChildren(expr, context);
+  }
+
+  @Override
+  public RESULT visitFunctionCallAccessor(FunctionCallAccessor expr, CONTEXT context) {
+    return visitChildren(expr, context);
+  }
+
+  @Override
+  public RESULT visitUnaryLookup(UnaryLookup expr, CONTEXT context) {
+    return defaultResult();
   }
 }

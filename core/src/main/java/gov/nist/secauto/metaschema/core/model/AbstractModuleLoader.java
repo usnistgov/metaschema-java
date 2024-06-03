@@ -98,7 +98,7 @@ public abstract class AbstractModuleLoader<T, M extends IModuleExtended<M, ?, ?,
   protected abstract M newModule(
       @NonNull URI resource,
       @NonNull T binding,
-      @NonNull List<M> importedModules) throws MetaschemaException;
+      @NonNull List<? extends M> importedModules) throws MetaschemaException;
 
   /**
    * Get the list of Metaschema module URIs associated with the provided binding.

@@ -12,7 +12,7 @@
 	</bannerLeft>
 
 	<publishDate position="bottom" format="yyyy-MM-dd" />
-	<version position="navigation-bottom" />
+	<version position="left" />
 
 	<skin>
 		<groupId>io.github.devacfr.maven.skins</groupId>
@@ -115,5 +115,6 @@
 		</menu>
 		<menu name="Modules" ref="modules" />
 		<menu name="Maven Documentation" ref="reports" inherit="bottom" />
+		<footer><![CDATA[]]></footer>
 	</body>
 </project>

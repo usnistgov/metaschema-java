@@ -28,9 +28,8 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
@@ -46,9 +45,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlFlagInstance
-    extends AbstractInstance<IModelDefinition>
-    implements IFlagInstance,
-    IFeatureDefinitionReferenceInstance<IFlagDefinition, IFlagInstance> {
+    extends AbstractFlagInstance<IModelDefinition, IFlagDefinition, IFlagInstance> {
   @NonNull
   private final FlagReferenceType xmlFlag;
   @Nullable
@@ -63,6 +60,7 @@ class XmlFlagInstance
    * @param parent
    *          the field definition this object is an instance of
    */
+  @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
   public XmlFlagInstance(@NonNull FlagReferenceType xmlObject, @NonNull IModelDefinition parent) {
     super(parent);
     this.xmlFlag = xmlObject;
@@ -70,6 +68,10 @@ class XmlFlagInstance
         ? getDefinition().getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlObject.getDefault()))
         : null; // NOPMD needed for final variable
   }
+
+  // ----------------------------------------
+  // - Start XmlBeans driven code - CPD-OFF -
+  // ----------------------------------------
 
   /**
    * Get the underlying XML data.
@@ -79,22 +81,6 @@ class XmlFlagInstance
   protected final FlagReferenceType getXmlObject() {
     return xmlFlag;
   }
-
-  @Override
-  public final IFlagDefinition getDefinition() {
-    // this should always be not null
-    return ObjectUtils.requireNonNull(
-        getContainingDefinition().getContainingModule().getScopedFlagDefinitionByName(getName()));
-  }
-
-  @Override
-  public final IModelDefinition getContainingDefinition() {
-    return getParentContainer();
-  }
-
-  // ----------------------------------------
-  // - Start XmlBeans driven code - CPD-OFF -
-  // ----------------------------------------
 
   @Override
   public String getFormalName() {

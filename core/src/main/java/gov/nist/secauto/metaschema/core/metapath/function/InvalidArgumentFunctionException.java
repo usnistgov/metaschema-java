@@ -103,7 +103,7 @@ public class InvalidArgumentFunctionException
   }
 
   @Override
-  protected String getCodePrefix() {
+  public String getCodePrefix() {
     return "FORG";
   }
 }

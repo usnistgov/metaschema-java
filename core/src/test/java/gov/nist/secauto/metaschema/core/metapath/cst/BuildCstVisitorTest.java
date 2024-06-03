@@ -53,7 +53,6 @@ import gov.nist.secauto.metaschema.core.metapath.cst.comparison.AbstractComparis
 import gov.nist.secauto.metaschema.core.metapath.cst.comparison.GeneralComparison;
 import gov.nist.secauto.metaschema.core.metapath.cst.comparison.ValueComparison;
 import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
-import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
@@ -79,10 +78,21 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 @SuppressWarnings("PMD.TooManyStaticImports")
 class BuildCstVisitorTest {
+  private static final URI NS_URI = URI.create("http://example.com/ns");
+  private static final String NS = NS_URI.toASCIIString();
+
+  private static final QName ROOT = new QName(NS, "root");
+  private static final QName FIELD1 = new QName(NS, "field1");
+  private static final QName FIELD2 = new QName(NS, "field2");
+  private static final QName UUID = new QName(NS, "uuid");
+  private static final QName FLAG = new QName("flag");
+
   @RegisterExtension
   Mockery context = new JUnit5Mockery();
 
@@ -90,19 +100,21 @@ class BuildCstVisitorTest {
   @NonNull
   private IDocumentNodeItem newTestDocument() {
     MockNodeItemFactory factory = new MockNodeItemFactory(context);
-    return factory.document(URI.create("http://example.com/content"), "root",
+
+    return factory.document(URI.create("http://example.com/content"), ROOT,
         List.of(
-            factory.flag("uuid", IUuidItem.random())),
+            factory.flag(UUID, IUuidItem.random())),
         List.of(
-            factory.field("field1", IStringItem.valueOf("field1")),
-            factory.field("field2", IStringItem.valueOf("field2"), // NOPMD
-                List.of(factory.flag("flag", IStringItem.valueOf("field2-flag"))))));
+            factory.field(FIELD1, IStringItem.valueOf("field1")),
+            factory.field(FIELD2, IStringItem.valueOf("field2"), // NOPMD
+                List.of(factory.flag(FLAG, IStringItem.valueOf("field2-flag"))))));
   }
 
   @NonNull
-  private static DynamicContext newDynamicContext() {
+  private static StaticContext newStaticContext() {
     return StaticContext.builder()
-        .build().dynamicContext();
+        .defaultModelNamespace(NS_URI)
+        .build();
   }
 
   private static IExpression parseExpression(@NonNull String path) {
@@ -116,128 +128,147 @@ class BuildCstVisitorTest {
     // ParseTreePrinter cstPrinter = new ParseTreePrinter(System.out);
     // cstPrinter.print(tree, Arrays.asList(parser.getRuleNames()));
 
-    return new BuildCSTVisitor().visit(tree);
+    return new BuildCSTVisitor(StaticContext.instance()).visit(tree);
   }
 
   @Test
   void testAbbreviatedParentAxis() {
+    StaticContext staticContext = newStaticContext();
     // compile expression
     String path = "../field2";
-    IExpression ast = parseExpression(path);
+    MetapathExpression expr = MetapathExpression.compile(path, staticContext);
 
     // select starting node
     IDocumentNodeItem document = newTestDocument();
-    IFieldNodeItem field = MetapathExpression.compile("/root/field1").evaluateAs(document, ResultType.NODE);
+    IFieldNodeItem field
+        = MetapathExpression.compile("/root/field1", staticContext).evaluateAs(document, ResultType.NODE);
     assert field != null;
 
     // evaluate
-    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(field));
-    assertThat(result.asList(), contains(
+    ISequence<?> result = expr.evaluate(field);
+    assertThat(result.getValue(), contains(
         allOf(
             instanceOf(IFieldNodeItem.class),
-            hasProperty("name", equalTo("field2"))))); // NOPMD
+            hasProperty("name", equalTo(FIELD2))))); // NOPMD
 
   }
 
   @Test
   void testParentAxisMatch() {
+    StaticContext staticContext = newStaticContext();
+
     // select starting node
     IDocumentNodeItem document = newTestDocument();
-    IFieldNodeItem field = MetapathExpression.compile("/root/field1").evaluateAs(document, ResultType.NODE);
+    IFieldNodeItem field = MetapathExpression.compile("/root/field1", staticContext)
+        .evaluateAs(document, ResultType.NODE);
     assert field != null;
 
     // compile expression
-    IItem result = MetapathExpression.compile("parent::root").evaluateAs(field, ResultType.NODE);
+    IItem result = MetapathExpression.compile("parent::root", staticContext)
+        .evaluateAs(field, ResultType.NODE);
     assert result != null;
 
     assertAll(
         () -> assertInstanceOf(IRootAssemblyNodeItem.class, result),
-        () -> assertEquals("root", ((IRootAssemblyNodeItem) result).getName()));
+        () -> assertEquals(ROOT, ((IRootAssemblyNodeItem) result).getName()));
   }
 
   @Test
   void testParentAxisNonMatch() {
+    StaticContext staticContext = newStaticContext();
+
     // select starting node
     IDocumentNodeItem document = newTestDocument();
-    IFieldNodeItem field = MetapathExpression.compile("/root/field1").evaluateAs(document, ResultType.NODE);
+    IFieldNodeItem field = MetapathExpression.compile("/root/field1", staticContext)
+        .evaluateAs(document, ResultType.NODE);
     assert field != null;
 
     // compile expression
     String path = "parent::other";
-    IExpression ast = parseExpression(path);
+    MetapathExpression expr = MetapathExpression.compile(path, staticContext);
 
     // evaluate
-    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(field));
+    ISequence<?> result = expr.evaluate(field);
     assertTrue(result.isEmpty());
   }
 
   @Test
   void testParentAxisDocument() {
+    StaticContext staticContext = newStaticContext();
+
     // compile expression
     String path = "parent::other";
-    IExpression ast = parseExpression(path);
+    MetapathExpression expr = MetapathExpression.compile(path, staticContext);
 
     // select starting node
     IDocumentNodeItem document = newTestDocument();
 
     // evaluate
-    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
+    ISequence<?> result = expr.evaluate(document);
     assertTrue(result.isEmpty());
   }
 
   @Test
   void testAbbreviatedForwardAxisModelName() {
+    StaticContext staticContext = newStaticContext();
+
     String path = "./root";
-    IExpression ast = parseExpression(path);
+    MetapathExpression expr = MetapathExpression.compile(path, staticContext);
 
     // select starting node
     IDocumentNodeItem document = newTestDocument();
 
     // evaluate
-    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
-    assertThat(result.asList(), contains(
+    ISequence<?> result = expr.evaluate(document);
+    assertThat(result.getValue(), contains(
         allOf(
             instanceOf(IRootAssemblyNodeItem.class),
-            hasProperty("name", equalTo("root")))));
+            hasProperty("name", equalTo(ROOT)))));
   }
 
   @Test
   void testAbbreviatedForwardAxisFlagName() {
+    StaticContext staticContext = newStaticContext();
+
     String path = "./@flag";
-    IExpression ast = parseExpression(path);
+    MetapathExpression expr = MetapathExpression.compile(path, staticContext);
 
     // select starting node
     IDocumentNodeItem document = newTestDocument();
-    IFieldNodeItem field = MetapathExpression.compile("/root/field2").evaluateAs(document, ResultType.NODE);
+    IFieldNodeItem field = MetapathExpression.compile("/root/field2", staticContext)
+        .evaluateAs(document, ResultType.NODE);
     assert field != null;
 
     // evaluate
-    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(field));
-    assertThat(result.asList(), contains(
+    ISequence<?> result = expr.evaluate(field);
+    assertThat(result.getValue(), contains(
         allOf(
             instanceOf(IFlagNodeItem.class),
-            hasProperty("name", equalTo("flag")))));
+            hasProperty("name", equalTo(FLAG)))));
   }
 
   @Test
   void testForwardstepChild() {
+    StaticContext staticContext = newStaticContext();
+
     String path = "child::*";
-    IExpression ast = parseExpression(path);
+    MetapathExpression expr = MetapathExpression.compile(path, staticContext);
 
     // select starting node
     IDocumentNodeItem document = newTestDocument();
-    IRootAssemblyNodeItem root = MetapathExpression.compile("/root").evaluateAs(document, ResultType.NODE);
+    IRootAssemblyNodeItem root = MetapathExpression.compile("/root", staticContext)
+        .evaluateAs(document, ResultType.NODE, new DynamicContext(staticContext));
     assert root != null;
 
     // evaluate
-    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(root));
-    assertThat(result.asList(), contains(
+    ISequence<?> result = expr.evaluate(root);
+    assertThat(result.getValue(), contains(
         allOf(
             instanceOf(IFieldNodeItem.class),
-            hasProperty("name", equalTo("field1"))), // NOPMD
+            hasProperty("name", equalTo(FIELD1))), // NOPMD
         allOf(
             instanceOf(IFieldNodeItem.class),
-            hasProperty("name", equalTo("field2"))))); // NOPMD
+            hasProperty("name", equalTo(FIELD2))))); // NOPMD
   }
 
   static Stream<Arguments> testComparison() {
@@ -283,8 +314,8 @@ class BuildCstVisitorTest {
     IExpression ast = parseExpression(metapath);
 
     IDocumentNodeItem document = newTestDocument();
-    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
-    IItem resultItem = FunctionUtils.getFirstItem(result, false);
+    ISequence<?> result = ast.accept(new DynamicContext(), ISequence.of(document));
+    IItem resultItem = result.getFirstItem(false);
     assertAll(
         () -> assertEquals(And.class, ast.getClass()),
         () -> assertNotNull(resultItem),
@@ -308,8 +339,8 @@ class BuildCstVisitorTest {
     IExpression ast = parseExpression(metapath);
 
     IDocumentNodeItem document = newTestDocument();
-    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
-    IItem resultItem = FunctionUtils.getFirstItem(result, false);
+    ISequence<?> result = ast.accept(new DynamicContext(), ISequence.of(document));
+    IItem resultItem = result.getFirstItem(false);
     assertAll(
         () -> assertEquals(If.class, ast.getClass()),
         () -> assertNotNull(resultItem),
@@ -339,7 +370,7 @@ class BuildCstVisitorTest {
     IExpression ast = parseExpression(metapath);
 
     IDocumentNodeItem document = newTestDocument();
-    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
+    ISequence<?> result = ast.accept(new DynamicContext(), ISequence.of(document));
     assertAll(
         () -> assertEquals(For.class, ast.getClass()),
         () -> assertNotNull(result),
@@ -366,7 +397,7 @@ class BuildCstVisitorTest {
     IExpression ast = parseExpression(metapath);
 
     IDocumentNodeItem document = newTestDocument();
-    ISequence<?> result = ast.accept(newDynamicContext(), ISequence.of(document));
+    ISequence<?> result = ast.accept(new DynamicContext(), ISequence.of(document));
     assertAll(
         () -> assertEquals(SimpleMap.class, ast.getClass()),
         () -> assertNotNull(result),

@@ -30,9 +30,12 @@ import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IGroupable;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
@@ -54,6 +57,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -67,14 +72,14 @@ public final class ModelSupport {
     return CollectionUtil.unmodifiableMap(ObjectUtils.notNull(props.stream()
         .collect(
             Collectors.groupingBy(
-                (prop) -> {
+                prop -> {
                   String name = ObjectUtils.requireNonNull(prop.getName());
                   URI namespace = prop.getNamespace();
                   return namespace == null ? IAttributable.key(name)
                       : IAttributable.key(name, ObjectUtils.notNull(namespace.toASCIIString()));
                 },
                 Collectors.mapping(
-                    (prop) -> ObjectUtils.requireNonNull(prop.getValue()),
+                    prop -> ObjectUtils.requireNonNull(prop.getValue()),
                     Collectors.toCollection(LinkedHashSet::new))))));
   }
 
@@ -181,10 +186,12 @@ public final class ModelSupport {
   }
 
   @NonNull
-  public static IGroupAs groupAs(@Nullable GroupAs groupAs) {
+  public static IGroupAs groupAs(
+      @Nullable GroupAs groupAs,
+      @NonNull IModule module) {
     return groupAs == null
         ? IGroupAs.SINGLETON_GROUP_AS
-        : new GroupAsImpl(groupAs);
+        : new GroupAsImpl(groupAs, module);
   }
 
   @NonNull
@@ -226,5 +233,15 @@ public final class ModelSupport {
       }
     }
     return retval;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Nullable
+  public static <NODE extends IAssemblyNodeItem> NODE toNodeItem(
+      @NonNull IModule module,
+      @NonNull QName qname,
+      int position) {
+    IDocumentNodeItem moduleNodeItem = module.getNodeItem();
+    return moduleNodeItem == null ? null : (NODE) moduleNodeItem.getModelItemsByName(qname).get(position);
   }
 }

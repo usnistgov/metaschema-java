@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.model.IContainerModelSupport;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelGrouped;
 import gov.nist.secauto.metaschema.databind.model.IBoundContainerModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedField;
@@ -34,11 +35,17 @@ import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedName
 
 import java.util.Collection;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFeatureBoundContainerModelChoiceGroup
-    extends IBoundContainerModelChoiceGroup {
+    extends IBoundContainerModelChoiceGroup, IFeatureContainerModelGrouped<
+        IBoundInstanceModelGroupedNamed,
+        IBoundInstanceModelGroupedField,
+        IBoundInstanceModelGroupedAssembly> {
 
+  @Override
   @NonNull
   IContainerModelSupport<
       IBoundInstanceModelGroupedNamed,
@@ -47,7 +54,12 @@ public interface IFeatureBoundContainerModelChoiceGroup
       IBoundInstanceModelGroupedAssembly> getModelContainer();
 
   @Override
-  default IBoundInstanceModelGroupedNamed getNamedModelInstanceByName(String name) {
+  default Collection<IBoundInstanceModelGroupedNamed> getModelInstances() {
+    return getModelContainer().getModelInstances();
+  }
+
+  @Override
+  default IBoundInstanceModelGroupedNamed getNamedModelInstanceByName(QName name) {
     return getModelContainer().getNamedModelInstanceMap().get(name);
   }
 
@@ -58,7 +70,7 @@ public interface IFeatureBoundContainerModelChoiceGroup
   }
 
   @Override
-  default IBoundInstanceModelGroupedField getFieldInstanceByName(String name) {
+  default IBoundInstanceModelGroupedField getFieldInstanceByName(QName name) {
     return getModelContainer().getFieldInstanceMap().get(name);
   }
 
@@ -69,7 +81,7 @@ public interface IFeatureBoundContainerModelChoiceGroup
   }
 
   @Override
-  default IBoundInstanceModelGroupedAssembly getAssemblyInstanceByName(String name) {
+  default IBoundInstanceModelGroupedAssembly getAssemblyInstanceByName(QName name) {
     return getModelContainer().getAssemblyInstanceMap().get(name);
   }
 

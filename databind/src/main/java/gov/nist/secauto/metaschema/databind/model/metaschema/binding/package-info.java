@@ -24,6 +24,11 @@
  * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
  * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
  */
+
+/**
+ * A Metaschema module represented as a set of Metaschema module bindings.
+ */
+
 @gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaPackage(moduleClass = { MetaschemaModelModule.class })
 @gov.nist.secauto.metaschema.databind.model.annotations.XmlSchema(
     namespace = "http://csrc.nist.gov/ns/oscal/metaschema/1.0",

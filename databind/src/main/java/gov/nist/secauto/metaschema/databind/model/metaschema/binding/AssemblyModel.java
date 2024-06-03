@@ -77,7 +77,7 @@ public class AssemblyModel {
           @BoundGroupedAssembly(formalName = "Choice Grouping", useName = "choice-group", binding = ChoiceGroup.class)
       },
       groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "instances",
-          namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+          inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _instances;
 
   @BoundAssembly(
@@ -159,7 +159,7 @@ public class AssemblyModel {
                 binding = DefineField.class)
         },
         groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "choices",
-            namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+            inJson = JsonGroupAsBehavior.LIST))
     private List<Object> _choices;
 
     @BoundField(
@@ -271,7 +271,7 @@ public class AssemblyModel {
           useName = "prop",
           maxOccurs = -1,
           groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
-              namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+              inJson = JsonGroupAsBehavior.LIST))
       private List<Property> _props;
 
       @BoundField(
@@ -440,7 +440,7 @@ public class AssemblyModel {
           useName = "prop",
           maxOccurs = -1,
           groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
-              namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+              inJson = JsonGroupAsBehavior.LIST))
       private List<Property> _props;
 
       @BoundField(
@@ -457,7 +457,7 @@ public class AssemblyModel {
               @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
           },
           groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "flags",
-              namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+              inJson = JsonGroupAsBehavior.LIST))
       private List<Object> _flags;
 
       @BoundAssembly(
@@ -479,7 +479,7 @@ public class AssemblyModel {
           useName = "example",
           maxOccurs = -1,
           groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "examples",
-              namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+              inJson = JsonGroupAsBehavior.LIST))
       private List<Example> _examples;
 
       public String getName() {
@@ -701,7 +701,7 @@ public class AssemblyModel {
           useName = "prop",
           maxOccurs = -1,
           groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
-              namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+              inJson = JsonGroupAsBehavior.LIST))
       private List<Property> _props;
 
       @BoundField(
@@ -920,7 +920,7 @@ public class AssemblyModel {
           useName = "prop",
           maxOccurs = -1,
           groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
-              namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+              inJson = JsonGroupAsBehavior.LIST))
       private List<Property> _props;
 
       @BoundField(
@@ -948,7 +948,7 @@ public class AssemblyModel {
               @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
           },
           groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "flags",
-              namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+              inJson = JsonGroupAsBehavior.LIST))
       private List<Object> _flags;
 
       @BoundAssembly(
@@ -966,7 +966,7 @@ public class AssemblyModel {
           useName = "example",
           maxOccurs = -1,
           groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "examples",
-              namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+              inJson = JsonGroupAsBehavior.LIST))
       private List<Example> _examples;
 
       public String getName() {
@@ -1170,7 +1170,7 @@ public class AssemblyModel {
                 binding = InlineDefineField.class)
         },
         groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "choices",
-            namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+            inJson = JsonGroupAsBehavior.LIST))
     private List<Object> _choices;
 
     @BoundAssembly(

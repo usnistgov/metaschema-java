@@ -38,17 +38,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 public interface IBoundModuleElement extends IItemValueHandler {
   /**
-   * Determine if the provided JSON property or YAML key name is associated with
-   * this instance.
-   *
-   * @param name
-   *          the name of the property/key being parsed
-   * @return {@code true} if the instance will handle this name, or {@code false}
-   *         otherwise
-   */
-  boolean canHandleJsonPropertyName(@NonNull String name);
-
-  /**
    * Determine if the provided XML qualified name is associated with this
    * property.
    *

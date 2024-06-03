@@ -31,28 +31,20 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
-import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.WildcardTypeName;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
-import gov.nist.secauto.metaschema.core.model.IContainerFlag;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
-import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
-import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
 import gov.nist.secauto.metaschema.databind.codegen.IGeneratedClass;
 import gov.nist.secauto.metaschema.databind.codegen.IGeneratedDefinitionClass;
 import gov.nist.secauto.metaschema.databind.codegen.IGeneratedModuleClass;
@@ -84,8 +76,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -152,14 +142,14 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     Path classFile = ObjectUtils.notNull(javaFile.writeToPath(targetDirectory));
 
     // now generate all related definition classes
-    Stream<? extends IContainerFlag> globalDefinitions = Stream.concat(
+    Stream<? extends IModelDefinition> globalDefinitions = Stream.concat(
         module.getAssemblyDefinitions().stream(),
         module.getFieldDefinitions().stream());
 
     Set<String> classNames = new HashSet<>();
 
     @SuppressWarnings("PMD.UseConcurrentHashMap") // map is unmodifiable
-    Map<IContainerFlag, IGeneratedDefinitionClass> definitionProductions
+    Map<IModelDefinition, IGeneratedDefinitionClass> definitionProductions
         = ObjectUtils.notNull(globalDefinitions
             // Get type information for assembly and field definitions.
             // Avoid field definitions without flags that don't require a generated class
@@ -474,9 +464,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   protected Set<IModelDefinition> buildClass(
       @NonNull IAssemblyDefinitionTypeInfo typeInfo,
       @NonNull TypeSpec.Builder builder) {
-    Set<IModelDefinition> retval = new HashSet<>();
-
-    retval.addAll(buildClass((IModelDefinitionTypeInfo) typeInfo, builder));
+    Set<IModelDefinition> retval = new HashSet<>(buildClass((IModelDefinitionTypeInfo) typeInfo, builder));
 
     AnnotationSpec.Builder metaschemaAssembly = ObjectUtils.notNull(AnnotationSpec.builder(MetaschemaAssembly.class));
 
@@ -513,9 +501,7 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
   protected Set<IModelDefinition> buildClass(
       @NonNull IFieldDefinitionTypeInfo typeInfo,
       @NonNull TypeSpec.Builder builder) {
-    Set<IModelDefinition> retval = new HashSet<>();
-    retval.addAll(buildClass((IModelDefinitionTypeInfo) typeInfo, builder));
-
+    Set<IModelDefinition> retval = new HashSet<>(buildClass((IModelDefinitionTypeInfo) typeInfo, builder));
     AnnotationSpec.Builder metaschemaField = ObjectUtils.notNull(AnnotationSpec.builder(MetaschemaField.class));
 
     buildCommonProperties(typeInfo, metaschemaField);
@@ -603,163 +589,5 @@ public class DefaultMetaschemaClassFactory implements IMetaschemaClassFactory {
     builder.addMember("name", "$S", definition.getName());
     IModule module = definition.getContainingModule();
     builder.addMember("moduleClass", "$T.class", getTypeResolver().getClassName(module));
-  }
-
-  /*
-  protected void buildFieldForFieldValue(
-      @NonNull IFieldValueTypeInfo typeInfo,
-      @NonNull FieldSpec.Builder builder) {
-    IFieldDefinition definition = typeInfo.getParentDefinitionTypeInfo().getDefinition();
-    AnnotationSpec.Builder fieldValue = AnnotationSpec.builder(BoundFieldValue.class);
-
-    IDataTypeAdapter<?> valueDataType = definition.getJavaTypeAdapter();
-
-    // a field object always has a single value
-    if (!definition.hasJsonValueKeyFlagInstance()) {
-      fieldValue.addMember("valueKeyName", "$S", definition.getJsonValueKeyName());
-    } // else do nothing, the annotation will be on the flag
-
-    if (!MetaschemaDataTypeProvider.DEFAULT_DATA_TYPE.equals(valueDataType)) {
-      fieldValue.addMember("typeAdapter", "$T.class", valueDataType.getClass());
-    }
-
-    Object defaultValue = definition.getDefaultValue();
-    if (defaultValue != null) {
-      fieldValue.addMember("defaultValue", "$S", valueDataType.asString(defaultValue));
-    }
-
-    builder.addAnnotation(fieldValue.build());
-  }
-  */
-  /**
-   * This method can be implemented by subclasses to create additional methods.
-   *
-   * @param typeInfo
-   *          the type information for the Java property to build
-   * @param builder
-   *          the class builder
-   * @param valueField
-   *          the field corresponding to this property
-   */
-  @SuppressWarnings("PMD.LooseCoupling") // need implementation classes
-  protected void buildExtraMethods( // NOPMD - intentional
-      @NonNull IModelInstanceTypeInfo typeInfo,
-      @NonNull TypeSpec.Builder builder,
-      @NonNull FieldSpec valueField) {
-    IModelInstanceAbsolute instance = typeInfo.getInstance();
-    int maxOccurance = instance.getMaxOccurs();
-    if (maxOccurance == -1 || maxOccurance > 1) {
-      TypeName itemType = typeInfo.getJavaItemType();
-      ParameterSpec valueParam = ObjectUtils.notNull(ParameterSpec.builder(itemType, "item").build());
-
-      String itemPropertyName = ClassUtils.toPropertyName(typeInfo.getItemBaseName());
-
-      if (JsonGroupAsBehavior.KEYED.equals(instance.getJsonGroupAsBehavior())) {
-        if (instance instanceof INamedModelInstance) {
-          buildKeyedMethods((INamedModelInstance) instance, builder, itemType, itemPropertyName, valueParam,
-              valueField);
-        } else {
-          // FIXME: implement choice group
-          throw new UnsupportedOperationException("implement");
-        }
-      } else {
-        {
-          // create add method
-          MethodSpec.Builder method = MethodSpec.methodBuilder("add" + itemPropertyName)
-              .addParameter(valueParam)
-              .returns(TypeName.BOOLEAN)
-              .addModifiers(Modifier.PUBLIC)
-              .addJavadoc("Add a new {@link $T} item to the underlying collection.\n", itemType)
-              .addJavadoc("@param item the item to add\n")
-              .addJavadoc("@return {@code true}\n")
-              .addStatement("$T value = $T.requireNonNull($N,\"$N cannot be null\")",
-                  itemType, ObjectUtils.class, valueParam, valueParam)
-              .beginControlFlow("if ($N == null)", valueField)
-              .addStatement("$N = new $T<>()", valueField, LinkedList.class)
-              .endControlFlow()
-              .addStatement("return $N.add(value)", valueField);
-
-          builder.addMethod(method.build());
-        }
-
-        {
-          // create remove method
-          MethodSpec.Builder method = MethodSpec.methodBuilder("remove" + itemPropertyName)
-              .addParameter(valueParam)
-              .returns(TypeName.BOOLEAN)
-              .addModifiers(Modifier.PUBLIC)
-              .addJavadoc("Remove the first matching {@link $T} item from the underlying collection.\n", itemType)
-              .addJavadoc("@param item the item to remove\n")
-              .addJavadoc("@return {@code true} if the item was removed or {@code false} otherwise\n")
-              .addStatement("$T value = $T.requireNonNull($N,\"$N cannot be null\")",
-                  itemType, ObjectUtils.class, valueParam, valueParam)
-              .addStatement("return $1N != null && $1N.remove(value)", valueField);
-          builder.addMethod(method.build());
-        }
-      }
-    }
-  }
-
-  private void buildKeyedMethods(
-      @NonNull INamedModelInstance instance,
-      @NonNull TypeSpec.Builder builder,
-      @NonNull TypeName itemType,
-      @NonNull String itemPropertyName,
-      @NonNull ParameterSpec valueParam,
-      @NonNull FieldSpec valueField) {
-
-    IFlagInstance jsonKey = instance.getDefinition().getJsonKeyFlagInstance();
-    if (jsonKey == null) {
-      throw new IllegalStateException(
-          String.format("JSON key not defined for property: %s", instance.toCoordinates()));
-    }
-
-    // get the json key property on the instance's definition
-    IModelDefinitionTypeInfo instanceTypeInfo = typeResolver.getTypeInfo(instance.getDefinition());
-    IFlagInstanceTypeInfo jsonKeyTypeInfo = instanceTypeInfo.getFlagInstanceTypeInfo(jsonKey);
-
-    if (jsonKeyTypeInfo == null) {
-      throw new IllegalStateException(
-          String.format("Unable to identify JSON key for property: %s", instance.toCoordinates()));
-    }
-
-    {
-      // create add method
-      MethodSpec.Builder method = MethodSpec.methodBuilder("add" + itemPropertyName)
-          .addParameter(valueParam)
-          .returns(itemType)
-          .addModifiers(Modifier.PUBLIC)
-          .addJavadoc("Add a new {@link $T} item to the underlying collection.\n", itemType)
-          .addJavadoc("@param item the item to add\n")
-          .addJavadoc("@return the existing {@link $T} item in the collection or {@code null} if not item exists\n",
-              itemType)
-          .addStatement("$1T value = $2T.requireNonNull($3N,\"$3N value cannot be null\")",
-              itemType, ObjectUtils.class, valueParam)
-          .addStatement("$1T key = $2T.requireNonNull($3N.$4N(),\"$3N key cannot be null\")",
-              String.class, ObjectUtils.class, valueParam, "get" + jsonKeyTypeInfo.getPropertyName())
-          .beginControlFlow("if ($N == null)", valueField)
-          .addStatement("$N = new $T<>()", valueField, LinkedHashMap.class) // NOPMD required
-          .endControlFlow()
-          .addStatement("return $N.put(key, value)", valueField);
-
-      builder.addMethod(method.build());
-    }
-    {
-      // create remove method
-      MethodSpec.Builder method = MethodSpec.methodBuilder("remove" + itemPropertyName)
-          .addParameter(valueParam)
-          .returns(TypeName.BOOLEAN)
-          .addModifiers(Modifier.PUBLIC)
-          .addJavadoc("Remove the {@link $T} item from the underlying collection.\n", itemType)
-          .addJavadoc("@param item the item to remove\n")
-          .addJavadoc("@return {@code true} if the item was removed or {@code false} otherwise\n")
-          .addStatement("$1T value = $2T.requireNonNull($3N,\"$3N value cannot be null\")",
-              itemType, ObjectUtils.class, valueParam)
-          .addStatement("$1T key = $2T.requireNonNull($3N.$4N(),\"$3N key cannot be null\")",
-              String.class, ObjectUtils.class, valueParam, "get" + jsonKeyTypeInfo.getPropertyName())
-          .addStatement("return $1N != null && $1N.remove(key, value)", valueField);
-      builder.addMethod(method.build());
-    }
-
   }
 }

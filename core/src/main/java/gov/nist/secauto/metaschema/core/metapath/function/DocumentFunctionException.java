@@ -104,7 +104,7 @@ public class DocumentFunctionException
   }
 
   @Override
-  protected String getCodePrefix() {
+  public String getCodePrefix() {
     return "FODC";
   }
 

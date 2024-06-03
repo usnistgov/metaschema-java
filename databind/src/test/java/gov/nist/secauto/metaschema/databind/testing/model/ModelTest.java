@@ -55,8 +55,12 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 class ModelTest
     extends ModelTestBase {
+  private static final String NS = "https://csrc.nist.gov/ns/test/xml";
+
   @Nested
   class TestRootAssemblyWithFlags {
 
@@ -67,9 +71,12 @@ class ModelTest
       IBoundDefinitionModelComplex definition = ObjectUtils.requireNonNull(
           context.getBoundDefinitionForClass(RootAssemblyWithFlags.class));
 
-      IBoundInstanceFlag idFlag = ObjectUtils.requireNonNull(definition.getFlagInstanceByName("id"));
-      IBoundInstanceFlag defaultFlag = ObjectUtils.requireNonNull(definition.getFlagInstanceByName("defaultFlag"));
-      IBoundInstanceFlag numberFlag = ObjectUtils.requireNonNull(definition.getFlagInstanceByName("number"));
+      IBoundInstanceFlag idFlag = ObjectUtils.requireNonNull(definition.getFlagInstanceByName(
+          new QName("id")));
+      IBoundInstanceFlag defaultFlag = ObjectUtils.requireNonNull(definition.getFlagInstanceByName(
+          new QName("defaultFlag")));
+      IBoundInstanceFlag numberFlag = ObjectUtils.requireNonNull(definition.getFlagInstanceByName(
+          new QName("number")));
 
       assertAll(
           "root assembly",
@@ -152,17 +159,17 @@ class ModelTest
           (IBoundDefinitionModelAssembly) context.getBoundDefinitionForClass(RootAssemblyWithFields.class));
 
       IBoundInstanceModelField defaultField = ObjectUtils.requireNonNull(
-          definition.getFieldInstanceByName("defaultField"));
+          definition.getFieldInstanceByName(new QName(NS, "defaultField")));
       IBoundInstanceModelField collectionField = ObjectUtils.requireNonNull(
-          definition.getFieldInstanceByName("field2"));
+          definition.getFieldInstanceByName(new QName(NS, "field2")));
       IBoundInstanceModelField specifiedValueKeyField = ObjectUtils.requireNonNull(
-          definition.getFieldInstanceByName("field-value-key"));
+          definition.getFieldInstanceByName(new QName(NS, "field-value-key")));
       IBoundInstanceModelField defaultValueKeyField = ObjectUtils.requireNonNull(
-          definition.getFieldInstanceByName("field-default-value-key"));
+          definition.getFieldInstanceByName(new QName(NS, "field-default-value-key")));
       IBoundInstanceModelField flagValueKeyField = ObjectUtils.requireNonNull(
-          definition.getFieldInstanceByName("field-flag-value-key"));
+          definition.getFieldInstanceByName(new QName(NS, "field-flag-value-key")));
       IBoundInstanceModelField flagJsonKeyField = ObjectUtils.requireNonNull(
-          definition.getFieldInstanceByName("field-json-key"));
+          definition.getFieldInstanceByName(new QName(NS, "field-json-key")));
 
       assertAll(
           "root assembly",

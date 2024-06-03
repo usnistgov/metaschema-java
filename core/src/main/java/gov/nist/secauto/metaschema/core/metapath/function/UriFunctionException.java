@@ -98,7 +98,7 @@ public class UriFunctionException
   }
 
   @Override
-  protected String getCodePrefix() {
+  public String getCodePrefix() {
     return "FONS";
   }
 

@@ -53,7 +53,6 @@ public class NullJavaTypeAdapter
    */
   public NullJavaTypeAdapter(@NonNull Class<Void> clazz) {
     super(clazz);
-    throw new UnsupportedOperationException(NOT_VALID);
   }
 
   @Override

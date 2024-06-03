@@ -30,9 +30,10 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.AbstractGlobalFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
-import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
@@ -49,11 +50,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
-class XmlGlobalFlagDefinition implements IFlagDefinition {
+class XmlGlobalFlagDefinition
+    extends AbstractGlobalFlagDefinition<XmlModule, IFlagInstance> {
   @NonNull
   private final GlobalFlagDefinitionType xmlFlag;
-  @NonNull
-  private final XmlModule module;
   @Nullable
   private final Object defaultValue;
   private final Lazy<IValueConstrained> constraints;
@@ -70,9 +70,8 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   public XmlGlobalFlagDefinition(
       @NonNull GlobalFlagDefinitionType xmlFlag,
       @NonNull XmlModule module) {
+    super(module);
     this.xmlFlag = xmlFlag;
-    this.module = module;
-
     Object defaultValue = null;
     if (xmlFlag.isSetDefault()) {
       defaultValue = getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlFlag.getDefault()));
@@ -98,11 +97,6 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
   @Override
   public IValueConstrained getConstraintSupport() {
     return constraints.get();
-  }
-
-  @Override
-  public XmlModule getContainingModule() {
-    return module;
   }
 
   @Override

@@ -30,9 +30,11 @@ import gov.nist.secauto.metaschema.core.model.constraint.IFeatureValueConstraine
 
 import java.util.Locale;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IDefinition extends IModelElement, INamed, IAttributable, IFeatureValueConstrained {
+public interface IDefinition extends INamedModelElement, IAttributable, IFeatureValueConstrained {
 
   @NonNull
   ModuleScopeEnum DEFAULT_DEFINITION_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
@@ -48,6 +50,21 @@ public interface IDefinition extends IModelElement, INamed, IAttributable, IFeat
   }
 
   /**
+   * The qualified name for the definition.
+   * <p>
+   * This name is the combination of the definition's namespace, which is the
+   * module's namespace, and the definition's name.
+   *
+   * @return the definition's qualified name
+   */
+  @NonNull
+  default QName getDefinitionQName() {
+    return new QName(
+        getContainingModule().getXmlNamespace().toASCIIString(),
+        getName());
+  }
+
+  /**
    * Determine if the definition is defined inline, meaning the definition is
    * declared where it is used.
    *
@@ -55,7 +72,7 @@ public interface IDefinition extends IModelElement, INamed, IAttributable, IFeat
    *         the definition is able to be globally referenced
    */
   default boolean isInline() {
-    return false;
+    return getInlineInstance() != null;
   }
 
   /**

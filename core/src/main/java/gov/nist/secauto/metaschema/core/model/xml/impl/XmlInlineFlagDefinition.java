@@ -30,9 +30,8 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractInlineFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
@@ -51,9 +50,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlInlineFlagDefinition
-    extends AbstractInstance<IModelDefinition>
-    implements IFlagInstance, IFlagDefinition,
-    IFeatureDefinitionInstanceInlined<IFlagDefinition, IFlagInstance> {
+    extends AbstractInlineFlagDefinition<IModelDefinition, IFlagDefinition, IFlagInstance> {
+
   @NonNull
   private final InlineFlagDefinitionType xmlFlag;
   @Nullable
@@ -88,17 +86,6 @@ class XmlInlineFlagDefinition
     }));
   }
 
-  @Override
-  public IFlagDefinition getDefinition() {
-    return this;
-  }
-
-  @Override
-  @NonNull
-  public IFlagInstance getInlineInstance() {
-    return this;
-  }
-
   /**
    * Used to generate the instances for the constraints in a lazy fashion when the
    * constraints are first accessed.
@@ -112,11 +99,6 @@ class XmlInlineFlagDefinition
   @Override
   public Object getDefaultValue() {
     return defaultValue;
-  }
-
-  @Override
-  public IModelDefinition getContainingDefinition() {
-    return getParentContainer();
   }
 
   // ----------------------------------------

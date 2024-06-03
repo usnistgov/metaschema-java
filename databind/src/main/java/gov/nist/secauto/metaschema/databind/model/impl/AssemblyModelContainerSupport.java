@@ -51,7 +51,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 class AssemblyModelContainerSupport
     implements IContainerModelAssemblySupport<
@@ -64,29 +67,30 @@ class AssemblyModelContainerSupport
   @NonNull
   private final List<IBoundInstanceModel> modelInstances;
   @NonNull
-  private final Map<String, IBoundInstanceModelNamed> namedModelInstances;
+  private final Map<QName, IBoundInstanceModelNamed> namedModelInstances;
   @NonNull
-  private final Map<String, IBoundInstanceModelField> fieldInstances;
+  private final Map<QName, IBoundInstanceModelField> fieldInstances;
   @NonNull
-  private final Map<String, IBoundInstanceModelAssembly> assemblyInstances;
+  private final Map<QName, IBoundInstanceModelAssembly> assemblyInstances;
   @NonNull
   private final Map<String, IBoundInstanceModelChoiceGroup> choiceGroupInstances;
 
   @SuppressWarnings("PMD.UseConcurrentHashMap")
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   public AssemblyModelContainerSupport(
       @NonNull DefinitionAssembly containingDefinition) {
     this.modelInstances = CollectionUtil.unmodifiableList(ObjectUtils.notNull(
         getModelInstanceStream(containingDefinition, containingDefinition.getBoundClass())
             .collect(Collectors.toUnmodifiableList())));
 
-    Map<String, IBoundInstanceModelNamed> namedModelInstances = new LinkedHashMap<>();
-    Map<String, IBoundInstanceModelField> fieldInstances = new LinkedHashMap<>();
-    Map<String, IBoundInstanceModelAssembly> assemblyInstances = new LinkedHashMap<>();
+    Map<QName, IBoundInstanceModelNamed> namedModelInstances = new LinkedHashMap<>();
+    Map<QName, IBoundInstanceModelField> fieldInstances = new LinkedHashMap<>();
+    Map<QName, IBoundInstanceModelAssembly> assemblyInstances = new LinkedHashMap<>();
     Map<String, IBoundInstanceModelChoiceGroup> choiceGroupInstances = new LinkedHashMap<>();
     for (IBoundInstanceModel instance : this.modelInstances) {
       if (instance instanceof IBoundInstanceModelNamed) {
         IBoundInstanceModelNamed named = (IBoundInstanceModelNamed) instance;
-        String key = named.getEffectiveName();
+        QName key = named.getXmlQName();
         namedModelInstances.put(key, named);
 
         if (instance instanceof IBoundInstanceModelField) {
@@ -169,17 +173,17 @@ class AssemblyModelContainerSupport
   }
 
   @Override
-  public Map<String, IBoundInstanceModelNamed> getNamedModelInstanceMap() {
+  public Map<QName, IBoundInstanceModelNamed> getNamedModelInstanceMap() {
     return namedModelInstances;
   }
 
   @Override
-  public Map<String, IBoundInstanceModelField> getFieldInstanceMap() {
+  public Map<QName, IBoundInstanceModelField> getFieldInstanceMap() {
     return fieldInstances;
   }
 
   @Override
-  public Map<String, IBoundInstanceModelAssembly> getAssemblyInstanceMap() {
+  public Map<QName, IBoundInstanceModelAssembly> getAssemblyInstanceMap() {
     return assemblyInstances;
   }
 

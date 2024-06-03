@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.model.xml;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import gov.nist.secauto.metaschema.core.model.IMetaschemaModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -44,7 +45,7 @@ class MetaschemaModuleTest {
     ModuleLoader loader = new ModuleLoader();
     URI moduleUri = ObjectUtils.notNull(
         Paths.get("metaschema/schema/metaschema/metaschema-module-metaschema.xml").toUri());
-    IXmlModule module = loader.load(moduleUri);
+    IMetaschemaModule module = loader.load(moduleUri);
     assertFalse(module.getExportedRootAssemblyDefinitions().isEmpty(), "no roots found");
   }
 }

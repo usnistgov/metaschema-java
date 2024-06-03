@@ -27,13 +27,14 @@
 package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.metapath.IStringValued;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IAnyAtomicItem extends IAtomicValuedItem {
+public interface IAnyAtomicItem extends IAtomicValuedItem, IStringValued {
   @NonNull
   Set<Class<? extends IAnyAtomicItem>> PRIMITIVE_ITEM_TYPES = ObjectUtils.notNull(Set.of(
       IStringItem.class,
@@ -69,6 +70,7 @@ public interface IAnyAtomicItem extends IAtomicValuedItem {
    *
    * @return the string value value of the item
    */
+  @Override
   @NonNull
   String asString();
 

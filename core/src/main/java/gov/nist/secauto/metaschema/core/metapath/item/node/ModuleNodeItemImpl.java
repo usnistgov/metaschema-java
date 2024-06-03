@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import java.net.URI;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
@@ -45,6 +47,11 @@ class ModuleNodeItemImpl
       @NonNull INodeItemGenerator generator) {
     this.module = module;
     this.model = ObjectUtils.notNull(Lazy.lazy(generator.newMetaschemaModelSupplier(this)));
+  }
+
+  @Override
+  public URI getNamespace() {
+    return getModule().getXmlNamespace();
   }
 
   @Override

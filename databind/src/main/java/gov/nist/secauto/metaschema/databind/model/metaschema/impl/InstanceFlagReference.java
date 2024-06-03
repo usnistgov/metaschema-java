@@ -29,14 +29,14 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.AbstractFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
+import gov.nist.secauto.metaschema.core.model.IFeatureValueless;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionFlag;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModel;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagReference;
 
 import java.util.Map;
@@ -47,11 +47,14 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceFlagReference
-    extends AbstractInstance<FlagReference>
-    implements IBindingInstanceFlag,
-    IFeatureDefinitionReferenceInstance<IBindingDefinitionFlag, IBindingInstanceFlag> {
+    extends AbstractFlagInstance<
+        IModelDefinition,
+        IFlagDefinition, IFlagInstance>
+    implements IFeatureValueless {
   @NonNull
-  private final IBindingDefinitionFlag definition;
+  private final FlagReference binding;
+  @NonNull
+  private final IFlagDefinition definition;
   @NonNull
   private final Map<IAttributable.Key, Set<String>> properties;
   @Nullable
@@ -60,29 +63,34 @@ public class InstanceFlagReference
   private final Lazy<IAssemblyNodeItem> boundNodeItem;
 
   public InstanceFlagReference(
-      @NonNull FlagReference obj,
+      @NonNull FlagReference binding,
       @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
       int position,
-      @NonNull IBindingDefinitionFlag definition,
-      @NonNull IBindingDefinitionModel parent) {
-    super(obj, parent);
+      @NonNull IFlagDefinition definition,
+      @NonNull IModelDefinition parent) {
+    super(parent);
+    this.binding = binding;
     this.definition = definition;
-    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
-    this.defaultValue = ModelSupport.defaultValue(getBinding().getDefault(), definition.getJavaTypeAdapter());
+    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(binding.getProps()));
+    this.defaultValue = ModelSupport.defaultValue(binding.getDefault(), definition.getJavaTypeAdapter());
     this.boundNodeItem = ObjectUtils.notNull(
-        Lazy.lazy(() -> (IAssemblyNodeItem) getContainingModule().getBoundNodeItem()
-            .getModelItemsByName(bindingInstance.getEffectiveName())
+        Lazy.lazy(() -> (IAssemblyNodeItem) ObjectUtils.notNull(getContainingModule().getNodeItem())
+            .getModelItemsByName(bindingInstance.getXmlQName())
             .get(position)));
   }
 
-  @SuppressWarnings("null")
+  @NonNull
+  protected FlagReference getBinding() {
+    return binding;
+  }
+
   @Override
-  public INodeItem getBoundNodeItem() {
+  public IAssemblyNodeItem getNodeItem() {
     return boundNodeItem.get();
   }
 
   @Override
-  public IBindingDefinitionFlag getDefinition() {
+  public IFlagDefinition getDefinition() {
     return definition;
   }
 

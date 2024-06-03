@@ -31,12 +31,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class ValueConstraintSet implements IValueConstrained { // NOPMD - intentional
   @SuppressWarnings("PMD.UseConcurrentHashMap") // need ordering
   @NonNull
-  private final Map<String, ILet> lets = new LinkedHashMap<>();
+  private final Map<QName, ILet> lets = new LinkedHashMap<>();
   @NonNull
   private final List<IConstraint> constraints = new LinkedList<>();
   @NonNull
@@ -49,7 +51,7 @@ public class ValueConstraintSet implements IValueConstrained { // NOPMD - intent
   private final List<IExpectConstraint> expectConstraints = new LinkedList<>();
 
   @Override
-  public Map<String, ILet> getLetExpressions() {
+  public Map<QName, ILet> getLetExpressions() {
     return lets;
   }
 

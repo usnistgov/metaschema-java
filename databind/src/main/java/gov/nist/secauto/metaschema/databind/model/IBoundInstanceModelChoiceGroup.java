@@ -60,12 +60,7 @@ public interface IBoundInstanceModelChoiceGroup
   static IBoundInstanceModelChoiceGroup newInstance(
       @NonNull Field field,
       @NonNull IBoundDefinitionModelAssembly containingDefinition) {
-    return new InstanceModelChoiceGroup(field, containingDefinition);
-  }
-
-  @Override
-  default IBoundInstanceModelChoiceGroup getInstance() {
-    return this;
+    return InstanceModelChoiceGroup.newInstance(field, containingDefinition);
   }
 
   @Override
@@ -148,11 +143,6 @@ public interface IBoundInstanceModelChoiceGroup
   default Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
     IBoundInstanceModelGroupedNamed itemInstance = getItemInstance(item);
     return itemInstance.deepCopyItem(itemInstance, parentInstance);
-  }
-
-  @Override
-  default boolean canHandleJsonPropertyName(@NonNull String name) {
-    return name.equals(getJsonName());
   }
 
   @Override

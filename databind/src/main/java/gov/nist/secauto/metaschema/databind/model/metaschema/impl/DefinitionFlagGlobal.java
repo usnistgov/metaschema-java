@@ -31,15 +31,16 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.AbstractGlobalFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionFlag;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagConstraints;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
 
@@ -51,8 +52,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class DefinitionFlagGlobal
-    extends AbstractDefinition<METASCHEMA.DefineFlag>
-    implements IBindingDefinitionFlag {
+    extends AbstractGlobalFlagDefinition<IMetaschemaModule, IFlagInstance> {
+  @NonNull
+  private final METASCHEMA.DefineFlag binding;
   @NonNull
   private final Map<IAttributable.Key, Set<String>> properties;
   @NonNull
@@ -82,24 +84,29 @@ public class DefinitionFlagGlobal
       @NonNull METASCHEMA.DefineFlag binding,
       @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
       int position,
-      @NonNull IBindingModule module) {
-    super(binding, module);
-    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
-    this.javaTypeAdapter = ModelSupport.dataType(getBinding().getAsType());
-    this.defaultValue = ModelSupport.defaultValue(getBinding().getDefault(), this.javaTypeAdapter);
+      @NonNull IMetaschemaModule module) {
+    super(module);
+    this.binding = binding;
+    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(binding.getProps()));
+    this.javaTypeAdapter = ModelSupport.dataType(binding.getAsType());
+    this.defaultValue = ModelSupport.defaultValue(binding.getDefault(), this.javaTypeAdapter);
     this.valueConstraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
-      FlagConstraints constraints = getBinding().getConstraint();
+      FlagConstraints constraints = binding.getConstraint();
       if (constraints != null) {
         ConstraintBindingSupport.parse(retval, constraints, ISource.modelSource(module.getLocation()));
       }
       return retval;
     }));
-    this.boundNodeItem = ObjectUtils.notNull(
-        Lazy.lazy(() -> (IAssemblyNodeItem) getContainingModule().getBoundNodeItem()
-            .getModelItemsByName(bindingInstance.getEffectiveName())
-            .get(position)));
-    // new NodeItem(bindingInstance, position, generator)
+    this.boundNodeItem = ObjectUtils.notNull(Lazy.lazy(() -> ObjectUtils.requireNonNull(ModelSupport.toNodeItem(
+        module,
+        bindingInstance.getXmlQName(),
+        position))));
+  }
+
+  @NonNull
+  protected METASCHEMA.DefineFlag getBinding() {
+    return binding;
   }
 
   @Override
@@ -162,34 +169,8 @@ public class DefinitionFlagGlobal
     return ModelSupport.remarks(getBinding().getRemarks());
   }
 
-  @SuppressWarnings("null")
   @Override
-  public INodeItem getBoundNodeItem() {
+  public INodeItem getNodeItem() {
     return boundNodeItem.get();
   }
-
-  // private class NodeItem
-  // extends AbstractGroupedAssemblyInstanceNodeItem {
-  // private NodeItem(
-  // @NonNull IAssemblyInstanceGrouped instance,
-  // int position,
-  // @NonNull INodeItemGenerator generator) {
-  // super(instance, position, generator);
-  // }
-  //
-  // @Override
-  // public IAssemblyNodeItem getParentNodeItem() {
-  // return getContainingModule().getBoundNodeItem();
-  // }
-  //
-  // @Override
-  // public IAssemblyNodeItem getParentContentNodeItem() {
-  // return getParentNodeItem();
-  // }
-  //
-  // @Override
-  // public METASCHEMA.DefineFlag getValue() {
-  // return getBinding();
-  // }
-  // }
 }

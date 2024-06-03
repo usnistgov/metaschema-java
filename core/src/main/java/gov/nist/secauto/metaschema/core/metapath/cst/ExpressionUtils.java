@@ -61,7 +61,7 @@ public final class ExpressionUtils {
       retval = baseType;
     } else {
       List<Class<?>> expressionClasses = ObjectUtils.notNull(expressions.stream()
-          .map(expr -> expr.getStaticResultType()).collect(Collectors.toList()));
+          .map(IExpression::getStaticResultType).collect(Collectors.toList()));
 
       // check if the expression classes, are derived from the base type
       if (checkDerivedFrom(baseType, expressionClasses)) {

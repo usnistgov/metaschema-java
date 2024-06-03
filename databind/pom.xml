@@ -101,7 +101,7 @@
 							<excludeRoot>target/generated-sources/xmlbeans</excludeRoot>
 						</excludeRoots>
 						<excludes>
-                            <exclude>**/gov/nist/secauto/metaschema/databind/model/metaschema/*.java</exclude>
+                            <exclude>gov/nist/secauto/metaschema/databind/model/metaschema/binding/*.java</exclude>
                         </excludes>
 					</configuration>
 				</plugin>
@@ -117,8 +117,10 @@
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<configuration>
 						<excludes>
+							<!-- filter generated code -->
 							<exclude>gov/nist/secauto/metaschema/databind/codegen/xmlbeans/**/*</exclude>
 							<exclude>org/apache/xmlbeans/**/*</exclude>
+							<exclude>gov/nist/secauto/metaschema/databind/model/metaschema/binding/*</exclude>
 						</excludes>
 					</configuration>
 				</plugin>

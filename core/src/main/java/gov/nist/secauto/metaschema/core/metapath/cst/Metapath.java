@@ -68,7 +68,7 @@ public class Metapath
     Stream<? extends IItem> retval = ObjectUtils.notNull(getChildren().stream()
         .flatMap(child -> {
           ISequence<?> result = child.accept(dynamicContext, focus);
-          return result.asStream();
+          return result.stream();
         }));
     return ISequence.of(retval);
   }

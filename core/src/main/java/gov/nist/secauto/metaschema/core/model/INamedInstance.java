@@ -36,7 +36,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * identify the data.
  *
  */
-public interface INamedInstance extends INamed, IAttributable, IInstance {
+public interface INamedInstance extends INamedModelElement, IAttributable, IInstance {
   /**
    * Retrieve the definition of this instance.
    *
@@ -46,20 +46,11 @@ public interface INamedInstance extends INamed, IAttributable, IInstance {
   IDefinition getDefinition();
 
   /**
-   * Get the XML qualified name to use in XML.
+   * This represents the qualified name of a referenced definition.
    *
-   * @return the XML qualified name, or {@code null} if there isn't one
+   * @return the qualified name
+   * @see IDefinition#getDefinitionQName()
    */
-  default QName getXmlQName() {
-    return new QName(getXmlNamespace(), getEffectiveName());
-  }
-
-  /**
-   * Retrieve the XML namespace for this instance.
-   *
-   * @return the XML namespace or {@code null} if no namespace is defined
-   */
-  default String getXmlNamespace() {
-    return getContainingModule().getXmlNamespace().toASCIIString();
-  }
+  @NonNull
+  QName getReferencedDefinitionQName();
 }

@@ -269,7 +269,7 @@ public class ModuleIndex {
     public boolean isUsedAsJsonKey() {
       return references.stream()
           .anyMatch(ref -> ref instanceof INamedModelInstance
-              && ((INamedModelInstance) ref).getJsonKeyFlagName() != null);
+              && ((INamedModelInstance) ref).hasJsonKey());
     }
 
     public boolean isUsedWithoutJsonKey() {
@@ -277,12 +277,12 @@ public class ModuleIndex {
           || references.isEmpty()
           || references.stream()
               .anyMatch(ref -> ref instanceof INamedModelInstance
-                  && ((INamedModelInstance) ref).getJsonKeyFlagName() == null);
+                  && !((INamedModelInstance) ref).hasJsonKey());
     }
 
     public boolean isChoiceGroupMember() {
       return references.stream()
-          .anyMatch(ref -> ref instanceof INamedModelInstanceGrouped);
+          .anyMatch(INamedModelInstanceGrouped.class::isInstance);
     }
   }
 }

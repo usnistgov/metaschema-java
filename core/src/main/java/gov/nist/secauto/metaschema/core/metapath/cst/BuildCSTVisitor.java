@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.core.metapath.cst;
 
+import gov.nist.secauto.metaschema.core.metapath.EQNameUtils;
+import gov.nist.secauto.metaschema.core.metapath.StaticContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AbbrevforwardstepContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AbbrevreversestepContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AdditiveexprContext;
@@ -36,6 +38,7 @@ import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.Arrowfunctions
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.AxisstepContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ComparisonexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ContextitemexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.CurlyarrayconstructorContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.EqnameContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ExprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ExprsingleContext;
@@ -45,9 +48,13 @@ import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.FunctioncallCo
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.GeneralcompContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.IfexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.IntersectexceptexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.KeyspecifierContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.LetexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.LiteralContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.LookupContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.MultiplicativeexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.NametestContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.NodetestContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.NumericliteralContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.OrexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ParenthesizedexprContext;
@@ -63,14 +70,17 @@ import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.Simpleforclaus
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleletbindingContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimpleletclauseContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SimplemapexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.SquarearrayconstructorContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.StringconcatexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.UnaryexprContext;
+import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.UnarylookupContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.UnionexprContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.ValuecompContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.VarnameContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.VarrefContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10.WildcardContext;
 import gov.nist.secauto.metaschema.core.metapath.antlr.Metapath10Lexer;
+import gov.nist.secauto.metaschema.core.metapath.cst.AbstractLookup.IKeySpecifier;
 import gov.nist.secauto.metaschema.core.metapath.cst.comparison.GeneralComparison;
 import gov.nist.secauto.metaschema.core.metapath.cst.comparison.ValueComparison;
 import gov.nist.secauto.metaschema.core.metapath.cst.math.Addition;
@@ -81,14 +91,20 @@ import gov.nist.secauto.metaschema.core.metapath.cst.math.Multiplication;
 import gov.nist.secauto.metaschema.core.metapath.cst.math.Subtraction;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Axis;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Flag;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.INameTestExpression;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.INodeTestExpression;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.ModelInstance;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.NameTest;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RelativeDoubleSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RelativeSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RootDoubleSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashOnlyPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Step;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.Wildcard;
 import gov.nist.secauto.metaschema.core.metapath.function.ComparisonFunctions;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -103,8 +119,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -119,11 +138,21 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 })
 public class BuildCSTVisitor
     extends AbstractCSTVisitorBase {
+  @NonNull
+  private final StaticContext context;
 
-  /* ============================================================
-   * Expressions - https://www.w3.org/TR/xpath-31/#id-expressions
-   * ============================================================
-   */
+  public BuildCSTVisitor(@NonNull StaticContext context) {
+    this.context = context;
+  }
+
+  // ============================================================
+  // Expressions - https://www.w3.org/TR/xpath-31/#id-expressions
+  // ============================================================
+
+  @NonNull
+  protected StaticContext getContext() {
+    return context;
+  }
 
   @Override
   protected IExpression handleExpr(ExprContext ctx) {
@@ -133,10 +162,9 @@ public class BuildCSTVisitor
     });
   }
 
-  /* =================================================================
-   * Literal Expressions - https://www.w3.org/TR/xpath-31/#id-literals
-   * =================================================================
-   */
+  // =================================================================
+  // Literal Expressions - https://www.w3.org/TR/xpath-31/#id-literals
+  // =================================================================
 
   @Override
   protected IExpression handleStringLiteral(LiteralContext ctx) {
@@ -163,42 +191,229 @@ public class BuildCSTVisitor
     return retval;
   }
 
-  /* ==================================================================
-   * Variable References - https://www.w3.org/TR/xpath-31/#id-variables
-   * ==================================================================
-   */
+  // ==================================================================
+  // Variable References - https://www.w3.org/TR/xpath-31/#id-variables
+  // ==================================================================
 
   @Override
   protected IExpression handleVarref(VarrefContext ctx) {
-    Name varName = (Name) ctx.varname().accept(this);
-    assert varName != null;
-    return new VariableReference(varName);
+    return new VariableReference(
+        EQNameUtils.parseName(
+            ctx.varname().eqname().getText(),
+            getContext().getVariablePrefixResolver()));
   }
 
-  /* =================================================================================
-   * Parenthesized Expressions  - https://www.w3.org/TR/xpath-31/#id-paren-expressions
-   * =================================================================================
-   */
+  // ====================================================================
+  // For Expressions - https://www.w3.org/TR/xpath-31/#id-for-expressions
+  // ====================================================================
+
+  @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+  @Override
+  protected IExpression handleForexpr(ForexprContext ctx) {
+    SimpleforclauseContext simpleForClause = ctx.simpleforclause();
+
+    // for SimpleForBinding ("," SimpleForBinding)*
+    int bindingCount = simpleForClause.getChildCount() / 2;
+
+    @NonNull IExpression retval = ObjectUtils.notNull(ctx.exprsingle().accept(this));
+
+    // step through in reverse
+    for (int idx = bindingCount - 1; idx >= 0; idx--) {
+      SimpleforbindingContext simpleForBinding = simpleForClause.simpleforbinding(idx);
+
+      VarnameContext varName = simpleForBinding.varname();
+      ExprsingleContext exprSingle = simpleForBinding.exprsingle();
+
+      IExpression boundExpression = exprSingle.accept(this);
+      assert boundExpression != null;
+
+      QName qname = EQNameUtils.parseName(
+          varName.eqname().getText(),
+          getContext().getVariablePrefixResolver());
+
+      Let.VariableDeclaration variable = new Let.VariableDeclaration(qname, boundExpression);
+
+      retval = new For(variable, retval);
+    }
+    return retval;
+  }
+
+  // ====================================================================
+  // Let Expressions - https://www.w3.org/TR/xpath-31/#id-let-expressions
+  // ====================================================================
+
+  @Override
+  protected IExpression handleLet(LetexprContext context) {
+    @NonNull IExpression retval = ObjectUtils.notNull(context.exprsingle().accept(this));
+
+    SimpleletclauseContext letClause = context.simpleletclause();
+    List<SimpleletbindingContext> clauses = letClause.simpleletbinding();
+
+    ListIterator<SimpleletbindingContext> reverseListIterator = clauses.listIterator(clauses.size());
+    while (reverseListIterator.hasPrevious()) {
+      SimpleletbindingContext simpleCtx = reverseListIterator.previous();
+
+      IExpression boundExpression = simpleCtx.exprsingle().accept(this);
+      assert boundExpression != null;
+
+      QName varName = EQNameUtils.parseName(
+          simpleCtx.varname().eqname().getText(),
+          getContext().getVariablePrefixResolver());
+
+      retval = new Let(varName, boundExpression, retval); // NOPMD intended
+    }
+    return retval;
+  }
+
+  // ==============================================================
+  // Array Constructors - https://www.w3.org/TR/xpath-31/#id-arrays
+  // ==============================================================
+
+  @Override
+  protected IExpression handleArrayConstructor(SquarearrayconstructorContext context) {
+    if (context.getChildCount() == 2) {
+      // empty
+      return new ArraySquare(CollectionUtil.emptyList());
+    }
+
+    return nAiryToCollection(context, 1, 2,
+        (ctx, idx) -> {
+          int pos = (idx - 1) / 2;
+          ParseTree tree = ctx.exprsingle(pos);
+          return visit(tree);
+        },
+        children -> {
+          assert children != null;
+          return new ArraySquare(children);
+        });
+  }
+
+  @Override
+  protected IExpression handleArrayConstructor(CurlyarrayconstructorContext ctx) {
+    return new ArraySequence(visit(ctx.enclosedexpr()));
+  }
+
+  // ===============================================
+  // Unary Lookup -
+  // https://www.w3.org/TR/xpath-31/#id-unary-lookup
+  // ===============================================
+
+  @Override
+  protected IExpression handleUnarylookup(UnarylookupContext ctx) {
+    KeyspecifierContext specifier = ctx.keyspecifier();
+
+    IKeySpecifier keySpecifier;
+    if (specifier.parenthesizedexpr() != null) {
+      keySpecifier
+          = new UnaryLookup.ParenthesizedExprKeySpecifier(
+              ObjectUtils.requireNonNull(specifier.parenthesizedexpr().accept(this)));
+    } else if (specifier.NCName() != null) {
+      keySpecifier
+          = new UnaryLookup.NCNameKeySpecifier(ObjectUtils.requireNonNull(specifier.NCName().getText()));
+    } else if (specifier.IntegerLiteral() != null) {
+      keySpecifier = new UnaryLookup.IntegerLiteralKeySpecifier(
+          IIntegerItem.valueOf(ObjectUtils.requireNonNull(specifier.IntegerLiteral().getText())));
+    } else if (specifier.STAR() != null) {
+      keySpecifier = new UnaryLookup.WildcardKeySpecifier();
+    } else {
+      throw new UnsupportedOperationException("unknown key specifier");
+    }
+    return new UnaryLookup(keySpecifier);
+  }
+
+  // =========================================================
+  // Quantified Expressions -
+  // https://www.w3.org/TR/xpath-31/#id-quantified-expressions
+  // =========================================================
+
+  @Override
+  protected IExpression handleQuantifiedexpr(QuantifiedexprContext ctx) {
+    Quantified.Quantifier quantifier;
+    int type = ((TerminalNode) ctx.getChild(0)).getSymbol().getType();
+    switch (type) {
+    case Metapath10Lexer.KW_SOME:
+      quantifier = Quantified.Quantifier.SOME;
+      break;
+    case Metapath10Lexer.KW_EVERY:
+      quantifier = Quantified.Quantifier.EVERY;
+      break;
+    default:
+      throw new UnsupportedOperationException(((TerminalNode) ctx.getChild(0)).getSymbol().getText());
+    }
+
+    int numVars = (ctx.getChildCount() - 2) / 5; // children - "satisfies expr" / ", $ varName in expr"
+    Map<QName, IExpression> vars = new LinkedHashMap<>(); // NOPMD ordering needed
+    int offset = 0;
+    for (; offset < numVars; offset++) {
+      // $
+      QName varName = EQNameUtils.parseName(
+          ctx.varname(offset).eqname().getText(),
+          getContext().getVariablePrefixResolver());
+
+      // in
+      IExpression varExpr = visit(ctx.exprsingle(offset));
+
+      vars.put(varName, varExpr);
+    }
+
+    IExpression satisfies = visit(ctx.exprsingle(offset));
+
+    return new Quantified(quantifier, vars, satisfies);
+  }
+
+  // =======================================================================
+  // Arrow operator (=>) - https://www.w3.org/TR/xpath-31/#id-arrow-operator
+  // =======================================================================
+
+  @Override
+  protected IExpression handleArrowexpr(ArrowexprContext context) {
+    // TODO: handle additional syntax for varef and parenthesized
+    return handleGroupedNAiry(context, 0, 3, (ctx, idx, left) -> {
+      // the next child is "=>"
+      assert "=>".equals(ctx.getChild(idx).getText());
+
+      int offset = (idx - 1) / 3;
+
+      ArrowfunctionspecifierContext fcCtx = ctx.getChild(ArrowfunctionspecifierContext.class, offset);
+      ArgumentlistContext argumentCtx = ctx.getChild(ArgumentlistContext.class, offset);
+
+      QName name = EQNameUtils.parseName(
+          fcCtx.eqname().getText(),
+          getContext().getFunctionPrefixResolver());
+
+      try (Stream<IExpression> args = Stream.concat(
+          Stream.of(left),
+          parseArgumentList(ObjectUtils.notNull(argumentCtx)))) {
+        assert args != null;
+
+        return new StaticFunctionCall(name, ObjectUtils.notNull(args.collect(Collectors.toUnmodifiableList())));
+      }
+    });
+  }
+
+  // ====================================================
+  // Parenthesized Expressions -
+  // https://www.w3.org/TR/xpath-31/#id-paren-expressions
+  // ====================================================
 
   @Override
   protected IExpression handleEmptyParenthesizedexpr(ParenthesizedexprContext ctx) {
     return EmptySequence.instance();
   }
 
-  /* =====================================================================================
-   * Context Item Expression  - https://www.w3.org/TR/xpath-31/#id-context-item-expression
-   * =====================================================================================
-   */
+  // ==========================================================
+  // Context Item Expression -
+  // https://www.w3.org/TR/xpath-31/#id-context-item-expression
+  // ==========================================================
 
   @Override
   protected IExpression handleContextitemexpr(ContextitemexprContext ctx) {
     return ContextItem.instance();
   }
 
-  /* =========================================================================
-   * Static Function Calls - https://www.w3.org/TR/xpath-31/#id-function-calls
-   * =========================================================================
-   */
+  // =========================================================================
+  // Static Function Calls - https://www.w3.org/TR/xpath-31/#id-function-calls
+  // =========================================================================
 
   /**
    * Parse a list of arguments.
@@ -229,21 +444,18 @@ public class BuildCSTVisitor
 
   @Override
   protected IExpression handleFunctioncall(FunctioncallContext ctx) {
-    EqnameContext nameCtx = ctx.eqname();
-    String name = nameCtx.getText();
-
-    assert name != null;
-
-    return new FunctionCall(
-        name,
+    QName qname = EQNameUtils.parseName(
+        ctx.eqname().getText(),
+        getContext().getFunctionPrefixResolver());
+    return new StaticFunctionCall(
+        qname,
         ObjectUtils.notNull(parseArgumentList(ObjectUtils.notNull(ctx.argumentlist()))
             .collect(Collectors.toUnmodifiableList())));
   }
 
-  /* =========================================================================
-   * Filter Expressions - https://www.w3.org/TR/xpath-31/#id-filter-expression
-   * =========================================================================
-   */
+  // =========================================================================
+  // Filter Expressions - https://www.w3.org/TR/xpath-31/#id-filter-expression
+  // =========================================================================
 
   /**
    * Parse a predicate AST.
@@ -293,22 +505,65 @@ public class BuildCSTVisitor
   }
 
   @Override
-  protected IExpression handlePostfixexpr(PostfixexprContext ctx) {
-    int numChildren = ctx.getChildCount();
-    ParseTree primaryTree = ctx.getChild(0);
-    IExpression retval = ObjectUtils.notNull(primaryTree.accept(this));
+  protected IExpression handlePostfixexpr(PostfixexprContext context) {
+    return handleGroupedNAiry(
+        context,
+        0,
+        1,
+        (ctx, idx, left) -> {
+          ParseTree tree = ctx.getChild(idx);
+          IExpression result;
+          if (tree instanceof ArgumentlistContext) {
+            // map or array access using function call syntax
+            result = new FunctionCallAccessor(
+                left,
+                parseArgumentList((ArgumentlistContext) tree).findFirst().get());
+          } else if (tree instanceof PredicateContext) {
+            result = new PredicateExpression(
+                left,
+                CollectionUtil.singletonList(parsePredicate((PredicateContext) tree)));
+          } else if (tree instanceof LookupContext) {
+            KeyspecifierContext specifier = ((LookupContext) tree).keyspecifier();
 
-    List<IExpression> predicates = numChildren > 1 ? parsePredicates(ctx, 1) : CollectionUtil.emptyList();
-
-    if (!predicates.isEmpty()) {
-      retval = new Predicate(retval, predicates);
-    }
-    return retval;
+            IKeySpecifier keySpecifier;
+            if (specifier.parenthesizedexpr() != null) {
+              keySpecifier
+                  = new PostfixLookup.ParenthesizedExprKeySpecifier(
+                      ObjectUtils.requireNonNull(specifier.parenthesizedexpr().accept(this)));
+            } else if (specifier.NCName() != null) {
+              keySpecifier
+                  = new PostfixLookup.NCNameKeySpecifier(ObjectUtils.requireNonNull(specifier.NCName().getText()));
+            } else if (specifier.IntegerLiteral() != null) {
+              keySpecifier = new PostfixLookup.IntegerLiteralKeySpecifier(
+                  IIntegerItem.valueOf(ObjectUtils.requireNonNull(specifier.IntegerLiteral().getText())));
+            } else if (specifier.STAR() != null) {
+              keySpecifier = new PostfixLookup.WildcardKeySpecifier();
+            } else {
+              throw new UnsupportedOperationException("unknown key specifier");
+            }
+            result = new PostfixLookup(left, keySpecifier);
+          } else {
+            result = visit(tree);
+          }
+          return result;
+        });
   }
-  /* ======================================================================
-   * Path Expressions - https://www.w3.org/TR/xpath-31/#id-path-expressions
-   * ======================================================================
-   */
+
+  // ======================================================================
+  // Path Expressions - https://www.w3.org/TR/xpath-31/#id-path-expressions
+  // ======================================================================
+
+  @Override
+  protected IExpression handlePredicate(PredicateContext ctx) {
+    parsePredicate(ctx);
+    return null;
+  }
+
+  @Override
+  protected IExpression handleLookup(LookupContext ctx) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
   @Override
   protected IExpression handlePathexpr(PathexprContext ctx) {
@@ -342,10 +597,10 @@ public class BuildCSTVisitor
     return retval;
   }
 
-  /* =======================================================================================
-   * RelativePath Expressions - https://www.w3.org/TR/xpath-31/#id-relative-path-expressions
-   * =======================================================================================
-   */
+  // ============================================================
+  // RelativePath Expressions -
+  // https://www.w3.org/TR/xpath-31/#id-relative-path-expressions
+  // ============================================================
 
   @Override
   protected IExpression handleRelativepathexpr(RelativepathexprContext context) {
@@ -372,35 +627,46 @@ public class BuildCSTVisitor
     });
   }
 
-  /* ================================================
-   * Steps - https://www.w3.org/TR/xpath-31/#id-steps
-   * ================================================
-   */
+  // ================================================
+  // Steps - https://www.w3.org/TR/xpath-31/#id-steps
+  // ================================================
 
   @Override
   protected IExpression handleForwardstep(ForwardstepContext ctx) {
-    assert ctx.getChildCount() == 2;
+    AbbrevforwardstepContext abbrev = ctx.abbrevforwardstep();
 
-    Token token = (Token) ctx.forwardaxis().getChild(0).getPayload();
+    Step retval;
+    if (abbrev == null) {
+      assert ctx.getChildCount() == 2;
 
-    Axis axis;
-    switch (token.getType()) {
-    case Metapath10Lexer.KW_SELF:
-      axis = Axis.SELF;
-      break;
-    case Metapath10Lexer.KW_CHILD:
-      axis = Axis.CHILDREN;
-      break;
-    case Metapath10Lexer.KW_DESCENDANT:
-      axis = Axis.DESCENDANT;
-      break;
-    case Metapath10Lexer.KW_DESCENDANT_OR_SELF:
-      axis = Axis.DESCENDANT_OR_SELF;
-      break;
-    default:
-      throw new UnsupportedOperationException(token.getText());
+      Token token = (Token) ctx.forwardaxis().getChild(0).getPayload();
+
+      Axis axis;
+      switch (token.getType()) {
+      case Metapath10Lexer.KW_SELF:
+        axis = Axis.SELF;
+        break;
+      case Metapath10Lexer.KW_CHILD:
+        axis = Axis.CHILDREN;
+        break;
+      case Metapath10Lexer.KW_DESCENDANT:
+        axis = Axis.DESCENDANT;
+        break;
+      case Metapath10Lexer.KW_DESCENDANT_OR_SELF:
+        axis = Axis.DESCENDANT_OR_SELF;
+        break;
+      default:
+        throw new UnsupportedOperationException(token.getText());
+      }
+      retval = new Step(axis, parseNodeTest(ctx.nodetest(), false));
+    } else {
+      retval = new Step(
+          Axis.CHILDREN,
+          parseNodeTest(
+              ctx.nodetest(),
+              abbrev.AT() != null));
     }
-    return new Step(axis, visit(ctx.nametest()));
+    return retval;
   }
 
   @Override
@@ -423,13 +689,62 @@ public class BuildCSTVisitor
     default:
       throw new UnsupportedOperationException(token.getText());
     }
-    return new Step(axis, visit(ctx.nametest()));
+    return new Step(axis, parseNodeTest(ctx.nodetest(), false));
   }
 
-  /* ======================================================================
-   * Predicates within Steps - https://www.w3.org/TR/xpath-31/#id-predicate
-   * ======================================================================
-   */
+  // =======================================================
+  // Node Tests - https://www.w3.org/TR/xpath-31/#node-tests
+  // =======================================================
+
+  protected INodeTestExpression parseNodeTest(NodetestContext ctx, boolean flag) {
+    // TODO: implement kind test
+    NametestContext nameTestCtx = ctx.nametest();
+    return parseNameTest(nameTestCtx, flag);
+  }
+
+  protected INameTestExpression parseNameTest(NametestContext ctx, boolean flag) {
+    ParseTree testType = ObjectUtils.requireNonNull(ctx.getChild(0));
+    INameTestExpression retval;
+    if (testType instanceof EqnameContext) {
+      QName qname = EQNameUtils.parseName(
+          ctx.eqname().getText(),
+          flag ? getContext().getFlagPrefixResolver() : getContext().getModelPrefixResolver());
+      retval = new NameTest(qname);
+    } else { // wildcard
+      retval = handleWildcard((WildcardContext) testType);
+    }
+    return retval;
+  }
+
+  @Override
+  protected Wildcard handleWildcard(WildcardContext ctx) {
+    Predicate<IDefinitionNodeItem<?, ?>> matcher = null;
+    if (ctx.STAR() == null) {
+      if (ctx.CS() != null) {
+        // specified prefix, any local-name
+        String prefix = ctx.NCName().getText();
+        String namespace = getContext().lookupNamespaceForPrefix(prefix);
+        if (namespace == null) {
+          throw new IllegalStateException(String.format("Prefix '%s' did not map to a namespace.", prefix));
+        }
+        matcher = new Wildcard.MatchAnyLocalName(namespace);
+      } else if (ctx.SC() != null) {
+        // any prefix, specified local-name
+        matcher = new Wildcard.MatchAnyNamespace(ctx.NCName().getText());
+      } else {
+        // specified braced namespace, any local-name
+        String bracedUriLiteral = ctx.BracedURILiteral().getText();
+        String namespace = bracedUriLiteral.substring(2, bracedUriLiteral.length() - 1);
+        matcher = new Wildcard.MatchAnyLocalName(namespace);
+      }
+    } // star needs no matcher: any prefix, any local-name
+
+    return new Wildcard(matcher);
+  }
+
+  // ======================================================================
+  // Predicates within Steps - https://www.w3.org/TR/xpath-31/#id-predicate
+  // ======================================================================
 
   @Override
   protected IExpression handleAxisstep(AxisstepContext ctx) {
@@ -439,33 +754,12 @@ public class BuildCSTVisitor
 
     List<IExpression> predicates = parsePredicates(predicateTree, 0);
 
-    return predicates.isEmpty() ? step : new Predicate(step, predicates);
+    return predicates.isEmpty() ? step : new PredicateExpression(step, predicates);
   }
 
-  /* =======================================================
-   * Node Tests - https://www.w3.org/TR/xpath-31/#node-tests
-   * =======================================================
-   */
-
-  @Override
-  protected IExpression handleEqname(EqnameContext ctx) {
-    ParseTree tree = ctx.getChild(0);
-    String name = ((TerminalNode) tree).getText();
-
-    assert name != null;
-
-    return new Name(name);
-  }
-
-  @Override
-  protected IExpression handleWildcard(WildcardContext ctx) {
-    return new Wildcard();
-  }
-
-  /* ===========================================================
-   * Abbreviated Syntax - https://www.w3.org/TR/xpath-31/#abbrev
-   * ===========================================================
-   */
+  // ===========================================================
+  // Abbreviated Syntax - https://www.w3.org/TR/xpath-31/#abbrev
+  // ===========================================================
 
   @Override
   protected IExpression handleAbbrevforwardstep(AbbrevforwardstepContext ctx) {
@@ -473,10 +767,10 @@ public class BuildCSTVisitor
 
     IExpression retval;
     if (numChildren == 1) {
-      retval = new ModelInstance(visit(ctx.getChild(0)));
+      retval = new ModelInstance(parseNodeTest(ctx.nodetest(), false));
     } else {
       // this is an AT test
-      retval = new Flag(visit(ctx.getChild(1)));
+      retval = new Flag(parseNodeTest(ctx.nodetest(), true));
     }
     return retval;
   }
@@ -486,10 +780,9 @@ public class BuildCSTVisitor
     return Axis.PARENT;
   }
 
-  /* ======================================================================
-   * Constructing Sequences - https://www.w3.org/TR/xpath-31/#construct_seq
-   * ======================================================================
-   */
+  // ======================================================================
+  // Constructing Sequences - https://www.w3.org/TR/xpath-31/#construct_seq
+  // ======================================================================
 
   @Override
   protected IExpression handleRangeexpr(RangeexprContext ctx) {
@@ -501,10 +794,9 @@ public class BuildCSTVisitor
     return new Range(left, right);
   }
 
-  /* ========================================================================
-   * Combining Node Sequences - https://www.w3.org/TR/xpath-31/#combining_seq
-   * ========================================================================
-   */
+  // ========================================================================
+  // Combining Node Sequences - https://www.w3.org/TR/xpath-31/#combining_seq
+  // ========================================================================
 
   @Override
   protected IExpression handleUnionexpr(UnionexprContext ctx) {
@@ -539,10 +831,9 @@ public class BuildCSTVisitor
     });
   }
 
-  /* ======================================================================
-   * Arithmetic Expressions - https://www.w3.org/TR/xpath-31/#id-arithmetic
-   * ======================================================================
-   */
+  // ======================================================================
+  // Arithmetic Expressions - https://www.w3.org/TR/xpath-31/#id-arithmetic
+  // ======================================================================
 
   @Override
   protected IExpression handleAdditiveexpr(AdditiveexprContext context) {
@@ -630,10 +921,10 @@ public class BuildCSTVisitor
     return retval;
   }
 
-  /* ========================================================================================
-   * String Concatenation Expressions - https://www.w3.org/TR/xpath-31/#id-string-concat-expr
-   * ========================================================================================
-   */
+  // =====================================================
+  // String Concatenation Expressions -
+  // https://www.w3.org/TR/xpath-31/#id-string-concat-expr
+  // =====================================================
 
   @Override
   protected IExpression handleStringconcatexpr(StringconcatexprContext ctx) {
@@ -643,10 +934,9 @@ public class BuildCSTVisitor
     });
   }
 
-  /* =======================================================================
-   * Comparison Expressions - https://www.w3.org/TR/xpath-31/#id-comparisons
-   * =======================================================================
-   */
+  // =======================================================================
+  // Comparison Expressions - https://www.w3.org/TR/xpath-31/#id-comparisons
+  // =======================================================================
 
   @Override
   protected IExpression handleComparisonexpr(ComparisonexprContext ctx) { // NOPMD - ok
@@ -719,10 +1009,9 @@ public class BuildCSTVisitor
     return retval;
   }
 
-  /* ============================================================================
-   * Logical Expressions - https://www.w3.org/TR/xpath-31/#id-logical-expressions
-   * ============================================================================
-   */
+  // ============================================================================
+  // Logical Expressions - https://www.w3.org/TR/xpath-31/#id-logical-expressions
+  // ============================================================================
 
   @Override
   protected IExpression handleOrexpr(OrexprContext ctx) {
@@ -740,72 +1029,9 @@ public class BuildCSTVisitor
     });
   }
 
-  /* ====================================================================
-   * For Expressions - https://www.w3.org/TR/xpath-31/#id-for-expressions
-   * ====================================================================
-   */
-
-  @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
-  @Override
-  protected IExpression handleForexpr(ForexprContext ctx) {
-    SimpleforclauseContext simpleForClause = ctx.simpleforclause();
-
-    // for SimpleForBinding ("," SimpleForBinding)*
-    int bindingCount = simpleForClause.getChildCount() / 2;
-
-    @NonNull IExpression retval = ObjectUtils.notNull(ctx.exprsingle().accept(this));
-
-    // step through in reverse
-    for (int idx = bindingCount - 1; idx >= 0; idx--) {
-      SimpleforbindingContext simpleForBinding = simpleForClause.simpleforbinding(idx);
-
-      VarnameContext varName = simpleForBinding.varname();
-      ExprsingleContext exprSingle = simpleForBinding.exprsingle();
-
-      Name name = (Name) varName.accept(this);
-      IExpression boundExpression = exprSingle.accept(this);
-
-      assert name != null;
-      assert boundExpression != null;
-
-      Let.VariableDeclaration variable = new Let.VariableDeclaration(name, boundExpression);
-
-      retval = new For(variable, retval);
-    }
-    return retval;
-  }
-
-  /* ====================================================================
-   * Let Expressions - https://www.w3.org/TR/xpath-31/#id-let-expressions
-   * ====================================================================
-   */
-
-  @Override
-  protected IExpression handleLet(LetexprContext context) {
-    @NonNull IExpression retval = ObjectUtils.notNull(context.exprsingle().accept(this));
-
-    SimpleletclauseContext letClause = context.simpleletclause();
-    List<SimpleletbindingContext> clauses = letClause.simpleletbinding();
-
-    ListIterator<SimpleletbindingContext> reverseListIterator = clauses.listIterator(clauses.size());
-    while (reverseListIterator.hasPrevious()) {
-      SimpleletbindingContext simpleCtx = reverseListIterator.previous();
-
-      Name varName = (Name) simpleCtx.varname().accept(this);
-      IExpression boundExpression = simpleCtx.exprsingle().accept(this);
-
-      assert varName != null;
-      assert boundExpression != null;
-
-      retval = new Let(varName, boundExpression, retval); // NOPMD intended
-    }
-    return retval;
-  }
-
-  /* =========================================================================
-   * Conditional Expressions - https://www.w3.org/TR/xpath-31/#id-conditionals
-   * =========================================================================
-   */
+  // =========================================================================
+  // Conditional Expressions - https://www.w3.org/TR/xpath-31/#id-conditionals
+  // =========================================================================
 
   @Override
   protected IExpression handleIfexpr(IfexprContext ctx) {
@@ -816,47 +1042,9 @@ public class BuildCSTVisitor
     return new If(testExpr, thenExpr, elseExpr);
   }
 
-  /* ==================================================================================
-   * Quantified Expressions - https://www.w3.org/TR/xpath-31/#id-quantified-expressions
-   * ==================================================================================
-   */
-
-  @Override
-  protected IExpression handleQuantifiedexpr(QuantifiedexprContext ctx) {
-    Quantified.Quantifier quantifier;
-    int type = ((TerminalNode) ctx.getChild(0)).getSymbol().getType();
-    switch (type) {
-    case Metapath10Lexer.KW_SOME:
-      quantifier = Quantified.Quantifier.SOME;
-      break;
-    case Metapath10Lexer.KW_EVERY:
-      quantifier = Quantified.Quantifier.EVERY;
-      break;
-    default:
-      throw new UnsupportedOperationException(((TerminalNode) ctx.getChild(0)).getSymbol().getText());
-    }
-
-    int numVars = (ctx.getChildCount() - 2) / 5; // children - "satisfies expr" / ", $ varName in expr"
-    Map<String, IExpression> vars = new LinkedHashMap<>(); // NOPMD ordering needed
-    int offset = 0;
-    for (; offset < numVars; offset++) {
-      // $
-      String varName = ((Name) visit(ctx.varname(offset))).getValue();
-      // in
-      IExpression varExpr = visit(ctx.exprsingle(offset));
-
-      vars.put(varName, varExpr);
-    }
-
-    IExpression satisfies = visit(ctx.exprsingle(offset));
-
-    return new Quantified(quantifier, vars, satisfies);
-  }
-
-  /* =========================================================================
-   * Simple map operator (!) - https://www.w3.org/TR/xpath-31/#id-map-operator
-   * =========================================================================
-   */
+  // =========================================================================
+  // Simple map operator (!) - https://www.w3.org/TR/xpath-31/#id-map-operator
+  // =========================================================================
 
   @Override
   protected IExpression handleSimplemapexpr(SimplemapexprContext context) {
@@ -866,36 +1054,6 @@ public class BuildCSTVisitor
       IExpression right = ctx.getChild(idx + 1).accept(this);
 
       return new SimpleMap(left, right);
-    });
-  }
-
-  /* =======================================================================
-   * Arrow operator (=>) - https://www.w3.org/TR/xpath-31/#id-arrow-operator
-   * =======================================================================
-   */
-
-  @Override
-  protected IExpression handleArrowexpr(ArrowexprContext context) {
-    // TODO: handle additional syntax for varef and parenthesized
-    return handleGroupedNAiry(context, 0, 3, (ctx, idx, left) -> {
-      // the next child is "=>"
-      assert "=>".equals(ctx.getChild(idx).getText());
-
-      int offset = (idx - 1) / 3;
-
-      ArrowfunctionspecifierContext fcCtx = ctx.getChild(ArrowfunctionspecifierContext.class, offset);
-      ArgumentlistContext argumentCtx = ctx.getChild(ArgumentlistContext.class, offset);
-      // QName name = toQName(
-      String name = fcCtx.eqname().getText();
-      assert name != null;
-
-      try (Stream<IExpression> args = Stream.concat(
-          Stream.of(left),
-          parseArgumentList(ObjectUtils.notNull(argumentCtx)))) {
-        assert args != null;
-
-        return new FunctionCall(name, ObjectUtils.notNull(args.collect(Collectors.toUnmodifiableList())));
-      }
     });
   }
 }

@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.databind.codegen.impl;
 
 import com.squareup.javapoet.ClassName;
 
-import gov.nist.secauto.metaschema.core.model.IContainerFlag;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -47,7 +47,7 @@ public class DefaultGeneratedModuleClass
   @NonNull
   private final IModule module;
   @NonNull
-  private final Map<IContainerFlag, IGeneratedDefinitionClass> definitionClassMap;
+  private final Map<IModelDefinition, IGeneratedDefinitionClass> definitionClassMap;
   @NonNull
   private final String packageName;
 
@@ -55,7 +55,7 @@ public class DefaultGeneratedModuleClass
       @NonNull IModule module,
       @NonNull ClassName className,
       @NonNull Path classFile,
-      @NonNull Map<IContainerFlag, IGeneratedDefinitionClass> definitionClassMap,
+      @NonNull Map<IModelDefinition, IGeneratedDefinitionClass> definitionClassMap,
       @NonNull String packageName) {
     super(classFile, className);
     this.module = module;

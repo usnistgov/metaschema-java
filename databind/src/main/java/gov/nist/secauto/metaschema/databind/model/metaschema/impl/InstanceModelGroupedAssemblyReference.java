@@ -28,42 +28,82 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyGrouped;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceGroupBinding;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel;
 
+import java.util.Map;
+import java.util.Set;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelGroupedAssemblyReference
-    extends AbstractInstanceModelGrouped<AssemblyModel.ChoiceGroup.Assembly>
-    implements IBindingInstanceModelAssemblyGrouped,
-    IFeatureDefinitionReferenceInstance<IBindingDefinitionAssembly, IBindingInstanceModelAssemblyGrouped> {
+    extends AbstractAssemblyInstance<
+        IChoiceGroupInstance,
+        IAssemblyDefinition,
+        IAssemblyInstanceGrouped,
+        IAssemblyDefinition>
+    implements IAssemblyInstanceGrouped {
   @NonNull
-  private final IBindingDefinitionAssembly definition;
+  private final AssemblyModel.ChoiceGroup.Assembly binding;
+  @NonNull
+  private final IAssemblyDefinition definition;
+  @NonNull
+  private final Map<IAttributable.Key, Set<String>> properties;
+  @NonNull
+  private final Lazy<IAssemblyNodeItem> boundNodeItem;
 
   public InstanceModelGroupedAssemblyReference(
       @NonNull AssemblyModel.ChoiceGroup.Assembly binding,
       @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
       int position,
-      @NonNull IBindingDefinitionAssembly definition,
-      @NonNull IInstanceModelChoiceGroupBinding parent) {
-    super(binding, bindingInstance, position, parent, ObjectUtils.requireNonNull(binding.getProps()));
+      @NonNull IAssemblyDefinition definition,
+      @NonNull IChoiceGroupInstance parent) {
+    super(parent);
+    this.binding = binding;
     this.definition = definition;
+    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(binding.getProps()));
+    this.boundNodeItem = ObjectUtils.notNull(
+        Lazy.lazy(() -> (IAssemblyNodeItem) ObjectUtils.notNull(getContainingDefinition().getNodeItem())
+            .getModelItemsByName(bindingInstance.getXmlQName())
+            .get(position)));
   }
 
   @Override
-  public IBindingDefinitionAssembly getDefinition() {
+  public IAssemblyDefinition getDefinition() {
     return definition;
+  }
+
+  @NonNull
+  protected AssemblyModel.ChoiceGroup.Assembly getBinding() {
+    return binding;
+  }
+
+  @Override
+  public Map<IAttributable.Key, Set<String>> getProperties() {
+    return properties;
+  }
+
+  @Override
+  public IAssemblyNodeItem getNodeItem() {
+    return boundNodeItem.get();
   }
 
   @Override
   public String getName() {
     return getDefinition().getName();
   }
+
+  // ---------------------------------------
+  // - Start binding driven code - CPD-OFF -
+  // ---------------------------------------
 
   @Override
   public String getUseName() {

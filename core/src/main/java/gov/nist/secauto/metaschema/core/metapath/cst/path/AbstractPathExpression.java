@@ -68,15 +68,15 @@ public abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
       @NonNull IExpression expression,
       @NonNull DynamicContext dynamicContext,
       @NonNull ISequence<?> outerFocus) {
-
-    outerFocus.collect();
+    // ensure the sequence is backed by a list
+    outerFocus.getValue();
 
     // check the current focus
     @SuppressWarnings("unchecked") Stream<? extends INodeItem> nodeMatches
-        = (Stream<? extends INodeItem>) expression.accept(dynamicContext, outerFocus).asStream();
+        = (Stream<? extends INodeItem>) expression.accept(dynamicContext, outerFocus).stream();
 
-    Stream<? extends INodeItem> childMatches = outerFocus.asStream()
-        .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
+    Stream<? extends INodeItem> childMatches = outerFocus.stream()
+        .map(ItemUtils::checkItemIsNodeItemForStep)
         .flatMap(focusedNode -> {
 
           Stream<? extends INodeItem> matches;

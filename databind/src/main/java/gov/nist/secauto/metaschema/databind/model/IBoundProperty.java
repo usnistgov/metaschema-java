@@ -26,43 +26,12 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.model.IJsonNamed;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
-
-import java.util.Collection;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundProperty extends IBoundModuleElement, IFeatureJavaField {
-  /**
-   * Get the Metaschema module instance associated with this binding.
-   *
-   * @return the instance
-   */
-  @NonNull
-  IBoundProperty getInstance();
-
-  /**
-   * Get the JSON/YAML property/key name to use for serialization-related
-   * operations.
-   *
-   * @return the JSON name
-   */
-  // REFACTOR: rename to getEffectiveJsonName
-  @NonNull
-  String getJsonName();
-
-  /**
-   * Get the individual item values for this property.
-   * <p>
-   * A property can be single- or multi-valued. This method gets each value in
-   * either case.
-   *
-   * @param propertyValue
-   *          the value for the property, which can be multi-valued
-   * @return the item values
-   */
-  Collection<? extends Object> getItemValues(Object propertyValue);
-
+public interface IBoundProperty extends IBoundModuleElement, IFeatureJavaField, IJsonNamed {
   /**
    * Copy this instance from one parent object to another.
    *

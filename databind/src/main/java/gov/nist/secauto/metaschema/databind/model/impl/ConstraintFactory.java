@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraintBuilder;
@@ -68,6 +67,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -83,7 +84,7 @@ final class ConstraintFactory {
   }
 
   @NonNull
-  static MetapathExpression toMetapath(@NonNull String metapath) {
+  static String toMetapath(@NonNull String metapath) {
     String path = metapath;
     if (path.startsWith("/")) {
       String newPath = "." + path;
@@ -100,7 +101,7 @@ final class ConstraintFactory {
       path = newPath;
     }
 
-    return path.isBlank() ? IConstraint.DEFAULT_TARGET : MetapathExpression.compile(path);
+    return path.isBlank() ? IConstraint.DEFAULT_TARGET_METAPATH : path;
   }
 
   @NonNull
@@ -364,6 +365,6 @@ final class ConstraintFactory {
 
   @NonNull
   static ILet newLetExpression(@NonNull Let annotation, @NonNull ISource source) {
-    return ILet.of(annotation.name(), annotation.target(), source);
+    return ILet.of(new QName(annotation.name()), annotation.target(), source);
   }
 }

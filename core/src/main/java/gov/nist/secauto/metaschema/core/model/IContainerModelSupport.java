@@ -31,6 +31,8 @@ import gov.nist.secauto.metaschema.core.model.xml.impl.DefaultContainerModelSupp
 import java.util.Collection;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
@@ -88,7 +90,7 @@ public interface IContainerModelSupport<
    * @return the mapping
    */
   @NonNull
-  Map<String, NMI> getNamedModelInstanceMap();
+  Map<QName, NMI> getNamedModelInstanceMap();
 
   /**
    * Get a mapping of all field instances, mapped from their effective name to the
@@ -97,7 +99,7 @@ public interface IContainerModelSupport<
    * @return the mapping
    */
   @NonNull
-  Map<String, FI> getFieldInstanceMap();
+  Map<QName, FI> getFieldInstanceMap();
 
   /**
    * Get a mapping of all assembly instances, mapped from their effective name to
@@ -106,5 +108,5 @@ public interface IContainerModelSupport<
    * @return the mapping
    */
   @NonNull
-  Map<String, AI> getAssemblyInstanceMap();
+  Map<QName, AI> getAssemblyInstanceMap();
 }

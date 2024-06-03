@@ -28,11 +28,10 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IContainerModel;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
@@ -49,9 +48,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 class XmlFieldInstance
-    extends AbstractInstance<IContainerModel>
-    implements IFieldInstanceAbsolute,
-    IFeatureDefinitionReferenceInstance<IFieldDefinition, IFieldInstanceAbsolute> {
+    extends AbstractFieldInstance<IContainerModel, IFieldDefinition, IFieldInstanceAbsolute, IAssemblyDefinition>
+    implements IFieldInstanceAbsolute {
   @NonNull
   private final FieldReferenceType xmlObject;
   @Nullable
@@ -66,7 +64,7 @@ class XmlFieldInstance
    * @param container
    *          the parent container, either a choice or assembly
    */
-  @SuppressWarnings("PMD.NullAssignment")
+  @SuppressWarnings({ "PMD.NullAssignment", "PMD.ConstructorCallsOverridableMethod" })
   public XmlFieldInstance(
       @NonNull FieldReferenceType xmlObject,
       @NonNull IContainerModel container) {
@@ -75,17 +73,6 @@ class XmlFieldInstance
     this.defaultValue = xmlObject.isSetDefault()
         ? getDefinition().getJavaTypeAdapter().parse(ObjectUtils.requireNonNull(xmlObject.getDefault()))
         : null;
-  }
-
-  @Override
-  public final IFieldDefinition getDefinition() {
-    // this will always be not null
-    return ObjectUtils.notNull(getContainingModule().getScopedFieldDefinitionByName(getName()));
-  }
-
-  @Override
-  public IAssemblyDefinition getContainingDefinition() {
-    return getParentContainer().getOwningDefinition();
   }
 
   // ----------------------------------------
@@ -97,6 +84,7 @@ class XmlFieldInstance
    *
    * @return the underlying XML data
    */
+  @NonNull
   protected final FieldReferenceType getXmlObject() {
     return xmlObject;
   }

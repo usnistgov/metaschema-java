@@ -42,8 +42,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Module assembly.
  * <p>
  * For XML serialization, the {@link #useName()} identifies the name of the
- * element to use and the {@link #namespace()} identifies the namespace of this
- * element.
+ * element to use for this element.
  * <p>
  * For JSON and YAML serializations, the {@link #useName()} identifies the
  * property/item name to use.
@@ -94,17 +93,6 @@ public @interface BoundGroupedAssembly {
    * @return the index value
    */
   int useIndex() default Integer.MIN_VALUE;
-
-  /**
-   * The namespace to use for associated XML elements.
-   * <p>
-   * If the value is "##default", then element name is derived from the namespace
-   * provided in the package-info.
-   *
-   * @return the namespace
-   */
-  @NonNull
-  String namespace() default ModelUtil.DEFAULT_STRING_VALUE;
 
   /**
    * Get any remarks for this field.

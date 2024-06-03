@@ -32,6 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
@@ -69,11 +71,11 @@ public abstract class ModelTestBase {
             "formalName"),
         () -> assertEquals(
             ModelUtil.resolveNoneOrValue(annotation.description()),
-            Optional.ofNullable(assembly.getDescription()).map(value -> value.toMarkdown()).orElse(null),
+            Optional.ofNullable(assembly.getDescription()).map(MarkupLine::toMarkdown).orElse(null),
             "description"),
         () -> assertEquals(
             ModelUtil.resolveNoneOrValue(annotation.remarks()),
-            Optional.ofNullable(assembly.getRemarks()).map(value -> value.toMarkdown()).orElse(null),
+            Optional.ofNullable(assembly.getRemarks()).map(MarkupMultiline::toMarkdown).orElse(null),
             "remarks"),
         () -> {
           String rootName = ModelUtil.resolveNoneOrValue(annotation.rootName());
@@ -84,8 +86,7 @@ public abstract class ModelTestBase {
                     assembly.getRootName(),
                     "rootName"),
                 () -> assertEquals(
-                    Optional.ofNullable(ModelUtil.resolveOptionalNamespace(annotation.rootNamespace()))
-                        .orElse(assembly.getContainingModule().getXmlNamespace().toASCIIString()),
+                    assembly.getContainingModule().getXmlNamespace().toASCIIString(),
                     assembly.getRootXmlQName().getNamespaceURI(),
                     "rootNamespace"),
                 () -> assertTrue(true));
@@ -137,11 +138,11 @@ public abstract class ModelTestBase {
             "formalName"),
         () -> assertEquals(
             ModelUtil.resolveNoneOrValue(annotation.description()),
-            Optional.ofNullable(flag.getDescription()).map(value -> value.toMarkdown()).orElse(null),
+            Optional.ofNullable(flag.getDescription()).map(MarkupLine::toMarkdown).orElse(null),
             "description"),
         () -> assertEquals(
             ModelUtil.resolveNoneOrValue(annotation.remarks()),
-            Optional.ofNullable(flag.getRemarks()).map(value -> value.toMarkdown()).orElse(null),
+            Optional.ofNullable(flag.getRemarks()).map(MarkupMultiline::toMarkdown).orElse(null),
             "remarks"));
   }
 
@@ -184,8 +185,7 @@ public abstract class ModelTestBase {
             field.getDefaultValue(),
             "defaultValue"),
         () -> assertEquals(
-            Optional.ofNullable(ModelUtil.resolveOptionalNamespace(annotation.namespace()))
-                .orElse(field.getContainingModule().getXmlNamespace().toASCIIString()),
+            field.getContainingModule().getXmlNamespace().toASCIIString(),
             field.getXmlNamespace(),
             "namespace"),
         () -> assertEquals(
@@ -206,11 +206,11 @@ public abstract class ModelTestBase {
             "formalName"),
         () -> assertEquals(
             ModelUtil.resolveNoneOrValue(annotation.description()),
-            Optional.ofNullable(field.getDescription()).map(value -> value.toMarkdown()).orElse(null),
+            Optional.ofNullable(field.getDescription()).map(MarkupLine::toMarkdown).orElse(null),
             "description"),
         () -> assertEquals(
             ModelUtil.resolveNoneOrValue(annotation.remarks()),
-            Optional.ofNullable(field.getRemarks()).map(value -> value.toMarkdown()).orElse(null),
+            Optional.ofNullable(field.getRemarks()).map(MarkupMultiline::toMarkdown).orElse(null),
             "remarks"));
     // groupAs
   }

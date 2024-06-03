@@ -96,7 +96,7 @@ public class ArithmeticFunctionException
   }
 
   @Override
-  protected String getCodePrefix() {
+  public String getCodePrefix() {
     return "FOAR";
   }
 

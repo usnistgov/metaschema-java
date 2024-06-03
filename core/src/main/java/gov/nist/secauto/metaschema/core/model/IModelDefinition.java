@@ -26,26 +26,39 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
+import java.util.Collection;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IModelDefinition extends IDefinition, IContainerFlag {
+public interface IModelDefinition extends IDefinition, IContainer {
+  @Override
+  default boolean hasChildren() {
+    return !getFlagInstances().isEmpty();
+  }
 
   /**
-   * Indicates if a flag's value can be used as a property name in the containing
-   * object in JSON who's value will be the object containing the flag. In such
-   * cases, the flag will not appear in the object. This is only allowed if the
-   * flag is required, as determined by a {@code true} result from
-   * {@link IFlagInstance#isRequired()}. The {@link IFlagInstance} can be
-   * retrieved using {@link #getJsonKeyFlagInstance()}.
+   * Retrieves a flag instance, by the flag's effective name, that is defined on
+   * the containing definition.
    *
-   * @return {@code true} if the flag's value can be used as a property name, or
-   *         {@code false} otherwise
-   * @see #getJsonKeyFlagInstance()
+   * @param name
+   *          the flag's name
+   * @return the matching flag instance, or {@code null} if there is no flag
+   *         matching the specified name
    */
-  // TODO: remove once moved to the instance side
-  default boolean hasJsonKey() {
-    return getJsonKeyFlagInstance() != null;
-  }
+  @Nullable
+  IFlagInstance getFlagInstanceByName(@NonNull QName name);
+
+  /**
+   * Retrieves the flag instances for all flags defined on the containing
+   * definition.
+   *
+   * @return the flags
+   */
+  @NonNull
+  Collection<? extends IFlagInstance> getFlagInstances();
 
   /**
    * Retrieves the flag instance to use as as the property name for the containing
@@ -53,9 +66,9 @@ public interface IModelDefinition extends IDefinition, IContainerFlag {
    *
    * @return the flag instance if a JSON key is configured, or {@code null}
    *         otherwise
-   * @see #hasJsonKey()
    */
   // TODO: remove once moved to the instance side
+  // TODO: Reconsider using toFlagName in favor of getReferencedDefinitionQName
   @Nullable
-  IFlagInstance getJsonKeyFlagInstance();
+  IFlagInstance getJsonKey();
 }
