@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -50,7 +51,6 @@ public interface IBoundDefinitionModelAssembly
 
   // Assembly Definition Features
   // ============================
-
   @Override
   @NonNull
   default IBoundDefinitionModelAssembly getOwningDefinition() {
@@ -69,11 +69,12 @@ public interface IBoundDefinitionModelAssembly
     // never inline
     return null;
   }
-
-  @Override
-  default QName getXmlQName() {
-    return ObjectUtils.requireNonNull(getRootXmlQName());
-  }
+  //
+  // @Override
+  // @NonNull
+  // default QName getXmlQName() {
+  // return ObjectUtils.requireNonNull(getRootXmlQName());
+  // }
 
   @Override
   @NonNull
@@ -85,8 +86,7 @@ public interface IBoundDefinitionModelAssembly
     }
 
     return ObjectUtils.notNull(Stream.concat(flagStream, getModelInstances().stream())
-        .collect(Collectors.toUnmodifiableMap(
-            (p) -> p.getJsonName(), (p) -> p)));
+        .collect(Collectors.toUnmodifiableMap(IBoundProperty::getJsonName, Function.identity())));
   }
 
   @Override
@@ -98,11 +98,6 @@ public interface IBoundDefinitionModelAssembly
   @Override
   default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
     handler.writeItemAssembly(item, this);
-  }
-
-  @Override
-  default boolean canHandleJsonPropertyName(@NonNull String name) {
-    return name.equals(getRootJsonName());
   }
 
   @Override

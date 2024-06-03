@@ -490,7 +490,7 @@ public class MetaschemaXmlReader
       try {
         QName wrapper = null;
         if (instance.isEffectiveValueWrappedInXml()) {
-          wrapper = new QName(instance.getXmlNamespace(), instance.getEffectiveName());
+          wrapper = instance.getXmlQName();
 
           XmlEventUtil.skipWhitespace(getReader());
           XmlEventUtil.requireStartElement(getReader(), wrapper);

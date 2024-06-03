@@ -73,11 +73,7 @@ public interface IConstraint extends IAttributable, IDescribable {
    */
   @NonNull
   Level DEFAULT_LEVEL = Level.ERROR;
-  /**
-   * The default target Metapath expression to use if no target is provided.
-   */
-  @NonNull
-  MetapathExpression DEFAULT_TARGET = MetapathExpression.CONTEXT_NODE;
+
   /**
    * The default target Metapath expression to use if no target is provided.
    */
@@ -115,7 +111,7 @@ public interface IConstraint extends IAttributable, IDescribable {
    * @return a Metapath expression
    */
   @NonNull
-  MetapathExpression getTarget();
+  String getTarget();
 
   /**
    * Based on the provided {@code contextNodeItem}, find all nodes matching the
@@ -129,7 +125,7 @@ public interface IConstraint extends IAttributable, IDescribable {
   @NonNull
   default ISequence<? extends IDefinitionNodeItem<?, ?>> matchTargets(
       @NonNull IDefinitionNodeItem<?, ?> contextNodeItem) {
-    return getTarget().evaluate(contextNodeItem);
+    return MetapathExpression.compile(getTarget()).evaluate(contextNodeItem);
   }
 
   /**
@@ -144,9 +140,11 @@ public interface IConstraint extends IAttributable, IDescribable {
    * @see #getTarget()
    */
   @NonNull
-  default ISequence<? extends IDefinitionNodeItem<?, ?>> matchTargets(@NonNull IDefinitionNodeItem<?, ?> item,
+  default ISequence<? extends IDefinitionNodeItem<?, ?>> matchTargets(
+      @NonNull IDefinitionNodeItem<?, ?> item,
       @NonNull DynamicContext dynamicContext) {
-    return item.hasValue() ? getTarget().evaluate(item, dynamicContext) : ISequence.empty();
+    return item.hasValue() ? MetapathExpression.compile(getTarget(), dynamicContext.getStaticContext())
+        .evaluate(item, dynamicContext) : ISequence.empty();
   }
 
   /**

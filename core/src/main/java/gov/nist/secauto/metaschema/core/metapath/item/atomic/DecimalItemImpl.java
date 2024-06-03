@@ -36,8 +36,7 @@ import java.util.Objects;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DecimalItemImpl
-    extends AbstractAnyAtomicItem<BigDecimal>
-    implements IDecimalItem {
+    extends AbstractDecimalItem<BigDecimal> {
   public DecimalItemImpl(@NonNull BigDecimal value) {
     super(value);
   }

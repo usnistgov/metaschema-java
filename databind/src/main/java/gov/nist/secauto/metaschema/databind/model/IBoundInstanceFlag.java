@@ -26,8 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceFlagInline;
@@ -37,12 +37,10 @@ import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Collection;
 
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents a flag instance bound to Java data.
@@ -50,7 +48,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IBoundInstanceFlag
     extends IFlagInstance, IBoundDefinitionFlag,
     IFeatureScalarItemValueHandler,
-    IFeatureBoundDefinitionInline<IBoundDefinitionFlag, IBoundInstanceFlag> {
+    IBoundInstance, IFeatureDefinitionInstanceInlined<IBoundDefinitionFlag, IBoundInstanceFlag> {
 
   /**
    * Create a new bound flag instance.
@@ -101,12 +99,6 @@ public interface IBoundInstanceFlag
     return getContainingDefinition();
   }
 
-  @Override
-  @NonNull
-  default IBoundInstanceFlag getInstance() {
-    return this;
-  }
-
   /**
    * {@inheritDoc}
    * <p>
@@ -114,41 +106,13 @@ public interface IBoundInstanceFlag
    */
   @Override
   @NonNull
-  default IBoundInstanceFlag getDefinition() {
-    return this;
-  }
+  IBoundDefinitionFlag getDefinition();
 
   @Override
   @NonNull
   default IBoundInstanceFlag getInlineInstance() {
     // always inline
     return this;
-  }
-
-  @Override
-  default Collection<? extends Object> getItemValues(Object value) {
-    return value == null ? CollectionUtil.emptyList() : CollectionUtil.singleton(value);
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Always bound to a field.
-   */
-  @Override
-  @Nullable
-  default Object getValue(@NonNull Object parent) {
-    return IFeatureBoundDefinitionInline.super.getValue(parent);
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Always bound to a field.
-   */
-  @Override
-  default void setValue(@NonNull Object parentObject, @Nullable Object value) {
-    IFeatureBoundDefinitionInline.super.setValue(parentObject, value);
   }
 
   @Override
@@ -168,11 +132,6 @@ public interface IBoundInstanceFlag
   @Override
   default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
     handler.writeItemFlag(item, this);
-  }
-
-  @Override
-  default boolean canHandleJsonPropertyName(@NonNull String name) {
-    return name.equals(getJsonName());
   }
 
   @Override

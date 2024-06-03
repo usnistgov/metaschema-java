@@ -55,7 +55,7 @@ public class XmlObjectParser<T> {
     // build a mapping of namespace prefix to namespace
     AtomicInteger count = new AtomicInteger();
     Map<String, String> namespaceToPrefixMap = nodes.stream()
-        .map(qname -> qname.getNamespaceURI())
+        .map(QName::getNamespaceURI)
         .distinct()
         .map(ns -> Pair.of(ns, "m" + count.getAndIncrement()))
         .collect(Collectors.toMap(

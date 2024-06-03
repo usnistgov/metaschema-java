@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 
+import gov.nist.secauto.metaschema.core.metapath.impl.AbstractStringMapKey;
+import gov.nist.secauto.metaschema.core.metapath.item.function.IMapKey;
+
 import java.net.URI;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -51,6 +54,11 @@ public abstract class AbstractUriItem
   }
 
   @Override
+  public IMapKey asMapKey() {
+    return new MapKey();
+  }
+
+  @Override
   public int hashCode() {
     return asUri().hashCode();
   }
@@ -60,5 +68,14 @@ public abstract class AbstractUriItem
   public boolean equals(Object obj) {
     return this == obj
         || (obj instanceof IAnyUriItem && compareTo((IAnyUriItem) obj) == 0);
+  }
+
+  private final class MapKey
+      extends AbstractStringMapKey {
+
+    @Override
+    public IAnyUriItem getKey() {
+      return AbstractUriItem.this;
+    }
   }
 }

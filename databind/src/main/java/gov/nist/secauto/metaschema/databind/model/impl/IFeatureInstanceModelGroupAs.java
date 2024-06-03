@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IGroupAs;
 
@@ -55,5 +56,14 @@ public interface IFeatureInstanceModelGroupAs extends IBoundInstanceModel {
   @Override
   default XmlGroupAsBehavior getXmlGroupAsBehavior() {
     return getGroupAs().getXmlGroupAsBehavior();
+  }
+
+  @Override
+  default void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
+    Object value = getValue(fromInstance);
+    if (value != null) {
+      value = getCollectionInfo().deepCopyItems(fromInstance, toInstance);
+    }
+    setValue(toInstance, value);
   }
 }

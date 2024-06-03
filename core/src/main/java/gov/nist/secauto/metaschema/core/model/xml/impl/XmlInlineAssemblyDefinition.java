@@ -28,17 +28,15 @@ package gov.nist.secauto.metaschema.core.model.xml.impl; // NOPMD - excessive pu
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractInlineAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
 import gov.nist.secauto.metaschema.core.model.IContainerModel;
 import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
-import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
-import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelAssembly;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
@@ -62,21 +60,28 @@ import nl.talsmasoftware.lazy4j.Lazy;
  * Represents a Metaschema assembly definition declared locally as an instance.
  */
 class XmlInlineAssemblyDefinition
-    extends AbstractInstance<IContainerModel>
-    implements IAssemblyInstanceAbsolute, IAssemblyDefinition,
-    IFeatureContainerModelAssembly<
+    extends AbstractInlineAssemblyDefinition<
+        IContainerModel,
+        IAssemblyDefinition,
+        IAssemblyInstanceAbsolute,
+        IAssemblyDefinition,
+        IFlagInstance,
         IModelInstanceAbsolute,
         INamedModelInstanceAbsolute,
         IFieldInstanceAbsolute,
         IAssemblyInstanceAbsolute,
         IChoiceInstance,
-        IChoiceGroupInstance>,
-    IFeatureContainerFlag<IFlagInstance>,
-    IFeatureDefinitionInstanceInlined<IAssemblyDefinition, IAssemblyInstanceAbsolute> {
+        IChoiceGroupInstance>
+    implements IAssemblyInstanceAbsolute {
+
+  // ----------------------------------------
+  // - Start XmlBeans driven code - CPD-OFF -
+  // ----------------------------------------
+
   @NonNull
   private final InlineAssemblyDefinitionType xmlObject;
   @NonNull
-  private final Lazy<XmlFlagContainerSupport> flagContainer;
+  private final Lazy<IContainerFlagSupport<IFlagInstance>> flagContainer;
   @NonNull
   private final Lazy<IContainerModelAssemblySupport<
       IModelInstanceAbsolute,
@@ -102,7 +107,7 @@ class XmlInlineAssemblyDefinition
       @NonNull IContainerModel parent) {
     super(parent);
     this.xmlObject = xmlObject;
-    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> XmlFlagContainerSupport.newInstance(xmlObject, this)));
     this.modelContainer
         = ObjectUtils.notNull(Lazy.lazy(() -> XmlAssemblyModelContainer.of(xmlObject.getModel(), this)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
@@ -115,20 +120,9 @@ class XmlInlineAssemblyDefinition
     }));
   }
 
-  @Override
-  public IAssemblyDefinition getDefinition() {
-    return this;
-  }
-
-  @Override
-  @NonNull
-  public IAssemblyInstanceAbsolute getInlineInstance() {
-    return this;
-  }
-
   @SuppressWarnings("null")
   @Override
-  public XmlFlagContainerSupport getFlagContainer() {
+  public IContainerFlagSupport<IFlagInstance> getFlagContainer() {
     return flagContainer.get();
   }
 
@@ -149,15 +143,6 @@ class XmlInlineAssemblyDefinition
   public IModelConstrained getConstraintSupport() {
     return constraints.get();
   }
-
-  @Override
-  public IFlagInstance getJsonKeyFlagInstance() {
-    return getFlagContainer().getJsonKeyFlagInstance();
-  }
-
-  // ----------------------------------------
-  // - Start XmlBeans driven code - CPD-OFF -
-  // ----------------------------------------
 
   /**
    * Get the underlying XML model.

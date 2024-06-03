@@ -105,7 +105,7 @@ public class DynamicMetapathException
   }
 
   @Override
-  protected String getCodePrefix() {
+  public String getCodePrefix() {
     return "MPDY";
   }
 }

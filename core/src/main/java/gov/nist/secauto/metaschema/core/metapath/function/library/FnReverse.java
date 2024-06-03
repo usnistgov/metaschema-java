@@ -74,7 +74,7 @@ public final class FnReverse {
       @NonNull DynamicContext dynamicContext,
       IItem focus) {
     ISequence<?> target = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
-    return ISequence.of(fnReverse(target));
+    return ISequence.ofCollection(fnReverse(target));
   }
 
   /**

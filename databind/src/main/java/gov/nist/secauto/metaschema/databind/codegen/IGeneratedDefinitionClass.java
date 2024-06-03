@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.codegen;
 
-import gov.nist.secauto.metaschema.core.model.IContainerFlag;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -38,7 +38,7 @@ public interface IGeneratedDefinitionClass extends IGeneratedClass {
    * @return the definition
    */
   @NonNull
-  IContainerFlag getDefinition();
+  IModelDefinition getDefinition();
 
   /**
    * Indicates if the class represents a root Module assembly which can be the

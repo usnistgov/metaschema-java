@@ -26,19 +26,22 @@
 
 package gov.nist.secauto.metaschema.core.metapath.item.node;
 
-import gov.nist.secauto.metaschema.core.model.IContainerFlag;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * This mixin interface indicates that the implementation is a {@link INodeItem}
- * that is based on an {@link IContainerFlag}. This means it has flag children.
+ * that is based on an {@link IModelDefinition}. This means it has flag
+ * children.
  * <p>
  * If an implementation may have flag and model children, or model children
  * only, then the {@link IFeatureModelContainerItem} should be used instead.
@@ -54,7 +57,7 @@ public interface IFeatureFlagContainerItem extends INodeItem {
   }
 
   @Override
-  default IFlagNodeItem getFlagByName(@NonNull String name) {
+  default IFlagNodeItem getFlagByName(@NonNull QName name) {
     return getModel().getFlagByName(name);
   }
 
@@ -65,7 +68,7 @@ public interface IFeatureFlagContainerItem extends INodeItem {
   }
 
   @Override
-  default List<? extends IModelNodeItem<?, ?>> getModelItemsByName(String name) {
+  default List<? extends IModelNodeItem<?, ?>> getModelItemsByName(QName name) {
     // no model items
     return CollectionUtil.emptyList();
   }
@@ -75,14 +78,14 @@ public interface IFeatureFlagContainerItem extends INodeItem {
    */
   class FlagContainer {
     @NonNull
-    private final Map<String, IFlagNodeItem> flags;
+    private final Map<QName, IFlagNodeItem> flags;
 
-    protected FlagContainer(@NonNull Map<String, IFlagNodeItem> flags) {
+    protected FlagContainer(@NonNull Map<QName, IFlagNodeItem> flags) {
       this.flags = flags;
     }
 
     @Nullable
-    public IFlagNodeItem getFlagByName(@NonNull String name) {
+    public IFlagNodeItem getFlagByName(@NonNull QName name) {
       return flags.get(name);
     }
 

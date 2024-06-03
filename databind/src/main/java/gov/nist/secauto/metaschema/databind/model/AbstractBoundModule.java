@@ -43,6 +43,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
@@ -57,9 +59,9 @@ public abstract class AbstractBoundModule
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
-  private final Lazy<Map<String, IBoundDefinitionModelAssembly>> assemblyDefinitions;
+  private final Lazy<Map<QName, IBoundDefinitionModelAssembly>> assemblyDefinitions;
   @NonNull
-  private final Lazy<Map<String, IBoundDefinitionModelField>> fieldDefinitions;
+  private final Lazy<Map<QName, IBoundDefinitionModelField>> fieldDefinitions;
 
   /**
    * Create a new Module instance for a given class annotated by the
@@ -140,7 +142,7 @@ public abstract class AbstractBoundModule
               .requireNonNull(bindingContext.getBoundDefinitionForClass(clazz));
         })
         .collect(Collectors.toUnmodifiableMap(
-            IBoundDefinitionModelAssembly::getName,
+            IBoundDefinitionModelAssembly::getDefinitionQName,
             Function.identity()))));
     this.fieldDefinitions = ObjectUtils.notNull(Lazy.lazy(() -> Arrays.stream(getFieldClasses())
         .map(clazz -> {
@@ -149,7 +151,7 @@ public abstract class AbstractBoundModule
               .requireNonNull(bindingContext.getBoundDefinitionForClass(clazz));
         })
         .collect(Collectors.toUnmodifiableMap(
-            IBoundDefinitionModelField::getName,
+            IBoundDefinitionModelField::getDefinitionQName,
             Function.identity()))));
   }
 
@@ -199,7 +201,7 @@ public abstract class AbstractBoundModule
    *
    * @return the mapping
    */
-  protected Map<String, IBoundDefinitionModelAssembly> getAssemblyDefinitionMap() {
+  protected Map<QName, IBoundDefinitionModelAssembly> getAssemblyDefinitionMap() {
     return assemblyDefinitions.get();
   }
 
@@ -210,7 +212,7 @@ public abstract class AbstractBoundModule
   }
 
   @Override
-  public IBoundDefinitionModelAssembly getAssemblyDefinitionByName(@NonNull String name) {
+  public IBoundDefinitionModelAssembly getAssemblyDefinitionByName(@NonNull QName name) {
     return getAssemblyDefinitionMap().get(name);
   }
 
@@ -219,7 +221,7 @@ public abstract class AbstractBoundModule
    *
    * @return the mapping
    */
-  protected Map<String, IBoundDefinitionModelField> getFieldDefinitionMap() {
+  protected Map<QName, IBoundDefinitionModelField> getFieldDefinitionMap() {
     return fieldDefinitions.get();
   }
 
@@ -230,7 +232,7 @@ public abstract class AbstractBoundModule
   }
 
   @Override
-  public IBoundDefinitionModelField getFieldDefinitionByName(@NonNull String name) {
+  public IBoundDefinitionModelField getFieldDefinitionByName(@NonNull QName name) {
     return getFieldDefinitionMap().get(name);
   }
 
@@ -242,7 +244,7 @@ public abstract class AbstractBoundModule
   }
 
   @Override
-  public IBoundDefinitionFlag getFlagDefinitionByName(@NonNull String name) {
+  public IBoundDefinitionFlag getFlagDefinitionByName(@NonNull QName name) {
     // Flags are always inline, so they do not have separate definitions
     return null;
   }

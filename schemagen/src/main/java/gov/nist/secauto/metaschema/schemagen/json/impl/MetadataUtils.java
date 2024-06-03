@@ -40,7 +40,7 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.model.IModelElement;
-import gov.nist.secauto.metaschema.core.model.INamed;
+import gov.nist.secauto.metaschema.core.model.INamedModelElement;
 import gov.nist.secauto.metaschema.core.model.IValuedDefinition;
 import gov.nist.secauto.metaschema.core.model.IValuedInstance;
 
@@ -54,14 +54,14 @@ public final class MetadataUtils {
     // disable construction
   }
 
-  public static void generateTitle(@NonNull INamed named, @NonNull ObjectNode obj) {
+  public static void generateTitle(@NonNull INamedModelElement named, @NonNull ObjectNode obj) {
     String formalName = named.getEffectiveFormalName();
     if (formalName != null) {
       obj.put("title", formalName);
     }
   }
 
-  public static <NAMED extends INamed & IModelElement> void generateDescription(@NonNull NAMED named,
+  public static <NAMED extends INamedModelElement & IModelElement> void generateDescription(@NonNull NAMED named,
       @NonNull ObjectNode obj) {
     MarkupLine description = named.getEffectiveDescription();
 

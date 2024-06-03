@@ -36,7 +36,7 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IGroupable extends IInstanceAbsolute, IKeyed {
+public interface IGroupable extends IInstanceAbsolute {
 
   int DEFAULT_GROUP_AS_MIN_OCCURS = 0;
   int DEFAULT_GROUP_AS_MAX_OCCURS = 1;
@@ -85,8 +85,7 @@ public interface IGroupable extends IInstanceAbsolute, IKeyed {
    */
   @Nullable
   default String getGroupAsXmlNamespace() {
-    // no group-as by default
-    return null;
+    return getContainingDefinition().getXmlNamespace();
   }
 
   /**
@@ -97,9 +96,11 @@ public interface IGroupable extends IInstanceAbsolute, IKeyed {
    *
    * @return the XML namespace
    */
+  // REFACTOR: remove this method
+  // REFACTOR: consider pushing down the call for getGroupAsXmlNamespace
   @NonNull
   default String getEffectiveGroupAsNamespace() {
-    String namespace = getGroupAsXmlNamespace();
+    @Nullable String namespace = getGroupAsXmlNamespace();
     if (namespace == null) {
       namespace = ObjectUtils.notNull(getContainingModule().getXmlNamespace().toASCIIString());
     }
@@ -115,6 +116,7 @@ public interface IGroupable extends IInstanceAbsolute, IKeyed {
    * @return the groupAs QName or {@code null} if no name is configured, such as
    *         when {@link #getMaxOccurs()} = 1.
    */
+  // REFACTOR: rename to getXmlGroupAsQName
   @Nullable
   default QName getEffectiveXmlGroupAsQName() {
     return XmlGroupAsBehavior.GROUPED.equals(getXmlGroupAsBehavior())
@@ -164,7 +166,7 @@ public interface IGroupable extends IInstanceAbsolute, IKeyed {
    * @return the item values or an empty collection if no item values exist
    */
   @NonNull
-  default Collection<?> getItemValues(Object instanceValue) {
+  default Collection<?> getItemValues(@NonNull Object instanceValue) {
     // no item values by default
     return CollectionUtil.emptyList();
   }

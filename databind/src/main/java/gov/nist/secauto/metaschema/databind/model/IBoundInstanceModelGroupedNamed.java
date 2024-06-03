@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.databind.model;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -44,12 +45,44 @@ public interface IBoundInstanceModelGroupedNamed
   @Override
   IBoundDefinitionModelComplex getDefinition();
 
+  @Override
   @Nullable
-  default IBoundInstanceFlag getJsonKey() {
-    String jsonKeyName = getJsonKeyFlagName();
+  default IBoundInstanceFlag getEffectiveJsonKey() {
     return JsonGroupAsBehavior.KEYED.equals(getParentContainer().getJsonGroupAsBehavior())
-        ? ObjectUtils.requireNonNull(getDefinition().getFlagInstanceByName(
-            ObjectUtils.requireNonNull(jsonKeyName)))
+        ? getJsonKey()
         : null;
+  }
+
+  @Override
+  default IBoundInstanceFlag getJsonKey() {
+    String name = getParentContainer().getJsonKeyFlagInstanceName();
+    return name == null
+        ? null
+        : ObjectUtils.requireNonNull(getDefinition().getFlagInstanceByName(getContainingModule().toFlagQName(name)));
+  }
+
+  @Override
+  default IBoundDefinitionModelAssembly getContainingDefinition() {
+    return getParentContainer().getContainingDefinition();
+  }
+
+  @Override
+  default String getName() {
+    return getDefinition().getName();
+  }
+
+  @Override
+  default Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
+    return getDefinition().deepCopyItem(item, parentInstance);
+  }
+
+  @Override
+  default void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getDefinition().callBeforeDeserialize(targetObject, parentObject);
+  }
+
+  @Override
+  default void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
+    getDefinition().callAfterDeserialize(targetObject, parentObject);
   }
 }

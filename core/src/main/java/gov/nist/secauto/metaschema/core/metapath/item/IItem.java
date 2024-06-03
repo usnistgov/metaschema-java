@@ -27,8 +27,12 @@
 package gov.nist.secauto.metaschema.core.metapath.item;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.metapath.ICollectionValue;
+import gov.nist.secauto.metaschema.core.metapath.ISequence;
 
-public interface IItem {
+import java.util.stream.Stream;
+
+public interface IItem extends ICollectionValue {
   /**
    * Get the item's "wrapped" value. This "wrapped" value may be:
    * <ul>
@@ -53,5 +57,16 @@ public interface IItem {
    */
   default boolean hasValue() {
     return getValue() != null;
+  }
+
+  @Override
+  default ISequence<?> asSequence() {
+    return ISequence.of(this);
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  default Stream<? extends IItem> flatten() {
+    return Stream.of(this);
   }
 }

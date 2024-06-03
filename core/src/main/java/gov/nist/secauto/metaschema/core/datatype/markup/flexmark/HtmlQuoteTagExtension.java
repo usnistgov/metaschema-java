@@ -172,6 +172,7 @@ public class HtmlQuoteTagExtension
   public static class DoubleQuoteNode
       extends TypographicQuotes {
 
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public DoubleQuoteNode(TypographicQuotes node) {
       super(node.getOpeningMarker(), node.getText(), node.getClosingMarker());
       setTypographicOpening(node.getTypographicOpening());

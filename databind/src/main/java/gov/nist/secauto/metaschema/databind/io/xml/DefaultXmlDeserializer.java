@@ -44,11 +44,13 @@ import java.io.Reader;
 import java.net.URI;
 
 import javax.xml.stream.EventFilter;
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLResolver;
 import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class DefaultXmlDeserializer<CLASS>
     extends AbstractDeserializer<CLASS> {
@@ -65,13 +67,14 @@ public class DefaultXmlDeserializer<CLASS>
    *          the assembly class binding describing the Java objects this
    *          deserializer parses data into
    */
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   public DefaultXmlDeserializer(@NonNull IBoundDefinitionModelAssembly definition) {
     super(definition);
+    this.rootDefinition = definition;
     if (!definition.isRoot()) {
       throw new UnsupportedOperationException(
           String.format("The assembly '%s' is not a root assembly.", definition.getBoundClass().getName()));
     }
-    this.rootDefinition = definition;
   }
 
   /**
@@ -97,21 +100,16 @@ public class DefaultXmlDeserializer<CLASS>
           xmlInputFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, true);
           xmlInputFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, true);
           xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, true);
-          xmlInputFactory.setProperty(XMLInputFactory.RESOLVER, new XMLResolver() {
-
-            @Override
-            public Object resolveEntity(String publicID, String systemID, String baseURI, String namespace)
-                throws XMLStreamException {
-              URI base = URI.create(baseURI);
-              URI resource = base.resolve(systemID);
-              try {
-                return resource.toURL().openStream();
-              } catch (IOException ex) {
-                throw new XMLStreamException(ex);
-              }
-            }
-
-          });
+          xmlInputFactory.setProperty(XMLInputFactory.RESOLVER,
+              (XMLResolver) (publicID, systemID, baseURI, namespace) -> {
+                URI base = URI.create(baseURI);
+                URI resource = base.resolve(systemID);
+                try {
+                  return resource.toURL().openStream();
+                } catch (IOException ex) {
+                  throw new XMLStreamException(ex);
+                }
+              });
         }
       }
       return ObjectUtils.notNull(xmlInputFactory);
@@ -151,7 +149,7 @@ public class DefaultXmlDeserializer<CLASS>
   public final CLASS deserializeToValue(Reader reader, URI documentUri) throws IOException {
     // doesn't auto close the underlying reader
     try (AutoCloser<XMLEventReader2, XMLStreamException> closer = new AutoCloser<>(
-        newXMLEventReader2(documentUri, reader), event -> event.close())) {
+        newXMLEventReader2(documentUri, reader), XMLEventReader::close)) {
       return parseXmlInternal(closer.getResource());
     } catch (XMLStreamException ex) {
       throw new IOException("Unable to create a new XMLEventReader2 instance.", ex);

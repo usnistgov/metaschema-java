@@ -42,13 +42,13 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Override;
-import java.lang.String;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -94,7 +94,7 @@ public class FlagReference {
   private String _required;
 
   @BoundField(
-      formalName = "Formal Name",
+      formalName = "Formal NameT",
       description = "A formal name for the data construct, to be presented in documentation.",
       useName = "formal-name")
   private String _formalName;
@@ -110,7 +110,7 @@ public class FlagReference {
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "props", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
   @BoundField(

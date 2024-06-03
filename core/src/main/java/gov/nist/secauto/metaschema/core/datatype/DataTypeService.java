@@ -51,8 +51,8 @@ public final class DataTypeService {
   private static final Logger LOGGER = LogManager.getLogger(DataTypeService.class);
   private static final Lazy<DataTypeService> INSTANCE = Lazy.lazy(() -> new DataTypeService());
 
-  private Map<String, IDataTypeAdapter<?>> libraryByName;
-  private Map<Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> libraryByClass;
+  private final Map<String, IDataTypeAdapter<?>> libraryByName;
+  private final Map<Class<? extends IDataTypeAdapter<?>>, IDataTypeAdapter<?>> libraryByClass;
 
   /**
    * Get the singleton service instance, which will be lazy constructed on first
@@ -67,45 +67,7 @@ public final class DataTypeService {
   }
 
   private DataTypeService() {
-    load();
-  }
 
-  /**
-   * Lookup a specific {@link IDataTypeAdapter} instance by its name.
-   *
-   * @param name
-   *          the data type name of data type adapter to get the instance for
-   * @return the instance or {@code null} if the instance is unknown to the type
-   *         system
-   */
-  @Nullable
-  public IDataTypeAdapter<?> getJavaTypeAdapterByName(@NonNull String name) {
-    return libraryByName.get(name);
-  }
-
-  /**
-   * Lookup a specific {@link IDataTypeAdapter} instance by its class.
-   *
-   * @param clazz
-   *          the adapter class to get the instance for
-   * @param <TYPE>
-   *          the type of the requested adapter
-   * @return the instance or {@code null} if the instance is unknown to the type
-   *         system
-   */
-  @SuppressWarnings("unchecked")
-  @Nullable
-  public <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterByClass(@NonNull Class<TYPE> clazz) {
-    return (TYPE) libraryByClass.get(clazz);
-  }
-
-  /**
-   * Load available data types registered with the {@link IDataTypeProvider} SPI.
-   *
-   * @throws IllegalStateException
-   *           if there are two adapters with the same name
-   */
-  private void load() {
     ServiceLoader<IDataTypeProvider> loader = ServiceLoader.load(IDataTypeProvider.class);
     List<IDataTypeAdapter<?>> dataTypes = loader.stream()
         .map(Provider<IDataTypeProvider>::get)
@@ -142,10 +104,36 @@ public final class DataTypeService {
                   return v1;
                 },
                 ConcurrentHashMap::new));
+    this.libraryByName = libraryByName;
+    this.libraryByClass = libraryByClass;
+  }
 
-    synchronized (this) {
-      this.libraryByName = libraryByName;
-      this.libraryByClass = libraryByClass;
-    }
+  /**
+   * Lookup a specific {@link IDataTypeAdapter} instance by its name.
+   *
+   * @param name
+   *          the data type name of data type adapter to get the instance for
+   * @return the instance or {@code null} if the instance is unknown to the type
+   *         system
+   */
+  @Nullable
+  public IDataTypeAdapter<?> getJavaTypeAdapterByName(@NonNull String name) {
+    return libraryByName.get(name);
+  }
+
+  /**
+   * Lookup a specific {@link IDataTypeAdapter} instance by its class.
+   *
+   * @param clazz
+   *          the adapter class to get the instance for
+   * @param <TYPE>
+   *          the type of the requested adapter
+   * @return the instance or {@code null} if the instance is unknown to the type
+   *         system
+   */
+  @SuppressWarnings("unchecked")
+  @Nullable
+  public <TYPE extends IDataTypeAdapter<?>> TYPE getJavaTypeAdapterByClass(@NonNull Class<TYPE> clazz) {
+    return (TYPE) libraryByClass.get(clazz);
   }
 }

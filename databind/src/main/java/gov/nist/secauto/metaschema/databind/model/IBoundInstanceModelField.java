@@ -63,9 +63,9 @@ public interface IBoundInstanceModelField extends IBoundInstanceModelNamed, IFie
 
     IBoundInstanceModelField retval;
     if (definition == null) {
-      retval = new InstanceModelFieldScalar(field, containingDefinition);
+      retval = InstanceModelFieldScalar.newInstance(field, containingDefinition);
     } else if (definition instanceof DefinitionField) {
-      retval = new InstanceModelFieldComplex(field, (DefinitionField) definition, containingDefinition);
+      retval = InstanceModelFieldComplex.newInstance(field, (DefinitionField) definition, containingDefinition);
     } else {
       throw new IllegalStateException(String.format(
           "The field '%s' on class '%s' is not bound to a Metaschema field",

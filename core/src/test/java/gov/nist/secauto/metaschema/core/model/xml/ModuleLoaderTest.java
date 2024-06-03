@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IConstraintLoader;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
@@ -48,6 +49,8 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 class ModuleLoaderTest {
 
   @Test
@@ -56,13 +59,14 @@ class ModuleLoaderTest {
     loader.allowEntityResolution();
     URI moduleUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
-    IXmlModule module = loader.load(moduleUri);
+    IMetaschemaModule module = loader.load(moduleUri);
 
-    IXmlModule oscalCatalogModule = module.getImportedModuleByShortName("oscal-catalog");
+    IMetaschemaModule oscalCatalogModule = module.getImportedModuleByShortName("oscal-catalog");
     assertNotNull(oscalCatalogModule, "catalog metaschema not found");
-    IXmlModule metadataModule = oscalCatalogModule.getImportedModuleByShortName("oscal-metadata");
+    IMetaschemaModule metadataModule = oscalCatalogModule.getImportedModuleByShortName("oscal-metadata");
     assertNotNull(metadataModule, "metadata metaschema not found");
-    IFlagDefinition flag = metadataModule.getScopedFlagDefinitionByName("location-type");
+    IFlagDefinition flag
+        = metadataModule.getScopedFlagDefinitionByName(new QName("location-type"));
     assertNotNull(flag, "flag not found");
     List<? extends IConstraint> constraints = flag.getConstraints();
     assertFalse(constraints.isEmpty(), "a constraint was expected");
@@ -73,7 +77,7 @@ class ModuleLoaderTest {
     ModuleLoader loader = new ModuleLoader();
     URI moduleUri = ObjectUtils.notNull(
         Paths.get("src/test/resources/content/custom-entity-metaschema.xml").toUri());
-    IXmlModule module = loader.load(moduleUri);
+    IMetaschemaModule module = loader.load(moduleUri);
     assertFalse(module.getExportedRootAssemblyDefinitions().isEmpty(), "no roots found");
   }
 
@@ -89,8 +93,9 @@ class ModuleLoaderTest {
     loader.allowEntityResolution();
     URI moduleUri = ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
-    IXmlModule module = loader.load(moduleUri);
-    IAssemblyDefinition catalog = module.getExportedAssemblyDefinitionByName("catalog");
+    IMetaschemaModule module = loader.load(moduleUri);
+    IAssemblyDefinition catalog
+        = module.getExportedAssemblyDefinitionByName(new QName("http://csrc.nist.gov/ns/oscal/1.0", "catalog"));
 
     assertNotNull(catalog, "catalog not found");
     List<? extends IConstraint> constraints = catalog.getConstraints();
@@ -101,10 +106,11 @@ class ModuleLoaderTest {
   void testLoadMetaschemaWithExternalEntity() throws MetaschemaException, IOException {
     ModuleLoader loader = new ModuleLoader();
     loader.allowEntityResolution();
-    IXmlModule module
+    IMetaschemaModule module
         = loader.load(ObjectUtils.notNull(Paths.get("src/test/resources/content/custom-entity-metaschema.xml")));
 
-    IAssemblyDefinition root = module.getAssemblyDefinitionByName("root");
+    IAssemblyDefinition root = module.getExportedRootAssemblyDefinitionByName(
+        new QName("http://csrc.nist.gov/ns/test/metaschema/entity", "root"));
     assert root != null;
     List<? extends IAllowedValuesConstraint> allowedValues = root.getAllowedValuesConstraints();
 

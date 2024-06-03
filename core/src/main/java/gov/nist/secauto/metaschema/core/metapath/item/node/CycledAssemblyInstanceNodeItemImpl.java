@@ -32,6 +32,8 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
 import java.util.Collection;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class CycledAssemblyInstanceNodeItemImpl
@@ -70,7 +72,7 @@ class CycledAssemblyInstanceNodeItemImpl
   }
 
   @Override
-  public IFlagNodeItem getFlagByName(@NonNull String name) {
+  public IFlagNodeItem getFlagByName(@NonNull QName name) {
     return getCycledNodeItem().getFlagByName(name);
   }
 
@@ -80,7 +82,7 @@ class CycledAssemblyInstanceNodeItemImpl
   }
 
   @Override
-  public List<? extends IModelNodeItem<?, ?>> getModelItemsByName(String name) {
+  public List<? extends IModelNodeItem<?, ?>> getModelItemsByName(QName name) {
     return getCycledNodeItem().getModelItemsByName(name);
   }
 

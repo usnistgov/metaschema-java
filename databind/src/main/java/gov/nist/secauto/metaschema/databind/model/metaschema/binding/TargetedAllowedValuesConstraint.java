@@ -130,7 +130,7 @@ public class TargetedAllowedValuesConstraint implements ITargetedConstraintBase 
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "props", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
   @BoundField(
@@ -138,7 +138,7 @@ public class TargetedAllowedValuesConstraint implements ITargetedConstraintBase 
       useName = "enum",
       minOccurs = 1,
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "enums", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "enums", inJson = JsonGroupAsBehavior.LIST))
   private List<ConstraintValueEnum> _enums;
 
   @BoundField(

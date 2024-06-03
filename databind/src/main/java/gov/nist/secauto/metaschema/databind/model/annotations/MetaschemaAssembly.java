@@ -112,17 +112,6 @@ public @interface MetaschemaAssembly {
   int rootIndex() default Integer.MIN_VALUE;
 
   /**
-   * XML target namespace of the XML element.
-   * <p>
-   * If the value is "##default", then namespace is derived from the namespace
-   * provided in the package-info.
-   *
-   * @return the namespace
-   */
-  @NonNull
-  String rootNamespace() default ModelUtil.DEFAULT_STRING_VALUE;
-
-  /**
    * Get any remarks for this assembly.
    *
    * @return a markdown string or {@code "##none"} if no remarks are provided

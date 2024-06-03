@@ -30,11 +30,13 @@ import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 
 import java.util.Objects;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 class SequenceTypeImpl implements ISequenceType {
   private final Class<? extends IItem> type;
   private final Occurrence occurrence;
 
-  public SequenceTypeImpl(Class<? extends IItem> type, Occurrence occurrence) {
+  public SequenceTypeImpl(@NonNull Class<? extends IItem> type, @NonNull Occurrence occurrence) {
     Objects.requireNonNull(type, "type");
     Objects.requireNonNull(occurrence, "occurrence");
     this.type = type;

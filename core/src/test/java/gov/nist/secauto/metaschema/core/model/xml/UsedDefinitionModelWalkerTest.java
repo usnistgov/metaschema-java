@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.model.xml;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.UsedDefinitionModelWalker;
 
@@ -50,7 +51,7 @@ class UsedDefinitionModelWalkerTest {
     ModuleLoader loader = new ModuleLoader();
     loader.allowEntityResolution();
 
-    IXmlModule module = loader.load(new URL(
+    IMetaschemaModule module = loader.load(new URL(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/v1.0.0/src/metaschema/oscal_complete_metaschema.xml"));
 
     Collection<? extends IDefinition> definitions

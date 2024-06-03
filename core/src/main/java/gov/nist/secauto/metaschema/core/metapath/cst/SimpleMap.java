@@ -45,7 +45,7 @@ public class SimpleMap
 
     IExpression right = getRight();
     return ObjectUtils.notNull(leftResult.stream()
-        .flatMap(item -> right.accept(dynamicContext, ISequence.of(item)).asStream())
+        .flatMap(item -> right.accept(dynamicContext, ISequence.of(item)).stream())
         .collect(ISequence.toSequence()));
   }
 

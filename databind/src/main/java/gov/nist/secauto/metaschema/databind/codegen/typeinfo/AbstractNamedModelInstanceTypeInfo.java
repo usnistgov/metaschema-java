@@ -141,7 +141,7 @@ abstract class AbstractNamedModelInstanceTypeInfo<INSTANCE extends INamedModelIn
       String itemPropertyName = ClassUtils.toPropertyName(getItemBaseName());
 
       if (JsonGroupAsBehavior.KEYED.equals(instance.getJsonGroupAsBehavior())) {
-        IFlagInstance jsonKey = instance.getDefinition().getJsonKeyFlagInstance();
+        IFlagInstance jsonKey = instance.getDefinition().getJsonKey();
         if (jsonKey == null) {
           throw new IllegalStateException(
               String.format("JSON key not defined for property: %s", instance.toCoordinates()));

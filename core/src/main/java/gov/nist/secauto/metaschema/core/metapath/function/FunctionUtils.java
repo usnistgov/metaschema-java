@@ -113,74 +113,6 @@ public final class FunctionUtils {
   }
 
   /**
-   * Retrieves the first item in a sequence. If the sequence is empty, a
-   * {@link TypeMetapathException} exception is thrown. If requireSingleton is
-   * {@code true} and the sequence contains more than one item, a
-   * {@link TypeMetapathException} is thrown.
-   *
-   * @param <ITEM>
-   *          the item type to return derived from the provided sequence
-   * @param sequence
-   *          the sequence to retrieve the first item from
-   * @param requireSingleton
-   *          if {@code true} then a {@link TypeMetapathException} is thrown if
-   *          the sequence contains more than one item
-   * @return {@code null} if the sequence is empty, or the item otherwise
-   * @throws TypeMetapathException
-   *           if the sequence is empty, or contains more than one item and
-   *           requireSingleton is {@code true}
-   */
-  @NonNull
-  public static <ITEM extends IItem> ITEM requireFirstItem(@NonNull ISequence<ITEM> sequence,
-      boolean requireSingleton) {
-    if (sequence.isEmpty()) {
-      throw new InvalidTypeMetapathException(
-          null,
-          "Expected a non-empty sequence, but sequence was empty.");
-    }
-    List<ITEM> items = sequence.asList();
-    if (requireSingleton && items.size() != 1) {
-      throw new InvalidTypeMetapathException(
-          null,
-          String.format("sequence expected to contain one item, but found '%d'", items.size()));
-    }
-    return ObjectUtils.notNull(items.iterator().next());
-  }
-
-  /**
-   * Retrieves the first item in a sequence. If the sequence is empty, a
-   * {@code null} result is returned. If requireSingleton is {@code true} and the
-   * sequence contains more than one item, a {@link TypeMetapathException} is
-   * thrown.
-   *
-   * @param <ITEM>
-   *          the item type to return derived from the provided sequence
-   * @param sequence
-   *          the sequence to retrieve the first item from
-   * @param requireSingleton
-   *          if {@code true} then a {@link TypeMetapathException} is thrown if
-   *          the sequence contains more than one item
-   * @return {@code null} if the sequence is empty, or the item otherwise
-   * @throws TypeMetapathException
-   *           if the sequence contains more than one item and requireSingleton is
-   *           {@code true}
-   */
-  @Nullable
-  public static <ITEM extends IItem> ITEM getFirstItem(@NonNull ISequence<ITEM> sequence, boolean requireSingleton) {
-    @Nullable ITEM retval = null;
-    if (!sequence.isEmpty()) {
-      List<ITEM> items = sequence.asList();
-      if (requireSingleton && items.size() != 1) {
-        throw new InvalidTypeMetapathException(
-            null,
-            String.format("sequence expected to contain one item, but found '%d'", items.size()));
-      }
-      retval = items.iterator().next();
-    }
-    return retval;
-  }
-
-  /**
    * Gets the first item of the provided sequence as a {@link INumericItem} value.
    * If the sequence is empty, then a {@code null} value is returned.
    *
@@ -198,7 +130,7 @@ public final class FunctionUtils {
    */
   @Nullable
   public static INumericItem toNumeric(@NonNull ISequence<?> sequence, boolean requireSingleton) {
-    IItem item = getFirstItem(sequence, requireSingleton);
+    IItem item = sequence.getFirstItem(requireSingleton);
     return item == null ? null : toNumeric(item);
   }
 
@@ -215,7 +147,7 @@ public final class FunctionUtils {
   @NonNull
   public static INumericItem toNumeric(@NonNull IItem item) {
     // atomize
-    IAnyAtomicItem atomicItem = FnData.fnDataItem(item);
+    IAnyAtomicItem atomicItem = ISequence.getFirstItem(FnData.atomize(item), true);
     return toNumeric(atomicItem);
   }
 
@@ -229,7 +161,7 @@ public final class FunctionUtils {
    *           if the item cannot be cast to a numeric value
    */
   @NonNull
-  public static INumericItem toNumeric(@NonNull IAnyAtomicItem item) {
+  public static INumericItem toNumeric(@Nullable IAnyAtomicItem item) {
     try {
       return IDecimalItem.cast(item);
     } catch (InvalidValueForCastFunctionException ex) {
@@ -373,7 +305,7 @@ public final class FunctionUtils {
    */
   @NonNull
   public static Stream<Class<?>> getTypes(@NonNull Stream<? extends IItem> items) {
-    return ObjectUtils.notNull(items.map(item -> item.getClass()));
+    return ObjectUtils.notNull(items.map(Object::getClass));
   }
 
   /**

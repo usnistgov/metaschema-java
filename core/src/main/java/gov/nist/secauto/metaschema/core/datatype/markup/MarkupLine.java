@@ -45,7 +45,7 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class MarkupLine
+public final class MarkupLine
     extends AbstractMarkupString<MarkupLine> {
 
   @NonNull

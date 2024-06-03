@@ -28,26 +28,42 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupable;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAbsolute;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingContainerModelAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyAbsolute;
+import gov.nist.secauto.metaschema.databind.model.IGroupAs;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyReference;
 
 import java.math.BigInteger;
+import java.util.Map;
+import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelAssemblyReference
-    extends AbstractInstanceModelNamedReference<
-        AssemblyReference,
-        IBindingDefinitionAssembly,
-        IBindingContainerModelAbsolute>
-    implements IBindingInstanceModelAssemblyAbsolute,
-    IFeatureDefinitionReferenceInstance<IBindingDefinitionAssembly, IBindingInstanceModelAssemblyAbsolute> {
+    extends AbstractAssemblyInstance<
+        IContainerModelAbsolute,
+        IAssemblyDefinition,
+        IAssemblyInstanceAbsolute,
+        IAssemblyDefinition>
+    implements IAssemblyInstanceAbsolute, IFeatureInstanceModelGroupAs {
+  @NonNull
+  private final AssemblyReference binding;
+  @NonNull
+  private final IAssemblyDefinition definition;
+  @NonNull
+  private final Map<IAttributable.Key, Set<String>> properties;
+  @NonNull
+  private final IGroupAs groupAs;
+  @NonNull
+  private final Lazy<IAssemblyNodeItem> boundNodeItem;
+
   /**
    * Construct a new assembly reference.
    *
@@ -67,15 +83,51 @@ public class InstanceModelAssemblyReference
       @NonNull AssemblyReference binding,
       @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
       int position,
-      @NonNull IBindingDefinitionAssembly definition,
-      @NonNull IBindingContainerModelAbsolute parent) {
-    super(binding,
-        bindingInstance,
-        position,
-        definition,
-        parent,
-        ObjectUtils.requireNonNull(binding.getProps()),
-        binding.getGroupAs());
+      @NonNull IAssemblyDefinition definition,
+      @NonNull IContainerModelAbsolute parent) {
+    super(parent);
+    this.binding = binding;
+    this.definition = definition;
+    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(binding.getProps()));
+    this.groupAs = ModelSupport.groupAs(binding.getGroupAs(), parent.getOwningDefinition().getContainingModule());
+    this.boundNodeItem = ObjectUtils.notNull(
+        Lazy.lazy(() -> (IAssemblyNodeItem) ObjectUtils.notNull(getContainingDefinition().getNodeItem())
+            .getModelItemsByName(bindingInstance.getXmlQName())
+            .get(position)));
+  }
+
+  @Override
+  public IAssemblyDefinition getDefinition() {
+    return definition;
+  }
+
+  @NonNull
+  protected AssemblyReference getBinding() {
+    return binding;
+  }
+
+  @Override
+  public Map<IAttributable.Key, Set<String>> getProperties() {
+    return properties;
+  }
+
+  @Override
+  public IGroupAs getGroupAs() {
+    return groupAs;
+  }
+
+  @Override
+  public IAssemblyNodeItem getNodeItem() {
+    return boundNodeItem.get();
+  }
+
+  // ---------------------------------------
+  // - Start binding driven code - CPD-OFF -
+  // ---------------------------------------
+
+  @Override
+  public String getName() {
+    return getDefinition().getName();
   }
 
   @Override
@@ -111,14 +163,12 @@ public class InstanceModelAssemblyReference
   @Override
   public int getMinOccurs() {
     BigInteger min = getBinding().getMinOccurs();
-    return min == null ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
+    return min == null ? DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
   }
 
   @Override
   public int getMaxOccurs() {
     String max = getBinding().getMaxOccurs();
-    return max == null
-        ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS
-        : ModelSupport.maxOccurs(max);
+    return max == null ? DEFAULT_GROUP_AS_MAX_OCCURS : ModelSupport.maxOccurs(max);
   }
 }

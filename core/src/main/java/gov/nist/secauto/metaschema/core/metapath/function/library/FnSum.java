@@ -105,7 +105,7 @@ public final class FnSum {
     ISequence<? extends IAnyAtomicItem> sequence = FunctionUtils.asType(
         ObjectUtils.requireNonNull(arguments.get(0)));
 
-    return ISequence.of(sum(sequence.asList(), IIntegerItem.ZERO));
+    return ISequence.of(sum(sequence.getValue(), IIntegerItem.ZERO));
   }
 
   @SuppressWarnings("unused")
@@ -115,15 +115,11 @@ public final class FnSum {
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
       IItem focus) {
-    ISequence<? extends IAnyAtomicItem> sequence = FunctionUtils.asType(
-        ObjectUtils.requireNonNull(arguments.get(0)));
+    ISequence<? extends IAnyAtomicItem> sequence = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
 
-    IAnyAtomicItem zero = FunctionUtils.getFirstItem(
-        FunctionUtils.asType(
-            ObjectUtils.requireNonNull(arguments.get(1))),
-        true);
+    IAnyAtomicItem zero = FunctionUtils.asTypeOrNull(arguments.get(1).getFirstItem(true));
 
-    return ISequence.of(sum(sequence.asList(), zero));
+    return ISequence.of(sum(sequence.getValue(), zero));
   }
 
   /**
@@ -208,7 +204,7 @@ public final class FnSum {
           InvalidArgumentFunctionException.INVALID_ARGUMENT_TYPE,
           String.format("Values must all be of type '%s'.",
               OperationFunctions.AGGREGATE_MATH_TYPES.stream()
-                  .map(type -> type.getName())
+                  .map(Class::getName)
                   .collect(CustomCollectors.joiningWithOxfordComma(","))));
     }
 

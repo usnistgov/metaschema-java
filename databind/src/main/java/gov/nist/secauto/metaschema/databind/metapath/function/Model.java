@@ -34,11 +34,9 @@ import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
-import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
 import gov.nist.secauto.metaschema.core.model.MetaschemaModelConstants;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBinding;
 
 import java.util.List;
 
@@ -58,7 +56,7 @@ public final class Model {
       .focusIndependent()
       .contextIndependent()
       .deterministic()
-      .returnOne()
+      .returnZeroOrOne()
       .functionHandler(Model::execute)
       .build();
 
@@ -84,7 +82,7 @@ public final class Model {
     }
 
     // always not null, since the first item is required
-    INodeItem node = FunctionUtils.requireFirstItem(nodeSequence, true);
+    INodeItem node = nodeSequence.getFirstItem(true);
 
     if (!(node instanceof IDefinitionNodeItem)) {
       return ISequence.empty();
@@ -96,15 +94,8 @@ public final class Model {
 
   public static INodeItem getModel(@NonNull IDefinitionNodeItem<?, ?> definitionNodeItem) {
     INamedInstance instance = definitionNodeItem.getInstance();
-    INodeItem retval = null;
-    if (instance instanceof IBinding) {
-      retval = ((IBinding) instance).getBoundNodeItem();
-    } else {
-      IDefinition definition = definitionNodeItem.getDefinition();
-      if (definition instanceof IBinding) {
-        retval = ((IBinding) definition).getBoundNodeItem();
-      }
-    }
-    return retval;
+    return instance != null
+        ? instance.getNodeItem()
+        : definitionNodeItem.getDefinition().getNodeItem();
   }
 }

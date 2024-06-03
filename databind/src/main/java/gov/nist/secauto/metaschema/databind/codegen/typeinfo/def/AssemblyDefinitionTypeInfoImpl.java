@@ -45,6 +45,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -67,8 +68,8 @@ class AssemblyDefinitionTypeInfoImpl
         getFlagInstanceTypeInfos().stream(),
         processModel(definition))
         .collect(CustomCollectors.toMap(
-            (typeInfo) -> typeInfo.getInstance(),
-            (typeInfo) -> typeInfo,
+            IInstanceTypeInfo::getInstance,
+            CustomCollectors.identity(),
             (key, v1, v2) -> {
               if (LOGGER.isErrorEnabled()) {
                 LOGGER.error(String.format("Unexpected duplicate property name '%s'", key));
@@ -78,8 +79,8 @@ class AssemblyDefinitionTypeInfoImpl
             LinkedHashMap::new))));
     this.propertyNameToTypeInfoMap = ObjectUtils.notNull(Lazy.lazy(() -> getInstanceTypeInfoMap().values().stream()
         .collect(Collectors.toMap(
-            (typeInfo) -> typeInfo.getPropertyName(),
-            (typeInfo) -> typeInfo,
+            IInstanceTypeInfo::getPropertyName,
+            Function.identity(),
             (v1, v2) -> v2,
             LinkedHashMap::new))));
   }

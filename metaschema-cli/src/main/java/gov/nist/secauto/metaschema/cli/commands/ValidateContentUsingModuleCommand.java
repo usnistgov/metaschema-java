@@ -115,7 +115,7 @@ public class ValidateContentUsingModuleCommand
     return new OscalCommandExecutor(callingContext, commandLine);
   }
 
-  private class OscalCommandExecutor
+  private final class OscalCommandExecutor
       extends AbstractValidationCommandExecutor {
 
     private Path tempDir;

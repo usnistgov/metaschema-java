@@ -193,11 +193,12 @@ public class GenerateSchemaMojo
 
     Path outputDirectory = ObjectUtils.notNull(getOutputDirectory().toPath());
     for (IModule module : modules) {
-      getLog().info(String.format("Processing metaschema: %s", module.getLocation()));
+      if (getLog().isInfoEnabled()) {
+        getLog().info(String.format("Processing metaschema: %s", module.getLocation()));
+      }
       if (module.getExportedRootAssemblyDefinitions().isEmpty()) {
         continue;
       }
-
       generateSchemas(module, schemaGenerationConfig, outputDirectory, schemaFormats);
     }
   }
@@ -252,23 +253,31 @@ public class GenerateSchemaMojo
     try {
       staleFile = staleFile.getCanonicalFile();
     } catch (IOException ex) {
-      getLog().warn("Unable to resolve canonical path to stale file. Treating it as not existing.", ex);
+      if (getLog().isWarnEnabled()) {
+        getLog().warn("Unable to resolve canonical path to stale file. Treating it as not existing.", ex);
+      }
     }
 
     boolean generate;
     if (shouldExecutionBeSkipped()) {
-      getLog().debug(String.format("Schema generation is configured to be skipped. Skipping."));
+      if (getLog().isDebugEnabled()) {
+        getLog().debug(String.format("Schema generation is configured to be skipped. Skipping."));
+      }
       generate = false;
     } else if (staleFile.exists()) {
       generate = isGenerationRequired();
     } else {
-      getLog().info(String.format("Stale file '%s' doesn't exist! Generating source files.", staleFile.getPath()));
+      if (getLog().isInfoEnabled()) {
+        getLog().info(String.format("Stale file '%s' doesn't exist! Generating source files.", staleFile.getPath()));
+      }
       generate = true;
     }
 
     if (generate) {
       File outputDir = getOutputDirectory();
-      getLog().debug(String.format("Using outputDirectory: %s", outputDir.getPath()));
+      if (getLog().isDebugEnabled()) {
+        getLog().debug(String.format("Using outputDirectory: %s", outputDir.getPath()));
+      }
 
       if (!outputDir.exists() && !outputDir.mkdirs()) {
         throw new MojoExecutionException("Unable to create output directory: " + outputDir);
@@ -289,7 +298,9 @@ public class GenerateSchemaMojo
       loader.allowEntityResolution();
       final Set<IModule> modules = new HashSet<>();
       for (File source : getModuleSources().collect(Collectors.toList())) {
-        getLog().info("Using metaschema source: " + source.getPath());
+        if (getLog().isInfoEnabled()) {
+          getLog().info("Using metaschema source: " + source.getPath());
+        }
         IModule module;
         try {
           module = loader.load(source);
@@ -309,7 +320,9 @@ public class GenerateSchemaMojo
           = Files.newOutputStream(staleFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
               StandardOpenOption.TRUNCATE_EXISTING)) {
         os.close();
-        getLog().info("Created stale file: " + staleFile);
+        if (getLog().isInfoEnabled()) {
+          getLog().info("Created stale file: " + staleFile);
+        }
       } catch (IOException ex) {
         throw new MojoExecutionException("Failed to write stale file: " + staleFile.getPath(), ex);
       }

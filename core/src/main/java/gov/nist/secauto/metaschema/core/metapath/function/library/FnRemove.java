@@ -79,10 +79,8 @@ public final class FnRemove {
       @NonNull DynamicContext dynamicContext,
       IItem focus) {
     ISequence<?> target = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
-    IIntegerItem position
-        = ObjectUtils.requireNonNull(
-            FunctionUtils.getFirstItem(FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true));
-    return ISequence.of(fnRemove(target, position));
+    IIntegerItem position = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1).getFirstItem(true)));
+    return ISequence.ofCollection(fnRemove(target, position));
   }
 
   /**

@@ -47,7 +47,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Unit test for simple CLI.
  */
 public class CLITest {
-  private static final ExitCode NO_EXPECTION_CLASS = null;
+  private static final ExitCode NO_EXCEPTION_CLASS = null;
 
   void evaluateResult(@NonNull ExitStatus status, @NonNull ExitCode expectedCode) {
     status.generateMessage(true);
@@ -65,7 +65,6 @@ public class CLITest {
   }
 
   private static Stream<Arguments> providesValues() {
-    ExitCode NO_EXCEPTION_CLASS = null;
     List<Arguments> values = new LinkedList<>() {
       {
         add(Arguments.of(new String[] {}, ExitCode.INVALID_COMMAND, NO_EXCEPTION_CLASS));
@@ -142,6 +141,9 @@ public class CLITest {
                 "--as=xml"
             },
             ExitCode.IO_ERROR, java.io.FileNotFoundException.class));
+        add(Arguments.of(
+            new String[] { "metapath", "list-functions" },
+            ExitCode.OK, NO_EXCEPTION_CLASS));
       }
     };
 

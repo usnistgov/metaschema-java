@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public final class ObjectUtils {
   private ObjectUtils() {
@@ -50,7 +51,7 @@ public final class ObjectUtils {
    * @return the object
    */
   @NonNull
-  public static <T> T notNull(T obj) {
+  public static <T> T notNull(@Nullable T obj) {
     assert obj != null;
     return obj;
   }
@@ -67,7 +68,8 @@ public final class ObjectUtils {
    *           if {@code obj} is {@code null}
    */
   @NonNull
-  public static <T> T requireNonNull(T obj) {
+  @SuppressFBWarnings("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
+  public static <T> T requireNonNull(@Nullable T obj) {
     if (obj == null) {
       throw new NullPointerException(); // NOPMD
     }
@@ -89,7 +91,8 @@ public final class ObjectUtils {
    *           if {@code obj} is {@code null}
    */
   @NonNull
-  public static <T> T requireNonNull(T obj, String message) {
+  @SuppressFBWarnings("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
+  public static <T> T requireNonNull(@Nullable T obj, @NonNull String message) {
     if (obj == null) {
       throw new NullPointerException(message); // NOPMD
     }

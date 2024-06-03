@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
@@ -81,5 +83,10 @@ class RootAssemblyValuedNodeItemImpl
   @Override
   public ModelContainer getModel() {
     return model.get();
+  }
+
+  @Override
+  public QName getName() {
+    return ObjectUtils.requireNonNull(getDefinition().getRootXmlQName());
   }
 }

@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.model.xml;
 
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.AbstractLoader;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IConstraintLoader;
@@ -43,6 +42,7 @@ import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.ITargetedConstraints;
 import gov.nist.secauto.metaschema.core.model.xml.impl.ConstraintXmlSupport;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MetaschemaMetaConstraintsDocument;
+import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MetaschemaMetapathReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.ModelContextType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -90,13 +90,13 @@ public class XmlMetaConstraintLoader
     List<String> metapaths;
     if (parent == null) {
       metapaths = ObjectUtils.notNull(contextObj.getMetapathList().stream()
-          .map(metapath -> metapath.getTarget())
+          .map(MetaschemaMetapathReferenceType::getTarget)
           .collect(Collectors.toList()));
     } else {
       List<String> parentMetapaths = parent.getMetapaths().stream()
           .collect(Collectors.toList());
       metapaths = ObjectUtils.notNull(contextObj.getMetapathList().stream()
-          .map(metapath -> metapath.getTarget())
+          .map(MetaschemaMetapathReferenceType::getTarget)
           .flatMap(childPath -> {
             return parentMetapaths.stream()
                 .map(parentPath -> parentPath + '/' + childPath);
@@ -157,7 +157,6 @@ public class XmlMetaConstraintLoader
     public List<ITargetedConstraints> getTargetedConstraints() {
       return Stream.concat(
           getMetapaths().stream()
-              .map(metapath -> MetapathExpression.compile(ObjectUtils.notNull(metapath)))
               .map(metapath -> new MetaTargetedContraints(ObjectUtils.notNull(metapath), constraints)),
           childContexts.stream()
               .flatMap(child -> child.getTargetedConstraints().stream()))
@@ -178,7 +177,7 @@ public class XmlMetaConstraintLoader
       implements IFeatureModelConstrained {
 
     protected MetaTargetedContraints(
-        @NonNull MetapathExpression target,
+        @NonNull String target,
         @NonNull IModelConstrained constraints) {
       super(target, constraints);
     }
@@ -192,20 +191,18 @@ public class XmlMetaConstraintLoader
      * @param definition
      *          the definition to apply the constraints to.
      */
-    @SuppressWarnings("null")
     protected void applyTo(@NonNull IDefinition definition) {
-      getAllowedValuesConstraints().forEach(constraint -> definition.addConstraint(constraint));
-      getMatchesConstraints().forEach(constraint -> definition.addConstraint(constraint));
-      getIndexHasKeyConstraints().forEach(constraint -> definition.addConstraint(constraint));
-      getExpectConstraints().forEach(constraint -> definition.addConstraint(constraint));
+      getAllowedValuesConstraints().forEach(definition::addConstraint);
+      getMatchesConstraints().forEach(definition::addConstraint);
+      getIndexHasKeyConstraints().forEach(definition::addConstraint);
+      getExpectConstraints().forEach(definition::addConstraint);
     }
 
-    @SuppressWarnings("null")
     protected void applyTo(@NonNull IAssemblyDefinition definition) {
       applyTo((IDefinition) definition);
-      getIndexConstraints().forEach(constraint -> definition.addConstraint(constraint));
-      getUniqueConstraints().forEach(constraint -> definition.addConstraint(constraint));
-      getHasCardinalityConstraints().forEach(constraint -> definition.addConstraint(constraint));
+      getIndexConstraints().forEach(definition::addConstraint);
+      getUniqueConstraints().forEach(definition::addConstraint);
+      getHasCardinalityConstraints().forEach(definition::addConstraint);
     }
 
     @Override

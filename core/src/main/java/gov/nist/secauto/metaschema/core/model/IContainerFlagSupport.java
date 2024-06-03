@@ -26,9 +26,14 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
+import gov.nist.secauto.metaschema.core.model.impl.EmptyFlagContainer;
+
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IContainerFlagSupport<FI extends IFlagInstance> {
   /**
@@ -44,13 +49,24 @@ public interface IContainerFlagSupport<FI extends IFlagInstance> {
     return (IContainerFlagSupport<T>) EmptyFlagContainer.EMPTY;
   }
 
+  @NonNull
+  static <T extends IFlagInstance> IFlagContainerBuilder<T> builder() {
+    return new FlagContainerBuilder<>(null);
+  }
+
+  @NonNull
+  static <T extends IFlagInstance> IFlagContainerBuilder<T> builder(@NonNull QName jsonKey) {
+    return new FlagContainerBuilder<>(jsonKey);
+  }
+
   /**
    * Get a mapping of flag effective name to flag instance.
    *
    * @return the mapping of flag effective name to flag instance
    */
   @NonNull
-  Map<String, FI> getFlagInstanceMap();
-  // @Nullable
-  // FI getJsonKeyFlagInstance();
+  Map<QName, FI> getFlagInstanceMap();
+
+  @Nullable
+  FI getJsonKeyFlagInstance();
 }

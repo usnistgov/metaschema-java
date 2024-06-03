@@ -55,7 +55,7 @@ public class AssemblyConstraints implements IModelConstraintsBase {
       formalName = "Constraint Let Expression",
       useName = "let",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "lets", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "lets", inJson = JsonGroupAsBehavior.LIST))
   private List<ConstraintLetExpression> _lets;
 
   @BoundChoiceGroup(
@@ -77,7 +77,7 @@ public class AssemblyConstraints implements IModelConstraintsBase {
           @BoundGroupedAssembly(formalName = "Targeted Cardinality Constraint", useName = "has-cardinality",
               binding = TargetedHasCardinalityConstraint.class)
       },
-      groupAs = @GroupAs(name = "rules", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "rules", inJson = JsonGroupAsBehavior.LIST))
   private List<? extends ITargetedConstraintBase> _rules;
 
   @Override

@@ -27,6 +27,8 @@
 package gov.nist.secauto.metaschema.core.metapath.cst;
 
 import gov.nist.secauto.metaschema.core.metapath.cst.path.AbstractPathExpression;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.NameTest;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.Wildcard;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 
 import java.util.List;
@@ -50,7 +52,7 @@ public abstract class AbstractNamedInstanceExpression<RESULT_TYPE extends INodeI
   }
 
   /**
-   * Get the {@link Wildcard} or {@link Name} test.
+   * Get the {@link Wildcard} or {@link NameTest} test.
    *
    * @return the test
    */

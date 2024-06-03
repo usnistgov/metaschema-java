@@ -29,11 +29,12 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.AbstractInlineFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
@@ -55,8 +56,13 @@ import nl.talsmasoftware.lazy4j.Lazy;
  */
 // TODO: implement getProperties()
 public class InstanceFlagInline
-    extends AbstractBoundInstanceJavaField<BoundFlag, IBoundDefinitionModel>
+    extends AbstractInlineFlagDefinition<IBoundDefinitionModel, IBoundDefinitionFlag, IBoundInstanceFlag>
+    // extends AbstractBoundInstanceJavaField<BoundFlag, IBoundDefinitionModel>
     implements IBoundInstanceFlag {
+  @NonNull
+  private final Field javaField;
+  @NonNull
+  private final BoundFlag annotation;
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
@@ -75,7 +81,9 @@ public class InstanceFlagInline
   public InstanceFlagInline(
       @NonNull Field javaField,
       @NonNull IBoundDefinitionModel containingDefinition) {
-    super(javaField, BoundFlag.class, containingDefinition);
+    super(containingDefinition);
+    this.javaField = javaField;
+    this.annotation = ModelUtil.getAnnotation(javaField, BoundFlag.class);
     Class<? extends IDataTypeAdapter<?>> adapterClass = ObjectUtils.notNull(getAnnotation().typeAdapter());
     this.javaTypeAdapter = ModelUtil.getDataTypeAdapter(
         adapterClass,
@@ -90,6 +98,26 @@ public class InstanceFlagInline
     }));
   }
 
+  /**
+   * Get the bound Java field.
+   *
+   * @return the bound Java field
+   */
+  @Override
+  @NonNull
+  public Field getField() {
+    return javaField;
+  }
+
+  /**
+   * Get the binding Java annotation.
+   *
+   * @return the binding Java annotation
+   */
+  @NonNull
+  private BoundFlag getAnnotation() {
+    return annotation;
+  }
   // ------------------------------------------
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
@@ -150,19 +178,9 @@ public class InstanceFlagInline
   }
 
   @Override
-  public String getXmlNamespace() {
-    return ModelUtil.resolveOptionalNamespace(getAnnotation().namespace());
-  }
-
-  @Override
   @Nullable
   public MarkupMultiline getRemarks() {
     return ModelUtil.resolveToMarkupMultiline(getAnnotation().remarks());
-  }
-
-  @Override
-  public IBindingContext getBindingContext() {
-    return getContainingDefinition().getBindingContext();
   }
 
   // ----------------------------------------

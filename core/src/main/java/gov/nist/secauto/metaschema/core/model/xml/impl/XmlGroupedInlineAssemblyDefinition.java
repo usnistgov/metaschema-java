@@ -28,17 +28,15 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractNamedModelInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.AbstractInlineAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
 import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
-import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
-import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelAssembly;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
@@ -57,22 +55,28 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class XmlGroupedInlineAssemblyDefinition
-    extends AbstractNamedModelInstanceGrouped
-    implements IAssemblyInstanceGrouped, IAssemblyDefinition,
-    IFeatureContainerModelAssembly<
+    extends AbstractInlineAssemblyDefinition<
+        IChoiceGroupInstance,
+        IAssemblyDefinition,
+        IAssemblyInstanceGrouped,
+        IAssemblyDefinition,
+        IFlagInstance,
         IModelInstanceAbsolute,
         INamedModelInstanceAbsolute,
         IFieldInstanceAbsolute,
         IAssemblyInstanceAbsolute,
         IChoiceInstance,
-        IChoiceGroupInstance>,
-    IFeatureContainerFlag<IFlagInstance>,
-    IFeatureDefinitionInstanceInlined<IAssemblyDefinition, IAssemblyInstanceGrouped> {
+        IChoiceGroupInstance>
+    implements IAssemblyInstanceGrouped {
+
+  // ----------------------------------------
+  // - Start XmlBeans driven code - CPD-OFF -
+  // ----------------------------------------
 
   @NonNull
   private final GroupedInlineAssemblyDefinitionType xmlObject;
   @NonNull
-  private final Lazy<XmlFlagContainerSupport> flagContainer;
+  private final Lazy<IContainerFlagSupport<IFlagInstance>> flagContainer;
   @NonNull
   private final Lazy<IContainerModelAssemblySupport<
       IModelInstanceAbsolute,
@@ -99,7 +103,10 @@ public class XmlGroupedInlineAssemblyDefinition
       @NonNull IChoiceGroupInstance parent) {
     super(parent);
     this.xmlObject = xmlObject;
-    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> XmlFlagContainerSupport.newInstance(
+        xmlObject,
+        this,
+        parent.getJsonKeyFlagInstanceName())));
     this.modelContainer = ObjectUtils.notNull(
         Lazy.lazy(() -> XmlAssemblyModelContainer.of(xmlObject.getModel(), this)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
@@ -113,17 +120,7 @@ public class XmlGroupedInlineAssemblyDefinition
   }
 
   @Override
-  public IAssemblyDefinition getDefinition() {
-    return this;
-  }
-
-  @Override
-  public IAssemblyInstanceGrouped getInlineInstance() {
-    return this;
-  }
-
-  @Override
-  public XmlFlagContainerSupport getFlagContainer() {
+  public IContainerFlagSupport<IFlagInstance> getFlagContainer() {
     return ObjectUtils.notNull(flagContainer.get());
   }
 
@@ -143,15 +140,6 @@ public class XmlGroupedInlineAssemblyDefinition
   public IModelConstrained getConstraintSupport() {
     return ObjectUtils.notNull(constraints.get());
   }
-
-  @Override
-  public IFlagInstance getJsonKeyFlagInstance() {
-    return getFlagContainer().getJsonKeyFlagInstance();
-  }
-
-  // ----------------------------------------
-  // - Start XmlBeans driven code - CPD-OFF -
-  // ----------------------------------------
 
   /**
    * Get the underlying XML model.

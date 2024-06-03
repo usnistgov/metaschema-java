@@ -46,7 +46,6 @@ import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionType
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonFieldValueKeyFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.JsonKey;
-import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.util.Set;
 
@@ -97,13 +96,7 @@ public class FlagInstanceTypeInfoImpl
       annotation.addMember("useIndex", "$L", index);
     }
 
-    String namespace = instance.getXmlNamespace();
-    if (namespace != null) {
-      if (namespace.equals(instance.getContainingModule().getXmlNamespace().toASCIIString())) {
-        namespace = ModelUtil.DEFAULT_STRING_VALUE;
-      }
-      annotation.addMember("namespace", "$S", namespace);
-    }
+    // TODO: handle flag namespace as a prefix
 
     IFlagDefinition definition = instance.getDefinition();
 
@@ -128,7 +121,8 @@ public class FlagInstanceTypeInfoImpl
     fieldBuilder.addAnnotation(annotation.build());
 
     IModelDefinition parent = instance.getContainingDefinition();
-    if (parent.hasJsonKey() && instance.equals(parent.getJsonKeyFlagInstance())) {
+    IFlagInstance jsonKey = parent.getJsonKey();
+    if (instance.equals(jsonKey)) {
       fieldBuilder.addAnnotation(JsonKey.class);
     }
 

@@ -60,6 +60,11 @@ class DocumentNodeItemImpl
   }
 
   @Override
+  public URI getNamespace() {
+    return ObjectUtils.notNull(URI.create(getRootAssemblyNodeItem().getName().getNamespaceURI()));
+  }
+
+  @Override
   @NonNull
   public URI getDocumentUri() {
     return documentUri;
@@ -69,5 +74,10 @@ class DocumentNodeItemImpl
   @Override
   public ModelContainer getModel() {
     return model.get();
+  }
+
+  @Override
+  public Object getValue() {
+    return getRootAssemblyNodeItem().getValue();
   }
 }

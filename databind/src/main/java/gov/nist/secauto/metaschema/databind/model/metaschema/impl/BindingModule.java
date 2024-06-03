@@ -31,17 +31,16 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
 import gov.nist.secauto.metaschema.core.model.AbstractModule;
-import gov.nist.secauto.metaschema.core.model.IDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaModule;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionFlag;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModel;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModelField;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
 
 import java.net.URI;
@@ -52,17 +51,20 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class BindingModule
     extends AbstractModule<
-        IBindingModule,
-        IBindingDefinitionModel,
-        IBindingDefinitionFlag,
-        IBindingDefinitionModelField,
-        IBindingDefinitionAssembly>
-    implements IBindingModule {
+        IMetaschemaModule,
+        IModelDefinition,
+        IFlagDefinition,
+        IFieldDefinition,
+        IAssemblyDefinition>
+    implements IMetaschemaModule {
   @NonNull
   private final URI location;
   @NonNull
@@ -70,15 +72,13 @@ public class BindingModule
   @NonNull
   private final Lazy<IDocumentNodeItem> nodeItem;
   @NonNull
-  private final Map<String, IDefinition> definitions;
+  private final Map<QName, IFlagDefinition> flagDefinitions;
   @NonNull
-  private final Map<String, IBindingDefinitionFlag> flagDefinitions;
+  private final Map<QName, IFieldDefinition> fieldDefinitions;
   @NonNull
-  private final Map<String, IBindingDefinitionModelField> fieldDefinitions;
+  private final Map<QName, IAssemblyDefinition> assemblyDefinitions;
   @NonNull
-  private final Map<String, IBindingDefinitionAssembly> assemblyDefinitions;
-  @NonNull
-  private final Map<String, IBindingDefinitionAssembly> rootAssemblyDefinitions;
+  private final Map<QName, IAssemblyDefinition> rootAssemblyDefinitions;
 
   /**
    * Constructs a new Metaschema instance.
@@ -95,15 +95,15 @@ public class BindingModule
    *           if a processing error occurs
    */
   @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   public BindingModule( // NOPMD - unavoidable
       @NonNull URI resource,
       @NonNull IBoundDefinitionModelAssembly rootDefinition,
       @NonNull METASCHEMA binding,
-      @NonNull List<IBindingModule> importedModules) throws MetaschemaException {
+      @NonNull List<? extends IMetaschemaModule> importedModules) throws MetaschemaException {
     super(importedModules);
     this.location = ObjectUtils.requireNonNull(resource, "resource");
     this.binding = binding;
-    this.definitions = new LinkedHashMap<>();
     this.flagDefinitions = new LinkedHashMap<>();
     this.fieldDefinitions = new LinkedHashMap<>();
     this.assemblyDefinitions = new LinkedHashMap<>();
@@ -122,35 +122,32 @@ public class BindingModule
           = (IBoundInstanceModelGroupedAssembly) instance.getItemInstance(obj);
 
       if (obj instanceof METASCHEMA.DefineAssembly) {
-        IBindingDefinitionAssembly definition = new DefinitionAssemblyGlobal(
+        IAssemblyDefinition definition = new DefinitionAssemblyGlobal(
             (METASCHEMA.DefineAssembly) obj,
             objInstance,
             globalAssemblyPosition++,
             this,
             nodeItemFactory);
-        String name = definition.getName();
-        definitions.put(name, definition);
+        QName name = definition.getDefinitionQName();
         assemblyDefinitions.put(name, definition);
         if (definition.isRoot()) {
           rootAssemblyDefinitions.put(name, definition);
         }
       } else if (obj instanceof METASCHEMA.DefineField) {
-        IBindingDefinitionModelField definition = new DefinitionFieldGlobal(
+        IFieldDefinition definition = new DefinitionFieldGlobal(
             (METASCHEMA.DefineField) obj,
             objInstance,
             globalFieldPosition++,
             this);
-        String name = definition.getName();
-        definitions.put(name, definition);
+        QName name = definition.getDefinitionQName();
         fieldDefinitions.put(name, definition);
       } else if (obj instanceof METASCHEMA.DefineFlag) {
-        IBindingDefinitionFlag definition = new DefinitionFlagGlobal(
+        IFlagDefinition definition = new DefinitionFlagGlobal(
             (METASCHEMA.DefineFlag) obj,
             objInstance,
             globalFlagPosition++,
             this);
-        String name = definition.getName();
-        definitions.put(name, definition);
+        QName name = definition.getDefinitionQName();
         flagDefinitions.put(name, definition);
       } else {
         throw new IllegalStateException(
@@ -159,19 +156,17 @@ public class BindingModule
                 resource.toASCIIString()));
       }
     }
-    this.nodeItem = ObjectUtils.notNull(Lazy.lazy(() -> {
-      return nodeItemFactory.newDocumentNodeItem(rootDefinition, resource, binding);
-    }));
+    this.nodeItem
+        = ObjectUtils.notNull(Lazy.lazy(() -> nodeItemFactory.newDocumentNodeItem(rootDefinition, resource, binding)));
   }
 
-  @Override
   @NonNull
   public METASCHEMA getBinding() {
     return binding;
   }
 
   @Override
-  public IDocumentNodeItem getBoundNodeItem() {
+  public IDocumentNodeItem getNodeItem() {
     return ObjectUtils.notNull(nodeItem.get());
   }
 
@@ -232,69 +227,64 @@ public class BindingModule
     return retval;
   }
 
-  @NonNull
-  public Collection<IDefinition> getDefinitions() {
-    return ObjectUtils.notNull(definitions.values());
-  }
-
-  private Map<String, IBindingDefinitionAssembly> getAssemblyDefinitionMap() {
+  private Map<QName, IAssemblyDefinition> getAssemblyDefinitionMap() {
     return assemblyDefinitions;
   }
 
   @Override
-  public Collection<IBindingDefinitionAssembly> getAssemblyDefinitions() {
+  public Collection<IAssemblyDefinition> getAssemblyDefinitions() {
     return ObjectUtils.notNull(getAssemblyDefinitionMap().values());
   }
 
   @Override
-  public IBindingDefinitionAssembly getAssemblyDefinitionByName(@NonNull String name) {
+  public IAssemblyDefinition getAssemblyDefinitionByName(@NonNull QName name) {
     return getAssemblyDefinitionMap().get(name);
   }
 
-  private Map<String, IBindingDefinitionModelField> getFieldDefinitionMap() {
+  private Map<QName, IFieldDefinition> getFieldDefinitionMap() {
     return fieldDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<IBindingDefinitionModelField> getFieldDefinitions() {
+  public Collection<IFieldDefinition> getFieldDefinitions() {
     return getFieldDefinitionMap().values();
   }
 
   @Override
-  public IBindingDefinitionModelField getFieldDefinitionByName(@NonNull String name) {
+  public IFieldDefinition getFieldDefinitionByName(@NonNull QName name) {
     return getFieldDefinitionMap().get(name);
   }
 
   @SuppressWarnings("null")
   @Override
-  public List<IBindingDefinitionModel> getAssemblyAndFieldDefinitions() {
+  public List<IModelDefinition> getAssemblyAndFieldDefinitions() {
     return Stream.concat(getAssemblyDefinitions().stream(), getFieldDefinitions().stream())
         .collect(Collectors.toList());
   }
 
-  private Map<String, IBindingDefinitionFlag> getFlagDefinitionMap() {
+  private Map<QName, IFlagDefinition> getFlagDefinitionMap() {
     return flagDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<IBindingDefinitionFlag> getFlagDefinitions() {
+  public Collection<IFlagDefinition> getFlagDefinitions() {
     return getFlagDefinitionMap().values();
   }
 
   @Override
-  public IBindingDefinitionFlag getFlagDefinitionByName(@NonNull String name) {
+  public IFlagDefinition getFlagDefinitionByName(@NonNull QName name) {
     return getFlagDefinitionMap().get(name);
   }
 
-  private Map<String, ? extends IBindingDefinitionAssembly> getRootAssemblyDefinitionMap() {
+  private Map<QName, ? extends IAssemblyDefinition> getRootAssemblyDefinitionMap() {
     return rootAssemblyDefinitions;
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<? extends IBindingDefinitionAssembly> getRootAssemblyDefinitions() {
+  public Collection<? extends IAssemblyDefinition> getRootAssemblyDefinitions() {
     return getRootAssemblyDefinitionMap().values();
   }
 }

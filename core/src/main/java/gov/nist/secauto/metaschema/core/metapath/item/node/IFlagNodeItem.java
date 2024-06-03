@@ -37,6 +37,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -80,7 +82,7 @@ public interface IFlagNodeItem
    * FlagContainer do not have flag items. This call should return {@code null}.
    */
   @Override
-  default IFlagNodeItem getFlagByName(@NonNull String name) {
+  default IFlagNodeItem getFlagByName(@NonNull QName name) {
     // a flag does not have flags
     return null;
   }
@@ -112,7 +114,7 @@ public interface IFlagNodeItem
    */
   @SuppressWarnings("null")
   @Override
-  default List<? extends IModelNodeItem<?, ?>> getModelItemsByName(String name) {
+  default List<? extends IModelNodeItem<?, ?>> getModelItemsByName(QName name) {
     // a flag does not have model items
     return Collections.emptyList();
   }

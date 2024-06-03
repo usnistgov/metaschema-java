@@ -129,7 +129,7 @@ public class StaticMetapathException
   }
 
   @Override
-  protected String getCodePrefix() {
+  public String getCodePrefix() {
     return "MPST";
   }
 

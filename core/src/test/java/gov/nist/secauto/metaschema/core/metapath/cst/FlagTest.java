@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ExpressionTestBase;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Flag;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.NameTest;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IModelNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.NodeItemType;
@@ -40,6 +41,8 @@ import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.jupiter.api.Test;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -57,7 +60,7 @@ class FlagTest
     IFlagInstance instance = context.mock(IFlagInstance.class);
     IFlagNodeItem flagNode = context.mock(IFlagNodeItem.class);
 
-    String flagName = "test";
+    QName flagName = new QName("test");
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
@@ -77,7 +80,7 @@ class FlagTest
       }
     });
 
-    Flag expr = new Flag(new Name(flagName));
+    Flag expr = new Flag(new NameTest(flagName));
 
     ISequence<?> result = expr.accept(dynamicContext, ISequence.of(focusItem));
     assertEquals(ISequence.of(flagNode), result, "Sequence does not match");

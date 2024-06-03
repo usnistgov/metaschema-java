@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceModelAssemblyComplex;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
@@ -43,8 +44,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Represents an assembly instance bound to Java field.
  */
 public interface IBoundInstanceModelAssembly
-    extends IBoundInstanceModelNamedComplex, IAssemblyInstanceAbsolute {
-
+    extends IBoundInstanceModelNamed, IAssemblyInstanceAbsolute, IFeatureComplexItemValueHandler {
   /**
    * Create a new bound assembly instance.
    *
@@ -62,18 +62,16 @@ public interface IBoundInstanceModelAssembly
     IBindingContext bindingContext = containingDefinition.getBindingContext();
     IBoundDefinitionModel definition = bindingContext.getBoundDefinitionForClass(itemType);
     if (definition instanceof IBoundDefinitionModelAssembly) {
-      return new InstanceModelAssemblyComplex(field, (IBoundDefinitionModelAssembly) definition, containingDefinition);
+      return InstanceModelAssemblyComplex.newInstance(
+          field,
+          (IBoundDefinitionModelAssembly) definition,
+          containingDefinition);
     }
 
     throw new IllegalStateException(String.format(
         "The field '%s' on class '%s' is not bound to a Metaschema field",
         field.toString(),
         field.getDeclaringClass().getName()));
-  }
-
-  @Override
-  default IBoundInstanceModelAssembly getInstance() {
-    return this;
   }
 
   @Override

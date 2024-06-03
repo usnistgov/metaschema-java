@@ -26,9 +26,11 @@
 
 package gov.nist.secauto.metaschema.core.model.xml;
 
+import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression.ResultType;
+import gov.nist.secauto.metaschema.core.metapath.StaticContext;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
@@ -73,11 +75,17 @@ public class ExternalConstraintsModulePostProcessor implements IModuleLoader.IMo
     ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();
     IModuleNodeItem moduleItem = INodeItemFactory.instance().newModuleNodeItem(module);
 
+    StaticContext staticContext = StaticContext.builder()
+        .defaultModelNamespace(module.getXmlNamespace())
+        .build();
+    DynamicContext dynamicContext = new DynamicContext(staticContext);
+
     for (IConstraintSet set : getRegisteredConstraintSets()) {
       for (ITargetedConstraints targeted : set.getTargetedConstraintsForModule(module)) {
         // apply targeted constraints
-        MetapathExpression targetExpression = targeted.getTargetExpression();
-        ISequence<?> items = targetExpression.evaluateAs(moduleItem, ResultType.SEQUENCE);
+        String targetExpression = targeted.getTargetExpression();
+        MetapathExpression metapath = MetapathExpression.compile(targetExpression, staticContext);
+        ISequence<?> items = metapath.evaluateAs(moduleItem, ResultType.SEQUENCE, dynamicContext);
 
         if (items != null && !items.isEmpty()) {
           for (IItem item : items) {

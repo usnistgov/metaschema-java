@@ -54,6 +54,11 @@ public interface ISequenceType {
     }
   };
 
+  @NonNull
+  static ISequenceType of(@NonNull Class<? extends IItem> type, @NonNull Occurrence occurrence) {
+    return new SequenceTypeImpl(type, occurrence);
+  }
+
   /**
    * Determine if the sequence is empty (if it holds any data) or not.
    *
@@ -81,5 +86,6 @@ public interface ISequenceType {
    *
    * @return the signature
    */
+  @NonNull
   String toSignature();
 }

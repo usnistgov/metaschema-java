@@ -42,13 +42,13 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Override;
-import java.lang.String;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -135,7 +135,7 @@ public class InlineDefineFlag {
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "props", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
   @BoundAssembly(
@@ -152,7 +152,7 @@ public class InlineDefineFlag {
       formalName = "Example",
       useName = "example",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "examples", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
   private List<Example> _examples;
 
   public String getName() {

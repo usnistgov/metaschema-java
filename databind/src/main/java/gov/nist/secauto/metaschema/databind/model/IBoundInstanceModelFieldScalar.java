@@ -26,65 +26,44 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
-import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 public interface IBoundInstanceModelFieldScalar
     extends IBoundInstanceModelField,
     IBoundDefinitionModelField, IFeatureScalarItemValueHandler,
-    IFeatureBoundDefinitionInline<IBoundDefinitionModelField, IBoundInstanceModelFieldScalar> {
+    IFeatureDefinitionInstanceInlined<IBoundDefinitionModelField, IBoundInstanceModelFieldScalar> {
 
   // integrate above
+  @Override
+  default IBoundDefinitionModelField getDefinition() {
+    return IFeatureDefinitionInstanceInlined.super.getDefinition();
+  }
+
+  @Override
+  default IBoundInstanceModelFieldScalar getInlineInstance() {
+    return IFeatureDefinitionInstanceInlined.super.getInlineInstance();
+  }
 
   @Override
   IBoundDefinitionModelAssembly getContainingDefinition();
 
   @Override
-  default IBoundInstanceModelFieldScalar getInstance() {
-    return this;
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * For an inline instance, this instance is the definition.
-   */
-  @Override
-  default IBoundInstanceModelFieldScalar getDefinition() {
-    return this;
+  default IContainerFlagSupport<IBoundInstanceFlag> getFlagContainer() {
+    return IContainerFlagSupport.empty();
   }
 
   @Override
-  default IBoundInstanceModelFieldScalar getInlineInstance() {
-    // always inline
-    return this;
+  default IBoundInstanceFlag getJsonKey() {
+    // no flags
+    return null;
   }
-
-  @Override
-  default IBindingContext getBindingContext() {
-    return getContainingDefinition().getBindingContext();
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Use the effective name of the instance.
-   */
-  @Override
-  @NonNull
-  default String getJsonName() {
-    return IBoundInstanceModelField.super.getJsonName();
-  }
-
-  @Override
-  IBoundInstanceFlag getJsonKeyFlagInstance();
 
   @Override
   default IBoundInstanceFlag getItemJsonKey(Object item) {
@@ -110,26 +89,6 @@ public interface IBoundInstanceModelFieldScalar
     return null;
   }
 
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Always bound to a field.
-   */
-  @Override
-  default Object getValue(Object parent) {
-    return IBoundInstanceModelField.super.getValue(parent);
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Always bound to a field.
-   */
-  @Override
-  default void setValue(Object parentObject, Object value) {
-    IBoundInstanceModelField.super.setValue(parentObject, value);
-  }
-
   @Override
   default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
     return handler.readItemField(ObjectUtils.requireNonNull(parent, "parent"), this);
@@ -139,5 +98,4 @@ public interface IBoundInstanceModelFieldScalar
   default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
     handler.writeItemField(item, this);
   }
-
 }

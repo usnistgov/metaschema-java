@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
@@ -57,7 +56,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 //TODO: implement getProperties()
-public class DefinitionAssembly
+public final class DefinitionAssembly
     extends AbstractBoundDefinitionModelComplex<MetaschemaAssembly>
     implements IBoundDefinitionModelAssembly,
     IFeatureBoundContainerModelAssembly<
@@ -66,6 +65,7 @@ public class DefinitionAssembly
         IBoundInstanceModelField,
         IBoundInstanceModelAssembly,
         IBoundInstanceModelChoiceGroup> {
+
   @NonNull
   private final Lazy<FlagContainerSupport> flagContainer;
   @NonNull
@@ -77,23 +77,25 @@ public class DefinitionAssembly
   @NonNull
   private final Lazy<Map<String, IBoundProperty>> jsonProperties;
 
-  public DefinitionAssembly(
+  public static DefinitionAssembly newInstance(
       @NonNull Class<?> clazz,
       @NonNull IBindingContext bindingContext) {
-    super(clazz, MetaschemaAssembly.class, bindingContext);
+    MetaschemaAssembly annotation = ModelUtil.getAnnotation(clazz, MetaschemaAssembly.class);
+    Class<? extends IBoundModule> moduleClass = annotation.moduleClass();
+    return new DefinitionAssembly(clazz, annotation, moduleClass, bindingContext);
+  }
+
+  private DefinitionAssembly(
+      @NonNull Class<?> clazz,
+      @NonNull MetaschemaAssembly annotation,
+      @NonNull Class<? extends IBoundModule> moduleClass,
+      @NonNull IBindingContext bindingContext) {
+    super(clazz, annotation, moduleClass, bindingContext);
 
     String rootLocalName = ModelUtil.resolveNoneOrDefault(getAnnotation().rootName(), null);
-    this.xmlRootQName = ObjectUtils.notNull(Lazy.lazy(() -> {
-      QName retval = null;
-      if (rootLocalName != null) {
-        String namespace = ModelUtil.resolveOptionalNamespace(getAnnotation().rootNamespace());
-        if (namespace == null) {
-          namespace = getContainingModule().getXmlNamespace().toASCIIString();
-        }
-        retval = new QName(namespace, rootLocalName);
-      }
-      return retval;
-    }));
+    this.xmlRootQName = ObjectUtils.notNull(Lazy.lazy(() -> rootLocalName == null
+        ? null
+        : getContainingModule().toModelQName(rootLocalName)));
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(this, null)));
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new AssemblyModelContainerSupport(this)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
@@ -122,6 +124,11 @@ public class DefinitionAssembly
     }
   }
 
+  @Override
+  public Map<String, IBoundProperty> getJsonProperties() {
+    return ObjectUtils.notNull(jsonProperties.get());
+  }
+
   // ------------------------------------------
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
@@ -131,11 +138,6 @@ public class DefinitionAssembly
   @NonNull
   public FlagContainerSupport getFlagContainer() {
     return flagContainer.get();
-  }
-
-  @Override
-  public IBoundInstanceFlag getJsonKeyFlagInstance() {
-    return getFlagContainer().getJsonKeyFlagInstance();
   }
 
   @Override
@@ -149,11 +151,6 @@ public class DefinitionAssembly
   @NonNull
   public IModelConstrained getConstraintSupport() {
     return ObjectUtils.notNull(constraints.get());
-  }
-
-  @Override
-  public Map<String, IBoundProperty> getJsonProperties() {
-    return ObjectUtils.notNull(jsonProperties.get());
   }
 
   @Override
@@ -184,12 +181,6 @@ public class DefinitionAssembly
   @Nullable
   public MarkupMultiline getRemarks() {
     return ModelUtil.resolveToMarkupMultiline(getAnnotation().description());
-  }
-
-  @Override
-  @NonNull
-  protected Class<? extends IBoundModule> getModuleClass() {
-    return getAnnotation().moduleClass();
   }
 
   @Override

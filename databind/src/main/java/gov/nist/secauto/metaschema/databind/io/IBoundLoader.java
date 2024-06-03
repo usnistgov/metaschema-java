@@ -523,4 +523,72 @@ public interface IBoundLoader extends IDocumentLoader, IMutableConfiguration<Des
     ISerializer<CLASS> serializer = getBindingContext().newSerializer(toFormat, rootClass);
     serializer.serialize(object, os);
   }
+
+  /**
+   * Auto convert the provided {@code source} to the provided {@code toFormat}.
+   * Write the converted content to the provided {@code destination}.
+   * <p>
+   * The format of the source is expected to be auto detected using
+   * {@link #detectFormat(Path)}.
+   *
+   * @param <CLASS>
+   *          the Java type to load data into
+   * @param source
+   *          the resource to convert
+   * @param destination
+   *          the resource to write converted content to
+   * @param toFormat
+   *          the format to convert to
+   * @param rootClass
+   *          the class for the Java type to load data into
+   * @throws FileNotFoundException
+   *           the the provided source file was not found
+   * @throws IOException
+   *           if an error occurred while loading the data from the specified
+   *           resource or writing the converted data to the specified destination
+   */
+  default <CLASS> void convert(
+      @NonNull URI source,
+      @NonNull Path destination,
+      @NonNull Format toFormat,
+      @NonNull Class<CLASS> rootClass) throws FileNotFoundException, IOException {
+    CLASS object = load(rootClass, source);
+
+    ISerializer<CLASS> serializer = getBindingContext().newSerializer(toFormat, rootClass);
+    serializer.serialize(object, destination);
+  }
+
+  /**
+   * Auto convert the provided {@code source} to the provided {@code toFormat}.
+   * Write the converted content to the provided {@code destination}.
+   * <p>
+   * The format of the source is expected to be auto detected using
+   * {@link #detectFormat(Path)}.
+   *
+   * @param <CLASS>
+   *          the Java type to load data into
+   * @param source
+   *          the resource to convert
+   * @param os
+   *          the output stream to write converted content to
+   * @param toFormat
+   *          the format to convert to
+   * @param rootClass
+   *          the class for the Java type to load data into
+   * @throws FileNotFoundException
+   *           the the provided source file was not found
+   * @throws IOException
+   *           if an error occurred while loading the data from the specified
+   *           resource or writing the converted data to the specified destination
+   */
+  default <CLASS> void convert(
+      @NonNull URI source,
+      @NonNull OutputStream os,
+      @NonNull Format toFormat,
+      @NonNull Class<CLASS> rootClass) throws FileNotFoundException, IOException {
+    CLASS object = load(rootClass, source);
+
+    ISerializer<CLASS> serializer = getBindingContext().newSerializer(toFormat, rootClass);
+    serializer.serialize(object, os);
+  }
 }

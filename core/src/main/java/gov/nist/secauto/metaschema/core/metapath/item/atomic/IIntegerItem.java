@@ -75,6 +75,20 @@ public interface IIntegerItem extends IDecimalItem {
    * @return the new item
    */
   @NonNull
+  static IIntegerItem valueOf(int value) {
+    @SuppressWarnings("null")
+    @NonNull BigInteger bigInteger = BigInteger.valueOf(value);
+    return valueOf(bigInteger);
+  }
+
+  /**
+   * Construct a new integer item using the provided {@code value}.
+   *
+   * @param value
+   *          a long value
+   * @return the new item
+   */
+  @NonNull
   static IIntegerItem valueOf(long value) {
     @SuppressWarnings("null")
     @NonNull BigInteger bigInteger = BigInteger.valueOf(value);

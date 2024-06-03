@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.core.model.constraint.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -54,7 +53,7 @@ public abstract class AbstractConstraint implements IConstraint { // NOPMD - int
   @NonNull
   private final Level level;
   @NonNull
-  private final MetapathExpression target;
+  private final String target;
   @Nullable
   private final MarkupMultiline remarks;
   @NonNull
@@ -87,7 +86,7 @@ public abstract class AbstractConstraint implements IConstraint { // NOPMD - int
       @Nullable MarkupLine description,
       @NonNull ISource source,
       @NonNull Level level,
-      @NonNull MetapathExpression target,
+      @NonNull String target,
       @NonNull Map<IAttributable.Key, Set<String>> properties,
       @Nullable MarkupMultiline remarks) {
     Objects.requireNonNull(target);
@@ -128,7 +127,7 @@ public abstract class AbstractConstraint implements IConstraint { // NOPMD - int
   }
 
   @Override
-  public MetapathExpression getTarget() {
+  public String getTarget() {
     return target;
   }
 

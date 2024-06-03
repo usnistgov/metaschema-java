@@ -26,14 +26,14 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.model.IGroupAs;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAbsolute;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IFeatureInstanceModelGroupAs extends IBindingInstanceModelAbsolute {
+public interface IFeatureInstanceModelGroupAs extends IModelInstanceAbsolute {
   @NonNull
   IGroupAs getGroupAs();
 

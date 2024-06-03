@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
@@ -69,6 +68,8 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -108,7 +109,7 @@ public final class ConstraintBindingSupport {
     // parse let expressions
     for (ConstraintLetExpression letObj : constraints.getLets()) {
       ILet let = ILet.of(
-          ObjectUtils.requireNonNull(letObj.getVar()),
+          ObjectUtils.requireNonNull(new QName(letObj.getVar())),
           ObjectUtils.requireNonNull(letObj.getExpression()), source);
       constraintSet.addLetExpression(let);
     }
@@ -370,10 +371,10 @@ public final class ConstraintBindingSupport {
   }
 
   @NonNull
-  private static MetapathExpression target(@Nullable String target) {
+  private static String target(@Nullable String target) {
     return target == null
-        ? MetapathExpression.CONTEXT_NODE
-        : MetapathExpression.compile(target);
+        ? IConstraint.DEFAULT_TARGET_METAPATH
+        : target;
   }
 
   @NonNull

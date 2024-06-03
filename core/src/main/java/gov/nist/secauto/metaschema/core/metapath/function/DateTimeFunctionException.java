@@ -102,7 +102,7 @@ public class DateTimeFunctionException
   }
 
   @Override
-  protected String getCodePrefix() {
+  public String getCodePrefix() {
     return "FODT";
   }
 

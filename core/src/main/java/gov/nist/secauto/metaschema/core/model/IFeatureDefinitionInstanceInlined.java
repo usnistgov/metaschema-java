@@ -27,8 +27,11 @@
 package gov.nist.secauto.metaschema.core.model;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Locale;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -42,7 +45,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * @param <INSTANCE>
  *          the associated instance Java type
  */
-public interface IFeatureDefinitionInstanceInlined<DEFINITION extends IDefinition, INSTANCE extends INamedInstance>
+public interface IFeatureDefinitionInstanceInlined<
+    DEFINITION extends IDefinition,
+    INSTANCE extends INamedInstance>
     extends IDefinition, INamedInstance {
   @Override
   default boolean isInline() {
@@ -51,11 +56,20 @@ public interface IFeatureDefinitionInstanceInlined<DEFINITION extends IDefinitio
   }
 
   @Override
-  DEFINITION getDefinition();
+  default QName getDefinitionQName() {
+    return getReferencedDefinitionQName();
+  }
+
+  @Override
+  default DEFINITION getDefinition() {
+    return ObjectUtils.asType(this);
+  }
 
   @Override
   @NonNull
-  INSTANCE getInlineInstance();
+  default INSTANCE getInlineInstance() {
+    return ObjectUtils.asType(this);
+  }
 
   @Override
   default String getEffectiveFormalName() {

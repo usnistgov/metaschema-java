@@ -28,8 +28,6 @@ package gov.nist.secauto.metaschema.core.model;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 
-import java.util.Locale;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -102,33 +100,5 @@ public interface IFeatureDefinitionReferenceInstance<
       retval = getDefinition().getDefaultValue();
     }
     return retval;
-  }
-
-  /**
-   * Generates a "coordinate" string for the provided information element
-   * instance.
-   *
-   * A coordinate consists of the element's:
-   * <ul>
-   * <li>containing Metaschema module's short name</li>
-   * <li>model type</li>
-   * <li>name</li>
-   * <li>hash code</li>
-   * <li>the hash code of the referenced definition</li>
-   * </ul>
-   *
-   * @return the coordinate
-   */
-  @SuppressWarnings("null")
-  @Override
-  default String toCoordinates() {
-    IDefinition definition = getDefinition();
-    return String.format("%s-instance:%s:%s/%s@%d(%d)",
-        getModelType().toString().toLowerCase(Locale.ROOT),
-        getContainingDefinition().getContainingModule().getShortName(),
-        definition.getName(),
-        getName(),
-        hashCode(),
-        definition.hashCode());
   }
 }
