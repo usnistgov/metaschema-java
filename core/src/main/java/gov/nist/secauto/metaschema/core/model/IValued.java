@@ -45,5 +45,7 @@ public interface IValued extends IDefaultable {
    */
   // from IInstanceAbsolute
   @Nullable
-  Object getValue(@NonNull Object parent);
+  default Object getValue(@NonNull Object parent) {
+    return getResolvedDefaultValue();
+  }
 }

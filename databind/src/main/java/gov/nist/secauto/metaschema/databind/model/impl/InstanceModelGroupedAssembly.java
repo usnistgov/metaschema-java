@@ -28,10 +28,9 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
@@ -39,7 +38,6 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssemb
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.util.Map;
-import java.util.function.Predicate;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
@@ -49,9 +47,15 @@ import nl.talsmasoftware.lazy4j.Lazy;
  * instance.
  */
 public class InstanceModelGroupedAssembly
-    extends AbstractBoundInstanceModelGroupedNamed<BoundGroupedAssembly>
-    implements IBoundInstanceModelGroupedAssembly,
-    IFeatureDefinitionReferenceInstance<IBoundDefinitionModelAssembly, IBoundInstanceModelGroupedAssembly> {
+    extends AbstractAssemblyInstance<
+        IBoundInstanceModelChoiceGroup,
+        IBoundDefinitionModelAssembly,
+        IBoundInstanceModelGroupedAssembly,
+        IBoundDefinitionModelAssembly>
+    // extends AbstractBoundInstanceModelGroupedNamed<BoundGroupedAssembly>
+    implements IBoundInstanceModelGroupedAssembly {
+  @NonNull
+  private final BoundGroupedAssembly annotation;
   @NonNull
   private final IBoundDefinitionModelAssembly definition;
   @NonNull
@@ -72,18 +76,28 @@ public class InstanceModelGroupedAssembly
       @NonNull BoundGroupedAssembly annotation,
       @NonNull IBoundDefinitionModelAssembly definition,
       @NonNull IBoundInstanceModelChoiceGroup container) {
-    super(annotation, container);
+    super(container);
+    this.annotation = annotation;
     this.definition = definition;
-    this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> {
-      IBoundInstanceFlag jsonKey = getJsonKey();
-      Predicate<IBoundInstanceFlag> flagFilter = jsonKey == null ? null : (flag) -> !jsonKey.equals(flag);
-      return getDefinition().getJsonProperties(flagFilter);
-    }));
+    // IBoundInstanceFlag jsonKey = getEffectiveJsonKey();
+    // Predicate<IBoundInstanceFlag> flagFilter = jsonKey == null ? null : (flag) ->
+    // !jsonKey.equals(flag);
+    // return getDefinition().getJsonProperties(flagFilter);
+    this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> getDefinition().getJsonProperties(null)));
+  }
+
+  private BoundGroupedAssembly getAnnotation() {
+    return annotation;
   }
 
   // ------------------------------------------
   // - Start annotation driven code - CPD-OFF -
   // ------------------------------------------
+
+  @Override
+  public Class<?> getBoundClass() {
+    return getAnnotation().binding();
+  }
 
   @Override
   public Map<String, IBoundProperty> getJsonProperties() {
@@ -123,10 +137,5 @@ public class InstanceModelGroupedAssembly
   @Override
   public Integer getUseIndex() {
     return ModelUtil.resolveNullOrInteger(getAnnotation().useIndex());
-  }
-
-  @Override
-  public Class<?> getBoundClass() {
-    return getAnnotation().binding();
   }
 }

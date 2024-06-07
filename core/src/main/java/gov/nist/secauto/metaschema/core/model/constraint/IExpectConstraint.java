@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.core.model.constraint;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultExpectConstraint;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -43,7 +42,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IExpectConstraint extends IConstraint {
   @NonNull
-  MetapathExpression getTest();
+  String getTest();
 
   /**
    * A message to emit when the constraint is violated. Allows embedded Metapath
@@ -67,7 +66,7 @@ public interface IExpectConstraint extends IConstraint {
 
   final class Builder
       extends AbstractConstraintBuilder<Builder, IExpectConstraint> {
-    private MetapathExpression test;
+    private String test;
     private String message;
 
     private Builder() {
@@ -75,7 +74,7 @@ public interface IExpectConstraint extends IConstraint {
     }
 
     @NonNull
-    public Builder test(@NonNull MetapathExpression test) {
+    public Builder test(@NonNull String test) {
       this.test = test;
       return this;
     }
@@ -98,7 +97,7 @@ public interface IExpectConstraint extends IConstraint {
       ObjectUtils.requireNonNull(getTest());
     }
 
-    protected MetapathExpression getTest() {
+    protected String getTest() {
       return test;
     }
 

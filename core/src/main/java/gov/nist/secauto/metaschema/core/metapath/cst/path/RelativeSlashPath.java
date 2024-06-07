@@ -60,6 +60,9 @@ public class RelativeSlashPath
       ISequence<?> focus) {
     ISequence<?> leftResult = getLeft().accept(dynamicContext, focus);
 
+    // ensure the left sequence is list backed
+    leftResult.getValue();
+
     return getRight().accept(dynamicContext, leftResult);
   }
 }

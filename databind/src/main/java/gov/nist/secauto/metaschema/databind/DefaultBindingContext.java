@@ -138,12 +138,12 @@ public class DefaultBindingContext implements IBindingContext {
 
   @Override
   @NonNull
-  public IBindingMatcher registerBindingMatcher(@NonNull IBoundDefinitionModelAssembly definition) {
-    return ObjectUtils.notNull(bindingMatchers.computeIfAbsent(definition, (key) -> IBindingMatcher.of(definition)));
+  public final IBindingMatcher registerBindingMatcher(@NonNull IBoundDefinitionModelAssembly definition) {
+    return ObjectUtils.notNull(bindingMatchers.computeIfAbsent(definition, key -> IBindingMatcher.of(definition)));
   }
 
   @Override
-  public IBindingMatcher registerBindingMatcher(@NonNull Class<?> clazz) {
+  public final IBindingMatcher registerBindingMatcher(@NonNull Class<?> clazz) {
     IBoundDefinitionModelComplex definition = getBoundDefinitionForClass(clazz);
     if (definition == null) {
       throw new IllegalArgumentException(String.format("Unable to find bound definition for class '%s'.",
@@ -160,7 +160,7 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public IBoundDefinitionModelComplex registerClassBinding(IBoundDefinitionModelComplex definition) {
+  public final IBoundDefinitionModelComplex registerClassBinding(IBoundDefinitionModelComplex definition) {
     Class<?> clazz = definition.getBoundClass();
     return boundClassToStrategyMap.computeIfAbsent(clazz, k -> definition);
   }
@@ -322,7 +322,6 @@ public class DefaultBindingContext implements IBindingContext {
     if (definition == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", other.getClass().getName()));
     }
-    @SuppressWarnings("unchecked") CLASS retval = (CLASS) definition.deepCopyItem(other, parentInstance);
-    return retval;
+    return ObjectUtils.asType(definition.deepCopyItem(other, parentInstance));
   }
 }

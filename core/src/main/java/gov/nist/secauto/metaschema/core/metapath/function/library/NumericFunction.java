@@ -63,6 +63,9 @@ public final class NumericFunction implements IFunctionExecutor {
     return IFunction.builder()
         .name(name)
         .namespace(namespace)
+        .deterministic()
+        .contextIndependent()
+        .focusIndependent()
         .argument(IArgument.builder()
             .name("arg1")
             .type(INumericItem.class)
@@ -103,7 +106,7 @@ public final class NumericFunction implements IFunctionExecutor {
       return ISequence.empty(); // NOPMD - readability
     }
 
-    INumericItem item = FunctionUtils.getFirstItem(sequence, true);
+    INumericItem item = sequence.getFirstItem(true);
     if (item == null) {
       return ISequence.empty(); // NOPMD - readability
     }

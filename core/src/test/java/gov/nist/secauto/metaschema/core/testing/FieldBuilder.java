@@ -42,6 +42,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -112,10 +114,10 @@ public final class FieldBuilder
     IFieldDefinition retval = mock(IFieldDefinition.class);
     applyDefinition(retval);
 
-    Map<String, IFlagInstance> flags = this.flags.stream()
+    Map<QName, IFlagInstance> flags = this.flags.stream()
         .map(builder -> builder.toInstance(retval))
         .collect(Collectors.toUnmodifiableMap(
-            IFlagInstance::getEffectiveName,
+            IFlagInstance::getXmlQName,
             Function.identity()));
 
     getContext().checking(new Expectations() {

@@ -56,7 +56,7 @@ public class Intersect
 
   @Override
   protected ISequence<?> applyFilterTo(@NonNull ISequence<?> result, @NonNull List<? extends IItem> items) {
-    return ISequence.of(result.asStream()
+    return ISequence.of(result.stream()
         .distinct()
         .filter(items::contains));
   }

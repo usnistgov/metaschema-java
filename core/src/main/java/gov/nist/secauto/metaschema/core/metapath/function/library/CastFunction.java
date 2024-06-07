@@ -75,6 +75,9 @@ public final class CastFunction<ITEM extends IAnyAtomicItem> implements IFunctio
     return IFunction.builder()
         .name(name)
         .namespace(namespace)
+        .deterministic()
+        .contextIndependent()
+        .focusIndependent()
         .argument(IArgument.builder()
             .name("arg1")
             .type(IAnyAtomicItem.class)
@@ -105,7 +108,7 @@ public final class CastFunction<ITEM extends IAnyAtomicItem> implements IFunctio
     ISequence<? extends IAnyAtomicItem> arg = FunctionUtils.asType(
         ObjectUtils.notNull(arguments.get(0)));
 
-    IAnyAtomicItem item = FunctionUtils.getFirstItem(arg, true);
+    IAnyAtomicItem item = arg.getFirstItem(true);
     if (item == null) {
       return ISequence.empty(); // NOPMD - readability
     }

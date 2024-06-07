@@ -48,6 +48,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 class DefaultBindingContextTest {
 
   @Test
@@ -61,7 +63,8 @@ class DefaultBindingContextTest {
     IBindingContext bindingContext = new DefaultBindingContext(CollectionUtil.singletonList(postProcessor));
     IBoundModule module = bindingContext.registerModule(TestMetaschema.class);
 
-    IAssemblyDefinition root = module.getExportedAssemblyDefinitionByName("root");
+    IAssemblyDefinition root
+        = module.getExportedAssemblyDefinitionByName(new QName("https://csrc.nist.gov/ns/test/xml", "root"));
 
     assertNotNull(root, "root not found");
     List<? extends IConstraint> constraints = root.getConstraints();
@@ -79,7 +82,8 @@ class DefaultBindingContextTest {
     IBindingContext bindingContext = new DefaultBindingContext(CollectionUtil.singletonList(postProcessor));
     IBoundModule module = bindingContext.registerModule(TestMetaschema.class);
 
-    IAssemblyDefinition root = module.getExportedAssemblyDefinitionByName("root");
+    IAssemblyDefinition root
+        = module.getExportedAssemblyDefinitionByName(new QName("https://csrc.nist.gov/ns/test/xml", "root"));
 
     assertNotNull(root, "root not found");
     List<? extends IConstraint> constraints = root.getConstraints();

@@ -80,7 +80,7 @@ public class FindingCollectingConstraintValidationHandler
       @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets) {
     addFinding(ConstraintValidationFinding.builder(constraint, node)
-        .targets(targets.asList())
+        .targets(targets.getValue())
         .message(newCardinalityMinimumViolationMessage(constraint, node, targets))
         .build());
   }
@@ -91,7 +91,7 @@ public class FindingCollectingConstraintValidationHandler
       @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets) {
     addFinding(ConstraintValidationFinding.builder(constraint, node)
-        .targets(targets.asList())
+        .targets(targets.getValue())
         .message(newCardinalityMaximumViolationMessage(constraint, node, targets))
         .build());
   }

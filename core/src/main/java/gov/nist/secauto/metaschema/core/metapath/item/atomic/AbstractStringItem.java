@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 
+import gov.nist.secauto.metaschema.core.metapath.impl.AbstractStringMapKey;
+import gov.nist.secauto.metaschema.core.metapath.item.function.IMapKey;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractStringItem
@@ -48,6 +51,11 @@ public abstract class AbstractStringItem
   }
 
   @Override
+  public IMapKey asMapKey() {
+    return new MapKey();
+  }
+
+  @Override
   public int hashCode() {
     return asString().hashCode();
   }
@@ -57,5 +65,14 @@ public abstract class AbstractStringItem
   public boolean equals(Object obj) {
     return this == obj
         || (obj instanceof IStringItem && compareTo((IStringItem) obj) == 0);
+  }
+
+  private final class MapKey
+      extends AbstractStringMapKey {
+
+    @Override
+    public IStringItem getKey() {
+      return AbstractStringItem.this;
+    }
   }
 }

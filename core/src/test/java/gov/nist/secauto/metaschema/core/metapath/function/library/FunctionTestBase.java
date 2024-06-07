@@ -109,8 +109,8 @@ public class FunctionTestBase
     assertAll(
         () -> assertEquals(expectedResult, result),
         () -> assertEquals(
-            FunctionUtils.getTypes(expectedResult.asList()),
-            FunctionUtils.getTypes(result.asList())));
+            FunctionUtils.getTypes(expectedResult.getValue()),
+            FunctionUtils.getTypes(result.getValue())));
 
   }
 }

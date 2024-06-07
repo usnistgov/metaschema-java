@@ -257,7 +257,7 @@ public final class JsonUtil {
       JsonToken actual) {
     return ObjectUtils.notNull(
         String.format("Expected JsonToken(s) '%s', but found JsonToken '%s'%s.",
-            expected.stream().map(token -> token.name()).collect(CustomCollectors.joiningWithOxfordComma("or")),
+            expected.stream().map(Enum::name).collect(CustomCollectors.joiningWithOxfordComma("or")),
             actual,
             generateLocationMessage(parser)));
   }

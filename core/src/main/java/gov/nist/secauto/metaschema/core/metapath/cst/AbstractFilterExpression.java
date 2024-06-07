@@ -71,7 +71,7 @@ public abstract class AbstractFilterExpression
 
     ISequence<?> left = getLeft().accept(dynamicContext, focus);
     ISequence<?> right = getRight().accept(dynamicContext, focus);
-    List<? extends IItem> rightList = right.asList();
+    List<? extends IItem> rightList = right.getValue();
 
     return applyFilterTo(left, rightList);
   }

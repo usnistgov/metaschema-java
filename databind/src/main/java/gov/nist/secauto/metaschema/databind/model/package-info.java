@@ -26,9 +26,9 @@
 
 /**
  * Provides an overlay of the Metaschema module model
- * ({@link gov.nist.secauto.metaschema.core.model}) representing module
- * constructs as bound Java class annotations
- * ({@link gov.nist.secauto.metaschema.databind.model.annotations}).
+ * ({@link gov.nist.secauto.metaschema.core.model}) using bound Java class
+ * annotations ({@link gov.nist.secauto.metaschema.databind.model.annotations})
+ * to represent module constructs annotated on Java classes.
  */
 
 package gov.nist.secauto.metaschema.databind.model;

@@ -63,7 +63,7 @@ public class MetaschemaMetaConstraints {
       description = "Declares a set of Metaschema constraints from an out-of-line resource to import, supporting composition of constraint sets.",
       useName = "import",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "imports", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "imports", inJson = JsonGroupAsBehavior.LIST))
   private List<Import> _imports;
 
   @BoundAssembly(
@@ -74,7 +74,7 @@ public class MetaschemaMetaConstraints {
       useName = "metapath-context",
       minOccurs = 1,
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "metapath-contexts", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "metapath-contexts", inJson = JsonGroupAsBehavior.LIST))
   private List<MetapathContext> _metapathContexts;
 
   public List<Import> getImports() {

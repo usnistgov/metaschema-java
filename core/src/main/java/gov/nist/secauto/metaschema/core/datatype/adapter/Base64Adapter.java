@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.datatype.adapter;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.core.datatype.AbstractDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBase64BinaryItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -36,23 +37,25 @@ import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class Base64Adapter
     extends AbstractDataTypeAdapter<ByteBuffer, IBase64BinaryItem> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
+  private static final List<QName> NAMES = ObjectUtils.notNull(
       List.of(
-          "base64",
+          new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "base64"),
           // for backwards compatibility with original type name
-          "base64Binary"));
+          new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "base64Binary")));
 
   Base64Adapter() {
     super(ByteBuffer.class);
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

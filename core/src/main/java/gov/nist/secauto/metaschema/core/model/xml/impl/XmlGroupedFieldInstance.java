@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractNamedModelInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedFieldReferenceType;
@@ -45,9 +45,8 @@ import java.util.Set;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class XmlGroupedFieldInstance
-    extends AbstractNamedModelInstanceGrouped
-    implements IFieldInstanceGrouped,
-    IFeatureDefinitionReferenceInstance<IFieldDefinition, IFieldInstanceGrouped> {
+    extends AbstractFieldInstance<IChoiceGroupInstance, IFieldDefinition, IFieldInstanceGrouped, IAssemblyDefinition>
+    implements IFieldInstanceGrouped {
   @NonNull
   private final GroupedFieldReferenceType xmlObject;
 
@@ -68,12 +67,6 @@ public class XmlGroupedFieldInstance
     this.xmlObject = xmlObject;
   }
 
-  @Override
-  public IFieldDefinition getDefinition() {
-    // this will always be not null
-    return ObjectUtils.notNull(getContainingModule().getScopedFieldDefinitionByName(getName()));
-  }
-
   // ----------------------------------------
   // - Start XmlBeans driven code - CPD-OFF -
   // ----------------------------------------
@@ -83,6 +76,7 @@ public class XmlGroupedFieldInstance
    *
    * @return the underlying XML data
    */
+  @NonNull
   protected GroupedFieldReferenceType getXmlObject() {
     return xmlObject;
   }

@@ -90,18 +90,6 @@ public @interface BoundFlag {
   int useIndex() default Integer.MIN_VALUE;
 
   /**
-   * XML target namespace of the XML Schema element.
-   * <p>
-   * If the value is "##default", then namespace is derived from the namespace
-   * provided in the package-info. If the value is "##none", the namespace will be
-   * {@code null}.
-   *
-   * @return the namespace
-   */
-  @NonNull
-  String namespace() default ModelUtil.NO_STRING_VALUE;
-
-  /**
    * The default value of the flag represented as a string.
    * <p>
    * The value {@link ModelUtil#NULL_VALUE} is used to indicate if no default

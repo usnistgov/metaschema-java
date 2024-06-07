@@ -56,7 +56,7 @@ public class InvalidTypeMetapathException
    *          the original exception cause
    */
   public InvalidTypeMetapathException(@NonNull IItem item, @NonNull Throwable cause) {
-    super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()),
+    super(INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()),
         cause);
     this.item = item;
   }
@@ -69,7 +69,7 @@ public class InvalidTypeMetapathException
    *          the item related to the invalid type error
    */
   public InvalidTypeMetapathException(@NonNull IItem item) {
-    super(TypeMetapathException.INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()));
+    super(INVALID_TYPE_ERROR, String.format("Invalid data type '%s'", item.getClass().getName()));
     this.item = item;
   }
 
@@ -85,7 +85,7 @@ public class InvalidTypeMetapathException
    *          the original exception cause
    */
   public InvalidTypeMetapathException(@Nullable IItem item, @Nullable String message, @NonNull Throwable cause) {
-    super(TypeMetapathException.INVALID_TYPE_ERROR, message, cause);
+    super(INVALID_TYPE_ERROR, message, cause);
     this.item = item;
   }
 
@@ -99,7 +99,7 @@ public class InvalidTypeMetapathException
    *          the exception message
    */
   public InvalidTypeMetapathException(@Nullable IItem item, @Nullable String message) {
-    super(TypeMetapathException.INVALID_TYPE_ERROR, message);
+    super(INVALID_TYPE_ERROR, message);
     this.item = item;
   }
 

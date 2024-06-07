@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Collection;
 
@@ -37,7 +36,8 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundInstanceModelNamed extends IBoundInstanceModel, INamedModelInstanceAbsolute {
+public interface IBoundInstanceModelNamed
+    extends IBoundInstanceModel, INamedModelInstanceAbsolute {
 
   @Override
   @NonNull
@@ -56,22 +56,21 @@ public interface IBoundInstanceModelNamed extends IBoundInstanceModel, INamedMod
   }
 
   @Override
-  default String getJsonName() {
-    return INamedModelInstanceAbsolute.super.getJsonName();
-  }
-
   @Nullable
-  default IBoundInstanceFlag getJsonKey() {
-    String jsonKeyName = getJsonKeyFlagName();
+  default IBoundInstanceFlag getEffectiveJsonKey() {
     return JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())
-        ? ObjectUtils.requireNonNull(getDefinition().getFlagInstanceByName(
-            ObjectUtils.requireNonNull(jsonKeyName)))
+        ? getJsonKey()
         : null;
   }
 
   @Override
+  default IBoundInstanceFlag getJsonKey() {
+    return getDefinition().getJsonKey();
+  }
+
+  @Override
   default IBoundInstanceFlag getItemJsonKey(Object item) {
-    return getJsonKey();
+    return getEffectiveJsonKey();
   }
 
   @Override
@@ -82,10 +81,5 @@ public interface IBoundInstanceModelNamed extends IBoundInstanceModel, INamedMod
   @Override
   default boolean canHandleXmlQName(QName qname) {
     return qname.equals(getXmlQName());
-  }
-
-  @Override
-  default boolean canHandleJsonPropertyName(@NonNull String name) {
-    return name.equals(getJsonName());
   }
 }

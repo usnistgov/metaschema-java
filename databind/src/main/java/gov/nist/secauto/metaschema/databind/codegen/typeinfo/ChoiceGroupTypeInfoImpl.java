@@ -93,7 +93,7 @@ public class ChoiceGroupTypeInfoImpl
       annotation.addMember("maxOccurs", "$L", maxOccurs);
     }
 
-    String jsonKeyName = choiceGroup.getJsonKeyFlagName();
+    String jsonKeyName = choiceGroup.getJsonKeyFlagInstanceName();
     if (jsonKeyName != null) {
       annotation.addMember("jsonKey", "$S", jsonKeyName);
     }

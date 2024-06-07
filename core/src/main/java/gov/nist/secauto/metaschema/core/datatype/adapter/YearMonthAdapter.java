@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.datatype.adapter;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.core.datatype.AbstractDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IYearMonthDurationItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -36,20 +37,22 @@ import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class YearMonthAdapter
     extends AbstractDataTypeAdapter<Period, IYearMonthDurationItem> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
-      List.of("year-month-duration"));
+  private static final List<QName> NAMES = ObjectUtils.notNull(
+      List.of(new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "year-month-duration")));
 
   YearMonthAdapter() {
     super(Period.class);
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

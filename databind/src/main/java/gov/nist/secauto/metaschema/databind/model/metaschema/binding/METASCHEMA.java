@@ -49,15 +49,14 @@ import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Object;
-import java.lang.Override;
-import java.lang.String;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * A declaration of the Metaschema module.
@@ -139,7 +138,7 @@ public class METASCHEMA {
       description = "Imports a set of Metaschema modules contained in another resource. Imports support the reuse of common information structures.",
       useName = "import",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "imports", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "imports", inJson = JsonGroupAsBehavior.LIST))
   private List<Import> _imports;
 
   @BoundChoiceGroup(
@@ -153,7 +152,7 @@ public class METASCHEMA {
           @BoundGroupedAssembly(formalName = "Global Flag Definition", useName = "define-flag",
               binding = DefineFlag.class)
       },
-      groupAs = @GroupAs(name = "definitions", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "definitions", inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _definitions;
 
   public String getAbstract() {
@@ -346,7 +345,7 @@ public class METASCHEMA {
         formalName = "Property",
         useName = "prop",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "props", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
     private List<Property> _props;
 
     @BoundField(
@@ -379,7 +378,7 @@ public class METASCHEMA {
                 binding = InlineDefineFlag.class),
             @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
         },
-        groupAs = @GroupAs(name = "flags", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+        groupAs = @GroupAs(name = "flags", inJson = JsonGroupAsBehavior.LIST))
     private List<Object> _flags;
 
     @BoundAssembly(
@@ -396,7 +395,7 @@ public class METASCHEMA {
         formalName = "Example",
         useName = "example",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "examples", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+        groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
     private List<Example> _examples;
 
     public String getName() {
@@ -682,7 +681,7 @@ public class METASCHEMA {
         formalName = "Property",
         useName = "prop",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "props", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
     private List<Property> _props;
 
     @BoundField(
@@ -705,7 +704,7 @@ public class METASCHEMA {
         formalName = "Example",
         useName = "example",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "examples", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+        groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
     private List<Example> _examples;
 
     public String getName() {
@@ -970,7 +969,7 @@ public class METASCHEMA {
         formalName = "Property",
         useName = "prop",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "props", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+        groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
     private List<Property> _props;
 
     @BoundField(
@@ -999,7 +998,7 @@ public class METASCHEMA {
                 binding = InlineDefineFlag.class),
             @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
         },
-        groupAs = @GroupAs(name = "flags", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+        groupAs = @GroupAs(name = "flags", inJson = JsonGroupAsBehavior.LIST))
     private List<Object> _flags;
 
     @BoundAssembly(
@@ -1020,7 +1019,7 @@ public class METASCHEMA {
         formalName = "Example",
         useName = "example",
         maxOccurs = -1,
-        groupAs = @GroupAs(name = "examples", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+        groupAs = @GroupAs(name = "examples", inJson = JsonGroupAsBehavior.LIST))
     private List<Example> _examples;
 
     public String getName() {

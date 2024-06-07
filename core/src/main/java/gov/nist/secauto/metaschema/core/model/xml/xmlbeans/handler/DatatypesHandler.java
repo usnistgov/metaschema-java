@@ -102,7 +102,7 @@ public final class DatatypesHandler {
 
   private static void encode(IDataTypeAdapter<?> datatype, SimpleValue target) {
     if (datatype != null) {
-      target.setStringValue(datatype.getPreferredName());
+      target.setStringValue(datatype.getPreferredName().getLocalPart());
     }
   }
 

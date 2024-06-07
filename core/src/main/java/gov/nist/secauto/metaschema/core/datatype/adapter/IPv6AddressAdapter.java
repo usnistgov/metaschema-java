@@ -29,10 +29,13 @@ package gov.nist.secauto.metaschema.core.datatype.adapter;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.core.datatype.AbstractDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIPv6AddressItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.List;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import inet.ipaddr.AddressStringException;
@@ -44,8 +47,8 @@ import inet.ipaddr.ipv6.IPv6Address;
 public class IPv6AddressAdapter
     extends AbstractDataTypeAdapter<IPv6Address, IIPv6AddressItem> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
-      List.of("ip-v6-address"));
+  private static final List<QName> NAMES = ObjectUtils.notNull(
+      List.of(new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "ip-v6-address")));
   private static final IPAddressStringParameters IP_V_6;
 
   static {
@@ -59,7 +62,7 @@ public class IPv6AddressAdapter
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

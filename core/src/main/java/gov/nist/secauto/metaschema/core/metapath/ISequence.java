@@ -26,20 +26,22 @@
 
 package gov.nist.secauto.metaschema.core.metapath;
 
+import gov.nist.secauto.metaschema.core.metapath.impl.AbstractSequence;
+import gov.nist.secauto.metaschema.core.metapath.impl.SequenceN;
+import gov.nist.secauto.metaschema.core.metapath.impl.SingletonSequence;
+import gov.nist.secauto.metaschema.core.metapath.impl.StreamSequence;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.function.IArrayItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
@@ -54,107 +56,27 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * Items is a sequence are typically ordered based on their position in the
  * original node graph based on a depth first ordering.
  *
- * @param <ITEM_TYPE>
+ * @param <ITEM>
  *          the Java type of the items in a sequence
  */
-public interface ISequence<ITEM_TYPE extends IItem> extends List<ITEM_TYPE> {
-  @SuppressWarnings("rawtypes")
-  ISequence EMPTY = new EmptyListImpl<>();
-
+@SuppressWarnings("PMD.ShortMethodName")
+public interface ISequence<ITEM extends IItem> extends List<ITEM>, IPrintable, ICollectionValue {
   /**
    * Get an empty sequence.
    *
-   * @param <ITEM_TYPE>
+   * @param <T>
    *          the item type
    * @return the empty sequence
    */
-  @SuppressWarnings({ "unchecked", "null" })
+  @SuppressWarnings("null")
   @NonNull
-  static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> empty() {
-    return EMPTY;
-  }
-
-  /**
-   * Construct a new sequence containing the provided {@code item}.
-   * <p>
-   * If the item is {@code null} and empty sequence will be created.
-   *
-   * @param <ITEM_TYPE>
-   *          the type of items contained in the sequence.
-   * @param item
-   *          the item to add to the sequence
-   * @return the new sequence
-   */
-  @NonNull
-  static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
-      @Nullable ITEM_TYPE item) {
-    ISequence<ITEM_TYPE> retval;
-    if (item == null) {
-      retval = empty();
-    } else {
-      retval = new SingletonSequenceImpl<>(item);
-    }
-    return retval;
-  }
-
-  /**
-   * Construct a new sequence containing the provided {@code items}.
-   *
-   * @param <ITEM_TYPE>
-   *          the type of items contained in the sequence.
-   * @param items
-   *          the items to add to the sequence
-   * @return the new sequence
-   */
-  @SafeVarargs
-  @NonNull
-  static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
-      @NonNull ITEM_TYPE... items) {
-    return of(ObjectUtils.notNull(Arrays.asList(items)));
-  }
-
-  /**
-   * Construct a new sequence containing the provided {@code items}.
-   *
-   * @param <ITEM_TYPE>
-   *          the type of items contained in the sequence.
-   * @param items
-   *          the items to add to the sequence
-   * @return the new sequence
-   */
-  @NonNull
-  static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
-      @NonNull List<ITEM_TYPE> items) {
-    ISequence<ITEM_TYPE> retval;
-    if (items.isEmpty()) {
-      retval = empty();
-    } else if (items.size() == 1) {
-      retval = new SingletonSequenceImpl<>(ObjectUtils.notNull(items.iterator().next()));
-    } else {
-      retval = new ListSequenceImpl<>(items);
-    }
-    return retval;
-  }
-
-  /**
-   * Construct a new sequence containing the provided {@code items}.
-   *
-   * @param <ITEM_TYPE>
-   *          the type of items contained in the sequence.
-   * @param items
-   *          the items to add to the sequence
-   * @return the new sequence
-   */
-  // TODO: remove null check on callers
-  @NonNull
-  static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> of( // NOPMD - intentional
-      Stream<ITEM_TYPE> items) {
-    return items == null ? empty() : new StreamSequenceImpl<>(items);
+  static <T extends IItem> ISequence<T> empty() {
+    return AbstractSequence.empty();
   }
 
   @Override
-  default Iterator<ITEM_TYPE> iterator() {
-    return asList().listIterator();
+  default Iterator<ITEM> iterator() {
+    return getValue().listIterator();
   }
 
   /**
@@ -163,16 +85,89 @@ public interface ISequence<ITEM_TYPE extends IItem> extends List<ITEM_TYPE> {
    * @return a list containing all the items of the sequence
    */
   @NonNull
-  List<ITEM_TYPE> asList();
+  List<ITEM> getValue();
 
   /**
    * Get the items in this sequence as a {@link Stream}.
    *
    * @return a stream containing all the items of the sequence
    */
-  // TODO: rename to "stream"
+  @Override
   @NonNull
-  Stream<ITEM_TYPE> asStream();
+  Stream<ITEM> stream();
+
+  /**
+   * Retrieves the first item in a sequence. If the sequence is empty, a
+   * {@code null} result is returned. If requireSingleton is {@code true} and the
+   * sequence contains more than one item, a {@link TypeMetapathException} is
+   * thrown.
+   *
+   * @param <T>
+   *          the item type to return derived from the provided sequence
+   * @param items
+   *          the sequence to retrieve the first item from
+   * @param requireSingleton
+   *          if {@code true} then a {@link TypeMetapathException} is thrown if
+   *          the sequence contains more than one item
+   * @return {@code null} if the sequence is empty, or the item otherwise
+   * @throws TypeMetapathException
+   *           if the sequence contains more than one item and requireSingleton is
+   *           {@code true}
+   */
+  static <T extends IItem> T getFirstItem(@NonNull ISequence<T> items, boolean requireSingleton) {
+    return getFirstItem(items.stream(), requireSingleton);
+  }
+
+  /**
+   * Retrieves the first item in a sequence. If the sequence is empty, a
+   * {@code null} result is returned. If requireSingleton is {@code true} and the
+   * sequence contains more than one item, a {@link TypeMetapathException} is
+   * thrown.
+   *
+   * @param <T>
+   *          the item type to return derived from the provided sequence
+   * @param items
+   *          the sequence to retrieve the first item from
+   * @param requireSingleton
+   *          if {@code true} then a {@link TypeMetapathException} is thrown if
+   *          the sequence contains more than one item
+   * @return {@code null} if the sequence is empty, or the item otherwise
+   * @throws TypeMetapathException
+   *           if the sequence contains more than one item and requireSingleton is
+   *           {@code true}
+   */
+  static <T extends IItem> T getFirstItem(@NonNull Stream<T> items, boolean requireSingleton) {
+    return items.limit(2)
+        .reduce((t, u) -> {
+          if (requireSingleton) {
+            throw new InvalidTypeMetapathException(
+                null,
+                String.format("sequence expected to contain only one item, but found multiple"));
+          }
+          return t;
+        }).orElse(null);
+  }
+
+  @Nullable
+  default ITEM getFirstItem(boolean requireSingleton) {
+    return getFirstItem(this, requireSingleton);
+  }
+
+  @NonNull
+  default ICollectionValue toCollectionValue() {
+    ICollectionValue retval;
+    switch (size()) {
+    case 0:
+      retval = empty();
+      break;
+    case 1:
+      retval = ObjectUtils.notNull(stream().findFirst().get());
+      break;
+    default:
+      retval = this;
+    }
+    return retval;
+  }
 
   /**
    * Get a stream guaranteed to be backed by a list.
@@ -180,46 +175,16 @@ public interface ISequence<ITEM_TYPE extends IItem> extends List<ITEM_TYPE> {
    * @return the stream
    */
   @NonNull
-  default Stream<ITEM_TYPE> safeStream() {
-    return ObjectUtils.notNull(asList().stream());
+  default Stream<ITEM> safeStream() {
+    return ObjectUtils.notNull(getValue().stream());
   }
 
-  /**
-   * This optional operation ensures that a list is used to back this sequence.
-   * <p>
-   * If a stream is currently backing this sequence, the stream will be collected
-   * into a list. This ensures the sequence can be visited multiple times.
-   *
-   * @return the resulting sequence
-   */
-  @NonNull
-  ISequence<ITEM_TYPE> collect();
-
-  /**
-   * Determine if this sequence is empty.
-   *
-   * @return {@code true} if the sequence contains no items, or {@code false}
-   *         otherwise
-   */
+  @SuppressWarnings("null")
   @Override
-  boolean isEmpty();
-
-  /**
-   * Get the count of items in this sequence.
-   *
-   * @return the count of items
-   */
-  @Override
-  int size();
-
-  /**
-   * Iterate over each item in the sequence using the provided {@code action}.
-   *
-   * @param action
-   *          code to execute for each item
-   */
-  @Override
-  void forEach(Consumer<? super ITEM_TYPE> action);
+  default Stream<? extends IItem> flatten() {
+    // TODO: Is a safe stream needed here?
+    return safeStream();
+  }
 
   /**
    * A {@link Collector} implementation to generates a sequence from a stream of
@@ -240,7 +205,7 @@ public interface ISequence<ITEM_TYPE extends IItem> extends List<ITEM_TYPE> {
 
       @Override
       public BiConsumer<List<ITEM_TYPE>, ITEM_TYPE> accumulator() {
-        return (list, value) -> list.add(value);
+        return List::add;
       }
 
       @Override
@@ -253,7 +218,7 @@ public interface ISequence<ITEM_TYPE extends IItem> extends List<ITEM_TYPE> {
 
       @Override
       public Function<List<ITEM_TYPE>, ISequence<ITEM_TYPE>> finisher() {
-        return list -> of(ObjectUtils.notNull(list));
+        return list -> ofCollection(ObjectUtils.notNull(list));
       }
 
       @Override
@@ -261,6 +226,11 @@ public interface ISequence<ITEM_TYPE extends IItem> extends List<ITEM_TYPE> {
         return Collections.emptySet();
       }
     };
+  }
+
+  @Override
+  default ISequence<ITEM> asSequence() {
+    return this;
   }
 
   /**
@@ -280,107 +250,352 @@ public interface ISequence<ITEM_TYPE extends IItem> extends List<ITEM_TYPE> {
       @NonNull Function<T, R> mapFunction,
       @NonNull ISequence<T> seq) {
     return seq.safeStream()
-        .map(item -> mapFunction.apply(item))
+        .map(mapFunction::apply)
         .collect(toSequence());
   }
 
-  @Override
-  default boolean contains(Object obj) {
-    return asList().contains(obj);
+  /**
+   * Returns an unmodifiable sequence containing the provided {@code items}.
+   *
+   * @param <ITEM_TYPE>
+   *          the type of items contained in the sequence.
+   * @param items
+   *          the items to add to the sequence
+   * @return the new sequence
+   */
+  @NonNull
+  static <ITEM_TYPE extends IItem> ISequence<ITEM_TYPE> ofCollection( // NOPMD - intentional
+      @NonNull List<ITEM_TYPE> items) {
+    ISequence<ITEM_TYPE> retval;
+    if (items.isEmpty()) {
+      retval = empty();
+    } else if (items.size() == 1) {
+      retval = new SingletonSequence<>(ObjectUtils.notNull(items.iterator().next()));
+    } else {
+      retval = new SequenceN<>(items);
+    }
+    return retval;
   }
 
-  @Override
-  default Object[] toArray() {
-    return asList().toArray();
+  /**
+   * Returns an unmodifiable sequence containing the provided {@code item}.
+   * <p>
+   * If the item is {@code null} and empty sequence will be created.
+   *
+   * @param <T>
+   *          the type of items contained in the sequence.
+   * @param item
+   *          the item to add to the sequence
+   * @return the new sequence
+   */
+  @NonNull
+  static <T extends IItem> ISequence<T> of( // NOPMD - intentional
+      @Nullable T item) {
+    return item == null ? empty() : new SingletonSequence<>(item);
   }
 
-  @Override
-  default <T> T[] toArray(T[] array) {
-    return asList().toArray(array);
+  /**
+   * Returns an unmodifiable sequence containing the provided {@code items}.
+   *
+   * @param <T>
+   *          the type of items contained in the sequence.
+   * @param items
+   *          the items to add to the sequence
+   * @return the new sequence
+   */
+  // TODO: remove null check on callers
+  @NonNull
+  static <T extends IItem> ISequence<T> of(@NonNull Stream<T> items) {
+    return new StreamSequence<>(items);
   }
 
-  @Override
-  default boolean add(ITEM_TYPE item) {
-    throw new UnsupportedOperationException("object is immutable");
+  /**
+   * Returns an unmodifiable sequence containing zero elements.
+   *
+   * @param <T>
+   *          the item type
+   * @return an empty {@code ISequence}
+   */
+  @NonNull
+  static <T extends IItem> ISequence<T> of() {
+    return empty();
   }
 
-  @Override
-  default void add(int index, ITEM_TYPE element) {
-    throw new UnsupportedOperationException("object is immutable");
+  /**
+   * Returns an unmodifiable sequence containing two items.
+   *
+   * @param <T>
+   *          the {@code ISequence}'s item type
+   * @param e1
+   *          the first item
+   * @param e2
+   *          the second item
+   * @return an {@code ISequence} containing the specified items
+   * @throws NullPointerException
+   *           if an item is {@code null}
+   */
+  @NonNull
+  static <T extends IItem> ISequence<T> of(T e1, T e2) {
+    return new SequenceN<>(e1, e2);
   }
 
-  @Override
-  default boolean addAll(Collection<? extends ITEM_TYPE> collection) {
-    throw new UnsupportedOperationException("object is immutable");
+  /**
+   * Returns an unmodifiable sequence containing three elements.
+   *
+   * @param <T>
+   *          the {@code ISequence}'s item type
+   * @param e1
+   *          the first item
+   * @param e2
+   *          the second item
+   * @param e3
+   *          the third item
+   * @return an {@code ISequence} containing the specified items
+   * @throws NullPointerException
+   *           if an item is {@code null}
+   */
+  @NonNull
+  static <T extends IItem> ISequence<T> of(T e1, T e2, T e3) {
+    return new SequenceN<>(e1, e2, e3);
   }
 
-  @Override
-  default boolean addAll(int index, Collection<? extends ITEM_TYPE> collection) {
-    throw new UnsupportedOperationException("object is immutable");
+  /**
+   * Returns an unmodifiable sequence containing four items.
+   *
+   * @param <T>
+   *          the {@code ISequence}'s item type
+   * @param e1
+   *          the first item
+   * @param e2
+   *          the second item
+   * @param e3
+   *          the third item
+   * @param e4
+   *          the fourth item
+   * @return an {@code ISequence} containing the specified items
+   * @throws NullPointerException
+   *           if an item is {@code null}
+   */
+  @NonNull
+  static <T extends IItem> ISequence<T> of(T e1, T e2, T e3, T e4) {
+    return new SequenceN<>(e1, e2, e3, e4);
   }
 
-  @Override
-  default boolean remove(Object obj) {
-    throw new UnsupportedOperationException("object is immutable");
+  /**
+   * Returns an unmodifiable sequence containing five items.
+   *
+   * @param <T>
+   *          the {@code ISequence}'s item type
+   * @param e1
+   *          the first item
+   * @param e2
+   *          the second item
+   * @param e3
+   *          the third item
+   * @param e4
+   *          the fourth item
+   * @param e5
+   *          the fifth item
+   * @return an {@code ISequence} containing the specified items
+   * @throws NullPointerException
+   *           if an item is {@code null}
+   */
+  @NonNull
+  static <T extends IItem> ISequence<T> of(T e1, T e2, T e3, T e4, T e5) {
+    return new SequenceN<>(e1, e2, e3, e4, e5);
   }
 
-  @Override
-  default ITEM_TYPE remove(int index) {
-    throw new UnsupportedOperationException("object is immutable");
+  /**
+   * Returns an unmodifiable sequence containing six items.
+   *
+   * @param <T>
+   *          the {@code ISequence}'s item type
+   * @param e1
+   *          the first item
+   * @param e2
+   *          the second item
+   * @param e3
+   *          the third item
+   * @param e4
+   *          the fourth item
+   * @param e5
+   *          the fifth item
+   * @param e6
+   *          the sixth item
+   * @return an {@code ISequence} containing the specified items
+   * @throws NullPointerException
+   *           if an item is {@code null}
+   */
+  @NonNull
+  static <T extends IItem> ISequence<T> of(T e1, T e2, T e3, T e4, T e5, T e6) {
+    return new SequenceN<>(e1, e2, e3, e4, e5, e6);
   }
 
-  @Override
-  default boolean containsAll(Collection<?> collection) {
-    return asList().containsAll(collection);
+  /**
+   * Returns an unmodifiable sequence containing seven items.
+   *
+   * @param <T>
+   *          the {@code ISequence}'s item type
+   * @param e1
+   *          the first item
+   * @param e2
+   *          the second item
+   * @param e3
+   *          the third item
+   * @param e4
+   *          the fourth item
+   * @param e5
+   *          the fifth item
+   * @param e6
+   *          the sixth item
+   * @param e7
+   *          the seventh item
+   * @return an {@code ISequence} containing the specified items
+   * @throws NullPointerException
+   *           if an item is {@code null}
+   */
+  @NonNull
+  static <T extends IItem> ISequence<T> of(T e1, T e2, T e3, T e4, T e5, T e6, T e7) {
+    return new SequenceN<>(e1, e2, e3, e4, e5, e6, e7);
   }
 
-  @Override
-  default boolean removeAll(Collection<?> collection) {
-    throw new UnsupportedOperationException("object is immutable");
+  /**
+   * Returns an unmodifiable sequence containing eight items.
+   *
+   * @param <T>
+   *          the {@code ISequence}'s item type
+   * @param e1
+   *          the first item
+   * @param e2
+   *          the second item
+   * @param e3
+   *          the third item
+   * @param e4
+   *          the fourth item
+   * @param e5
+   *          the fifth item
+   * @param e6
+   *          the sixth item
+   * @param e7
+   *          the seventh item
+   * @param e8
+   *          the eighth item
+   * @return an {@code ISequence} containing the specified items
+   * @throws NullPointerException
+   *           if an item is {@code null}
+   */
+  @NonNull
+  static <T extends IItem> ISequence<T> of(T e1, T e2, T e3, T e4, T e5, T e6, T e7, T e8) {
+    return new SequenceN<>(e1, e2, e3, e4, e5, e6, e7, e8);
   }
 
-  @Override
-  default boolean retainAll(Collection<?> collection) {
-    throw new UnsupportedOperationException("object is immutable");
+  /**
+   * Returns an unmodifiable sequence containing nine items.
+   *
+   * @param <T>
+   *          the {@code ISequence}'s item type
+   * @param e1
+   *          the first item
+   * @param e2
+   *          the second item
+   * @param e3
+   *          the third item
+   * @param e4
+   *          the fourth item
+   * @param e5
+   *          the fifth item
+   * @param e6
+   *          the sixth item
+   * @param e7
+   *          the seventh item
+   * @param e8
+   *          the eighth item
+   * @param e9
+   *          the ninth item
+   * @return an {@code ISequence} containing the specified items
+   * @throws NullPointerException
+   *           if an item is {@code null}
+   */
+  @NonNull
+  static <T extends IItem> ISequence<T> of(T e1, T e2, T e3, T e4, T e5, T e6, T e7, T e8, T e9) {
+    return new SequenceN<>(e1, e2, e3, e4, e5, e6, e7, e8, e9);
   }
 
-  @Override
-  default void clear() {
-    throw new UnsupportedOperationException("object is immutable");
+  /**
+   * Returns an unmodifiable sequence containing ten items.
+   *
+   * @param <T>
+   *          the {@code ISequence}'s item type
+   * @param e1
+   *          the first item
+   * @param e2
+   *          the second item
+   * @param e3
+   *          the third item
+   * @param e4
+   *          the fourth item
+   * @param e5
+   *          the fifth item
+   * @param e6
+   *          the sixth item
+   * @param e7
+   *          the seventh item
+   * @param e8
+   *          the eighth item
+   * @param e9
+   *          the ninth item
+   * @param e10
+   *          the tenth item
+   * @return an {@code IArrayItem} containing the specified items
+   * @throws NullPointerException
+   *           if an item is {@code null}
+   */
+  @NonNull
+  static <T extends IItem> ISequence<T> of(T e1, T e2, T e3, T e4, T e5, T e6, T e7, T e8, T e9, T e10) {
+    return new SequenceN<>(e1, e2, e3, e4, e5, e6, e7, e8, e9, e10);
   }
 
-  @Override
-  default ITEM_TYPE get(int index) {
-    return asList().get(index);
+  /**
+   * Returns an unmodifiable sequence containing an arbitrary number of items.
+   *
+   * @param <T>
+   *          the {@code ISequence}'s item type
+   * @param items
+   *          the items to be contained in the list
+   * @return an {@code ISequence} containing the specified items
+   * @throws NullPointerException
+   *           if an item is {@code null} or if the array is {@code null}
+   */
+  @SafeVarargs
+  @NonNull
+  static <T extends IItem> ISequence<T> of(@NonNull T... items) {
+    return items.length == 0 ? empty() : new SequenceN<>(items);
   }
 
-  @Override
-  default ITEM_TYPE set(int index, ITEM_TYPE element) {
-    throw new UnsupportedOperationException("object is immutable");
-  }
-
-  @Override
-  default int indexOf(Object obj) {
-    return asList().indexOf(obj);
-  }
-
-  @Override
-  default int lastIndexOf(Object obj) {
-    return asList().lastIndexOf(obj);
-  }
-
-  @Override
-  default ListIterator<ITEM_TYPE> listIterator() {
-    return asList().listIterator();
-  }
-
-  @Override
-  default ListIterator<ITEM_TYPE> listIterator(int index) {
-    return asList().listIterator(index);
-  }
-
-  @Override
-  default List<ITEM_TYPE> subList(int fromIndex, int toIndex) {
-    return asList().subList(fromIndex, toIndex);
+  /**
+   * Returns an unmodifiable sequence containing the items of the given
+   * Collection, in its iteration order. The given Collection must not be null,
+   * and it must not contain any null items. If the given Collection is
+   * subsequently modified, the returned array item will not reflect such
+   * modifications.
+   *
+   * @param <T>
+   *          the {@code ISequence}'s item type
+   * @param collection
+   *          a {@code Collection} from which items are drawn, must be non-null
+   * @return an {@code ISequence} containing the items of the given
+   *         {@code Collection}
+   * @throws NullPointerException
+   *           if collection is null, or if it contains any nulls
+   * @since 10
+   */
+  @SuppressWarnings("unchecked")
+  @NonNull
+  static <T extends IItem> ISequence<T> copyOf(Collection<? extends T> collection) {
+    return collection instanceof IArrayItem
+        ? (ISequence<T>) collection
+        : collection.isEmpty()
+            ? empty()
+            : new SequenceN<>(new ArrayList<>(collection));
   }
 }

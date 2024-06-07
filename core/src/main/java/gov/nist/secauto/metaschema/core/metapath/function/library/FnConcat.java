@@ -29,7 +29,6 @@ package gov.nist.secauto.metaschema.core.metapath.function.library;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
-import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.IArgument;
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
@@ -87,7 +86,7 @@ public final class FnConcat {
     return ISequence.of(concat(ObjectUtils.notNull(arguments.stream()
         .map(arg -> {
           assert arg != null;
-          return (IAnyAtomicItem) FunctionUtils.getFirstItem(arg, true);
+          return (IAnyAtomicItem) arg.getFirstItem(true);
         }))));
   }
 

@@ -34,6 +34,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -44,9 +46,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * can be accessed using {@link #getImportedModules()}.
  * <p>
  * Global scoped Metaschema definitions can be accessed using
- * {@link #getScopedAssemblyDefinitionByName(String)},
- * {@link #getScopedFieldDefinitionByName(String)}, and
- * {@link #getScopedFlagDefinitionByName(String)}. These methods take into
+ * {@link #getScopedAssemblyDefinitionByName(QName)},
+ * {@link #getScopedFieldDefinitionByName(QName)}, and
+ * {@link #getScopedFlagDefinitionByName(QName)}. These methods take into
  * consideration the import order to provide the global definitions that are in
  * scope within the given Metschema module.
  * <p>
@@ -120,7 +122,7 @@ public interface IModuleExtended<
 
   @Override
   @Nullable
-  FL getFlagDefinitionByName(@NonNull String name);
+  FL getFlagDefinitionByName(@NonNull QName name);
 
   @Override
   @NonNull
@@ -128,7 +130,7 @@ public interface IModuleExtended<
 
   @Override
   @Nullable
-  A getAssemblyDefinitionByName(@NonNull String name);
+  A getAssemblyDefinitionByName(@NonNull QName name);
 
   @Override
   @NonNull
@@ -136,7 +138,7 @@ public interface IModuleExtended<
 
   @Override
   @Nullable
-  FI getFieldDefinitionByName(@NonNull String name);
+  FI getFieldDefinitionByName(@NonNull QName name);
 
   @Override
   @SuppressWarnings("unchecked")
@@ -151,7 +153,7 @@ public interface IModuleExtended<
 
   @Override
   @Nullable
-  default A getScopedAssemblyDefinitionByName(@NonNull String name) {
+  default A getScopedAssemblyDefinitionByName(@NonNull QName name) {
     // first try local/global top-level definitions from current metaschema module
     A retval = getAssemblyDefinitionByName(name);
     if (retval == null) {
@@ -163,7 +165,7 @@ public interface IModuleExtended<
 
   @Override
   @Nullable
-  default FI getScopedFieldDefinitionByName(@NonNull String name) {
+  default FI getScopedFieldDefinitionByName(@NonNull QName name) {
     // first try local/global top-level definitions from current metaschema module
     FI retval = getFieldDefinitionByName(name);
     if (retval == null) {
@@ -175,7 +177,7 @@ public interface IModuleExtended<
 
   @Override
   @Nullable
-  default FL getScopedFlagDefinitionByName(@NonNull String name) {
+  default FL getScopedFlagDefinitionByName(@NonNull QName name) {
     // first try local/global top-level definitions from current metaschema module
     FL retval = getFlagDefinitionByName(name);
     if (retval == null) {
@@ -207,7 +209,7 @@ public interface IModuleExtended<
 
   @Override
   @Nullable
-  FL getExportedFlagDefinitionByName(String name);
+  FL getExportedFlagDefinitionByName(QName name);
 
   @Override
   @NonNull
@@ -215,7 +217,7 @@ public interface IModuleExtended<
 
   @Override
   @Nullable
-  FI getExportedFieldDefinitionByName(String name);
+  FI getExportedFieldDefinitionByName(QName name);
 
   @Override
   @NonNull
@@ -223,5 +225,5 @@ public interface IModuleExtended<
 
   @Override
   @Nullable
-  A getExportedAssemblyDefinitionByName(String name);
+  A getExportedAssemblyDefinitionByName(QName name);
 }

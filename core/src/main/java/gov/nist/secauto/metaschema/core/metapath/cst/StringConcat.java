@@ -71,7 +71,7 @@ public class StringConcat
     StringBuilder builder = new StringBuilder();
     for (IExpression child : getChildren()) {
       ISequence<?> result = child.accept(dynamicContext, focus);
-      FnData.fnData(result).asStream()
+      FnData.fnData(result).stream()
           .forEachOrdered(item -> {
             builder.append(item.asString());
           });

@@ -27,14 +27,17 @@
 package gov.nist.secauto.metaschema.core.metapath.function;
 
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.TypeSystem;
 
 import java.util.Objects;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 class SequenceTypeImpl implements ISequenceType {
   private final Class<? extends IItem> type;
   private final Occurrence occurrence;
 
-  public SequenceTypeImpl(Class<? extends IItem> type, Occurrence occurrence) {
+  public SequenceTypeImpl(@NonNull Class<? extends IItem> type, @NonNull Occurrence occurrence) {
     Objects.requireNonNull(type, "type");
     Objects.requireNonNull(occurrence, "occurrence");
     this.type = type;
@@ -65,8 +68,11 @@ class SequenceTypeImpl implements ISequenceType {
   public String toSignature() {
     StringBuilder builder = new StringBuilder();
 
+    Class<? extends IItem> type = getType();
     // name
-    builder.append(getType().getName())
+    builder.append(type == null
+        ? ""
+        : TypeSystem.getName(type))
         // occurrence
         .append(getOccurrence().getIndicator());
 

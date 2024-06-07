@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.core.model.constraint.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.constraint.IKeyField;
 
 import java.util.regex.Pattern;
@@ -40,7 +39,7 @@ public class DefaultKeyField implements IKeyField {
   @Nullable
   private final Pattern pattern;
   @NonNull
-  private final MetapathExpression target;
+  private final String target;
   @Nullable
   private final MarkupMultiline remarks;
 
@@ -56,7 +55,7 @@ public class DefaultKeyField implements IKeyField {
    *          optional remarks describing the intent of the constraint
    */
   public DefaultKeyField(
-      @NonNull MetapathExpression target,
+      @NonNull String target,
       @Nullable Pattern pattern,
       @Nullable MarkupMultiline remarks) {
     this.pattern = pattern;
@@ -70,7 +69,7 @@ public class DefaultKeyField implements IKeyField {
   }
 
   @Override
-  public MetapathExpression getTarget() {
+  public String getTarget() {
     return target;
   }
 
@@ -78,5 +77,4 @@ public class DefaultKeyField implements IKeyField {
   public MarkupMultiline getRemarks() {
     return remarks;
   }
-
 }

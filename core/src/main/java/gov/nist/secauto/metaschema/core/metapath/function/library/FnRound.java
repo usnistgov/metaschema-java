@@ -102,7 +102,7 @@ public final class FnRound {
     ISequence<? extends INumericItem> sequence = FunctionUtils.asType(
         ObjectUtils.requireNonNull(arguments.get(0)));
 
-    INumericItem item = FunctionUtils.getFirstItem(sequence, true);
+    INumericItem item = sequence.getFirstItem(true);
     if (item == null) {
       return ISequence.empty(); // NOPMD - readability
     }
@@ -120,15 +120,12 @@ public final class FnRound {
     ISequence<? extends INumericItem> sequence = FunctionUtils.asType(
         ObjectUtils.requireNonNull(arguments.get(0)));
 
-    INumericItem item = FunctionUtils.getFirstItem(sequence, true);
+    INumericItem item = sequence.getFirstItem(true);
     if (item == null) {
       return ISequence.empty(); // NOPMD - readability
     }
 
-    IIntegerItem precision = FunctionUtils.asType(
-        FunctionUtils.requireFirstItem(
-            ObjectUtils.requireNonNull(arguments.get(1)),
-            true));
+    IIntegerItem precision = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1).getFirstItem(true)));
 
     return ISequence.of(item.round(precision));
   }

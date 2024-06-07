@@ -40,7 +40,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Provides model container support.
@@ -76,11 +79,11 @@ public class DefaultContainerModelSupport<
   @NonNull
   private final List<MI> modelInstances;
   @NonNull
-  private final Map<String, NMI> namedModelInstances;
+  private final Map<QName, NMI> namedModelInstances;
   @NonNull
-  private final Map<String, FI> fieldInstances;
+  private final Map<QName, FI> fieldInstances;
   @NonNull
-  private final Map<String, AI> assemblyInstances;
+  private final Map<QName, AI> assemblyInstances;
 
   /**
    * Construct an empty, mutable container.
@@ -107,7 +110,8 @@ public class DefaultContainerModelSupport<
    *          the Java type for assembly instances
    */
   @SuppressWarnings({ "PMD.UseConcurrentHashMap" })
-  public DefaultContainerModelSupport(
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
+  protected DefaultContainerModelSupport(
       @NonNull Collection<MI> instances,
       @NonNull Class<NMI> namedModelClass,
       @NonNull Class<FI> fieldClass,
@@ -127,13 +131,13 @@ public class DefaultContainerModelSupport<
 
     this.modelInstances = ObjectUtils.notNull(List.copyOf(instances));
 
-    Map<String, NMI> namedModelInstances = new LinkedHashMap<>();
-    Map<String, FI> fieldInstances = new LinkedHashMap<>();
-    Map<String, AI> assemblyInstances = new LinkedHashMap<>();
+    Map<QName, NMI> namedModelInstances = new LinkedHashMap<>();
+    Map<QName, FI> fieldInstances = new LinkedHashMap<>();
+    Map<QName, AI> assemblyInstances = new LinkedHashMap<>();
     for (MI instance : instances) {
       if (namedModelClass.isInstance(instance)) {
         NMI named = namedModelClass.cast(instance);
-        String key = named.getEffectiveName();
+        QName key = named.getXmlQName();
         namedModelInstances.put(key, named);
 
         if (fieldClass.isInstance(instance)) {
@@ -169,9 +173,9 @@ public class DefaultContainerModelSupport<
    */
   protected DefaultContainerModelSupport(
       @NonNull List<MI> modelInstances,
-      @NonNull Map<String, NMI> namedModelInstances,
-      @NonNull Map<String, FI> fieldInstances,
-      @NonNull Map<String, AI> assemblyInstances) {
+      @NonNull Map<QName, NMI> namedModelInstances,
+      @NonNull Map<QName, FI> fieldInstances,
+      @NonNull Map<QName, AI> assemblyInstances) {
     this.modelInstances = modelInstances;
     this.namedModelInstances = namedModelInstances;
     this.fieldInstances = fieldInstances;
@@ -184,17 +188,17 @@ public class DefaultContainerModelSupport<
   }
 
   @Override
-  public Map<String, NMI> getNamedModelInstanceMap() {
+  public Map<QName, NMI> getNamedModelInstanceMap() {
     return namedModelInstances;
   }
 
   @Override
-  public Map<String, FI> getFieldInstanceMap() {
+  public Map<QName, FI> getFieldInstanceMap() {
     return fieldInstances;
   }
 
   @Override
-  public Map<String, AI> getAssemblyInstanceMap() {
+  public Map<QName, AI> getAssemblyInstanceMap() {
     return assemblyInstances;
   }
 }

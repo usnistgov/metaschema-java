@@ -28,10 +28,10 @@ package gov.nist.secauto.metaschema.schemagen;
 
 import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.metaschema.BindingModuleLoader;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 import gov.nist.secauto.metaschema.schemagen.json.JsonSchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.xml.XmlSchemaGenerator;
 
@@ -41,7 +41,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -57,7 +56,7 @@ class MetaschemaModuleTest {
   void testGenerateMetaschemaModuleJson() throws MetaschemaException, IOException {
     BindingModuleLoader loader = new BindingModuleLoader();
 
-    IBindingModule module = loader.load(METASCHEMA_FILE);
+    IModule module = loader.load(METASCHEMA_FILE);
 
     IMutableConfiguration<SchemaGenerationFeature<?>> features
         = new DefaultConfiguration<>();
@@ -67,11 +66,7 @@ class MetaschemaModuleTest {
     try (Writer writer = Files.newBufferedWriter(
         Path.of("target/metaschema-schema.json"),
         StandardCharsets.UTF_8,
-        new OpenOption[] {
-            StandardOpenOption.CREATE,
-            StandardOpenOption.WRITE,
-            StandardOpenOption.TRUNCATE_EXISTING
-        })) {
+        StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
       assert writer != null;
       ISchemaGenerator schemaGenerator = new JsonSchemaGenerator();
       schemaGenerator.generateFromModule(module, writer, features);
@@ -82,7 +77,7 @@ class MetaschemaModuleTest {
   void testGenerateMetaschemaModuleXml() throws MetaschemaException, IOException {
     BindingModuleLoader loader = new BindingModuleLoader();
 
-    IBindingModule module = loader.load(METASCHEMA_FILE);
+    IModule module = loader.load(METASCHEMA_FILE);
 
     IMutableConfiguration<SchemaGenerationFeature<?>> features
         = new DefaultConfiguration<>();
@@ -92,11 +87,7 @@ class MetaschemaModuleTest {
     try (Writer writer = Files.newBufferedWriter(
         Path.of("target/metaschema-schema.xsd"),
         StandardCharsets.UTF_8,
-        new OpenOption[] {
-            StandardOpenOption.CREATE,
-            StandardOpenOption.WRITE,
-            StandardOpenOption.TRUNCATE_EXISTING
-        })) {
+        StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
       assert writer != null;
       ISchemaGenerator schemaGenerator = new XmlSchemaGenerator();
       schemaGenerator.generateFromModule(module, writer, features);

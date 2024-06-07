@@ -26,25 +26,28 @@
 
 package gov.nist.secauto.metaschema.core.datatype.adapter;
 
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IHostnameItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.List;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class HostnameAdapter
     extends AbstractStringAdapter<IHostnameItem> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
-      List.of("hostname"));
+  private static final List<QName> NAMES = ObjectUtils.notNull(
+      List.of(new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "hostname")));
 
   HostnameAdapter() {
     // avoid general construction
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

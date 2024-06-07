@@ -31,13 +31,14 @@ import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.cst.AbstractNamedInstanceExpression;
 import gov.nist.secauto.metaschema.core.metapath.cst.IExpression;
 import gov.nist.secauto.metaschema.core.metapath.cst.IExpressionVisitor;
-import gov.nist.secauto.metaschema.core.metapath.cst.Name;
 import gov.nist.secauto.metaschema.core.metapath.item.ItemUtils;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IModelNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 
 import java.util.List;
 import java.util.stream.Stream;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -70,8 +71,8 @@ public class ModelInstance
   public ISequence<? extends IModelNodeItem<?, ?>> accept(
       DynamicContext dynamicContext,
       ISequence<?> focus) {
-    return ISequence.of(focus.asStream()
-        .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
+    return ISequence.of(focus.stream()
+        .map(ItemUtils::checkItemIsNodeItemForStep)
         .flatMap(item -> {
           assert item != null;
           return match(item);
@@ -90,8 +91,8 @@ public class ModelInstance
   protected Stream<? extends IModelNodeItem<?, ?>> match(
       @NonNull INodeItem focusedItem) {
     Stream<? extends IModelNodeItem<?, ?>> retval;
-    if (getTest() instanceof Name) {
-      String name = ((Name) getTest()).getValue();
+    if (getTest() instanceof NameTest) {
+      QName name = ((NameTest) getTest()).getName();
       List<? extends IModelNodeItem<?, ?>> items = focusedItem.getModelItemsByName(name);
       retval = items.stream();
     } else {

@@ -56,6 +56,12 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   // @Nullable
   // String getJsonKeyFlagName();
 
+  /**
+   * Get the mapping of JSON property names to property bindings.
+   *
+   * @return the mapping
+   */
+  // REFACTOR: move JSON-specific methods to a binding cache implementation
   @NonNull
   Map<String, IBoundProperty> getJsonProperties();
 

@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath;
 
 import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyUriItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDayTimeDurationItem;
@@ -35,6 +36,9 @@ import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDecimalItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IYearMonthDurationItem;
+import gov.nist.secauto.metaschema.core.metapath.item.function.IArrayItem;
+import gov.nist.secauto.metaschema.core.metapath.item.function.IMapItem;
+import gov.nist.secauto.metaschema.core.metapath.item.function.IMapKey;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -43,6 +47,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -50,6 +55,41 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public final class TestUtils {
   private TestUtils() {
     // disable construction
+  }
+
+  @NonNull
+  public static <T extends IItem> ISequence<T> sequence() {
+    return ISequence.of();
+  }
+
+  @SafeVarargs
+  @NonNull
+  public static <T extends IItem> ISequence<T> sequence(@NonNull T... items) {
+    return ISequence.of(items);
+  }
+
+  @NonNull
+  public static <T extends ICollectionValue> IArrayItem<T> array() {
+    return IArrayItem.of();
+  }
+
+  @SafeVarargs
+  @NonNull
+  public static <T extends ICollectionValue> IArrayItem<T> array(@NonNull T... items) {
+    return IArrayItem.of(items);
+  }
+
+  @SafeVarargs
+  @NonNull
+  public static <T extends ICollectionValue> IMapItem<T> map(@NonNull Map.Entry<IMapKey, T>... entries) {
+    return IMapItem.ofEntries(entries);
+  }
+
+  @NonNull
+  public static <T extends ICollectionValue> Map.Entry<IMapKey, T> entry(
+      @NonNull IAnyAtomicItem key,
+      @NonNull T value) {
+    return IMapItem.entry(key, value);
   }
 
   @NonNull
@@ -105,7 +145,7 @@ public final class TestUtils {
       @Nullable ISequence<?> focus,
       List<ISequence<?>> arguments) {
 
-    DynamicContext context = dynamicContext == null ? StaticContext.instance().dynamicContext() : dynamicContext;
+    DynamicContext context = dynamicContext == null ? new DynamicContext() : dynamicContext;
     ISequence<?> focusSeqence = function.isFocusDepenent()
         ? ObjectUtils.requireNonNull(focus, "Function call requires a focus")
         : ISequence.empty();

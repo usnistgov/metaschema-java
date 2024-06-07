@@ -41,7 +41,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * All definitions in the {@link ModuleScopeEnum#INHERITED} scope. This allows
  * the exported structure of the Metaschema module to be queried.
  */
-public interface IModuleNodeItem extends IDocumentNodeItem {
+public interface IModuleNodeItem extends IDocumentNodeItem, IFeatureNoDataItem {
 
   /**
    * The Metaschema module this item is based on.

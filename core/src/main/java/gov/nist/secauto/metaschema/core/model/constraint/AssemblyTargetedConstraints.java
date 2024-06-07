@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.AbstractDefinitionTargetedConstraints;
 
@@ -51,7 +50,7 @@ public class AssemblyTargetedConstraints
    *          the constraints to apply to matching targets
    */
   public AssemblyTargetedConstraints(
-      @NonNull MetapathExpression target,
+      @NonNull String target,
       @NonNull IModelConstrained constraints) {
     super(target, constraints);
   }
@@ -62,11 +61,10 @@ public class AssemblyTargetedConstraints
   }
 
   @Override
-  @SuppressWarnings("null")
   protected void applyTo(@NonNull IAssemblyDefinition definition) {
     super.applyTo(definition);
-    getIndexConstraints().forEach(constraint -> definition.addConstraint(constraint));
-    getUniqueConstraints().forEach(constraint -> definition.addConstraint(constraint));
-    getHasCardinalityConstraints().forEach(constraint -> definition.addConstraint(constraint));
+    getIndexConstraints().forEach(definition::addConstraint);
+    getUniqueConstraints().forEach(definition::addConstraint);
+    getHasCardinalityConstraints().forEach(definition::addConstraint);
   }
 }

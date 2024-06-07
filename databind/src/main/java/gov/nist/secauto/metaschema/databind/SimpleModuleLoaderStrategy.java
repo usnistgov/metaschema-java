@@ -90,9 +90,9 @@ public class SimpleModuleLoaderStrategy implements IBindingContext.IModuleLoader
   private IBoundDefinitionModelComplex newBoundDefinition(@NonNull Class<?> clazz) {
     IBoundDefinitionModelComplex retval = null;
     if (clazz.isAnnotationPresent(MetaschemaAssembly.class)) {
-      retval = new DefinitionAssembly(clazz, getBindingContext());
+      retval = DefinitionAssembly.newInstance(clazz, getBindingContext());
     } else if (clazz.isAnnotationPresent(MetaschemaField.class)) {
-      retval = new DefinitionField(clazz, getBindingContext());
+      retval = DefinitionField.newInstance(clazz, getBindingContext());
     }
     return retval;
   }

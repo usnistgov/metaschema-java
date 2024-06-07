@@ -52,7 +52,7 @@ public class MetapathContext {
       useName = "metapath",
       minOccurs = 1,
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "metapaths", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "metapaths", inJson = JsonGroupAsBehavior.LIST))
   private List<MetaschemaMetapath> _metapaths;
 
   @BoundAssembly(
@@ -62,7 +62,7 @@ public class MetapathContext {
   @BoundAssembly(
       useName = "metapath-context",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "metapath-contexts", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "metapath-contexts", inJson = JsonGroupAsBehavior.LIST))
   private List<MetapathContext> _metapathContexts;
 
   @BoundField(

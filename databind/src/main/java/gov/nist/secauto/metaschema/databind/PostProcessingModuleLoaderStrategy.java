@@ -26,10 +26,10 @@
 
 package gov.nist.secauto.metaschema.databind;
 
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.IModuleLoader;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
-import gov.nist.secauto.metaschema.databind.model.IBoundModule;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,7 +42,7 @@ class PostProcessingModuleLoaderStrategy
     extends SimpleModuleLoaderStrategy {
   @NonNull
   private final List<IModuleLoader.IModulePostProcessor> modulePostProcessors;
-  private final Set<IBoundModule> resolvedModules = new HashSet<>();
+  private final Set<IModule> resolvedModules = new HashSet<>();
 
   protected PostProcessingModuleLoaderStrategy(
       @NonNull IBindingContext bindingContext,
@@ -61,7 +61,7 @@ class PostProcessingModuleLoaderStrategy
     IBoundDefinitionModelComplex retval = super.getBoundDefinitionForClass(clazz);
     if (retval != null) {
       // force loading of metaschema information to apply constraints
-      IBoundModule module = retval.getContainingModule();
+      IModule module = retval.getContainingModule();
       synchronized (resolvedModules) {
         if (!resolvedModules.contains(module)) {
           // add first, to avoid loops
@@ -73,7 +73,7 @@ class PostProcessingModuleLoaderStrategy
     return retval;
   }
 
-  private void handleModule(@NonNull IBoundModule module) {
+  private void handleModule(@NonNull IModule module) {
     for (IModuleLoader.IModulePostProcessor postProcessor : getModulePostProcessors()) {
       postProcessor.processModule(module);
     }

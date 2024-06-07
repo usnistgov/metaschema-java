@@ -33,7 +33,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import inet.ipaddr.ipv4.IPv4Address;
 
 class IPv4AddressItemImpl
-    extends AbstractAnyAtomicItem<IPv4Address>
+    extends AbstractUntypedAtomicItem<IPv4Address>
     implements IIPv4AddressItem {
 
   public IPv4AddressItemImpl(@NonNull IPv4Address value) {

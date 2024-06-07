@@ -45,6 +45,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 // TODO: add support for in-scope namespaces
@@ -54,9 +56,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 public class DynamicContext { // NOPMD - intentional data class
   @NonNull
-  private final Map<String, ISequence<?>> letVariableMap;
+  private final Map<QName, ISequence<?>> letVariableMap;
   @NonNull
   private final SharedState sharedState;
+
+  public DynamicContext() {
+    this(StaticContext.instance());
+  }
 
   /**
    * Construct a new Metapath dynamic context.
@@ -64,7 +70,7 @@ public class DynamicContext { // NOPMD - intentional data class
    * @param staticContext
    *          the Metapath static context
    */
-  DynamicContext(@NonNull StaticContext staticContext) {
+  public DynamicContext(@NonNull StaticContext staticContext) {
     this.letVariableMap = new ConcurrentHashMap<>();
     this.sharedState = new SharedState(staticContext);
   }
@@ -181,8 +187,15 @@ public class DynamicContext { // NOPMD - intentional data class
   }
 
   @NonNull
-  public ISequence<?> getVariableValue(@NonNull String name) {
-    return ObjectUtils.requireNonNull(letVariableMap.get(name));
+  public ISequence<?> getVariableValue(@NonNull QName name) {
+    ISequence<?> retval = letVariableMap.get(name);
+    if (retval == null) {
+      if (!letVariableMap.containsKey(name)) {
+        throw new MetapathException(String.format("Variable '%s' not defined in context.", name));
+      }
+      throw new MetapathException(String.format("Variable '%s' has null contents.", name));
+    }
+    return retval;
   }
 
   /**
@@ -193,7 +206,7 @@ public class DynamicContext { // NOPMD - intentional data class
    * @param boundValue
    *          the value to bind to the variable
    */
-  public void bindVariableValue(@NonNull String name, @NonNull ISequence<?> boundValue) {
+  public void bindVariableValue(@NonNull QName name, @NonNull ISequence<?> boundValue) {
     letVariableMap.put(name, boundValue);
   }
 

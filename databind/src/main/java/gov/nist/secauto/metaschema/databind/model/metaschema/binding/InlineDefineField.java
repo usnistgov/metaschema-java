@@ -45,14 +45,13 @@ import gov.nist.secauto.metaschema.databind.model.annotations.BoundGroupedAssemb
 import gov.nist.secauto.metaschema.databind.model.annotations.Matches;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.ValueConstraints;
-import java.lang.Object;
-import java.lang.Override;
-import java.lang.String;
+
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 @SuppressWarnings({
     "PMD.DataClass",
@@ -161,7 +160,7 @@ public class InlineDefineField {
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props", namespace = "##default",
+      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "props",
           inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
@@ -194,7 +193,7 @@ public class InlineDefineField {
               binding = InlineDefineFlag.class),
           @BoundGroupedAssembly(formalName = "Flag Reference", useName = "flag", binding = FlagReference.class)
       },
-      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "flags", namespace = "##default",
+      groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "flags",
           inJson = JsonGroupAsBehavior.LIST))
   private List<Object> _flags;
 
@@ -213,7 +212,7 @@ public class InlineDefineField {
       useName = "example",
       maxOccurs = -1,
       groupAs = @gov.nist.secauto.metaschema.databind.model.annotations.GroupAs(name = "examples",
-          namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+          inJson = JsonGroupAsBehavior.LIST))
   private List<Example> _examples;
 
   public String getName() {

@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.core.model;
 
 import java.util.Collection;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -76,7 +78,7 @@ public interface IContainerModel extends IContainer {
    * @see INamedModelInstance#getEffectiveName()
    */
   @Nullable
-  INamedModelInstance getNamedModelInstanceByName(String name);
+  INamedModelInstance getNamedModelInstanceByName(QName name);
 
   /**
    * Get all field instances within the container.
@@ -96,7 +98,7 @@ public interface IContainerModel extends IContainer {
    * @see IFieldInstance#getUseName()
    */
   @Nullable
-  IFieldInstance getFieldInstanceByName(String name);
+  IFieldInstance getFieldInstanceByName(QName name);
 
   /**
    * Get all assembly instances within the container.
@@ -116,5 +118,5 @@ public interface IContainerModel extends IContainer {
    * @see INamedModelInstance#getEffectiveName()
    */
   @Nullable
-  IAssemblyInstance getAssemblyInstanceByName(String name);
+  IAssemblyInstance getAssemblyInstanceByName(QName name);
 }

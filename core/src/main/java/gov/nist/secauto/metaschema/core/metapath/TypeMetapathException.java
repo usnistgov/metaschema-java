@@ -106,7 +106,7 @@ public class TypeMetapathException
   }
 
   @Override
-  protected String getCodePrefix() {
+  public String getCodePrefix() {
     return "MPTY";
   }
 }

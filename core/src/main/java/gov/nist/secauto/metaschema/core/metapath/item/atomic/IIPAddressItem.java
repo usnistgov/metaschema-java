@@ -38,9 +38,6 @@ public interface IIPAddressItem extends IUntypedAtomicItem {
   @NonNull
   IPAddress asIpAddress();
 
-  @Override
-  int compareTo(IAnyAtomicItem item);
-
   /**
    * Compares this value with the argument.
    *
