@@ -30,9 +30,11 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.IGroupAs;
+import gov.nist.secauto.metaschema.databind.model.impl.DefaultGroupAs;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -104,43 +106,6 @@ public final class ModelUtil {
       retval = defaultValue;
     } else if (NO_STRING_VALUE.equals(value)) {
       retval = null; // NOPMD - intentional
-    } else {
-      retval = value;
-    }
-    return retval;
-  }
-
-  @Nullable
-  public static String resolveOptionalNamespace(String annotationValue) {
-    return resolveNamespace(annotationValue, true);
-  }
-
-  @NonNull
-  public static String resolveNamespace(String annotationValue) {
-    return ObjectUtils.requireNonNull(resolveNamespace(annotationValue, false));
-  }
-
-  /**
-   * Resolves a provided namespace value. If the value is {@code null} or
-   * "##default", then the provided default value will be used instead. If the
-   * value is "##none" and {@code allowNone} is {@code true}, then an empty string
-   * value will be used. Otherwise, the value is returned.
-   *
-   * @param value
-   *          the requested value
-   * @param definition
-   *          a class with the {@link XmlSchema} annotation
-   * @param allowNone
-   *          if the "##none" value is honored
-   * @return the resolved value or {@code null} if no namespace is defined
-   */
-  private static String resolveNamespace(String value, boolean allowNone) {
-    String retval;
-    if (value == null || DEFAULT_STRING_VALUE.equals(value)) {
-      // get namespace from the metaschema
-      retval = null;
-    } else if (allowNone && NO_STRING_VALUE.equals(value)) {
-      retval = ""; // NOPMD - intentional
     } else {
       retval = value;
     }
@@ -221,9 +186,11 @@ public final class ModelUtil {
   }
 
   @NonNull
-  public static IGroupAs groupAs(@NonNull GroupAs groupAs) {
+  public static IGroupAs groupAs(
+      @NonNull GroupAs groupAs,
+      @NonNull IModule module) {
     return NULL_VALUE.equals(groupAs.name())
         ? IGroupAs.SINGLETON_GROUP_AS
-        : new DefaultGroupAs(groupAs);
+        : new DefaultGroupAs(groupAs, module);
   }
 }

@@ -27,11 +27,10 @@
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IModule;
@@ -55,9 +54,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlChoiceInstance
-    extends AbstractInstance<IAssemblyDefinition>
-    implements IChoiceInstance,
-    IFeatureContainerModelAbsolute<
+    extends AbstractChoiceInstance<
+        IAssemblyDefinition,
         IModelInstanceAbsolute,
         INamedModelInstanceAbsolute,
         IFieldInstanceAbsolute,
@@ -88,23 +86,6 @@ class XmlChoiceInstance
     return ObjectUtils.notNull(modelContainer.get());
   }
 
-  @Override
-  public String getGroupAsName() {
-    // a choice does not have a groups-as name
-    return null;
-  }
-
-  @Override
-  public String getJsonKeyFlagName() {
-    // choices do not have a JSON key flag
-    return null;
-  }
-
-  @Override
-  public boolean hasChildren() {
-    return !getModelContainer().getModelInstances().isEmpty();
-  }
-
   // ----------------------------------------
   // - Start XmlBeans driven code - CPD-OFF -
   // ----------------------------------------
@@ -131,36 +112,33 @@ class XmlChoiceInstance
 
   @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
-  private static final XmlObjectParser<Pair<IChoiceInstance, XmlModelContainer>> XML_MODEL_PARSER
-      = new XmlObjectParser<>(ObjectUtils.notNull(
-          Map.ofEntries(
-              Map.entry(new QName(IModule.XML_NAMESPACE, "assembly"),
-                  XmlChoiceInstance::handleAssembly),
-              Map.entry(new QName(IModule.XML_NAMESPACE, "define-assembly"),
-                  XmlChoiceInstance::handleDefineAssembly),
-              Map.entry(new QName(IModule.XML_NAMESPACE, "field"),
-                  XmlChoiceInstance::handleField),
-              Map.entry(new QName(IModule.XML_NAMESPACE, "define-field"),
-                  XmlChoiceInstance::handleDefineField)))) {
+  private static final XmlObjectParser<Pair<IChoiceInstance,
+      XmlModelContainer>> XML_MODEL_PARSER
+          = new XmlObjectParser<>(ObjectUtils.notNull(
+              Map.ofEntries(Map.entry(new QName(IModule.XML_NAMESPACE, "assembly"), XmlChoiceInstance::handleAssembly),
+                  Map.entry(new QName(IModule.XML_NAMESPACE, "define-assembly"),
+                      XmlChoiceInstance::handleDefineAssembly),
+                  Map.entry(new QName(IModule.XML_NAMESPACE, "field"), XmlChoiceInstance::handleField),
+                  Map.entry(new QName(IModule.XML_NAMESPACE, "define-field"), XmlChoiceInstance::handleDefineField)))) {
 
-        @Override
-        protected Handler<Pair<IChoiceInstance, XmlModelContainer>>
-            identifyHandler(XmlCursor cursor, XmlObject obj) {
-          Handler<Pair<IChoiceInstance, XmlModelContainer>> retval;
-          if (obj instanceof FieldReferenceType) {
-            retval = XmlChoiceInstance::handleField;
-          } else if (obj instanceof InlineFieldDefinitionType) {
-            retval = XmlChoiceInstance::handleDefineField;
-          } else if (obj instanceof AssemblyReferenceType) {
-            retval = XmlChoiceInstance::handleAssembly;
-          } else if (obj instanceof InlineAssemblyDefinitionType) {
-            retval = XmlChoiceInstance::handleDefineAssembly;
-          } else {
-            retval = super.identifyHandler(cursor, obj);
-          }
-          return retval;
-        }
-      };
+            @Override
+            protected Handler<Pair<IChoiceInstance, XmlModelContainer>> identifyHandler(XmlCursor cursor,
+                XmlObject obj) {
+              Handler<Pair<IChoiceInstance, XmlModelContainer>> retval;
+              if (obj instanceof FieldReferenceType) {
+                retval = XmlChoiceInstance::handleField;
+              } else if (obj instanceof InlineFieldDefinitionType) {
+                retval = XmlChoiceInstance::handleDefineField;
+              } else if (obj instanceof AssemblyReferenceType) {
+                retval = XmlChoiceInstance::handleAssembly;
+              } else if (obj instanceof InlineAssemblyDefinitionType) {
+                retval = XmlChoiceInstance::handleDefineAssembly;
+              } else {
+                retval = super.identifyHandler(cursor, obj);
+              }
+              return retval;
+            }
+          };
 
   private static void handleField( // NOPMD false positive
       @NonNull XmlObject obj,
@@ -220,14 +198,14 @@ class XmlChoiceInstance
     }
 
     public void append(@NonNull IFieldInstanceAbsolute instance) {
-      String key = instance.getEffectiveName();
+      QName key = instance.getXmlQName();
       getFieldInstanceMap().put(key, instance);
       getNamedModelInstanceMap().put(key, instance);
       getModelInstances().add(instance);
     }
 
     public void append(@NonNull IAssemblyInstanceAbsolute instance) {
-      String key = instance.getEffectiveName();
+      QName key = instance.getXmlQName();
       getAssemblyInstanceMap().put(key, instance);
       getNamedModelInstanceMap().put(key, instance);
       getModelInstances().add(instance);

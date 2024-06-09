@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.cli.processor.command.DefaultExtraArgument;
 import gov.nist.secauto.metaschema.cli.processor.command.ExtraArgument;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.core.util.UriUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
@@ -46,10 +47,17 @@ import org.apache.commons.cli.Option;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -64,8 +72,8 @@ public abstract class AbstractConvertSubcommand
   private static final String COMMAND = "convert";
   @NonNull
   private static final List<ExtraArgument> EXTRA_ARGUMENTS = ObjectUtils.notNull(List.of(
-      new DefaultExtraArgument("source file", true),
-      new DefaultExtraArgument("destination file", false)));
+      new DefaultExtraArgument("source-file-or-URL", true),
+      new DefaultExtraArgument("destination-file", false)));
 
   @NonNull
   private static final Option OVERWRITE_OPTION = ObjectUtils.notNull(
@@ -121,14 +129,6 @@ public abstract class AbstractConvertSubcommand
     if (extraArgs.isEmpty() || extraArgs.size() > 2) {
       throw new InvalidArgumentException("Illegal number of arguments.");
     }
-
-    Path source = Paths.get(extraArgs.get(0));
-    if (!Files.exists(source)) {
-      throw new InvalidArgumentException("The provided source '" + source + "' does not exist.");
-    }
-    if (!Files.isReadable(source)) {
-      throw new InvalidArgumentException("The provided source '" + source + "' is not readable.");
-    }
   }
 
   protected abstract static class AbstractConversionCommandExecutor
@@ -142,9 +142,6 @@ public abstract class AbstractConvertSubcommand
 
     @NonNull
     protected abstract IBindingContext getBindingContext();
-
-    @NonNull
-    protected abstract Class<?> getLoadedClass();
 
     @SuppressWarnings({
         "PMD.OnlyOneReturn", // readability
@@ -185,7 +182,15 @@ public abstract class AbstractConvertSubcommand
         }
       }
 
-      Path source = Paths.get(extraArgs.get(0));
+      String sourceName = extraArgs.get(0);
+      URI source;
+      URI cwd = Paths.get("").toAbsolutePath().toUri();
+      try {
+        source = UriUtils.toUri(sourceName, cwd);
+      } catch (URISyntaxException ex) {
+        return ExitCode.IO_ERROR.exitMessage("Cannot load source '%s' as it is not a valid file or URI.")
+            .withThrowable(ex);
+      }
       assert source != null;
 
       String toFormatText = cmdLine.getOptionValue(TO_OPTION);
@@ -199,9 +204,19 @@ public abstract class AbstractConvertSubcommand
         }
 
         if (destination == null) {
-          loader.convert(source, ObjectUtils.notNull(System.out), toFormat, getLoadedClass());
+          // write to STDOUT
+          OutputStreamWriter writer = new OutputStreamWriter(System.out, StandardCharsets.UTF_8);
+          handleConversion(source, toFormat, writer, loader);
         } else {
-          loader.convert(source, destination, toFormat, getLoadedClass());
+          try (Writer writer = Files.newBufferedWriter(
+              destination,
+              StandardCharsets.UTF_8,
+              StandardOpenOption.CREATE,
+              StandardOpenOption.WRITE,
+              StandardOpenOption.TRUNCATE_EXISTING)) {
+            assert writer != null;
+            handleConversion(source, toFormat, writer, loader);
+          }
         }
       } catch (IOException | IllegalArgumentException ex) {
         return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex); // NOPMD readability
@@ -212,5 +227,10 @@ public abstract class AbstractConvertSubcommand
       return ExitCode.OK.exit();
     }
 
+    protected abstract void handleConversion(
+        @NonNull URI source,
+        @NonNull Format toFormat,
+        @NonNull Writer writer,
+        @NonNull IBoundLoader loader) throws FileNotFoundException, IOException;
   }
 }

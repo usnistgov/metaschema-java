@@ -26,28 +26,31 @@
 
 package gov.nist.secauto.metaschema.core.datatype.adapter;
 
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IEmailAddressItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.List;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class EmailAddressAdapter
     extends AbstractStringAdapter<IEmailAddressItem> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
+  private static final List<QName> NAMES = ObjectUtils.notNull(
       List.of(
-          "email-address",
+          new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "email-address"),
           // for backwards compatibility with original type name
-          "email"));
+          new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "email")));
 
   EmailAddressAdapter() {
     // avoid general construction
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

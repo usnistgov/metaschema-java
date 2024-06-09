@@ -111,7 +111,7 @@ public class TargetedIndexHasKeyConstraint implements ITargetedConstraintBase {
       formalName = "Property",
       useName = "prop",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "props", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "props", inJson = JsonGroupAsBehavior.LIST))
   private List<Property> _props;
 
   @BoundAssembly(
@@ -119,7 +119,7 @@ public class TargetedIndexHasKeyConstraint implements ITargetedConstraintBase {
       useName = "key-field",
       minOccurs = 1,
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "key-fields", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "key-fields", inJson = JsonGroupAsBehavior.LIST))
   private List<KeyConstraintField> _keyFields;
 
   @BoundField(

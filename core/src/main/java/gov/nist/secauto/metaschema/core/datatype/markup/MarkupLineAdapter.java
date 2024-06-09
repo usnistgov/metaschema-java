@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.datatype.markup;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.XmlMarkupParser;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IMarkupItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -37,6 +38,7 @@ import org.codehaus.stax2.XMLEventReader2;
 import java.io.IOException;
 import java.util.List;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -44,15 +46,15 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class MarkupLineAdapter
     extends AbstractMarkupAdapter<MarkupLine> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
-      List.of("markup-line"));
+  private static final List<QName> NAMES = ObjectUtils.notNull(
+      List.of(new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "markup-line")));
 
   MarkupLineAdapter() {
     super(MarkupLine.class);
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

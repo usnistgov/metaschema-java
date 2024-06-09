@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.model;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface INamedModelInstanceAbsolute extends INamedModelInstance, IModelInstanceAbsolute {
   @Override
@@ -48,14 +49,16 @@ public interface INamedModelInstanceAbsolute extends INamedModelInstance, IModel
   }
 
   @Override
-  default String getJsonKeyFlagName() {
-    String retval = null;
-    if (JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())) {
-      IFlagInstance jsonKeyFlag = getDefinition().getJsonKeyFlagInstance();
-      if (jsonKeyFlag != null) {
-        retval = jsonKeyFlag.getEffectiveName();
-      }
-    }
-    return retval;
+  @Nullable
+  default IFlagInstance getEffectiveJsonKey() {
+    return JsonGroupAsBehavior.KEYED.equals(getJsonGroupAsBehavior())
+        ? getJsonKey()
+        : null;
+  }
+
+  @Override
+  @Nullable
+  default IFlagInstance getJsonKey() {
+    return getDefinition().getJsonKey();
   }
 }

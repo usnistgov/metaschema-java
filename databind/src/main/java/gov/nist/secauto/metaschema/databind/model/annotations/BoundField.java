@@ -45,8 +45,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Module field.
  * <p>
  * For XML serialization, the {@link #useName()} identifies the name of the
- * element to use and the {@link #namespace()} identifies the namespace of this
- * element.
+ * element to use for this element.
  * <p>
  * For JSON and YAML serializations, the {@link #useName()} identifies the
  * property/item name to use.
@@ -126,16 +125,6 @@ public @interface BoundField {
    */
   @NonNull
   String defaultValue() default ModelUtil.NULL_VALUE;
-
-  /**
-   * The namespace to use for associated XML elements.
-   * <p>
-   * If the value is "##default", then element name is derived from the namespace
-   * provided in the package-info.
-   *
-   * @return the namespace
-   */
-  String namespace() default ModelUtil.DEFAULT_STRING_VALUE;
 
   /**
    * If the data type allows it, determines if the field's value must be wrapped

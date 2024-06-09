@@ -30,19 +30,24 @@ import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModelElement;
-import gov.nist.secauto.metaschema.core.model.INamed;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelElement;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 
+import java.net.URI;
+
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractModelBuilder<T extends AbstractModelBuilder<T>>
     extends MockFactory {
 
+  private String namespace;
   private String name;
 
   protected AbstractModelBuilder(@NonNull Mockery ctx) {
@@ -53,6 +58,21 @@ public abstract class AbstractModelBuilder<T extends AbstractModelBuilder<T>>
   @SuppressWarnings("unchecked")
   public T reset() {
     this.name = null;
+    this.namespace = null;
+    return (T) this;
+  }
+
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public T namespace(@NonNull String name) {
+    this.namespace = name;
+    return (T) this;
+  }
+
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public T namespace(@NonNull URI name) {
+    this.namespace = name.toASCIIString();
     return (T) this;
   }
 
@@ -82,6 +102,10 @@ public abstract class AbstractModelBuilder<T extends AbstractModelBuilder<T>>
     applyAttributable(instance);
     getContext().checking(new Expectations() {
       {
+        allowing(instance).getXmlNamespace();
+        will(returnValue(namespace));
+        allowing(instance).getXmlQName();
+        will(returnValue(new QName(namespace, name)));
         allowing(instance).getDefinition();
         will(returnValue(definition));
         allowing(instance).getContainingDefinition();
@@ -92,7 +116,7 @@ public abstract class AbstractModelBuilder<T extends AbstractModelBuilder<T>>
     });
   }
 
-  protected void applyNamed(@NonNull INamed element) {
+  protected void applyNamed(@NonNull INamedModelElement element) {
     getContext().checking(new Expectations() {
       {
         allowing(element).getName();

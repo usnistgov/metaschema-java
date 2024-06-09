@@ -34,6 +34,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IDecimalItem extends INumericItem {
   @SuppressWarnings("null")
@@ -104,7 +105,7 @@ public interface IDecimalItem extends INumericItem {
    *           if the provided {@code item} cannot be cast to this type
    */
   @NonNull
-  static IDecimalItem cast(@NonNull IAnyAtomicItem item) {
+  static IDecimalItem cast(@Nullable IAnyAtomicItem item) {
     return MetaschemaDataTypeProvider.DECIMAL.cast(item);
   }
 

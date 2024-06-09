@@ -114,7 +114,7 @@ public abstract class AbstractGenerationState<WRITER, DATATYPE_MANAGER extends I
         closed = true;
       }
 
-      if (!MetapathExpression.CONTEXT_NODE.equals(constraint.getTarget())) {
+      if (!MetapathExpression.CONTEXT_NODE.getPath().equals(constraint.getTarget())) {
         values = CollectionUtil.emptyList();
         break;
       }

@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.datatype.adapter;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.core.datatype.AbstractDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDayTimeDurationItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -36,20 +37,22 @@ import java.time.Duration;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DayTimeAdapter
     extends AbstractDataTypeAdapter<Duration, IDayTimeDurationItem> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
-      List.of("day-time-duration"));
+  private static final List<QName> NAMES = ObjectUtils.notNull(
+      List.of(new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "day-time-duration")));
 
   DayTimeAdapter() {
     super(Duration.class);
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

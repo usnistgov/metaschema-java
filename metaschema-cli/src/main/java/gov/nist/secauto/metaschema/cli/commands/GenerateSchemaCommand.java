@@ -99,7 +99,7 @@ public class GenerateSchemaCommand
 
   static {
     EXTRA_ARGUMENTS = ObjectUtils.notNull(List.of(
-        new DefaultExtraArgument("metaschema-module-file", true),
+        new DefaultExtraArgument("metaschema-module-file-or-URL", true),
         new DefaultExtraArgument("destination-schema-file", false)));
   }
 
@@ -166,7 +166,6 @@ public class GenerateSchemaCommand
       @NonNull CallingContext callingContext,
       @NonNull CommandLine cmdLine) {
     List<String> extraArgs = cmdLine.getArgList();
-    URI cwd = Paths.get("").toAbsolutePath().toUri();
 
     Path destination = null;
     if (extraArgs.size() > 1) {
@@ -212,6 +211,7 @@ public class GenerateSchemaCommand
 
     URI input;
     String inputName = extraArgs.get(0);
+    URI cwd = Paths.get("").toAbsolutePath().toUri();
 
     try {
       input = UriUtils.toUri(extraArgs.get(0), cwd);

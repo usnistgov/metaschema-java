@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.core.model.xml;
 
 import gov.nist.secauto.metaschema.core.model.AbstractModuleLoader;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaModule;
 import gov.nist.secauto.metaschema.core.model.IModuleLoader;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.model.xml.impl.XmlModule;
@@ -60,7 +61,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * every use. Any Metaschema imported is also loaded and cached automatically.
  */
 public class ModuleLoader
-    extends AbstractModuleLoader<METASCHEMADocument, IXmlModule> {
+    extends AbstractModuleLoader<METASCHEMADocument, IMetaschemaModule> {
   private boolean resolveEntities; // = false;
 
   /**
@@ -92,7 +93,8 @@ public class ModuleLoader
   }
 
   @Override
-  protected IXmlModule newModule(URI resource, METASCHEMADocument binding, List<IXmlModule> importedModules)
+  protected IMetaschemaModule newModule(URI resource, METASCHEMADocument binding,
+      List<? extends IMetaschemaModule> importedModules)
       throws MetaschemaException {
     return new XmlModule(resource, binding, importedModules);
   }

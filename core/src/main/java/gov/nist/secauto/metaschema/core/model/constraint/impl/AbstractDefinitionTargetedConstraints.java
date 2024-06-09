@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint.impl;
 
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
@@ -62,7 +61,7 @@ public abstract class AbstractDefinitionTargetedConstraints<
    *          the constraints to apply to matching targets
    */
   protected AbstractDefinitionTargetedConstraints(
-      @NonNull MetapathExpression target,
+      @NonNull String target,
       @NonNull S constraints) {
     super(target, constraints);
   }
@@ -76,12 +75,11 @@ public abstract class AbstractDefinitionTargetedConstraints<
    * @param definition
    *          the definition to apply the constraints to.
    */
-  @SuppressWarnings("null")
   protected void applyTo(@NonNull T definition) {
-    getAllowedValuesConstraints().forEach(constraint -> definition.addConstraint(constraint));
-    getMatchesConstraints().forEach(constraint -> definition.addConstraint(constraint));
-    getIndexHasKeyConstraints().forEach(constraint -> definition.addConstraint(constraint));
-    getExpectConstraints().forEach(constraint -> definition.addConstraint(constraint));
+    getAllowedValuesConstraints().forEach(definition::addConstraint);
+    getMatchesConstraints().forEach(definition::addConstraint);
+    getIndexHasKeyConstraints().forEach(definition::addConstraint);
+    getExpectConstraints().forEach(definition::addConstraint);
   }
 
   @Override

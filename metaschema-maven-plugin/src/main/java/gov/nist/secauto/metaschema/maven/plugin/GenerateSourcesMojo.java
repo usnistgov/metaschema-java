@@ -111,7 +111,9 @@ public class GenerateSourcesMojo
     DefaultBindingConfiguration bindingConfiguration = new DefaultBindingConfiguration();
     for (File config : getConfigs()) {
       try {
-        getLog().info("Loading binding configuration: " + config.getPath());
+        if (getLog().isInfoEnabled()) {
+          getLog().info("Loading binding configuration: " + config.getPath());
+        }
         bindingConfiguration.load(config);
       } catch (IOException ex) {
         throw new MojoExecutionException(
@@ -120,7 +122,9 @@ public class GenerateSourcesMojo
     }
 
     try {
-      getLog().info("Generating Java classes in: " + getOutputDirectory().getPath());
+      if (getLog().isInfoEnabled()) {
+        getLog().info("Generating Java classes in: " + getOutputDirectory().getPath());
+      }
       JavaGenerator.generate(modules, ObjectUtils.notNull(getOutputDirectory().toPath()),
           bindingConfiguration);
     } catch (IOException ex) {
@@ -134,15 +138,21 @@ public class GenerateSourcesMojo
     try {
       staleFile = staleFile.getCanonicalFile();
     } catch (IOException ex) {
-      getLog().warn("Unable to resolve canonical path to stale file. Treating it as not existing.", ex);
+      if (getLog().isWarnEnabled()) {
+        getLog().warn("Unable to resolve canonical path to stale file. Treating it as not existing.", ex);
+      }
     }
 
     boolean generate;
     if (shouldExecutionBeSkipped()) {
-      getLog().debug(String.format("Source file generation is configured to be skipped. Skipping."));
+      if (getLog().isDebugEnabled()) {
+        getLog().debug(String.format("Source file generation is configured to be skipped. Skipping."));
+      }
       generate = false;
     } else if (!staleFile.exists()) {
-      getLog().info(String.format("Stale file '%s' doesn't exist! Generating source files.", staleFile.getPath()));
+      if (getLog().isInfoEnabled()) {
+        getLog().info(String.format("Stale file '%s' doesn't exist! Generating source files.", staleFile.getPath()));
+      }
       generate = true;
     } else {
       generate = isGenerationRequired();
@@ -151,12 +161,12 @@ public class GenerateSourcesMojo
     if (generate) {
 
       File outputDir = getOutputDirectory();
-      getLog().debug(String.format("Using outputDirectory: %s", outputDir.getPath()));
+      if (getLog().isDebugEnabled()) {
+        getLog().debug(String.format("Using outputDirectory: %s", outputDir.getPath()));
+      }
 
-      if (!outputDir.exists()) {
-        if (!outputDir.mkdirs()) {
-          throw new MojoExecutionException("Unable to create output directory: " + outputDir);
-        }
+      if (!outputDir.exists() && !outputDir.mkdirs()) {
+        throw new MojoExecutionException("Unable to create output directory: " + outputDir);
       }
 
       List<IConstraintSet> constraints;
@@ -174,7 +184,9 @@ public class GenerateSourcesMojo
       loader.allowEntityResolution();
       final Set<IModule> modules = new HashSet<>();
       for (File source : getModuleSources().collect(Collectors.toList())) {
-        getLog().info("Using metaschema source: " + source.getPath());
+        if (getLog().isInfoEnabled()) {
+          getLog().info("Using metaschema source: " + source.getPath());
+        }
         IModule module;
         try {
           module = loader.load(source);
@@ -187,16 +199,16 @@ public class GenerateSourcesMojo
       generate(modules);
 
       // create the stale file
-      if (!staleFileDirectory.exists()) {
-        if (!staleFileDirectory.mkdirs()) {
-          throw new MojoExecutionException("Unable to create output directory: " + staleFileDirectory);
-        }
+      if (!staleFileDirectory.exists() && !staleFileDirectory.mkdirs()) {
+        throw new MojoExecutionException("Unable to create output directory: " + staleFileDirectory);
       }
       try (OutputStream os
           = Files.newOutputStream(staleFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
               StandardOpenOption.TRUNCATE_EXISTING)) {
         os.close();
-        getLog().info("Created stale file: " + staleFile);
+        if (getLog().isInfoEnabled()) {
+          getLog().info("Created stale file: " + staleFile);
+        }
       } catch (IOException ex) {
         throw new MojoExecutionException("Failed to write stale file: " + staleFile.getPath(), ex);
       }

@@ -63,14 +63,7 @@ public interface IDataTypeAdapter<TYPE> {
    * @return the name
    */
   @NonNull
-  List<String> getNames();
-
-  /**
-   * The JSON primative type of the data type.
-   *
-   * @return the JSON data type
-   */
-  JsonFormatTypes getJsonRawType();
+  List<QName> getNames();
 
   /**
    * Get the most preferred name for this data type.
@@ -78,9 +71,16 @@ public interface IDataTypeAdapter<TYPE> {
    * @return the name
    */
   @NonNull
-  default String getPreferredName() {
+  default QName getPreferredName() {
     return ObjectUtils.notNull(getNames().iterator().next());
   }
+
+  /**
+   * The JSON primative type of the data type.
+   *
+   * @return the JSON data type
+   */
+  JsonFormatTypes getJsonRawType();
 
   /**
    * Get the Java class supported by this adapter.

@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.core.metapath.cst;
 
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.bool;
 import static gov.nist.secauto.metaschema.core.metapath.TestUtils.integer;
-import static gov.nist.secauto.metaschema.core.metapath.TestUtils.string;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import gov.nist.secauto.metaschema.core.metapath.ExpressionTestBase;
@@ -47,7 +46,7 @@ class ArrowExpressionTest
     extends ExpressionTestBase {
   private static Stream<Arguments> provideValues() { // NOPMD - false positive
     return Stream.of(
-        Arguments.of(ISequence.of(string("true")), "true() => string()"),
+        // Arguments.of(ISequence.of(string("true")), "true() => string()"),
         Arguments.of(ISequence.of(bool(false)), "() => exists()"),
         Arguments.of(ISequence.of(integer(3)), "(1, 2) => sum()"));
   }

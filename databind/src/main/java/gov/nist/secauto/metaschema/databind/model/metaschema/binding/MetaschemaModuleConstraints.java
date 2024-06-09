@@ -83,14 +83,14 @@ public class MetaschemaModuleConstraints {
       description = "Declares a set of Metaschema constraints from an out-of-line resource to import, supporting composition of constraint sets.",
       useName = "import",
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "imports", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "imports", inJson = JsonGroupAsBehavior.LIST))
   private List<Import> _imports;
 
   @BoundAssembly(
       useName = "scope",
       minOccurs = 1,
       maxOccurs = -1,
-      groupAs = @GroupAs(name = "scopes", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+      groupAs = @GroupAs(name = "scopes", inJson = JsonGroupAsBehavior.LIST))
   private List<Scope> _scopes;
 
   public String getName() {
@@ -208,7 +208,7 @@ public class MetaschemaModuleConstraints {
             @BoundGroupedAssembly(useName = "field", binding = Field.class),
             @BoundGroupedAssembly(useName = "flag", binding = Flag.class)
         },
-        groupAs = @GroupAs(name = "constraints", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+        groupAs = @GroupAs(name = "constraints", inJson = JsonGroupAsBehavior.LIST))
     private List<Object> _constraints;
 
     @BoundField(
@@ -278,7 +278,7 @@ public class MetaschemaModuleConstraints {
               @BoundGroupedAssembly(formalName = "Value Matches Constraint", useName = "matches",
                   binding = FlagMatches.class)
           },
-          groupAs = @GroupAs(name = "rules", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+          groupAs = @GroupAs(name = "rules", inJson = JsonGroupAsBehavior.LIST))
       private List<? extends ITargetedConstraintBase> _rules;
 
       @Override
@@ -333,7 +333,7 @@ public class MetaschemaModuleConstraints {
               @BoundGroupedAssembly(formalName = "Value Matches Constraint", useName = "matches",
                   binding = TargetedMatchesConstraint.class)
           },
-          groupAs = @GroupAs(name = "rules", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+          groupAs = @GroupAs(name = "rules", inJson = JsonGroupAsBehavior.LIST))
       private List<? extends ITargetedConstraintBase> _rules;
 
       public String getTarget() {
@@ -394,7 +394,7 @@ public class MetaschemaModuleConstraints {
               @BoundGroupedAssembly(formalName = "Targeted Cardinality Constraint", useName = "has-cardinality",
                   binding = TargetedHasCardinalityConstraint.class)
           },
-          groupAs = @GroupAs(name = "rules", namespace = "##default", inJson = JsonGroupAsBehavior.LIST))
+          groupAs = @GroupAs(name = "rules", inJson = JsonGroupAsBehavior.LIST))
       private List<? extends ITargetedConstraintBase> _rules;
 
       public String getTarget() {

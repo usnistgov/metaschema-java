@@ -58,7 +58,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class DefaultBindingConfiguration implements IBindingConfiguration {
   private final Map<String, String> namespaceToPackageNameMap = new ConcurrentHashMap<>();
-  // metaschema location -> ModelType -> Definition Name -> IBindingConfiguration
+  // metaschema location -> ModelType -> Definition name -> IBindingConfiguration
   private final Map<String, MetaschemaBindingConfiguration> moduleUrlToMetaschemaBindingConfigurationMap
       = new ConcurrentHashMap<>();
 

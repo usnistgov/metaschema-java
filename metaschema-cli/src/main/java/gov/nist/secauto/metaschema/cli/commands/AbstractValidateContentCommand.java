@@ -46,9 +46,8 @@ import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.core.util.UriUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.IBindingContext.IValidationSchemaProvider;
+import gov.nist.secauto.metaschema.databind.IBindingContext.ISchemaValidationProvider;
 import gov.nist.secauto.metaschema.databind.io.Format;
-import gov.nist.secauto.metaschema.databind.io.FormatDetector;
 import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
 import gov.nist.secauto.metaschema.databind.model.metaschema.BindingConstraintLoader;
 
@@ -56,7 +55,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.xml.sax.SAXException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -80,7 +78,7 @@ public abstract class AbstractValidateContentCommand
   private static final String COMMAND = "validate";
   @NonNull
   private static final List<ExtraArgument> EXTRA_ARGUMENTS = ObjectUtils.notNull(List.of(
-      new DefaultExtraArgument("file to validate", true)));
+      new DefaultExtraArgument("file-or-URI-to-validate", true)));
 
   @NonNull
   private static final Option AS_OPTION = ObjectUtils.notNull(
@@ -143,7 +141,7 @@ public abstract class AbstractValidateContentCommand
 
   protected abstract class AbstractValidationCommandExecutor
       extends AbstractCommandExecutor
-      implements IValidationSchemaProvider {
+      implements ISchemaValidationProvider {
 
     public AbstractValidationCommandExecutor(
         @NonNull CallingContext callingContext,
@@ -189,7 +187,7 @@ public abstract class AbstractValidateContentCommand
       IBoundLoader loader = bindingContext.newBoundLoader();
 
       List<String> extraArgs = cmdLine.getArgList();
-      // @SuppressWarnings("null")
+
       String sourceName = extraArgs.get(0);
       URI source;
 
@@ -215,9 +213,8 @@ public abstract class AbstractValidateContentCommand
         }
       } else {
         // attempt to determine the format
-        FormatDetector.Result formatResult;
         try {
-          formatResult = loader.detectFormat(source);
+          asFormat = loader.detectFormat(source);
         } catch (FileNotFoundException ex) {
           // this case was already checked for
           return ExitCode.IO_ERROR.exitMessage("The provided source file '" + source + "' does not exist.");
@@ -230,7 +227,6 @@ public abstract class AbstractValidateContentCommand
                       .map(format -> format.name())
                       .collect(CustomCollectors.joiningWithOxfordComma("or")));
         }
-        asFormat = formatResult.getFormat();
       }
 
       if (LOGGER.isInfoEnabled()) {
@@ -246,12 +242,12 @@ public abstract class AbstractValidateContentCommand
       } catch (UnknownHostException ex) {
         return ExitCode.IO_ERROR.exitMessage(String.format("Unknown host for '%s'.", source)).withThrowable(ex);
 
-      } catch (IOException | SAXException ex) {
+      } catch (IOException ex) {
         return ExitCode.PROCESSING_ERROR.exit().withThrowable(ex);
       }
 
-      if (LOGGER.isInfoEnabled()) {
-        LOGGER.info("Validation identified the following in file '{}'.", source);
+      if (LOGGER.isInfoEnabled() && !validationResult.isPassing()) {
+        LOGGER.info("Validation identified the following issues:", source);
       }
 
       LoggingValidationHandler.instance().handleValidationResults(validationResult);

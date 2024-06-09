@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.hamcrest.Description;
 import org.jmock.Expectations;
@@ -43,6 +44,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -76,11 +79,12 @@ public class MockNodeItemFactory {
     return getContext().mock(clazz, mockName);
   }
 
-  public IDocumentNodeItem document(@NonNull URI documentURI, @NonNull String name,
+  public IDocumentNodeItem document(@NonNull URI documentURI, @NonNull QName rootName,
       @NonNull List<IFlagNodeItem> flags,
       @NonNull List<IModelNodeItem<?, ?>> modelItems) {
-    IDocumentNodeItem document = newMock(IDocumentNodeItem.class, name);
-    IRootAssemblyNodeItem root = newMock(IRootAssemblyNodeItem.class, name);
+    String qname = ObjectUtils.notNull(rootName.toString());
+    IDocumentNodeItem document = newMock(IDocumentNodeItem.class, qname);
+    IRootAssemblyNodeItem root = newMock(IRootAssemblyNodeItem.class, qname);
 
     getContext().checking(new Expectations() {
       { // NOPMD - intentional
@@ -96,7 +100,7 @@ public class MockNodeItemFactory {
         will(returnValue(Stream.of(document)));
 
         allowing(root).getName();
-        will(returnValue(name));
+        will(returnValue(rootName));
         allowing(root).getNodeItem();
         will(returnValue(root));
         allowing(root).getDocumentNodeItem();
@@ -128,7 +132,7 @@ public class MockNodeItemFactory {
           will(returnValue(item));
         });
 
-        Map<String, List<IModelNodeItem<?, ?>>> modelItemsMap = toModelItemsMap(modelItems);
+        Map<QName, List<IModelNodeItem<?, ?>>> modelItemsMap = toModelItemsMap(modelItems);
         allowing(item).getModelItems();
         will(returnValue(modelItemsMap.values()));
         modelItemsMap.entrySet().forEach(entry -> {
@@ -168,12 +172,12 @@ public class MockNodeItemFactory {
 
   @SuppressWarnings("static-method")
   @NonNull
-  private Map<String, List<IModelNodeItem<?, ?>>>
+  private Map<QName, List<IModelNodeItem<?, ?>>>
       toModelItemsMap(@NonNull List<IModelNodeItem<?, ?>> modelItems) {
 
-    Map<String, List<IModelNodeItem<?, ?>>> retval = new LinkedHashMap<>(); // NOPMD - intentional
+    Map<QName, List<IModelNodeItem<?, ?>>> retval = new LinkedHashMap<>(); // NOPMD - intentional
     for (IModelNodeItem<?, ?> item : modelItems) {
-      String name = item.getName();
+      QName name = item.getName();
       List<IModelNodeItem<?, ?>> namedItems = retval.get(name);
       if (namedItems == null) {
         namedItems = new LinkedList<>(); // NOPMD - intentional
@@ -185,8 +189,8 @@ public class MockNodeItemFactory {
   }
 
   @NonNull
-  public IFlagNodeItem flag(@NonNull String name, @NonNull IAnyAtomicItem value) {
-    IFlagNodeItem retval = newMock(IFlagNodeItem.class, name);
+  public IFlagNodeItem flag(@NonNull QName name, @NonNull IAnyAtomicItem value) {
+    IFlagNodeItem retval = newMock(IFlagNodeItem.class, ObjectUtils.notNull(name.toString()));
 
     getContext().checking(new Expectations() {
       { // NOPMD - intentional
@@ -210,14 +214,14 @@ public class MockNodeItemFactory {
   }
 
   @NonNull
-  public IFieldNodeItem field(@NonNull String name, @NonNull IAnyAtomicItem value) {
+  public IFieldNodeItem field(@NonNull QName name, @NonNull IAnyAtomicItem value) {
     return field(name, value, CollectionUtil.emptyList());
   }
 
   @NonNull
-  public IFieldNodeItem field(@NonNull String name, @NonNull IAnyAtomicItem value,
+  public IFieldNodeItem field(@NonNull QName name, @NonNull IAnyAtomicItem value,
       @NonNull List<IFlagNodeItem> flags) {
-    IFieldNodeItem retval = newMock(IFieldNodeItem.class, name);
+    IFieldNodeItem retval = newMock(IFieldNodeItem.class, ObjectUtils.notNull(name.toString()));
 
     getContext().checking(new Expectations() {
       { // NOPMD - intentional
@@ -240,9 +244,9 @@ public class MockNodeItemFactory {
   }
 
   @NonNull
-  public IAssemblyNodeItem assembly(@NonNull String name, @NonNull List<IFlagNodeItem> flags,
+  public IAssemblyNodeItem assembly(@NonNull QName name, @NonNull List<IFlagNodeItem> flags,
       @NonNull List<IModelNodeItem<?, ?>> modelItems) {
-    IAssemblyNodeItem retval = newMock(IAssemblyNodeItem.class, name);
+    IAssemblyNodeItem retval = newMock(IAssemblyNodeItem.class, ObjectUtils.notNull(name.toString()));
 
     getContext().checking(new Expectations() {
       { // NOPMD - intentional

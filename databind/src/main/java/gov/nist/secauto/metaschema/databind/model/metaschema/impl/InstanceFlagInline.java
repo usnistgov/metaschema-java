@@ -30,17 +30,17 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.AbstractInlineFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
+import gov.nist.secauto.metaschema.core.model.IFeatureValueless;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionFlag;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModel;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagConstraints;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.InlineDefineFlag;
 
@@ -52,9 +52,13 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceFlagInline
-    extends AbstractInstance<InlineDefineFlag>
-    implements IBindingInstanceFlag, IBindingDefinitionFlag,
-    IFeatureDefinitionInstanceInlined<IBindingDefinitionFlag, IBindingInstanceFlag> {
+    extends AbstractInlineFlagDefinition<
+        IModelDefinition,
+        IFlagDefinition,
+        IFlagInstance>
+    implements IFeatureValueless {
+  @NonNull
+  private final InlineDefineFlag binding;
   @NonNull
   private final Map<IAttributable.Key, Set<String>> properties;
   @NonNull
@@ -70,23 +74,29 @@ public class InstanceFlagInline
       @NonNull InlineDefineFlag binding,
       @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
       int position,
-      @NonNull IBindingDefinitionModel parent) {
-    super(binding, parent);
-    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
-    this.javaTypeAdapter = ModelSupport.dataType(getBinding().getAsType());
-    this.defaultValue = ModelSupport.defaultValue(getBinding().getDefault(), this.javaTypeAdapter);
+      @NonNull IModelDefinition parent) {
+    super(parent);
+    this.binding = binding;
+    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(binding.getProps()));
+    this.javaTypeAdapter = ModelSupport.dataType(binding.getAsType());
+    this.defaultValue = ModelSupport.defaultValue(binding.getDefault(), this.javaTypeAdapter);
     this.valueConstraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
-      FlagConstraints constraints = getBinding().getConstraint();
+      FlagConstraints constraints = binding.getConstraint();
       if (constraints != null) {
         ConstraintBindingSupport.parse(retval, constraints, ISource.modelSource());
       }
       return retval;
     }));
     this.boundNodeItem = ObjectUtils.notNull(
-        Lazy.lazy(() -> (IAssemblyNodeItem) getContainingModule().getBoundNodeItem()
-            .getModelItemsByName(bindingInstance.getEffectiveName())
+        Lazy.lazy(() -> (IAssemblyNodeItem) ObjectUtils.notNull(getContainingModule().getNodeItem())
+            .getModelItemsByName(bindingInstance.getXmlQName())
             .get(position)));
+  }
+
+  @NonNull
+  protected InlineDefineFlag getBinding() {
+    return binding;
   }
 
   @SuppressWarnings("null")
@@ -95,9 +105,8 @@ public class InstanceFlagInline
     return valueConstraints.get();
   }
 
-  @SuppressWarnings("null")
   @Override
-  public INodeItem getBoundNodeItem() {
+  public IAssemblyNodeItem getNodeItem() {
     return boundNodeItem.get();
   }
 
@@ -114,16 +123,6 @@ public class InstanceFlagInline
   @Override
   public Object getDefaultValue() {
     return defaultValue;
-  }
-
-  @Override
-  public IBindingInstanceFlag getInlineInstance() {
-    return this;
-  }
-
-  @Override
-  public IBindingDefinitionFlag getDefinition() {
-    return this;
   }
 
   @Override

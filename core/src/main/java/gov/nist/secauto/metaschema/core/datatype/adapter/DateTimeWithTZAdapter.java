@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.datatype.adapter;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.core.datatype.AbstractDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDateTimeItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -36,23 +37,25 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DateTimeWithTZAdapter
     extends AbstractDataTypeAdapter<ZonedDateTime, IDateTimeItem> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
+  private static final List<QName> NAMES = ObjectUtils.notNull(
       List.of(
-          "date-time-with-timezone",
+          new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "date-time-with-timezone"),
           // for backwards compatibility with original type name
-          "dateTime-with-timezone"));
+          new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "dateTime-with-timezone")));
 
   DateTimeWithTZAdapter() {
     super(ZonedDateTime.class);
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

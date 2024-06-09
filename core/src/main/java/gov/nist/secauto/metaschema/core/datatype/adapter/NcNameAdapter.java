@@ -26,10 +26,13 @@
 
 package gov.nist.secauto.metaschema.core.datatype.adapter;
 
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.INcNameItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.List;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -37,17 +40,17 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class NcNameAdapter
     extends AbstractStringAdapter<INcNameItem> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
-      List.of("ncname",
+  private static final List<QName> NAMES = ObjectUtils.notNull(
+      List.of(new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "ncname"),
           // for backwards compatibility with original type name
-          "NCName"));
+          new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "NCName")));
 
   NcNameAdapter() {
     // avoid general construction
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

@@ -26,29 +26,32 @@
 
 package gov.nist.secauto.metaschema.core.datatype.adapter;
 
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IPositiveIntegerItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.math.BigInteger;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class PositiveIntegerAdapter
     extends AbstractIntegerAdapter<IPositiveIntegerItem> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
+  private static final List<QName> NAMES = ObjectUtils.notNull(
       List.of(
-          "positive-integer",
+          new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "positive-integer"),
           // for backwards compatibility with original type name
-          "positiveInteger"));
+          new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "positiveInteger")));
 
   PositiveIntegerAdapter() {
     // avoid general construction
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

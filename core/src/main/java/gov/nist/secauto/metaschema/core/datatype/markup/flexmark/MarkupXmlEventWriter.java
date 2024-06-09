@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.datatype.markup.flexmark;
 
 import com.vladsch.flexmark.parser.ListOptions;
 
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.impl.AbstractMarkupWriter;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 

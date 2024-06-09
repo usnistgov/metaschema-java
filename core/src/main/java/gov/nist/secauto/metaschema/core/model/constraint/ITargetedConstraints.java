@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
@@ -39,7 +38,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 public interface ITargetedConstraints extends IValueConstrained {
   @NonNull
-  MetapathExpression getTargetExpression();
+  String getTargetExpression();
 
   void target(@NonNull IFlagDefinition definition);
 

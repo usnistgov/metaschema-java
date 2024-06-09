@@ -26,8 +26,8 @@
 
 /**
  * Provides an implementation of the Module model
- * ({@link gov.nist.secauto.metaschema.core.model}) representing module
- * constructs as bound Java class annotations
+ * ({@link gov.nist.secauto.metaschema.core.model}) represented by bound Java
+ * class annotations
  * ({@link gov.nist.secauto.metaschema.databind.model.annotations}).
  */
 

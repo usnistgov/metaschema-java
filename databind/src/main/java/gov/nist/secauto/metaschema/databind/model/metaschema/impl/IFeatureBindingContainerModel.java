@@ -26,67 +26,69 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAbsolute;
 import gov.nist.secauto.metaschema.core.model.IContainerModelSupport;
 import gov.nist.secauto.metaschema.core.model.IFeatureContainerModel;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingContainerModelAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelNamedAbsolute;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 
 import java.util.Collection;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IFeatureBindingContainerModel
-    extends IBindingContainerModelAbsolute, IFeatureContainerModel<
-        IBindingInstanceModelAbsolute,
-        IBindingInstanceModelNamedAbsolute,
-        IBindingInstanceModelFieldAbsolute,
-        IBindingInstanceModelAssemblyAbsolute> {
+    extends IContainerModelAbsolute, IFeatureContainerModel<
+        IModelInstanceAbsolute,
+        INamedModelInstanceAbsolute,
+        IFieldInstanceAbsolute,
+        IAssemblyInstanceAbsolute> {
   @Override
   @NonNull
   IContainerModelSupport<
-      IBindingInstanceModelAbsolute,
-      IBindingInstanceModelNamedAbsolute,
-      IBindingInstanceModelFieldAbsolute,
-      IBindingInstanceModelAssemblyAbsolute> getModelContainer();
+      IModelInstanceAbsolute,
+      INamedModelInstanceAbsolute,
+      IFieldInstanceAbsolute,
+      IAssemblyInstanceAbsolute> getModelContainer();
 
   @Override
-  default Collection<IBindingInstanceModelAbsolute> getModelInstances() {
+  default Collection<IModelInstanceAbsolute> getModelInstances() {
     return getModelContainer().getModelInstances();
   }
 
   @Override
-  default IBindingInstanceModelNamedAbsolute getNamedModelInstanceByName(String name) {
+  default INamedModelInstanceAbsolute getNamedModelInstanceByName(QName name) {
     return getModelContainer().getNamedModelInstanceMap().get(name);
   }
 
   @SuppressWarnings("null")
   @Override
-  default Collection<IBindingInstanceModelNamedAbsolute> getNamedModelInstances() {
+  default Collection<INamedModelInstanceAbsolute> getNamedModelInstances() {
     return getModelContainer().getNamedModelInstanceMap().values();
   }
 
   @Override
-  default IBindingInstanceModelFieldAbsolute getFieldInstanceByName(String name) {
+  default IFieldInstanceAbsolute getFieldInstanceByName(QName name) {
     return getModelContainer().getFieldInstanceMap().get(name);
   }
 
   @SuppressWarnings("null")
   @Override
-  default Collection<IBindingInstanceModelFieldAbsolute> getFieldInstances() {
+  default Collection<IFieldInstanceAbsolute> getFieldInstances() {
     return getModelContainer().getFieldInstanceMap().values();
   }
 
   @Override
-  default IBindingInstanceModelAssemblyAbsolute getAssemblyInstanceByName(String name) {
+  default IAssemblyInstanceAbsolute getAssemblyInstanceByName(QName name) {
     return getModelContainer().getAssemblyInstanceMap().get(name);
   }
 
   @SuppressWarnings("null")
   @Override
-  default Collection<IBindingInstanceModelAssemblyAbsolute> getAssemblyInstances() {
+  default Collection<IAssemblyInstanceAbsolute> getAssemblyInstances() {
     return getModelContainer().getAssemblyInstanceMap().values();
   }
 }

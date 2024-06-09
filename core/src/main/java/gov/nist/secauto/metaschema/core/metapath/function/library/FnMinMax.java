@@ -101,7 +101,7 @@ public final class FnMinMax {
     ISequence<? extends IAnyAtomicItem> sequence = FunctionUtils.asType(
         ObjectUtils.requireNonNull(arguments.get(0)));
 
-    return ISequence.of(min(sequence.asList()));
+    return ISequence.of(min(sequence.getValue()));
   }
 
   @SuppressWarnings("unused")
@@ -114,7 +114,7 @@ public final class FnMinMax {
     ISequence<? extends IAnyAtomicItem> sequence = FunctionUtils.asType(
         ObjectUtils.requireNonNull(arguments.get(0)));
 
-    return ISequence.of(max(sequence.asList()));
+    return ISequence.of(max(sequence.getValue()));
   }
 
   /**
@@ -179,7 +179,7 @@ public final class FnMinMax {
       int size = resultingItems.size();
       if (counts.getOrDefault(IStringItem.class, 0) + counts.getOrDefault(IAnyUriItem.class, 0) == size) {
         stream = resultingItems.stream()
-            .map(item -> item.asStringItem());
+            .map(IAnyAtomicItem::asStringItem);
       } else if (counts.getOrDefault(IDecimalItem.class, 0) == size) {
         stream = resultingItems.stream()
             .map(item -> (IDecimalItem) item);
@@ -191,7 +191,7 @@ public final class FnMinMax {
           InvalidArgumentFunctionException.INVALID_ARGUMENT_TYPE,
           String.format("Values must all be of a single atomic type. Their types are '%s'.",
               FunctionUtils.getTypes(resultingItems).stream()
-                  .map(clazz -> clazz.getName())
+                  .map(Class::getName)
                   .collect(Collectors.joining(","))));
     }
     return stream;

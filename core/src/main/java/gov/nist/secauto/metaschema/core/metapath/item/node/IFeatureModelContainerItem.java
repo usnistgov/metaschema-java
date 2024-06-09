@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
@@ -49,7 +51,7 @@ public interface IFeatureModelContainerItem extends IFeatureFlagContainerItem {
   }
 
   @Override
-  default List<? extends IModelNodeItem<?, ?>> getModelItemsByName(String name) {
+  default List<? extends IModelNodeItem<?, ?>> getModelItemsByName(QName name) {
     return getModel().getModelItemsByName(name);
   }
 
@@ -58,7 +60,7 @@ public interface IFeatureModelContainerItem extends IFeatureFlagContainerItem {
    */
   class ModelContainer
       extends FlagContainer {
-    private final Map<String, List<? extends IModelNodeItem<?, ?>>> modelItems;
+    private final Map<QName, List<? extends IModelNodeItem<?, ?>>> modelItems;
 
     /**
      * Creates a new collection of flags and model items.
@@ -69,8 +71,8 @@ public interface IFeatureModelContainerItem extends IFeatureFlagContainerItem {
      *          a mapping of model item name to a list of model items
      */
     protected ModelContainer(
-        @NonNull Map<String, IFlagNodeItem> flags,
-        @NonNull Map<String, List<? extends IModelNodeItem<?, ?>>> modelItems) {
+        @NonNull Map<QName, IFlagNodeItem> flags,
+        @NonNull Map<QName, List<? extends IModelNodeItem<?, ?>>> modelItems) {
       super(flags);
       this.modelItems = modelItems;
     }
@@ -83,7 +85,7 @@ public interface IFeatureModelContainerItem extends IFeatureFlagContainerItem {
      * @return a lisy of matching model items or {@code null} if no match was found
      */
     @NonNull
-    public List<? extends IModelNodeItem<?, ?>> getModelItemsByName(@NonNull String name) {
+    public List<? extends IModelNodeItem<?, ?>> getModelItemsByName(@NonNull QName name) {
       List<? extends IModelNodeItem<?, ?>> result = modelItems.get(name);
       return result == null ? CollectionUtil.emptyList() : result;
     }
@@ -98,6 +100,5 @@ public interface IFeatureModelContainerItem extends IFeatureFlagContainerItem {
     public Collection<List<? extends IModelNodeItem<?, ?>>> getModelItems() {
       return modelItems.values();
     }
-
   }
 }

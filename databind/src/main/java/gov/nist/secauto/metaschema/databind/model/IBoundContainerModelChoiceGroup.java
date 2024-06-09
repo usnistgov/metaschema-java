@@ -30,22 +30,23 @@ import gov.nist.secauto.metaschema.core.model.IContainerModelGrouped;
 
 import java.util.Collection;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IBoundContainerModelChoiceGroup extends IContainerModelGrouped {
 
   @Override
-  default Collection<? extends IBoundInstanceModelGroupedNamed> getModelInstances() {
-    return getNamedModelInstances();
-  }
+  @NonNull
+  Collection<? extends IBoundInstanceModelGroupedNamed> getModelInstances();
 
   @Override
   @NonNull
   Collection<? extends IBoundInstanceModelGroupedNamed> getNamedModelInstances();
 
   @Override
-  IBoundInstanceModelGroupedNamed getNamedModelInstanceByName(String name);
+  IBoundInstanceModelGroupedNamed getNamedModelInstanceByName(QName name);
 
   @Override
   @NonNull
@@ -53,7 +54,7 @@ public interface IBoundContainerModelChoiceGroup extends IContainerModelGrouped 
 
   @Override
   @Nullable
-  IBoundInstanceModelGroupedField getFieldInstanceByName(String name);
+  IBoundInstanceModelGroupedField getFieldInstanceByName(QName name);
 
   @Override
   @NonNull
@@ -61,5 +62,5 @@ public interface IBoundContainerModelChoiceGroup extends IContainerModelGrouped 
 
   @Override
   @Nullable
-  IBoundInstanceModelGroupedAssembly getAssemblyInstanceByName(String name);
+  IBoundInstanceModelGroupedAssembly getAssemblyInstanceByName(QName name);
 }

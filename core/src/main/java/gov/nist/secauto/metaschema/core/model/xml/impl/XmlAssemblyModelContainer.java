@@ -198,14 +198,14 @@ public class XmlAssemblyModelContainer
   }
 
   public void append(@NonNull IFieldInstanceAbsolute instance) {
-    String key = instance.getEffectiveName();
+    QName key = instance.getXmlQName();
     getFieldInstanceMap().put(key, instance);
     getNamedModelInstanceMap().put(key, instance);
     getModelInstances().add(instance);
   }
 
   public void append(@NonNull IAssemblyInstanceAbsolute instance) {
-    String key = instance.getEffectiveName();
+    QName key = instance.getXmlQName();
     getAssemblyInstanceMap().put(key, instance);
     getNamedModelInstanceMap().put(key, instance);
     getModelInstances().add(instance);

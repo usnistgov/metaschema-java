@@ -28,32 +28,37 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
+import gov.nist.secauto.metaschema.core.model.AbstractChoiceInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IContainerModelSupport;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelNamedAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceBinding;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel.Choice;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelChoice
-    extends AbstractInstanceModel<Choice, IBindingDefinitionAssembly>
-    implements IInstanceModelChoiceBinding,
-    IFeatureBindingContainerModel {
+    extends AbstractChoiceInstance<
+        IAssemblyDefinition,
+        IModelInstanceAbsolute,
+        INamedModelInstanceAbsolute,
+        IFieldInstanceAbsolute,
+        IAssemblyInstanceAbsolute> {
+  @NonNull
+  private final AssemblyModel.Choice binding;
   @NonNull
   private final Lazy<IContainerModelSupport<
-      IBindingInstanceModelAbsolute,
-      IBindingInstanceModelNamedAbsolute,
-      IBindingInstanceModelFieldAbsolute,
-      IBindingInstanceModelAssemblyAbsolute>> modelContainer;
+      IModelInstanceAbsolute,
+      INamedModelInstanceAbsolute,
+      IFieldInstanceAbsolute,
+      IAssemblyInstanceAbsolute>> modelContainer;
   @NonNull
   private final Lazy<IAssemblyNodeItem> boundNodeItem;
 
@@ -61,48 +66,53 @@ public class InstanceModelChoice
       @NonNull Choice binding,
       @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
       int position,
-      @NonNull IBindingDefinitionAssembly parent,
+      @NonNull IAssemblyDefinition parent,
       @NonNull INodeItemFactory nodeItemFactory) {
-    super(binding, parent);
+    super(parent);
+    this.binding = binding;
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> ChoiceModelContainerSupport.of(
         binding,
         bindingInstance,
         this,
         nodeItemFactory)));
     this.boundNodeItem = ObjectUtils.notNull(
-        Lazy.lazy(() -> (IAssemblyNodeItem) getContainingDefinition().getBoundNodeItem()
-            .getModelItemsByName(bindingInstance.getEffectiveName())
+        Lazy.lazy(() -> (IAssemblyNodeItem) ObjectUtils.notNull(getContainingDefinition().getNodeItem())
+            .getModelItemsByName(bindingInstance.getXmlQName())
             .get(position)));
+  }
+
+  @NonNull
+  protected AssemblyModel.Choice getBinding() {
+    return binding;
   }
 
   @Override
   public IContainerModelSupport<
-      IBindingInstanceModelAbsolute,
-      IBindingInstanceModelNamedAbsolute,
-      IBindingInstanceModelFieldAbsolute,
-      IBindingInstanceModelAssemblyAbsolute> getModelContainer() {
+      IModelInstanceAbsolute,
+      INamedModelInstanceAbsolute,
+      IFieldInstanceAbsolute,
+      IAssemblyInstanceAbsolute> getModelContainer() {
     return ObjectUtils.notNull(modelContainer.get());
   }
 
-  @SuppressWarnings("null")
   @Override
-  public INodeItem getBoundNodeItem() {
+  public IAssemblyNodeItem getNodeItem() {
     return boundNodeItem.get();
   }
 
   @Override
-  public IBindingDefinitionAssembly getOwningDefinition() {
+  public IAssemblyDefinition getOwningDefinition() {
     return getContainingDefinition();
-  }
-
-  @Override
-  public String getJsonKeyFlagName() {
-    return null;
   }
 
   @Override
   public MarkupMultiline getRemarks() {
     // no remarks
+    return null;
+  }
+
+  @Override
+  public String getGroupAsXmlNamespace() {
     return null;
   }
 }

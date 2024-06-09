@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -116,7 +117,7 @@ public interface IBoundDefinitionModelFieldComplex
     IBoundFieldValue fieldValue = getFieldValue();
     IBoundInstanceFlag jsonValueKey = getDefinition().getJsonValueKeyFlagInstance();
     if (jsonValueKey != null) {
-      Predicate<IBoundInstanceFlag> jsonValueKeyFilter = (flag) -> !flag.equals(jsonValueKey);
+      Predicate<IBoundInstanceFlag> jsonValueKeyFilter = flag -> !flag.equals(jsonValueKey);
       actualFlagFilter = actualFlagFilter == null ? jsonValueKeyFilter : actualFlagFilter.and(jsonValueKeyFilter);
       // ensure the field value is omitted too!
       fieldValue = null;
@@ -144,8 +145,7 @@ public interface IBoundDefinitionModelFieldComplex
         : Stream.concat(flagStream, Stream.of(getFieldValue()));
 
     return ObjectUtils.notNull(resultStream
-        .collect(Collectors.toUnmodifiableMap(
-            (p) -> p.getJsonName(), (p) -> p)));
+        .collect(Collectors.toUnmodifiableMap(IBoundProperty::getJsonName, Function.identity())));
   }
 
   @Override
@@ -157,12 +157,6 @@ public interface IBoundDefinitionModelFieldComplex
   @Override
   default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
     handler.writeItemField(item, this);
-  }
-
-  @Override
-  default boolean canHandleJsonPropertyName(String name) {
-    // not handled, since not root
-    return false;
   }
 
   @Override

@@ -56,11 +56,16 @@ import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaField;
 
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.xml.sax.SAXException;
 
+import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -235,7 +240,7 @@ public interface IBindingContext {
    * @see #getBoundDefinitionForClass(Class)
    */
   @NonNull
-  <CLASS> ISerializer<CLASS> newSerializer(@NonNull Format format, @NonNull Class<CLASS> clazz);
+  <CLASS> ISerializer<CLASS> newSerializer(@NonNull Format format, @NonNull Class<? extends CLASS> clazz);
 
   /**
    * Gets a data {@link IDeserializer} which can be used to read Java instance
@@ -304,7 +309,7 @@ public interface IBindingContext {
     IBoundLoader loader = newBoundLoader();
     loader.disableFeature(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
 
-    DynamicContext context = StaticContext.instance().dynamicContext();
+    DynamicContext context = new DynamicContext();
     context.setDocumentLoader(loader);
 
     return new DefaultConstraintValidator(handler);
@@ -316,15 +321,22 @@ public interface IBindingContext {
    *
    * @param nodeItem
    *          the node item to validate
+   * @param loader
+   *          a module loader used to load and resolve referenced resources
    * @return the validation result
    * @throws IllegalArgumentException
    *           if the provided class is not bound to a Module assembly or field
    */
-  default IValidationResult validate(@NonNull INodeItem nodeItem) {
+  default IValidationResult validate(@NonNull INodeItem nodeItem, @NonNull IBoundLoader loader) {
     FindingCollectingConstraintValidationHandler handler = new FindingCollectingConstraintValidationHandler();
     IConstraintValidator validator = newValidator(handler);
-    DynamicContext dynamicContext = StaticContext.instance().dynamicContext();
-    dynamicContext.setDocumentLoader(newBoundLoader());
+
+    StaticContext staticContext = StaticContext.builder()
+        .defaultModelNamespace(nodeItem.getNamespace())
+        .build();
+
+    DynamicContext dynamicContext = new DynamicContext(staticContext);
+    dynamicContext.setDocumentLoader(loader);
     validator.validate(nodeItem, dynamicContext);
     validator.finalizeValidation(dynamicContext);
     return handler;
@@ -343,31 +355,13 @@ public interface IBindingContext {
    * @return the validation result
    * @throws IOException
    *           if an error occurred while reading the target
-   * @throws SAXException
-   *           if an error occurred when parsing the target as XML
    */
   default IValidationResult validate(
       @NonNull URI target,
       @NonNull Format asFormat,
-      @NonNull IValidationSchemaProvider schemaProvider) throws IOException, SAXException {
-    IValidationResult retval;
-    switch (asFormat) {
-    case JSON:
-      retval = new JsonSchemaContentValidator(schemaProvider.getJsonSchema()).validate(target);
-      break;
-    case XML:
-      List<Source> schemaSources = schemaProvider.getXmlSchemas();
-      retval = new XmlSchemaContentValidator(schemaSources).validate(target);
-      break;
-    case YAML:
-      JSONObject json = YamlOperations.yamlToJson(YamlOperations.parseYaml(target));
-      assert json != null;
-      retval = new JsonSchemaContentValidator(schemaProvider.getJsonSchema())
-          .validate(json, ObjectUtils.notNull(target));
-      break;
-    default:
-      throw new UnsupportedOperationException("Unsupported format: " + asFormat.name());
-    }
+      @NonNull ISchemaValidationProvider schemaProvider) throws IOException {
+
+    IValidationResult retval = schemaProvider.validate(target, asFormat);
 
     if (retval.isPassing()) {
       IValidationResult constraintValidationResult = validateWithConstraints(target);
@@ -384,17 +378,15 @@ public interface IBindingContext {
    *          the file to load and validate
    * @return the validation results
    * @throws IOException
-   *           if an error occurred while loading the document
+   *           if an error occurred while parsing the target
    */
-  default IValidationResult validateWithConstraints(@NonNull URI target) throws IOException {
+  default IValidationResult validateWithConstraints(@NonNull URI target)
+      throws IOException {
     IBoundLoader loader = newBoundLoader();
     loader.disableFeature(DeserializationFeature.DESERIALIZE_VALIDATE_CONSTRAINTS);
-
-    DynamicContext dynamicContext = StaticContext.instance().dynamicContext();
-    dynamicContext.setDocumentLoader(loader);
     IDocumentNodeItem nodeItem = loader.loadAsNodeItem(target);
 
-    return validate(nodeItem);
+    return validate(nodeItem, loader);
   }
 
   interface IModuleLoaderStrategy {
@@ -430,26 +422,69 @@ public interface IBindingContext {
     IBoundDefinitionModelComplex getBoundDefinitionForClass(@NonNull Class<?> clazz);
   }
 
-  interface IValidationSchemaProvider {
+  interface ISchemaValidationProvider {
+
+    @NonNull
+    default IValidationResult validate(@NonNull URI target, @NonNull Format asFormat)
+        throws FileNotFoundException, IOException {
+      URL targetResource = target.toURL();
+
+      IValidationResult retval;
+      switch (asFormat) {
+      case JSON: {
+        JSONObject json;
+        try (@SuppressWarnings("resource") InputStream is
+            = new BufferedInputStream(ObjectUtils.notNull(targetResource.openStream()))) {
+          json = new JSONObject(new JSONTokener(is));
+        }
+        retval = new JsonSchemaContentValidator(getJsonSchema(json)).validate(json, target);
+        break;
+      }
+      case XML:
+        try {
+          List<Source> schemaSources = getXmlSchemas(targetResource);
+          retval = new XmlSchemaContentValidator(schemaSources).validate(target);
+        } catch (SAXException ex) {
+          throw new IOException(ex);
+        }
+        break;
+      case YAML: {
+        JSONObject json = YamlOperations.yamlToJson(YamlOperations.parseYaml(target));
+        assert json != null;
+        retval = new JsonSchemaContentValidator(getJsonSchema(json)).validate(json, ObjectUtils.notNull(target));
+        break;
+      }
+      default:
+        throw new UnsupportedOperationException("Unsupported format: " + asFormat.name());
+      }
+      return retval;
+    }
+
     /**
      * Get a JSON schema to use for content validation.
+     *
+     * @param json
+     *          the JSON content to validate
      *
      * @return the JSON schema
      * @throws IOException
      *           if an error occurred while loading the schema
      */
     @NonNull
-    JSONObject getJsonSchema() throws IOException;
+    JSONObject getJsonSchema(@NonNull JSONObject json) throws IOException;
 
     /**
      * Get a XML schema to use for content validation.
+     *
+     * @param targetResource
+     *          the URL for the XML content to validate
      *
      * @return the XML schema sources
      * @throws IOException
      *           if an error occurred while loading the schema
      */
     @NonNull
-    List<Source> getXmlSchemas() throws IOException;
+    List<Source> getXmlSchemas(@NonNull URL targetResource) throws IOException;
   }
 
   /**

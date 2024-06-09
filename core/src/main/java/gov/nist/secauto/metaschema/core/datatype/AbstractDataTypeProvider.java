@@ -61,7 +61,7 @@ public abstract class AbstractDataTypeProvider implements IDataTypeProvider {
    *           if another type adapter has no name
    */
   protected void registerDatatype(@NonNull IDataTypeAdapter<?> adapter) {
-    if (adapter.getNames().size() == 0) {
+    if (adapter.getNames().isEmpty()) {
       throw new IllegalArgumentException("The adapter has no name: " + adapter.getClass().getName());
     }
     synchronized (this) {

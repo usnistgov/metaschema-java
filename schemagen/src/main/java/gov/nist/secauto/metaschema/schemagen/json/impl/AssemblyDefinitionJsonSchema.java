@@ -126,8 +126,6 @@ public class AssemblyDefinitionJsonSchema
   protected void generateBody(
       IJsonGenerationState state,
       ObjectNode obj) throws IOException {
-    IAssemblyDefinition definition = getDefinition();
-
     obj.put("type", "object");
 
     PropertyCollection properties = new PropertyCollection();
@@ -152,7 +150,7 @@ public class AssemblyDefinitionJsonSchema
       property.generateProperty(properties, state);
     }
 
-    Collection<? extends IChoiceInstance> choices = definition.getChoiceInstances();
+    Collection<? extends IChoiceInstance> choices = getDefinition().getChoiceInstances();
     if (choices.isEmpty()) {
       properties.generate(obj);
       obj.put("additionalProperties", false);

@@ -44,6 +44,8 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class Quantified
@@ -56,7 +58,7 @@ public class Quantified
   @NonNull
   private final Quantifier quantifier;
   @NonNull
-  private final Map<String, IExpression> inClauses;
+  private final Map<QName, IExpression> inClauses;
   @NonNull
   private final IExpression satisfies;
 
@@ -74,7 +76,7 @@ public class Quantified
    */
   public Quantified(
       @NonNull Quantifier quantifier,
-      @NonNull Map<String, IExpression> inClauses,
+      @NonNull Map<QName, IExpression> inClauses,
       @NonNull IExpression satisfies) {
     this.quantifier = quantifier;
     this.inClauses = inClauses;
@@ -98,7 +100,7 @@ public class Quantified
    * @return the variable names mapped to the associated Metapath expression
    */
   @NonNull
-  public Map<String, IExpression> getInClauses() {
+  public Map<QName, IExpression> getInClauses() {
     return inClauses;
   }
 
@@ -122,20 +124,20 @@ public class Quantified
   @SuppressWarnings("PMD.SystemPrintln")
   @Override
   public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    Map<String, ISequence<? extends IItem>> clauses = getInClauses().entrySet().stream()
+    Map<QName, ISequence<? extends IItem>> clauses = getInClauses().entrySet().stream()
         .map(entry -> Map.entry(
             entry.getKey(),
             entry.getValue().accept(dynamicContext, focus)))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
-    List<String> clauseKeys = new ArrayList<>(clauses.keySet());
+    List<QName> clauseKeys = new ArrayList<>(clauses.keySet());
     List<? extends Collection<? extends IItem>> clauseValues = new ArrayList<>(clauses.values());
 
     boolean retval = true;
     for (List<IItem> product : new CartesianProduct<>(clauseValues)) {
       DynamicContext subDynamicContext = dynamicContext.subContext();
       for (int idx = 0; idx < product.size(); idx++) {
-        String var = clauseKeys.get(idx);
+        QName var = clauseKeys.get(idx);
         IItem item = product.get(idx);
 
         assert var != null;

@@ -30,11 +30,13 @@ import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.constraint.ILet;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DefaultLet implements ILet {
   @NonNull
-  private final String name;
+  private final QName name;
   @NonNull
   private final MetapathExpression valueExpression;
   @NonNull
@@ -51,7 +53,7 @@ public class DefaultLet implements ILet {
    *          the source of the let statement
    */
   public DefaultLet(
-      @NonNull String name,
+      @NonNull QName name,
       @NonNull MetapathExpression metapath,
       @NonNull ISource source) {
     this.name = name;
@@ -60,7 +62,7 @@ public class DefaultLet implements ILet {
   }
 
   @Override
-  public String getName() {
+  public QName getName() {
     return name;
   }
 

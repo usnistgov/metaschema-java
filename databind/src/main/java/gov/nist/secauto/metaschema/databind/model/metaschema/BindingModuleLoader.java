@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.databind.model.metaschema;
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.model.AbstractModuleLoader;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaModule;
 import gov.nist.secauto.metaschema.core.model.IModuleLoader;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -38,6 +39,7 @@ import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.io.IBoundLoader;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
+import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA.Import;
 import gov.nist.secauto.metaschema.databind.model.metaschema.impl.BindingModule;
 
 import java.io.IOException;
@@ -49,7 +51,7 @@ import java.util.stream.Collectors;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class BindingModuleLoader
-    extends AbstractModuleLoader<METASCHEMA, IBindingModule>
+    extends AbstractModuleLoader<METASCHEMA, IMetaschemaModule>
     implements IMutableConfiguration<DeserializationFeature<?>> {
   @NonNull
   private final IBoundLoader loader;
@@ -78,7 +80,10 @@ public class BindingModuleLoader
   }
 
   @Override
-  protected IBindingModule newModule(URI resource, METASCHEMA binding, List<IBindingModule> importedModules)
+  protected IMetaschemaModule newModule(
+      URI resource,
+      METASCHEMA binding,
+      List<? extends IMetaschemaModule> importedModules)
       throws MetaschemaException {
     return new BindingModule(
         resource,
@@ -92,7 +97,7 @@ public class BindingModuleLoader
   @Override
   protected List<URI> getImports(METASCHEMA binding) {
     return ObjectUtils.notNull(binding.getImports().stream()
-        .map(imported -> imported.getHref())
+        .map(Import::getHref)
         .collect(Collectors.toUnmodifiableList()));
   }
 

@@ -26,61 +26,19 @@
 
 package gov.nist.secauto.metaschema.core.model;
 
-import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-/**
- * A marker interface for Metaschema constructs that can be members of a
- * Metaschema module's model that have a name and other identifying
- * characteristics.
- */
-public interface INamed extends IDescribable {
-  /**
-   * The resolved formal display name, which allows an instance to override a
-   * definition's name.
-   *
-   * @return the formal name or {@code null} if not defined
-   */
-  // from INamedModelElement
-  @Nullable
-  default String getEffectiveFormalName() {
-    return getFormalName();
-  }
-
-  /**
-   * Get the text that describes the basic use of the element, which allows an
-   * instance to override a definition's description.
-   *
-   * @return a line of markup text or {@code null} if not defined
-   */
-  // from INamedModelElement
-  @Nullable
-  default MarkupLine getEffectiveDescription() {
-    return getDescription();
-  }
-
-  // @NonNull
-  // default QName getXmlQName() {
-  // String namespace = getXmlNamespace();
-  //
-  // @NonNull
-  // QName retval;
-  // if (namespace != null) {
-  // retval = new QName(namespace, getEffectiveName());
-  // } else {
-  // retval = new QName(getEffectiveName());
-  // }
-  // return retval;
-  // }
+public interface INamed {
 
   /**
    * Retrieve the name of the model element.
    *
    * @return the name
    */
-  // from INamedModelElement
   @NonNull
   String getName();
 
@@ -114,6 +72,43 @@ public interface INamed extends IDescribable {
     @Nullable String useName = getUseName();
     return useName == null ? getName() : useName;
   }
+
+  /**
+   * Retrieve the XML namespace for this instance.
+   * <p>
+   * Multiple calls to this method are expected to produce the same, deterministic
+   * return value.
+   *
+   * @return the XML namespace or {@code null} if no namespace is defined
+   */
+  @Nullable
+  default String getXmlNamespace() {
+    return getXmlQName().getNamespaceURI();
+  }
+
+  /**
+   * Get the unique XML qualified name for this model element.
+   * <p>
+   * The qualified name is considered to be unique relative to all sibling
+   * elements. For a flag, this name will be unique among all flag instances on
+   * the same field or assembly definition. For a field or assembly, this name
+   * will be unique among all sibling field or assembly instances on the same
+   * assembly definition.
+   * <p>
+   * Multiple calls to this method are expected to produce the same, deterministic
+   * return value.
+   * <p>
+   * If {@link #getXmlNamespace()} is {@code null}, the the resulting QName will
+   * have the namespace {@link XMLConstants#NULL_NS_URI}.
+   * <p>
+   * This implementation may be overridden by implementation that cache the QName
+   * or provide for a more efficient method for QName creation.
+   *
+   * @return the XML qualified name, or {@code null} if there isn't one
+   */
+  // REFACTOR: rename to getQName
+  @NonNull
+  QName getXmlQName();
 
   /**
    * Retrieve the index value to use for binary naming.
@@ -154,16 +149,5 @@ public interface INamed extends IDescribable {
   default Integer getEffectiveIndex() {
     @Nullable Integer useIndex = getUseIndex();
     return useIndex == null ? getIndex() : useIndex;
-  }
-
-  /**
-   * Get the name used for the associated property in JSON/YAML.
-   *
-   * @return the JSON property name
-   */
-  // from INamedModelElement
-  @NonNull
-  default String getJsonName() {
-    return getEffectiveName();
   }
 }

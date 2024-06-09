@@ -34,6 +34,8 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
@@ -43,7 +45,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 public class VariableReference implements IExpression {
   @NonNull
-  private final Name name;
+  private final QName name;
 
   /**
    * Construct a new Metapath variable reference CST node.
@@ -51,7 +53,7 @@ public class VariableReference implements IExpression {
    * @param name
    *          the variable name
    */
-  public VariableReference(@NonNull Name name) {
+  public VariableReference(@NonNull QName name) {
     this.name = name;
   }
 
@@ -61,7 +63,7 @@ public class VariableReference implements IExpression {
    * @return the variable name
    */
   @NonNull
-  public Name getName() {
+  public QName getName() {
     return name;
   }
 
@@ -73,7 +75,7 @@ public class VariableReference implements IExpression {
   @SuppressWarnings("null")
   @Override
   public String toASTString() {
-    return String.format("%s[name=%s]", getClass().getName(), getName().getValue());
+    return String.format("%s[name=%s]", getClass().getName(), getName());
   }
 
   @Override
@@ -83,7 +85,7 @@ public class VariableReference implements IExpression {
 
   @Override
   public ISequence<? extends IItem> accept(DynamicContext dynamicContext, ISequence<?> focus) {
-    return dynamicContext.getVariableValue(ObjectUtils.notNull(getName().getValue()));
+    return dynamicContext.getVariableValue(ObjectUtils.notNull(getName()));
   }
 
 }

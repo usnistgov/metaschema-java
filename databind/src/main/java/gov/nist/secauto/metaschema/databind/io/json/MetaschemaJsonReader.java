@@ -68,6 +68,7 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class MetaschemaJsonReader
@@ -95,6 +96,7 @@ public class MetaschemaJsonReader
    *           if an error occurred while reading the JSON
    * @see DefaultJsonProblemHandler
    */
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   public MetaschemaJsonReader(
       @NonNull JsonParser parser) throws IOException {
     this(parser, new DefaultJsonProblemHandler());
@@ -110,11 +112,12 @@ public class MetaschemaJsonReader
    * @throws IOException
    *           if an error occurred while reading the JSON
    */
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   public MetaschemaJsonReader(
       @NonNull JsonParser parser,
       @NonNull IJsonProblemHandler problemHandler) throws IOException {
     this.problemHandler = problemHandler;
-    this.objectMapper = ObjectUtils.notNull(Lazy.lazy(() -> new ObjectMapper()));
+    this.objectMapper = ObjectUtils.notNull(Lazy.lazy(ObjectMapper::new));
     push(parser);
   }
 
@@ -275,7 +278,7 @@ public class MetaschemaJsonReader
           parentItem,
           instance.getDefinition(),
           instance.getJsonProperties(),
-          instance.getJsonKey(),
+          instance.getEffectiveJsonKey(),
           getProblemHandler());
     }
 
@@ -292,7 +295,7 @@ public class MetaschemaJsonReader
       return readComplexDefinitionObject(
           parentItem,
           definition,
-          instance.getJsonKey(),
+          instance.getEffectiveJsonKey(),
           new PropertyBodyHandler(instance.getJsonProperties()),
           actualProblemHandler);
     }
@@ -330,7 +333,7 @@ public class MetaschemaJsonReader
       return readComplexDefinitionObject(
           parentItem,
           instance.getDefinition(),
-          instance.getJsonKey(),
+          instance.getEffectiveJsonKey(),
           new PropertyBodyHandler(instance.getJsonProperties()),
           new GroupedInstanceProblemHandler(instance, getProblemHandler()));
     }
@@ -439,8 +442,7 @@ public class MetaschemaJsonReader
       @Override
       public void accept(IBoundDefinitionModelComplex definition, Object parentItem, IJsonProblemHandler problemHandler)
           throws IOException {
-        @SuppressWarnings("resource")
-        JsonParser parser = getReader();
+        @SuppressWarnings("resource") JsonParser parser = getReader();
         JsonUtil.assertCurrent(parser, JsonToken.FIELD_NAME);
 
         // the field will be the JSON key
@@ -477,8 +479,7 @@ public class MetaschemaJsonReader
           Object parentItem,
           IJsonProblemHandler problemHandler)
           throws IOException {
-        @SuppressWarnings("resource")
-        JsonParser parser = getReader();
+        @SuppressWarnings("resource") JsonParser parser = getReader();
 
         // advance past the start object
         JsonUtil.assertAndAdvance(parser, JsonToken.START_OBJECT);
@@ -510,11 +511,11 @@ public class MetaschemaJsonReader
             handled = true;
           }
 
-          if (!(handled || problemHandler.handleUnknownProperty(
+          if (!handled && !problemHandler.handleUnknownProperty(
               definition,
               parentItem,
               propertyName,
-              getInstanceReader()))) {
+              getInstanceReader())) {
             if (LOGGER.isWarnEnabled()) {
               LOGGER.warn("Skipping unhandled JSON field '{}' {}.", propertyName, JsonUtil.toString(parser));
             }
@@ -602,8 +603,7 @@ public class MetaschemaJsonReader
         if (foundJsonValueKey) {
           retval = delegate.handleUnknownProperty(definition, parentItem, fieldName, reader);
         } else {
-          @SuppressWarnings("resource")
-          JsonParser parser = getReader();
+          @SuppressWarnings("resource") JsonParser parser = getReader();
           // handle JSON value key
           String key = ObjectUtils.notNull(parser.getCurrentName());
           Object keyValue = jsonValueKyeFlag.getJavaTypeAdapter().parse(key);
@@ -703,8 +703,7 @@ public class MetaschemaJsonReader
 
       IBoundInstanceModel instance = getCollectionInfo().getInstance();
 
-      @SuppressWarnings("PMD.UseConcurrentHashMap")
-      Map<String, Object> items = new LinkedHashMap<>();
+      @SuppressWarnings("PMD.UseConcurrentHashMap") Map<String, Object> items = new LinkedHashMap<>();
 
       // A map value is always wrapped in a START_OBJECT, since fields are used for
       // the keys
@@ -748,7 +747,6 @@ public class MetaschemaJsonReader
       IBoundInstanceModel instance = getCollectionInfo().getInstance();
       return instance.readItem(getParentObject(), getItemReader());
     }
-
   }
 
   @SuppressWarnings("unchecked")
@@ -772,7 +770,7 @@ public class MetaschemaJsonReader
 
     T retval = null;
     JsonToken token;
-    while (!(JsonToken.END_OBJECT.equals(token = parser.currentToken()) || token == null)) {
+    while (!JsonToken.END_OBJECT.equals(token = parser.currentToken()) && token != null) {
       if (!JsonToken.FIELD_NAME.equals(token)) {
         throw new IOException(String.format("Expected FIELD_NAME token, found '%s'", token.toString()));
       }

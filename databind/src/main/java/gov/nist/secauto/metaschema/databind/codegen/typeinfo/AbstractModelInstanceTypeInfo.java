@@ -120,14 +120,7 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstanceAbso
     groupAsAnnoation.addMember("name", "$S",
         ObjectUtils.requireNonNull(modelInstance.getGroupAsName(), "The grouping name must be non-null"));
 
-    String groupAsNamespace = modelInstance.getGroupAsXmlNamespace();
-    if (groupAsNamespace == null) {
-      groupAsAnnoation.addMember("namespace", "$S", "##default");
-    } else if (groupAsNamespace.isEmpty()) {
-      groupAsAnnoation.addMember("namespace", "$S", "##none");
-    } else if (!modelInstance.getContainingModule().getXmlNamespace().toASCIIString().equals(groupAsNamespace)) {
-      groupAsAnnoation.addMember("namespace", "$S", groupAsNamespace);
-    } // otherwise use the ##default
+    // TODO: handle group-as namespace as a prefix
 
     JsonGroupAsBehavior jsonGroupAsBehavior = modelInstance.getJsonGroupAsBehavior();
     assert jsonGroupAsBehavior != null;

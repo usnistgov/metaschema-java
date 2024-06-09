@@ -39,6 +39,7 @@ import gov.nist.secauto.metaschema.schemagen.json.impl.builder.IModelInstanceBui
 import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class ChoiceGroupInstanceJsonProperty
     extends AbstractJsonProperty<IChoiceGroupInstance>
@@ -46,6 +47,7 @@ public class ChoiceGroupInstanceJsonProperty
 
   private final IModelInstanceBuilder<?> collectionBuilder;
 
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   public ChoiceGroupInstanceJsonProperty(
       @NonNull IChoiceGroupInstance instance,
       @NonNull IJsonGenerationState state) {

@@ -32,7 +32,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * A marker interface for an information element that is an assembly model type.
  *
  */
-public interface IAssembly extends IModelElement, INamed, IAttributable {
+public interface IAssembly extends INamedModelElement, IAttributable {
   /**
    * Provides the Metaschema model type of "ASSEMBLY".
    *

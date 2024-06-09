@@ -114,23 +114,4 @@ public interface IBoundInstanceModel
   @Nullable
   IBoundInstanceFlag getItemJsonKey(@NonNull Object item);
 
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Always bound to a field.
-   */
-  @Override
-  default Object getValue(Object parent) {
-    return IBoundInstance.super.getValue(parent);
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Always bound to a field.
-   */
-  @Override
-  default void setValue(Object parentObject, Object value) {
-    IBoundInstance.super.setValue(parentObject, value);
-  }
 }

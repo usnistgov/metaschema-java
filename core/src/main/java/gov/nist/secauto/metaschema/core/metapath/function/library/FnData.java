@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.core.metapath.function.InvalidTypeFunctionExc
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAtomicValuedItem;
+import gov.nist.secauto.metaschema.core.metapath.item.function.IArrayItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -126,11 +127,9 @@ public final class FnData {
    */
   @SuppressWarnings("null")
   @NonNull
-  public static ISequence<IAnyAtomicItem> fnData(@NonNull ISequence<?> sequence) {
-    @NonNull Stream<? extends IItem> stream = sequence.asStream();
-    return ISequence.of(stream.flatMap(x -> {
-      return Stream.of(fnDataItem(x));
-    }));
+  public static ISequence<IAnyAtomicItem> fnData(@NonNull ISequence<? extends IItem> sequence) {
+    return ISequence.of(sequence.stream()
+        .flatMap(FnData::atomize));
   }
 
   /**
@@ -145,13 +144,60 @@ public final class FnData {
   @NonNull
   public static IAnyAtomicItem fnDataItem(@NonNull IItem item) {
     IAnyAtomicItem retval = null;
-    if (item instanceof IAnyAtomicItem) {
-      retval = (IAnyAtomicItem) item;
-    } else if (item instanceof IAtomicValuedItem) {
+    if (item instanceof IAtomicValuedItem) {
       retval = ((IAtomicValuedItem) item).toAtomicItem();
     }
 
-    if (retval == null) {
+    if (retval != null) {
+      return retval;
+    }
+    throw new InvalidTypeFunctionException(InvalidTypeFunctionException.NODE_HAS_NO_TYPED_VALUE, item);
+  }
+
+  /**
+   * An implementation of
+   * <a href="https://www.w3.org/TR/xpath-31/#id-atomization">item
+   * atomization</a>.
+   *
+   * @param item
+   *          the item to atomize
+   * @return the atomized result
+   */
+  @NonNull
+  public static Stream<IAnyAtomicItem> fnDataItem(@NonNull IArrayItem<?> item) {
+    return ObjectUtils.notNull(item.stream().flatMap(member -> {
+      Stream<IAnyAtomicItem> result;
+      if (member instanceof IItem) {
+        result = atomize((IItem) member);
+      } else if (member instanceof ISequence) {
+        result = ((ISequence<?>) member).stream()
+            .flatMap(FnData::atomize);
+      } else {
+        throw new UnsupportedOperationException("array member not an item or sequence.");
+      }
+      return result;
+    }));
+  }
+
+  /**
+   * An implementation of
+   * <a href="https://www.w3.org/TR/xpath-31/#id-atomization">item
+   * atomization</a>.
+   *
+   * @param item
+   *          the item to atomize
+   * @return the atomized result
+   */
+  @NonNull
+  public static Stream<IAnyAtomicItem> atomize(@NonNull IItem item) {
+    Stream<IAnyAtomicItem> retval;
+    if (item instanceof IAnyAtomicItem) {
+      retval = ObjectUtils.notNull(Stream.of((IAnyAtomicItem) item));
+    } else if (item instanceof IAtomicValuedItem) {
+      retval = ObjectUtils.notNull(Stream.of(((IAtomicValuedItem) item).toAtomicItem()));
+    } else if (item instanceof IArrayItem) {
+      retval = fnDataItem((IArrayItem<?>) item);
+    } else {
       throw new InvalidTypeFunctionException(InvalidTypeFunctionException.NODE_HAS_NO_TYPED_VALUE, item);
     }
     return retval;

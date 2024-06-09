@@ -27,54 +27,41 @@
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
+import gov.nist.secauto.metaschema.core.model.IFlagContainerBuilder;
+import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionFlag;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModel;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceFlag;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagReference;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.InlineDefineFlag;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-public class FlagContainerSupport implements IContainerFlagSupport<IBindingInstanceFlag> {
-  private static final Logger LOGGER = LogManager.getLogger(FlagContainerSupport.class);
+public final class FlagContainerSupport {
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   @NonNull
-  private final Map<String, IBindingInstanceFlag> flagInstances;
-
-  @SuppressWarnings("PMD.ShortMethodName")
-  public static IContainerFlagSupport<IBindingInstanceFlag> of(
+  public static IContainerFlagSupport<IFlagInstance> newFlagContainer(
       @Nullable List<Object> flags,
       @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
-      @NonNull IBindingDefinitionModel parent) {
-    return flags == null || flags.isEmpty()
-        ? IContainerFlagSupport.empty()
-        : new FlagContainerSupport(
-            flags,
-            bindingInstance,
-            parent);
-  }
+      @NonNull IModelDefinition parent,
+      @Nullable String jsonKeyName) {
+    if (flags == null || flags.isEmpty()) {
+      return IContainerFlagSupport.empty();
+    }
 
-  @SuppressWarnings("PMD.UseConcurrentHashMap")
-  public FlagContainerSupport(
-      @NonNull List<Object> flags,
-      @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
-      @NonNull IBindingDefinitionModel parent) {
     // create temporary collections to store the child binding objects
-    final Map<String, IBindingInstanceFlag> flagInstances = new LinkedHashMap<>();
+    IFlagContainerBuilder<IFlagInstance> builder = jsonKeyName == null
+        ? IContainerFlagSupport.builder()
+        : IContainerFlagSupport.builder(parent.getContainingModule().toFlagQName(jsonKeyName));
 
     // create counter to track child positions
     int flagReferencePosition = 0;
@@ -86,9 +73,9 @@ public class FlagContainerSupport implements IContainerFlagSupport<IBindingInsta
       IBoundInstanceModelGroupedAssembly objInstance
           = (IBoundInstanceModelGroupedAssembly) instance.getItemInstance(obj);
 
-      IBindingInstanceFlag flag;
+      IFlagInstance flag;
       if (obj instanceof InlineDefineFlag) {
-        flag = newFlagInstance(
+        flag = new InstanceFlagInline(
             (InlineDefineFlag) obj,
             objInstance,
             flagInlineDefinitionPosition++,
@@ -103,56 +90,34 @@ public class FlagContainerSupport implements IContainerFlagSupport<IBindingInsta
         throw new UnsupportedOperationException(String.format("Unknown flag instance class: %s", obj.getClass()));
       }
 
-      String key = flag.getEffectiveName();
-      flagInstances.merge(flag.getEffectiveName(), flag, (v1, v2) -> {
-        if (LOGGER.isErrorEnabled()) {
-          IModelDefinition owningDefinition = v1.getContainingDefinition();
-          IModule module = owningDefinition.getContainingModule();
-          LOGGER.error(
-              String.format(
-                  "Unexpected duplicate flag instance name '%s' in definition '%s' in module name '%s' at '%s'",
-                  key,
-                  owningDefinition.getName(),
-                  module.getShortName(),
-                  module.getLocation()));
-        }
-        return ObjectUtils.notNull(v2);
-      });
+      builder.flag(flag);
     }
 
-    this.flagInstances = flagInstances.isEmpty()
-        ? CollectionUtil.emptyMap()
-        : CollectionUtil.unmodifiableMap(flagInstances);
+    return builder.build();
   }
 
-  @Override
-  public Map<String, IBindingInstanceFlag> getFlagInstanceMap() {
-    return flagInstances;
-  }
-
-  protected static final IBindingInstanceFlag newFlagInstance(
-      @NonNull InlineDefineFlag obj,
-      @NonNull IBoundInstanceModelGroupedAssembly objInstance,
-      int position,
-      @NonNull IBindingDefinitionModel parent) {
-    return new InstanceFlagInline(obj, objInstance, position, parent);
-  }
-
-  protected static final IBindingInstanceFlag newFlagInstance(
+  @NonNull
+  private static IFlagInstance newFlagInstance(
       @NonNull FlagReference obj,
       @NonNull IBoundInstanceModelGroupedAssembly objInstance,
       int position,
-      @NonNull IBindingDefinitionModel parent) {
-    String flagName = ObjectUtils.requireNonNull(obj.getRef());
-    IBindingModule module = parent.getContainingModule();
-    IBindingDefinitionFlag definition = module.getScopedFlagDefinitionByName(flagName);
+      @NonNull IModelDefinition parent) {
+    IModule module = parent.getContainingModule();
+
+    QName qname = module.toFlagQName(ObjectUtils.requireNonNull(obj.getRef()));
+    IFlagDefinition definition = module.getScopedFlagDefinitionByName(qname);
     if (definition == null) {
       throw new IllegalStateException(
           String.format("Unable to resolve flag reference '%s' in definition '%s' in module '%s'",
-              flagName,
+              qname,
               parent.getName(),
               module.getShortName()));
     }
     return new InstanceFlagReference(obj, objInstance, position, definition, parent);
   }
+
+  private FlagContainerSupport() {
+    // disable construction
+  }
+
 }

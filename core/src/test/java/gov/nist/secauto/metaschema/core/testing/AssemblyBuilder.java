@@ -40,6 +40,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -103,16 +105,16 @@ public final class AssemblyBuilder
     IAssemblyDefinition retval = mock(IAssemblyDefinition.class);
     applyDefinition(retval);
 
-    Map<String, IFlagInstance> flags = this.flags.stream()
+    Map<QName, IFlagInstance> flags = this.flags.stream()
         .map(builder -> builder.toInstance(retval))
         .collect(Collectors.toUnmodifiableMap(
-            IFlagInstance::getEffectiveName,
+            IFlagInstance::getXmlQName,
             Function.identity()));
 
-    Map<String, ? extends INamedModelInstanceAbsolute> modelInstances = this.modelInstances.stream()
+    Map<QName, ? extends INamedModelInstanceAbsolute> modelInstances = this.modelInstances.stream()
         .map(builder -> builder.toInstance(retval))
         .collect(Collectors.toUnmodifiableMap(
-            INamedModelInstanceAbsolute::getEffectiveName,
+            INamedModelInstanceAbsolute::getXmlQName,
             Function.identity()));
 
     getContext().checking(new Expectations() {

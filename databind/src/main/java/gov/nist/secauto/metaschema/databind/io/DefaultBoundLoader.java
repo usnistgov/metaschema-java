@@ -34,6 +34,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.resource.AbstractResourceResolver;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.io.ModelDetector.Result;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -119,12 +120,12 @@ public class DefaultBoundLoader
   }
 
   @Override
-  public FormatDetector.Result detectFormat(@NonNull URI uri) throws IOException {
+  public Format detectFormat(@NonNull URI uri) throws IOException {
     URI resourceUri = resolve(uri);
     URL resource = resourceUri.toURL();
 
     try (InputStream is = ObjectUtils.notNull(resource.openStream())) {
-      return detectFormat(is);
+      return detectFormat(is).getFormat();
     }
   }
 
@@ -151,6 +152,11 @@ public class DefaultBoundLoader
     }
     assert modelDetector != null;
     return modelDetector;
+  }
+
+  @Override
+  public Result detectModel(InputStream is, Format format) throws IOException {
+    return getModelDetector().detect(is, format);
   }
 
   @Override
@@ -193,8 +199,9 @@ public class DefaultBoundLoader
     }
   }
 
+  @Override
   @NonNull
-  private <CLASS> CLASS load(
+  public <CLASS> CLASS load(
       @NonNull Class<CLASS> clazz,
       @NonNull Format format,
       @NonNull InputStream is,
@@ -236,7 +243,7 @@ public class DefaultBoundLoader
 
   @Override
   public IDocumentNodeItem loadAsNodeItem(Format format, InputStream is, URI documentUri) throws IOException {
-    ModelDetector.Result modelMatch = getModelDetector().detect(is, format);
+    ModelDetector.Result modelMatch = detectModel(is, format);
 
     IDeserializer<?> deserializer = getDeserializer(
         modelMatch.getBoundClass(),

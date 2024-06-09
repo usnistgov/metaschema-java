@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.AbstractDefinitionTargetedConstraints;
 
@@ -50,7 +49,7 @@ public class FieldTargetedConstraints
    *          the constraints to apply to matching targets
    */
   public FieldTargetedConstraints(
-      @NonNull MetapathExpression target,
+      @NonNull String target,
       @NonNull IValueConstrained constraints) {
     super(target, constraints);
   }

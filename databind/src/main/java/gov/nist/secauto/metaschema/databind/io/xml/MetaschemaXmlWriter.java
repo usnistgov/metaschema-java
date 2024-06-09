@@ -442,7 +442,9 @@ public class MetaschemaXmlWriter implements IXmlWritingContext {
     }
 
     /**
-     * @return the startElement
+     * Get the qualified name of the item's parent.
+     *
+     * @return the qualified name
      */
     @NonNull
     protected QName getParentQName() {

@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.core.model.constraint.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.constraint.IKeyField;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -75,7 +74,7 @@ public class DefaultUniqueConstraint
       @Nullable MarkupLine description,
       @NonNull ISource source,
       @NonNull Level level,
-      @NonNull MetapathExpression target,
+      @NonNull String target,
       @NonNull Map<IAttributable.Key, Set<String>> properties,
       @NonNull List<IKeyField> keyFields,
       @Nullable MarkupMultiline remarks) {

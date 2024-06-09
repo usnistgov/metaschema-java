@@ -36,7 +36,6 @@ import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.core.metapath.item.node.AbstractNodeItemVisitor;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
@@ -57,6 +56,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -288,7 +289,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     }
 
     IIndex index = IIndex.newInstance(constraint.getKeyFields());
-    targets.asStream()
+    targets.stream()
         .forEachOrdered(item -> {
           assert item != null;
           if (item.hasValue()) {
@@ -353,7 +354,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       @NonNull ISequence<? extends INodeItem> targets,
       @NonNull DynamicContext dynamicContext) {
     IIndex index = IIndex.newInstance(constraint.getKeyFields());
-    targets.asStream()
+    targets.stream()
         .forEachOrdered(item -> {
           assert item != null;
           if (item.hasValue()) {
@@ -414,7 +415,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       @NonNull IMatchesConstraint constraint,
       @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets) {
-    targets.asStream()
+    targets.stream()
         .forEachOrdered(item -> {
           assert item != null;
           if (item.hasValue()) {
@@ -486,7 +487,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       indexNameToKeyRefMap.put(indexName, keyRefItems);
     }
 
-    KeyRef keyRef = new KeyRef(constraint, node, new ArrayList<>(targets.asList()));
+    KeyRef keyRef = new KeyRef(constraint, node, new ArrayList<>(targets.getValue()));
     keyRefItems.add(keyRef);
   }
 
@@ -533,12 +534,14 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets,
       @NonNull DynamicContext dynamicContext) {
-    targets.asStream()
+    MetapathExpression metapath = MetapathExpression.compile(
+        constraint.getTest(),
+        dynamicContext.getStaticContext());
+    targets.stream()
         .map(item -> (INodeItem) item)
         .forEachOrdered(item -> {
           assert item != null;
           if (item.hasValue()) {
-            MetapathExpression metapath = constraint.getTest();
             try {
               ISequence<?> result = metapath.evaluate(item, dynamicContext);
               if (!FnBoolean.fnBoolean(result).toBoolean()) {
@@ -586,7 +589,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   private void validateAllowedValues(
       @NonNull IAllowedValuesConstraint constraint,
       @NonNull ISequence<? extends IDefinitionNodeItem<?, ?>> targets) {
-    targets.asStream().forEachOrdered(item -> {
+    targets.stream().forEachOrdered(item -> {
       assert item != null;
       if (item.hasValue()) {
         try {
@@ -610,7 +613,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     String id = constraint.getId();
     if (id == null) {
       builder.append(" targeting the metapath '")
-          .append(constraint.getTarget().getPath())
+          .append(constraint.getTarget())
           .append('\'');
     } else {
       builder.append(" with id '")
@@ -770,7 +773,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     @NonNull
     private DynamicContext handleLetStatements(
         @NonNull INodeItem focus,
-        @NonNull Map<String, ILet> letExpressions,
+        @NonNull Map<QName, ILet> letExpressions,
         @NonNull DynamicContext dynamicContext) {
 
       DynamicContext retval;
@@ -781,18 +784,17 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
         final DynamicContext subContext = dynamicContext.subContext();
 
         for (ILet let : lets) {
-          String name = let.getName();
+          QName name = let.getName();
           ISequence<?> result = let.getValueExpression().evaluate(focus, subContext);
+
+          // ensure the sequence is list backed
+          result.getValue();
+
           subContext.bindVariableValue(name, result);
         }
         retval = subContext;
       }
       return retval;
-    }
-
-    @Override
-    public Void visitDocument(@NonNull IDocumentNodeItem item, DynamicContext context) {
-      return super.visitDocument(item, context);
     }
 
     @Override

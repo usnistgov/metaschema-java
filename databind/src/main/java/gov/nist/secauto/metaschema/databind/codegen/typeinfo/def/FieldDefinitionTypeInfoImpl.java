@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.model.IInstance;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFieldValueTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFlagInstanceTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IInstanceTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IPropertyTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
@@ -40,6 +41,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,8 +62,8 @@ class FieldDefinitionTypeInfoImpl
     super(definition, typeResolver);
     this.instanceToTypeInfoMap = ObjectUtils.notNull(Lazy.lazy(() -> getFlagInstanceTypeInfos().stream()
         .collect(CustomCollectors.toMap(
-            (typeInfo) -> typeInfo.getInstance(),
-            (typeInfo) -> typeInfo,
+            IFlagInstanceTypeInfo::getInstance,
+            CustomCollectors.identity(),
             (key, v1, v2) -> {
               if (LOGGER.isErrorEnabled()) {
                 LOGGER.error(String.format("Unexpected duplicate property name '%s'", key));
@@ -73,8 +75,8 @@ class FieldDefinitionTypeInfoImpl
         getInstanceTypeInfoMap().values().stream(),
         Stream.of((IPropertyTypeInfo) IFieldValueTypeInfo.newTypeInfo(this)))
         .collect(Collectors.toMap(
-            (typeInfo) -> typeInfo.getPropertyName(),
-            (typeInfo) -> typeInfo,
+            IPropertyTypeInfo::getPropertyName,
+            Function.identity(),
             (v1, v2) -> v2,
             LinkedHashMap::new))));
   }

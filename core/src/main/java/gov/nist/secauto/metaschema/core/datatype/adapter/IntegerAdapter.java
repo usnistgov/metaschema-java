@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.datatype.adapter;
 
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
@@ -35,20 +36,22 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.math.BigInteger;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class IntegerAdapter
     extends AbstractIntegerAdapter<IIntegerItem> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
-      List.of("integer"));
+  private static final List<QName> NAMES = ObjectUtils.notNull(
+      List.of(new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "integer")));
 
   IntegerAdapter() {
     // avoid general construction
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

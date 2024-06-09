@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.databind.codegen.typeinfo.FlagInstanceTypeInf
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFlagInstanceTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IInstanceTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IPropertyTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import org.apache.logging.log4j.LogManager;
@@ -73,8 +74,8 @@ public abstract class AbstractModelDefinitionTypeInfo<DEF extends IModelDefiniti
     this.baseClassName = typeResolver.getBaseClassName(definition);
     this.flagTypeInfos = ObjectUtils.notNull(Lazy.lazy(() -> flags()
         .collect(CustomCollectors.toMap(
-            (typeInfo) -> typeInfo.getPropertyName(),
-            (typeInfo) -> typeInfo,
+            ITypeInfo::getPropertyName,
+            CustomCollectors.identity(),
             (key, v1, v2) -> {
               if (LOGGER.isErrorEnabled()) {
                 LOGGER.error(String.format("Unexpected duplicate flag property name '%s'", key));

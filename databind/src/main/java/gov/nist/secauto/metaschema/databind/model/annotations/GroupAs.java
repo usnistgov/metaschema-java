@@ -52,17 +52,6 @@ public @interface GroupAs {
   String name();
 
   /**
-   * XML target namespace of the XML grouping element.
-   * <p>
-   * If the value is "##default", then element name is derived from the namespace
-   * provided in the package-info.
-   *
-   * @return the namespace
-   */
-  @NonNull
-  String namespace() default ModelUtil.DEFAULT_STRING_VALUE;
-
-  /**
    * Describes how to handle collections in JSON/YAML.
    *
    * @return the JSON collection strategy

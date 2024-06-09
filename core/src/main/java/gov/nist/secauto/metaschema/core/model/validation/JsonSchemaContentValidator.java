@@ -92,9 +92,7 @@ public class JsonSchemaContentValidator
       schema.validate(json);
       retval = IValidationResult.PASSING_RESULT;
     } catch (ValidationException ex) {
-      retval = new JsonValidationResult(
-          handleValidationException(ex, documentUri)
-              .collect(Collectors.toList()));
+      retval = new JsonValidationResult(handleValidationException(ex, documentUri).collect(Collectors.toList()));
     }
 
     return retval;

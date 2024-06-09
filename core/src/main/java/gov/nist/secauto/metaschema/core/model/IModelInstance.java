@@ -35,9 +35,7 @@ public interface IModelInstance extends IInstance {
   IContainerModel getParentContainer();
 
   @Override
-  default IAssemblyDefinition getContainingDefinition() {
-    return getParentContainer().getOwningDefinition();
-  }
+  IAssemblyDefinition getContainingDefinition();
 
   /**
    * Indicate if the instance allows values without an XML element wrapper.

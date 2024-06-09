@@ -148,7 +148,7 @@ public abstract class AbstractLoader<T> implements ILoader<T> {
     // first check if the current resource has been visited to prevent cycles
     if (visitedResources.contains(resource)) {
       throw new MetaschemaException("Cycle detected in metaschema includes for '" + resource + "'. Call stack: '"
-          + visitedResources.stream().map(n -> n.toString()).collect(Collectors.joining(",")));
+          + visitedResources.stream().map(URI::toString).collect(Collectors.joining(",")));
     }
 
     T retval = cache.get(resource);

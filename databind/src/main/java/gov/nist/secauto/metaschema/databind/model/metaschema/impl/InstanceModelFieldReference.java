@@ -28,27 +28,43 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupable;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAbsolute;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingContainerModelAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModelField;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldAbsolute;
+import gov.nist.secauto.metaschema.databind.model.IGroupAs;
 import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FieldReference;
 
 import java.math.BigInteger;
+import java.util.Map;
+import java.util.Set;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelFieldReference
-    extends AbstractInstanceModelNamedReference<
-        FieldReference,
-        IBindingDefinitionModelField,
-        IBindingContainerModelAbsolute>
-    implements IBindingInstanceModelFieldAbsolute,
-    IFeatureDefinitionReferenceInstance<IBindingDefinitionModelField, IBindingInstanceModelFieldAbsolute> {
+    extends AbstractFieldInstance<
+        IContainerModelAbsolute,
+        IFieldDefinition,
+        IFieldInstanceAbsolute,
+        IAssemblyDefinition>
+    implements IFieldInstanceAbsolute, IFeatureInstanceModelGroupAs {
+  @NonNull
+  private final FieldReference binding;
+  @NonNull
+  private final IFieldDefinition definition;
+  @NonNull
+  private final Map<IAttributable.Key, Set<String>> properties;
+  @NonNull
+  private final IGroupAs groupAs;
+  @NonNull
+  private final Lazy<IAssemblyNodeItem> boundNodeItem;
   @Nullable
   private final Object defaultValue;
 
@@ -56,18 +72,48 @@ public class InstanceModelFieldReference
       @NonNull FieldReference binding,
       @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
       int position,
-      @NonNull IBindingDefinitionModelField definition,
-      @NonNull IBindingContainerModelAbsolute parent) {
-    super(
-        binding,
-        bindingInstance,
-        position,
-        definition,
-        parent,
-        ObjectUtils.requireNonNull(binding.getProps()),
-        binding.getGroupAs());
-    this.defaultValue = ModelSupport.defaultValue(getBinding().getDefault(), definition.getJavaTypeAdapter());
+      @NonNull IFieldDefinition definition,
+      @NonNull IContainerModelAbsolute parent) {
+    super(parent);
+    this.binding = binding;
+    this.definition = definition;
+    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(binding.getProps()));
+    this.groupAs = ModelSupport.groupAs(binding.getGroupAs(), parent.getOwningDefinition().getContainingModule());
+    this.boundNodeItem = ObjectUtils.notNull(
+        Lazy.lazy(() -> (IAssemblyNodeItem) ObjectUtils.notNull(getContainingDefinition().getNodeItem())
+            .getModelItemsByName(bindingInstance.getXmlQName())
+            .get(position)));
+    this.defaultValue = ModelSupport.defaultValue(binding.getDefault(), definition.getJavaTypeAdapter());
   }
+
+  @Override
+  public IFieldDefinition getDefinition() {
+    return definition;
+  }
+
+  @NonNull
+  protected FieldReference getBinding() {
+    return binding;
+  }
+
+  @Override
+  public Map<IAttributable.Key, Set<String>> getProperties() {
+    return properties;
+  }
+
+  @Override
+  public IGroupAs getGroupAs() {
+    return groupAs;
+  }
+
+  @Override
+  public IAssemblyNodeItem getNodeItem() {
+    return boundNodeItem.get();
+  }
+
+  // ---------------------------------------
+  // - Start binding driven code - CPD-OFF -
+  // ---------------------------------------
 
   @Override
   public boolean isInXmlWrapped() {
@@ -117,14 +163,12 @@ public class InstanceModelFieldReference
   @Override
   public int getMinOccurs() {
     BigInteger min = getBinding().getMinOccurs();
-    return min == null ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
+    return min == null ? DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
   }
 
   @Override
   public int getMaxOccurs() {
     String max = getBinding().getMaxOccurs();
-    return max == null
-        ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS
-        : ModelSupport.maxOccurs(max);
+    return max == null ? DEFAULT_GROUP_AS_MAX_OCCURS : ModelSupport.maxOccurs(max);
   }
 }

@@ -26,10 +26,11 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelNamed;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public abstract class AbstractModelInstanceReadHandler implements IModelInstanceReadHandler {
   @NonNull
@@ -65,6 +66,8 @@ public abstract class AbstractModelInstanceReadHandler implements IModelInstance
   }
 
   /**
+   * Get the object onto which parsed data will be stored.
+   *
    * @return the parentObject
    */
   @NonNull
@@ -73,8 +76,15 @@ public abstract class AbstractModelInstanceReadHandler implements IModelInstance
   }
 
   @Override
-  @Nullable
   public String getJsonKeyFlagName() {
-    return getCollectionInfo().getInstance().getJsonKeyFlagName();
+    IBoundInstanceModel instance = getInstance();
+    String retval = null;
+    if (instance instanceof IBoundInstanceModelNamed) {
+      IBoundInstanceFlag jsonKey = ((IBoundInstanceModelNamed) instance).getEffectiveJsonKey();
+      if (jsonKey != null) {
+        retval = jsonKey.getEffectiveName();
+      }
+    }
+    return retval;
   }
 }

@@ -30,11 +30,11 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractNamedModelInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.AbstractInlineFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
+import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
@@ -48,19 +48,24 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class XmlGroupedInlineFieldDefinition
-    extends AbstractNamedModelInstanceGrouped
-    implements IFieldInstanceGrouped, IFieldDefinition,
-    IFeatureDefinitionInstanceInlined<IFieldDefinition, IFieldInstanceGrouped>,
-    IFeatureContainerFlag<IFlagInstance> {
+    extends AbstractInlineFieldDefinition<
+        IChoiceGroupInstance,
+        IFieldDefinition,
+        IFieldInstanceGrouped,
+        IAssemblyDefinition,
+        IFlagInstance>
+    implements IFieldInstanceGrouped {
 
   @NonNull
   private final GroupedInlineFieldDefinitionType xmlObject;
   @NonNull
-  private final Lazy<XmlFlagContainerSupport> flagContainer;
+  private final Lazy<IContainerFlagSupport<IFlagInstance>> flagContainer;
   @NonNull
   private final Lazy<IValueConstrained> constraints;
 
@@ -79,7 +84,10 @@ public class XmlGroupedInlineFieldDefinition
       @NonNull IChoiceGroupInstance parent) {
     super(parent);
     this.xmlObject = xmlObject;
-    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new XmlFlagContainerSupport(xmlObject, this)));
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> XmlFlagContainerSupport.newInstance(
+        xmlObject,
+        this,
+        parent.getJsonKeyFlagInstanceName())));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
       if (getXmlObject().isSetConstraint()) {
@@ -91,17 +99,7 @@ public class XmlGroupedInlineFieldDefinition
   }
 
   @Override
-  public IFieldDefinition getDefinition() {
-    return this;
-  }
-
-  @Override
-  public XmlGroupedInlineFieldDefinition getInlineInstance() {
-    return this;
-  }
-
-  @Override
-  public XmlFlagContainerSupport getFlagContainer() {
+  public IContainerFlagSupport<IFlagInstance> getFlagContainer() {
     return ObjectUtils.notNull(flagContainer.get());
   }
 
@@ -110,10 +108,6 @@ public class XmlGroupedInlineFieldDefinition
     return ObjectUtils.notNull(constraints.get());
   }
 
-  @Override
-  public IFlagInstance getJsonKeyFlagInstance() {
-    return getFlagContainer().getJsonKeyFlagInstance();
-  }
   // ----------------------------------------
   // - Start XmlBeans driven code - CPD-OFF -
   // ----------------------------------------
@@ -181,7 +175,10 @@ public class XmlGroupedInlineFieldDefinition
   public IFlagInstance getJsonValueKeyFlagInstance() {
     IFlagInstance retval = null;
     if (getXmlObject().isSetJsonValueKeyFlag() && getXmlObject().getJsonValueKeyFlag().isSetFlagRef()) {
-      retval = getFlagInstanceByName(ObjectUtils.notNull(getXmlObject().getJsonValueKeyFlag().getFlagRef()));
+      retval = getFlagInstanceByName(
+          new QName(
+              getXmlNamespace(),
+              ObjectUtils.notNull(getXmlObject().getJsonValueKeyFlag().getFlagRef())));
     }
     return retval;
   }

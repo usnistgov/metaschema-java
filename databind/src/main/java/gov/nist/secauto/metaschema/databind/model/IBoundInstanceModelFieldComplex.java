@@ -28,22 +28,14 @@ package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 public interface IBoundInstanceModelFieldComplex
-    extends IBoundInstanceModelField, IBoundInstanceModelNamedComplex {
-
-  @Override
-  default IBoundInstanceModelFieldComplex getInstance() {
-    return this;
-  }
+    extends IBoundInstanceModelField, IFeatureComplexItemValueHandler {
 
   @Override
   IBoundDefinitionModelFieldComplex getDefinition();
@@ -52,12 +44,6 @@ public interface IBoundInstanceModelFieldComplex
   default boolean isEffectiveValueWrappedInXml() {
     // always wrapped
     return true;
-  }
-
-  @Override
-  @NonNull
-  default QName getXmlQName() {
-    return ObjectUtils.notNull(IBoundInstanceModelField.super.getXmlQName());
   }
 
   @Override
