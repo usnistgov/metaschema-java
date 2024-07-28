@@ -51,46 +51,50 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 class AssemblyModelContainerSupport
     implements IContainerModelAssemblySupport<
-        IBoundInstanceModel,
-        IBoundInstanceModelNamed,
-        IBoundInstanceModelField,
+        IBoundInstanceModel<?>,
+        IBoundInstanceModelNamed<?>,
+        IBoundInstanceModelField<?>,
         IBoundInstanceModelAssembly,
         IChoiceInstance,
         IBoundInstanceModelChoiceGroup> {
   @NonNull
-  private final List<IBoundInstanceModel> modelInstances;
+  private final List<IBoundInstanceModel<?>> modelInstances;
   @NonNull
-  private final Map<String, IBoundInstanceModelNamed> namedModelInstances;
+  private final Map<QName, IBoundInstanceModelNamed<?>> namedModelInstances;
   @NonNull
-  private final Map<String, IBoundInstanceModelField> fieldInstances;
+  private final Map<QName, IBoundInstanceModelField<?>> fieldInstances;
   @NonNull
-  private final Map<String, IBoundInstanceModelAssembly> assemblyInstances;
+  private final Map<QName, IBoundInstanceModelAssembly> assemblyInstances;
   @NonNull
   private final Map<String, IBoundInstanceModelChoiceGroup> choiceGroupInstances;
 
   @SuppressWarnings("PMD.UseConcurrentHashMap")
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   public AssemblyModelContainerSupport(
       @NonNull DefinitionAssembly containingDefinition) {
     this.modelInstances = CollectionUtil.unmodifiableList(ObjectUtils.notNull(
         getModelInstanceStream(containingDefinition, containingDefinition.getBoundClass())
             .collect(Collectors.toUnmodifiableList())));
 
-    Map<String, IBoundInstanceModelNamed> namedModelInstances = new LinkedHashMap<>();
-    Map<String, IBoundInstanceModelField> fieldInstances = new LinkedHashMap<>();
-    Map<String, IBoundInstanceModelAssembly> assemblyInstances = new LinkedHashMap<>();
+    Map<QName, IBoundInstanceModelNamed<?>> namedModelInstances = new LinkedHashMap<>();
+    Map<QName, IBoundInstanceModelField<?>> fieldInstances = new LinkedHashMap<>();
+    Map<QName, IBoundInstanceModelAssembly> assemblyInstances = new LinkedHashMap<>();
     Map<String, IBoundInstanceModelChoiceGroup> choiceGroupInstances = new LinkedHashMap<>();
-    for (IBoundInstanceModel instance : this.modelInstances) {
+    for (IBoundInstanceModel<?> instance : this.modelInstances) {
       if (instance instanceof IBoundInstanceModelNamed) {
-        IBoundInstanceModelNamed named = (IBoundInstanceModelNamed) instance;
-        String key = named.getEffectiveName();
+        IBoundInstanceModelNamed<?> named = (IBoundInstanceModelNamed<?>) instance;
+        QName key = named.getXmlQName();
         namedModelInstances.put(key, named);
 
         if (instance instanceof IBoundInstanceModelField) {
-          fieldInstances.put(key, (IBoundInstanceModelField) named);
+          fieldInstances.put(key, (IBoundInstanceModelField<?>) named);
         } else if (instance instanceof IBoundInstanceModelAssembly) {
           assemblyInstances.put(key, (IBoundInstanceModelAssembly) named);
         }
@@ -115,10 +119,10 @@ class AssemblyModelContainerSupport
         : CollectionUtil.unmodifiableMap(choiceGroupInstances);
   }
 
-  protected static IBoundInstanceModel newBoundModelInstance(
+  protected static IBoundInstanceModel<?> newBoundModelInstance(
       @NonNull Field field,
       @NonNull IBoundDefinitionModelAssembly definition) {
-    IBoundInstanceModel retval = null;
+    IBoundInstanceModel<?> retval = null;
     if (field.isAnnotationPresent(BoundAssembly.class)) {
       retval = IBoundInstanceModelAssembly.newInstance(field, definition);
     } else if (field.isAnnotationPresent(BoundField.class)) {
@@ -130,11 +134,11 @@ class AssemblyModelContainerSupport
   }
 
   @NonNull
-  protected static Stream<IBoundInstanceModel> getModelInstanceStream(
+  protected static Stream<IBoundInstanceModel<?>> getModelInstanceStream(
       @NonNull IBoundDefinitionModelAssembly definition,
       @NonNull Class<?> clazz) {
 
-    Stream<IBoundInstanceModel> superInstances;
+    Stream<IBoundInstanceModel<?>> superInstances;
     Class<?> superClass = clazz.getSuperclass();
     if (superClass == null) {
       superInstances = Stream.empty();
@@ -153,7 +157,7 @@ class AssemblyModelContainerSupport
         .map(field -> {
           assert field != null;
 
-          IBoundInstanceModel retval = newBoundModelInstance(field, definition);
+          IBoundInstanceModel<?> retval = newBoundModelInstance(field, definition);
           if (retval == null) {
             throw new IllegalStateException(
                 String.format("The field '%s' on class '%s' is not bound", field.getName(), clazz.getName()));
@@ -164,22 +168,22 @@ class AssemblyModelContainerSupport
   }
 
   @Override
-  public Collection<IBoundInstanceModel> getModelInstances() {
+  public Collection<IBoundInstanceModel<?>> getModelInstances() {
     return modelInstances;
   }
 
   @Override
-  public Map<String, IBoundInstanceModelNamed> getNamedModelInstanceMap() {
+  public Map<QName, IBoundInstanceModelNamed<?>> getNamedModelInstanceMap() {
     return namedModelInstances;
   }
 
   @Override
-  public Map<String, IBoundInstanceModelField> getFieldInstanceMap() {
+  public Map<QName, IBoundInstanceModelField<?>> getFieldInstanceMap() {
     return fieldInstances;
   }
 
   @Override
-  public Map<String, IBoundInstanceModelAssembly> getAssemblyInstanceMap() {
+  public Map<QName, IBoundInstanceModelAssembly> getAssemblyInstanceMap() {
     return assemblyInstances;
   }
 

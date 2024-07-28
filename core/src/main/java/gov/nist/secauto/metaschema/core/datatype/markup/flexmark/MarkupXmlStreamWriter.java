@@ -28,6 +28,8 @@ package gov.nist.secauto.metaschema.core.datatype.markup.flexmark;
 
 import com.vladsch.flexmark.parser.ListOptions;
 
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.impl.AbstractMarkupWriter;
+
 import java.util.Map;
 
 import javax.xml.namespace.QName;

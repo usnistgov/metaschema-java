@@ -26,8 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
+import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.impl.InstanceFlagInline;
@@ -37,12 +38,10 @@ import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Collection;
 
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents a flag instance bound to Java data.
@@ -50,7 +49,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface IBoundInstanceFlag
     extends IFlagInstance, IBoundDefinitionFlag,
     IFeatureScalarItemValueHandler,
-    IFeatureBoundDefinitionInline<IBoundDefinitionFlag, IBoundInstanceFlag> {
+    IBoundInstance<Object>, IFeatureDefinitionInstanceInlined<IBoundDefinitionFlag, IBoundInstanceFlag> {
 
   /**
    * Create a new bound flag instance.
@@ -64,7 +63,7 @@ public interface IBoundInstanceFlag
   @NonNull
   static IBoundInstanceFlag newInstance(
       @NonNull Field field,
-      @NonNull IBoundDefinitionModel containingDefinition) {
+      @NonNull IBoundDefinitionModel<IBoundObject> containingDefinition) {
     return new InstanceFlagInline(field, containingDefinition);
   }
 
@@ -93,18 +92,12 @@ public interface IBoundInstanceFlag
 
   @Override
   @NonNull
-  IBoundDefinitionModel getContainingDefinition();
+  IBoundDefinitionModel<IBoundObject> getContainingDefinition();
 
   @Override
   @NonNull
-  default IBoundDefinitionModel getParentContainer() {
+  default IBoundDefinitionModel<IBoundObject> getParentContainer() {
     return getContainingDefinition();
-  }
-
-  @Override
-  @NonNull
-  default IBoundInstanceFlag getInstance() {
-    return this;
   }
 
   /**
@@ -114,9 +107,7 @@ public interface IBoundInstanceFlag
    */
   @Override
   @NonNull
-  default IBoundInstanceFlag getDefinition() {
-    return this;
-  }
+  IBoundDefinitionFlag getDefinition();
 
   @Override
   @NonNull
@@ -126,33 +117,7 @@ public interface IBoundInstanceFlag
   }
 
   @Override
-  default Collection<? extends Object> getItemValues(Object value) {
-    return value == null ? CollectionUtil.emptyList() : CollectionUtil.singleton(value);
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Always bound to a field.
-   */
-  @Override
-  @Nullable
-  default Object getValue(@NonNull Object parent) {
-    return IFeatureBoundDefinitionInline.super.getValue(parent);
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Always bound to a field.
-   */
-  @Override
-  default void setValue(@NonNull Object parentObject, @Nullable Object value) {
-    IFeatureBoundDefinitionInline.super.setValue(parentObject, value);
-  }
-
-  @Override
-  default void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
+  default void deepCopy(@NonNull IBoundObject fromInstance, @NonNull IBoundObject toInstance) throws BindingException {
     Object value = getValue(fromInstance);
     if (value != null) {
       setValue(toInstance, deepCopyItem(value, toInstance));
@@ -161,18 +126,13 @@ public interface IBoundInstanceFlag
 
   @Override
   @NonNull
-  default Object readItem(Object parent, @NonNull IItemReadHandler handler) throws IOException {
+  default Object readItem(IBoundObject parent, @NonNull IItemReadHandler handler) throws IOException {
     return handler.readItemFlag(ObjectUtils.requireNonNull(parent, "parent"), this);
   }
 
   @Override
   default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
     handler.writeItemFlag(item, this);
-  }
-
-  @Override
-  default boolean canHandleJsonPropertyName(@NonNull String name) {
-    return name.equals(getJsonName());
   }
 
   @Override

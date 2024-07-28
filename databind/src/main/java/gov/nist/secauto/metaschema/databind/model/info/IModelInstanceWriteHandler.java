@@ -32,14 +32,14 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IModelInstanceWriteHandler {
-  default void writeSingleton(@NonNull Object item) throws IOException {
+public interface IModelInstanceWriteHandler<ITEM> {
+  default void writeSingleton(@NonNull ITEM item) throws IOException {
     writeItem(item);
   }
 
-  void writeList(@NonNull List<?> items) throws IOException;
+  void writeList(@NonNull List<ITEM> items) throws IOException;
 
-  void writeMap(@NonNull Map<String, ?> items) throws IOException;
+  void writeMap(@NonNull Map<String, ITEM> items) throws IOException;
 
   /**
    * Write the next item in the collection of items represented by the instance.
@@ -49,5 +49,5 @@ public interface IModelInstanceWriteHandler {
    * @throws IOException
    *           if an error occurred while parsing the input
    */
-  void writeItem(@NonNull Object item) throws IOException;
+  void writeItem(@NonNull ITEM item) throws IOException;
 }

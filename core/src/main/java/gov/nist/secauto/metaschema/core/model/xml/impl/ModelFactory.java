@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraintBuilder;
@@ -70,6 +69,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -80,8 +81,8 @@ public final class ModelFactory {
   }
 
   @NonNull
-  private static MetapathExpression target(@Nullable MetapathExpression target) {
-    return target == null ? IConstraint.DEFAULT_TARGET : target;
+  private static String target(@Nullable String target) {
+    return target == null ? IConstraint.DEFAULT_TARGET_METAPATH : target;
   }
 
   @NonNull
@@ -174,13 +175,13 @@ public final class ModelFactory {
   public static IAllowedValuesConstraint newAllowedValuesConstraint(
       @NonNull AllowedValuesType xmlObject,
       @NonNull ISource source) {
-    return newAllowedValuesConstraint(xmlObject, MetapathExpression.CONTEXT_NODE, source);
+    return newAllowedValuesConstraint(xmlObject, IConstraint.DEFAULT_TARGET_METAPATH, source);
   }
 
   @NonNull
   private static IAllowedValuesConstraint newAllowedValuesConstraint(
       @NonNull AllowedValuesType xmlObject,
-      @NonNull MetapathExpression target,
+      @NonNull String target,
       @NonNull ISource source) {
 
     IAllowedValuesConstraint.Builder builder = IAllowedValuesConstraint.builder();
@@ -205,7 +206,7 @@ public final class ModelFactory {
   @NonNull
   private static <T extends AbstractConstraintBuilder<T, ?>> T applyToBuilder(
       @NonNull ConstraintType xmlObject,
-      @NonNull MetapathExpression target,
+      @NonNull String target,
       @NonNull ISource source,
       @NonNull T builder) {
 
@@ -247,13 +248,13 @@ public final class ModelFactory {
   public static IMatchesConstraint newMatchesConstraint(
       @NonNull MatchesConstraintType xmlConstraint,
       @NonNull ISource source) {
-    return newMatchesConstraint(xmlConstraint, MetapathExpression.CONTEXT_NODE, source);
+    return newMatchesConstraint(xmlConstraint, IConstraint.DEFAULT_TARGET_METAPATH, source);
   }
 
   @NonNull
   private static IMatchesConstraint newMatchesConstraint(
       @NonNull MatchesConstraintType xmlObject,
-      @NonNull MetapathExpression target,
+      @NonNull String target,
       @NonNull ISource source) {
     IMatchesConstraint.Builder builder = IMatchesConstraint.builder();
 
@@ -367,14 +368,14 @@ public final class ModelFactory {
   public static IIndexHasKeyConstraint newIndexHasKeyConstraint(
       @NonNull IndexHasKeyConstraintType xmlObject,
       @NonNull ISource source) {
-    return newIndexHasKeyConstraint(xmlObject, MetapathExpression.CONTEXT_NODE, source);
+    return newIndexHasKeyConstraint(xmlObject, IConstraint.DEFAULT_TARGET_METAPATH, source);
 
   }
 
   @NonNull
   private static IIndexHasKeyConstraint newIndexHasKeyConstraint(
       @NonNull IndexHasKeyConstraintType xmlObject,
-      @NonNull MetapathExpression target,
+      @NonNull String target,
       @NonNull ISource source) {
     IIndexHasKeyConstraint.Builder builder = IIndexHasKeyConstraint.builder();
 
@@ -419,13 +420,13 @@ public final class ModelFactory {
   public static IExpectConstraint newExpectConstraint(
       @NonNull ExpectConstraintType xmlObject,
       @NonNull ISource source) {
-    return newExpectConstraint(xmlObject, MetapathExpression.CONTEXT_NODE, source);
+    return newExpectConstraint(xmlObject, IConstraint.DEFAULT_TARGET_METAPATH, source);
   }
 
   @NonNull
   private static IExpectConstraint newExpectConstraint(
       @NonNull ExpectConstraintType xmlConstraint,
-      @NonNull MetapathExpression target,
+      @NonNull String target,
       @NonNull ISource source) {
 
     IExpectConstraint.Builder builder = IExpectConstraint.builder();
@@ -491,8 +492,9 @@ public final class ModelFactory {
   public static ILet newLet(
       @NonNull ConstraintLetType xmlObject,
       @NonNull ISource source) {
+    // TODO: figure out how to resolve the namespace prefix on var
     return ILet.of(
-        ObjectUtils.notNull(xmlObject.getVar()),
+        new QName(xmlObject.getVar()),
         ObjectUtils.notNull(xmlObject.getExpression()),
         source);
   }

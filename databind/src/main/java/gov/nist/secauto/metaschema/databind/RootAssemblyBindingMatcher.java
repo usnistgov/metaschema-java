@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.databind.IBindingContext.IBindingMatcher;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 
@@ -46,7 +47,7 @@ class RootAssemblyBindingMatcher implements IBindingMatcher {
     return definition;
   }
 
-  protected Class<?> getClazz() {
+  protected Class<? extends IBoundObject> getClazz() {
     return getDefinition().getBoundClass();
   }
 
@@ -63,12 +64,12 @@ class RootAssemblyBindingMatcher implements IBindingMatcher {
   }
 
   @Override
-  public Class<?> getBoundClassForXmlQName(QName rootQName) {
+  public Class<? extends IBoundObject> getBoundClassForXmlQName(QName rootQName) {
     return getRootQName().equals(rootQName) ? getClazz() : null;
   }
 
   @Override
-  public Class<?> getBoundClassForJsonName(String rootName) {
+  public Class<? extends IBoundObject> getBoundClassForJsonName(String rootName) {
     return getRootJsonName().equals(rootName) ? getClazz() : null;
   }
 }

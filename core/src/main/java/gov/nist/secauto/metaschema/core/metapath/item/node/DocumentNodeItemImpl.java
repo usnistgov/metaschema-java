@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IResourceLocation;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.net.URI;
@@ -60,6 +61,11 @@ class DocumentNodeItemImpl
   }
 
   @Override
+  public URI getNamespace() {
+    return ObjectUtils.notNull(URI.create(getRootAssemblyNodeItem().getName().getNamespaceURI()));
+  }
+
+  @Override
   @NonNull
   public URI getDocumentUri() {
     return documentUri;
@@ -69,5 +75,15 @@ class DocumentNodeItemImpl
   @Override
   public ModelContainer getModel() {
     return model.get();
+  }
+
+  @Override
+  public Object getValue() {
+    return getRootAssemblyNodeItem().getValue();
+  }
+
+  @Override
+  public IResourceLocation getLocation() {
+    return getRootAssemblyNodeItem().getLocation();
   }
 }

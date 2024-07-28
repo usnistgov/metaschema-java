@@ -103,4 +103,13 @@ public interface IConstraintValidationHandler {
       @NonNull INodeItem node,
       @NonNull INodeItem target,
       @NonNull String message);
+
+  void handlePass(
+      @NonNull IConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem target);
+  // void handlePass(
+  // @NonNull IConstraint constraint,
+  // @NonNull INodeItem node,
+  // @NonNull List<? extends INodeItem> targets);
 }

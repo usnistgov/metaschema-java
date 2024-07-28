@@ -29,42 +29,58 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
+import gov.nist.secauto.metaschema.core.model.AbstractInlineFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAbsolute;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
-import gov.nist.secauto.metaschema.core.model.IGroupable;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingContainerModelAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModelField;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceFlag;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FieldConstraints;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.InlineDefineField;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.JsonKey;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.JsonValueKeyFlag;
+import gov.nist.secauto.metaschema.databind.model.IGroupAs;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.FieldConstraints;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.InlineDefineField;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.JsonKey;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.JsonValueKeyFlag;
 
 import java.math.BigInteger;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelFieldInline
-    extends AbstractInstanceModelNamedInline<InlineDefineField,
-        IBindingContainerModelAbsolute>
-    implements IBindingInstanceModelFieldAbsolute, IBindingDefinitionModelField,
-    IFeatureDefinitionInstanceInlined<IBindingDefinitionModelField, IBindingInstanceModelFieldAbsolute>,
-    IFeatureBindingContainerFlag {
+    extends AbstractInlineFieldDefinition<
+        IContainerModelAbsolute,
+        IFieldDefinition,
+        IFieldInstanceAbsolute,
+        IAssemblyDefinition,
+        IFlagInstance>
+    implements IFieldInstanceAbsolute, IFeatureInstanceModelGroupAs {
+  @NonNull
+  private final InlineDefineField binding;
+  @NonNull
+  private final Map<IAttributable.Key, Set<String>> properties;
+  @NonNull
+  private final IGroupAs groupAs;
+  @NonNull
+  private final Lazy<IAssemblyNodeItem> boundNodeItem;
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
   private final Object defaultValue;
   @NonNull
-  private final Lazy<IContainerFlagSupport<IBindingInstanceFlag>> flagContainer;
+  private final Lazy<IContainerFlagSupport<IFlagInstance>> flagContainer;
   @NonNull
   private final Lazy<IValueConstrained> valueConstraints;
 
@@ -72,22 +88,28 @@ public class InstanceModelFieldInline
       @NonNull InlineDefineField binding,
       @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
       int position,
-      @NonNull IBindingContainerModelAbsolute parent) {
-    super(binding,
-        bindingInstance,
-        position,
-        parent,
-        ObjectUtils.requireNonNull(binding.getProps()),
-        binding.getGroupAs());
-    this.javaTypeAdapter = ModelSupport.dataType(getBinding().getAsType());
-    this.defaultValue = ModelSupport.defaultValue(getBinding().getDefault(), this.javaTypeAdapter);
-    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> FlagContainerSupport.of(
-        binding.getFlags(),
-        bindingInstance,
-        this)));
+      @NonNull IContainerModelAbsolute parent) {
+    super(parent);
+    this.binding = binding;
+    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(binding.getProps()));
+    this.groupAs = ModelSupport.groupAs(binding.getGroupAs(), parent.getOwningDefinition().getContainingModule());
+    this.boundNodeItem = ObjectUtils.notNull(
+        Lazy.lazy(() -> (IAssemblyNodeItem) ObjectUtils.notNull(getContainingDefinition().getNodeItem())
+            .getModelItemsByName(bindingInstance.getXmlQName())
+            .get(position)));
+    this.javaTypeAdapter = ModelSupport.dataType(binding.getAsType());
+    this.defaultValue = ModelSupport.defaultValue(binding.getDefault(), this.javaTypeAdapter);
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
+      JsonKey jsonKey = binding.getJsonKey();
+      return FlagContainerSupport.newFlagContainer(
+          binding.getFlags(),
+          bindingInstance,
+          this,
+          jsonKey == null ? null : jsonKey.getFlagRef());
+    }));
     this.valueConstraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
-      FieldConstraints constraints = getBinding().getConstraint();
+      FieldConstraints constraints = binding.getConstraint();
       if (constraints != null) {
         ConstraintBindingSupport.parse(
             retval,
@@ -98,13 +120,23 @@ public class InstanceModelFieldInline
     }));
   }
 
-  @Override
-  public boolean isInXmlWrapped() {
-    return ModelSupport.fieldInXml(getBinding().getInXml());
+  @NonNull
+  protected InlineDefineField getBinding() {
+    return binding;
   }
 
   @Override
-  public IContainerFlagSupport<IBindingInstanceFlag> getFlagContainer() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
+    return properties;
+  }
+
+  @Override
+  public IGroupAs getGroupAs() {
+    return groupAs;
+  }
+
+  @Override
+  public IContainerFlagSupport<IFlagInstance> getFlagContainer() {
     return ObjectUtils.notNull(flagContainer.get());
   }
 
@@ -119,18 +151,22 @@ public class InstanceModelFieldInline
   }
 
   @Override
-  public InstanceModelFieldInline getDefinition() {
-    return this;
-  }
-
-  @Override
-  public IBindingInstanceModelFieldAbsolute getInlineInstance() {
-    return this;
-  }
-
-  @Override
   public Object getDefaultValue() {
     return defaultValue;
+  }
+
+  @Override
+  public IAssemblyNodeItem getNodeItem() {
+    return boundNodeItem.get();
+  }
+
+  // ---------------------------------------
+  // - Start binding driven code - CPD-OFF -
+  // ---------------------------------------
+
+  @Override
+  public boolean isInXmlWrapped() {
+    return ModelSupport.fieldInXml(getBinding().getInXml());
   }
 
   @Override
@@ -159,30 +195,25 @@ public class InstanceModelFieldInline
   }
 
   @Override
-  public String getJsonKeyFlagName() {
-    JsonKey jsonKey = getBinding().getJsonKey();
-    return jsonKey == null ? null : jsonKey.getFlagRef();
-  }
-
-  @Override
   public int getMinOccurs() {
     BigInteger min = getBinding().getMinOccurs();
-    return min == null ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
+    return min == null ? DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
   }
 
   @Override
   public int getMaxOccurs() {
     String max = getBinding().getMaxOccurs();
-    return max == null
-        ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS
-        : ModelSupport.maxOccurs(max);
+    return max == null ? DEFAULT_GROUP_AS_MAX_OCCURS : ModelSupport.maxOccurs(max);
   }
 
   @Override
   public IFlagInstance getJsonValueKeyFlagInstance() {
     JsonValueKeyFlag obj = getBinding().getJsonValueKeyFlag();
-    String flagName = obj == null ? null : obj.getFlagRef();
-    return flagName == null ? null : getFlagInstanceByName(flagName);
+    String name = obj == null ? null : obj.getFlagRef();
+    String namespace = getContainingModule().getXmlNamespace().toASCIIString();
+    return name == null ? null
+        : ObjectUtils.requireNonNull(getFlagInstanceByName(
+            new QName(namespace, name)));
   }
 
   @Override

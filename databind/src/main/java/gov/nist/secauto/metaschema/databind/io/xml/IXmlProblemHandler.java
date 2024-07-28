@@ -26,9 +26,10 @@
 
 package gov.nist.secauto.metaschema.databind.io.xml;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.databind.io.IProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 
@@ -59,8 +60,8 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *           if an error occurred while handling the unrecognized data
    */
   default boolean handleUnknownAttribute(
-      @NonNull IBoundDefinitionModel parentDefinition,
-      @NonNull Object targetObject,
+      @NonNull IBoundDefinitionModelComplex parentDefinition,
+      @NonNull IBoundObject targetObject,
       @NonNull Attribute attribute,
       @NonNull IXmlParsingContext parsingContext) throws IOException {
     return false;
@@ -84,7 +85,7 @@ public interface IXmlProblemHandler extends IProblemHandler {
    */
   default boolean handleUnknownElement(
       @NonNull IBoundDefinitionModelAssembly parentDefinition,
-      @NonNull Object targetObject,
+      @NonNull IBoundObject targetObject,
       @NonNull StartElement start,
       @NonNull IXmlParsingContext parsingContext) throws IOException {
     return false;
@@ -107,8 +108,8 @@ public interface IXmlProblemHandler extends IProblemHandler {
    *           if an error occurred while handling the missing instances
    */
   default void handleMissingFlagInstances(
-      @NonNull IBoundDefinitionModel parentDefinition,
-      @NonNull Object targetObject,
+      @NonNull IBoundDefinitionModelComplex parentDefinition,
+      @NonNull IBoundObject targetObject,
       @NonNull Collection<IBoundInstanceFlag> unhandledInstances)
       throws IOException {
     handleMissingInstances(parentDefinition, targetObject, unhandledInstances);
@@ -132,8 +133,8 @@ public interface IXmlProblemHandler extends IProblemHandler {
    */
   default void handleMissingModelInstances(
       @NonNull IBoundDefinitionModelAssembly parentDefinition,
-      @NonNull Object targetObject,
-      @NonNull Collection<? extends IBoundInstanceModel> unhandledInstances)
+      @NonNull IBoundObject targetObject,
+      @NonNull Collection<? extends IBoundInstanceModel<?>> unhandledInstances)
       throws IOException {
     handleMissingInstances(parentDefinition, targetObject, unhandledInstances);
   }

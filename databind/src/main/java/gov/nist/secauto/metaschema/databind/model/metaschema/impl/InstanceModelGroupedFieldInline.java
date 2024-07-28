@@ -29,8 +29,13 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;
+import gov.nist.secauto.metaschema.core.model.AbstractInlineFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAttributable;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionInstanceInlined;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -38,47 +43,60 @@ import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModelField;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceFlag;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldGrouped;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceGroupBinding;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FieldConstraints;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.JsonValueKeyFlag;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.AssemblyModel;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.FieldConstraints;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.JsonValueKeyFlag;
+
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelGroupedFieldInline
-    extends AbstractInstanceModelGrouped<AssemblyModel.ChoiceGroup.DefineField>
-    implements IBindingInstanceModelFieldGrouped, IBindingDefinitionModelField,
-    IFeatureDefinitionInstanceInlined<IBindingDefinitionModelField, IFieldInstanceGrouped>,
-    IFeatureBindingContainerFlag {
+    extends AbstractInlineFieldDefinition<
+        IChoiceGroupInstance,
+        IFieldDefinition,
+        IFieldInstanceGrouped,
+        IAssemblyDefinition,
+        IFlagInstance>
+    implements IFieldInstanceGrouped {
+  @NonNull
+  private final AssemblyModel.ChoiceGroup.DefineField binding;
+  @NonNull
+  private final Map<IAttributable.Key, Set<String>> properties;
   @NonNull
   private final IDataTypeAdapter<?> javaTypeAdapter;
   @Nullable
   private final Object defaultValue;
   @NonNull
-  private final Lazy<IContainerFlagSupport<IBindingInstanceFlag>> flagContainer;
+  private final Lazy<IContainerFlagSupport<IFlagInstance>> flagContainer;
   @NonNull
   private final Lazy<IValueConstrained> valueConstraints;
+  @NonNull
+  private final Lazy<IFieldNodeItem> boundNodeItem;
 
   public InstanceModelGroupedFieldInline(
       @NonNull AssemblyModel.ChoiceGroup.DefineField binding,
       @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
       int position,
-      @NonNull IInstanceModelChoiceGroupBinding parent) {
-    super(binding, bindingInstance, position, parent, ObjectUtils.requireNonNull(binding.getProps()));
-    this.javaTypeAdapter = ModelSupport.dataType(getBinding().getAsType());
-    this.defaultValue = ModelSupport.defaultValue(getBinding().getDefault(), this.javaTypeAdapter);
-    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> FlagContainerSupport.of(
+      @NonNull IChoiceGroupInstance parent) {
+    super(parent);
+    this.binding = binding;
+    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(binding.getProps()));
+    this.javaTypeAdapter = ModelSupport.dataType(binding.getAsType());
+    this.defaultValue = ModelSupport.defaultValue(binding.getDefault(), this.javaTypeAdapter);
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> FlagContainerSupport.newFlagContainer(
         binding.getFlags(),
         bindingInstance,
-        this)));
+        this,
+        getParentContainer().getJsonKeyFlagInstanceName())));
     this.valueConstraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
-      FieldConstraints constraints = getBinding().getConstraint();
+      FieldConstraints constraints = binding.getConstraint();
       if (constraints != null) {
         ConstraintBindingSupport.parse(
             retval,
@@ -87,10 +105,24 @@ public class InstanceModelGroupedFieldInline
       }
       return retval;
     }));
+    this.boundNodeItem = ObjectUtils.notNull(
+        Lazy.lazy(() -> (IFieldNodeItem) ObjectUtils.notNull(getContainingDefinition().getNodeItem())
+            .getModelItemsByName(bindingInstance.getXmlQName())
+            .get(position)));
+  }
+
+  @NonNull
+  protected AssemblyModel.ChoiceGroup.DefineField getBinding() {
+    return binding;
   }
 
   @Override
-  public IContainerFlagSupport<IBindingInstanceFlag> getFlagContainer() {
+  public Map<IAttributable.Key, Set<String>> getProperties() {
+    return properties;
+  }
+
+  @Override
+  public IContainerFlagSupport<IFlagInstance> getFlagContainer() {
     return ObjectUtils.notNull(flagContainer.get());
   }
 
@@ -100,24 +132,23 @@ public class InstanceModelGroupedFieldInline
   }
 
   @Override
+  public IFieldNodeItem getNodeItem() {
+    return boundNodeItem.get();
+  }
+
+  @Override
   public IDataTypeAdapter<?> getJavaTypeAdapter() {
     return javaTypeAdapter;
-  }
-
-  @Override
-  public IBindingDefinitionModelField getDefinition() {
-    return this;
-  }
-
-  @Override
-  public IFieldInstanceGrouped getInlineInstance() {
-    return this;
   }
 
   @Override
   public Object getDefaultValue() {
     return defaultValue;
   }
+
+  // ---------------------------------------
+  // - Start binding driven code - CPD-OFF -
+  // ---------------------------------------
 
   @Override
   public String getName() {
@@ -153,7 +184,7 @@ public class InstanceModelGroupedFieldInline
   public IFlagInstance getJsonValueKeyFlagInstance() {
     JsonValueKeyFlag obj = getBinding().getJsonValueKeyFlag();
     String flagName = obj == null ? null : obj.getFlagRef();
-    return flagName == null ? null : getFlagInstanceByName(flagName);
+    return flagName == null ? null : getFlagInstanceByName(new QName(getXmlNamespace(), flagName));
   }
 
   @Override

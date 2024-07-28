@@ -27,22 +27,18 @@
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
-import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IContainerModelSupport;
-import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelGrouped;
-import gov.nist.secauto.metaschema.core.model.IGroupable;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
 import gov.nist.secauto.metaschema.databind.model.IGroupAs;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyGrouped;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldGrouped;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelNamedGrouped;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceGroupBinding;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.JsonKey;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.AssemblyModel;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.JsonKey;
 
 import java.math.BigInteger;
 
@@ -50,21 +46,22 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelChoiceGroup
-    extends AbstractInstanceModel<AssemblyModel.ChoiceGroup, IBindingDefinitionAssembly>
-    implements IInstanceModelChoiceGroupBinding,
-    IFeatureContainerModelGrouped<
-        IBindingInstanceModelNamedGrouped,
-        IBindingInstanceModelFieldGrouped,
-        IBindingInstanceModelAssemblyGrouped>,
-    IFeatureInstanceModelGroupAs {
+    extends AbstractChoiceGroupInstance<
+        IAssemblyDefinition,
+        INamedModelInstanceGrouped,
+        IFieldInstanceGrouped,
+        IAssemblyInstanceGrouped>
+    implements IFeatureInstanceModelGroupAs {
+  @NonNull
+  private final AssemblyModel.ChoiceGroup binding;
   @NonNull
   private final IGroupAs groupAs;
   @NonNull
   private final Lazy<IContainerModelSupport<
-      IBindingInstanceModelNamedGrouped,
-      IBindingInstanceModelNamedGrouped,
-      IBindingInstanceModelFieldGrouped,
-      IBindingInstanceModelAssemblyGrouped>> modelContainer;
+      INamedModelInstanceGrouped,
+      INamedModelInstanceGrouped,
+      IFieldInstanceGrouped,
+      IAssemblyInstanceGrouped>> modelContainer;
   @NonNull
   private final Lazy<IAssemblyNodeItem> boundNodeItem;
 
@@ -72,27 +69,33 @@ public class InstanceModelChoiceGroup
       @NonNull AssemblyModel.ChoiceGroup binding,
       @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
       int position,
-      @NonNull IBindingDefinitionAssembly parent,
+      @NonNull IAssemblyDefinition parent,
       @NonNull INodeItemFactory nodeItemFactory) {
-    super(binding, parent);
-    this.groupAs = ModelSupport.groupAs(binding.getGroupAs());
+    super(parent);
+    this.binding = binding;
+    this.groupAs = ModelSupport.groupAs(binding.getGroupAs(), parent.getContainingModule());
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> ChoiceGroupModelContainerSupport.of(
         binding,
         bindingInstance,
         this,
         nodeItemFactory)));
     this.boundNodeItem = ObjectUtils.notNull(
-        Lazy.lazy(() -> (IAssemblyNodeItem) getContainingDefinition().getBoundNodeItem()
-            .getModelItemsByName(bindingInstance.getJsonName())
+        Lazy.lazy(() -> (IAssemblyNodeItem) ObjectUtils.notNull(getContainingDefinition().getNodeItem())
+            .getModelItemsByName(bindingInstance.getXmlQName())
             .get(position)));
+  }
+
+  @NonNull
+  protected AssemblyModel.ChoiceGroup getBinding() {
+    return binding;
   }
 
   @Override
   public IContainerModelSupport<
-      IBindingInstanceModelNamedGrouped,
-      IBindingInstanceModelNamedGrouped,
-      IBindingInstanceModelFieldGrouped,
-      IBindingInstanceModelAssemblyGrouped> getModelContainer() {
+      INamedModelInstanceGrouped,
+      INamedModelInstanceGrouped,
+      IFieldInstanceGrouped,
+      IAssemblyInstanceGrouped> getModelContainer() {
     return ObjectUtils.notNull(modelContainer.get());
   }
 
@@ -101,39 +104,40 @@ public class InstanceModelChoiceGroup
     return groupAs;
   }
 
-  @SuppressWarnings("null")
   @Override
-  public INodeItem getBoundNodeItem() {
+  public IAssemblyNodeItem getNodeItem() {
     return boundNodeItem.get();
   }
+
+  // ---------------------------------------
+  // - Start binding driven code - CPD-OFF -
+  // ---------------------------------------
 
   @Override
   public int getMinOccurs() {
     BigInteger min = getBinding().getMinOccurs();
-    return min == null ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
+    return min == null ? DEFAULT_GROUP_AS_MIN_OCCURS : min.intValueExact();
   }
 
   @Override
   public int getMaxOccurs() {
     String max = getBinding().getMaxOccurs();
-    return max == null
-        ? IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS
-        : ModelSupport.maxOccurs(max);
+    return max == null ? DEFAULT_GROUP_AS_MAX_OCCURS : ModelSupport.maxOccurs(max);
   }
 
   @Override
-  public IBindingDefinitionAssembly getOwningDefinition() {
-    return getContainingDefinition();
+  public IAssemblyDefinition getOwningDefinition() {
+    return getParentContainer();
   }
 
   @Override
   public String getJsonDiscriminatorProperty() {
     String discriminator = getBinding().getDiscriminator();
-    return discriminator == null ? IChoiceGroupInstance.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME : discriminator;
+    return discriminator == null ? DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME : discriminator;
   }
 
   @Override
-  public String getJsonKeyFlagName() {
+  public String getJsonKeyFlagInstanceName() {
     JsonKey jsonKey = getBinding().getJsonKey();
     return jsonKey == null ? null : jsonKey.getFlagRef();
   }

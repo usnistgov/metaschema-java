@@ -59,9 +59,10 @@ public class RootSlashPath
       DynamicContext dynamicContext,
       ISequence<?> focus) {
 
-    ISequence<?> roots = ObjectUtils.notNull(focus.asStream()
-        .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
-        .map(item -> Axis.ANCESTOR_OR_SELF.execute(ObjectUtils.notNull(item)).findFirst().get())
+    ISequence<?> roots = ObjectUtils.notNull(focus.stream()
+        .map(ItemUtils::checkItemIsNodeItemForStep)
+        // the previous checks for a null instance
+        .flatMap(item -> Axis.ANCESTOR_OR_SELF.execute(ObjectUtils.notNull(item)).limit(1))
         .collect(ISequence.toSequence()));
 
     return getExpression().accept(dynamicContext, roots);

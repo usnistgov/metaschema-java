@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind;
 
 import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.IModuleLoader;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -44,7 +45,6 @@ import gov.nist.secauto.metaschema.databind.io.xml.DefaultXmlDeserializer;
 import gov.nist.secauto.metaschema.databind.io.xml.DefaultXmlSerializer;
 import gov.nist.secauto.metaschema.databind.io.yaml.DefaultYamlDeserializer;
 import gov.nist.secauto.metaschema.databind.io.yaml.DefaultYamlSerializer;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundModule;
@@ -138,12 +138,12 @@ public class DefaultBindingContext implements IBindingContext {
 
   @Override
   @NonNull
-  public IBindingMatcher registerBindingMatcher(@NonNull IBoundDefinitionModelAssembly definition) {
-    return ObjectUtils.notNull(bindingMatchers.computeIfAbsent(definition, (key) -> IBindingMatcher.of(definition)));
+  public final IBindingMatcher registerBindingMatcher(@NonNull IBoundDefinitionModelAssembly definition) {
+    return ObjectUtils.notNull(bindingMatchers.computeIfAbsent(definition, key -> IBindingMatcher.of(definition)));
   }
 
   @Override
-  public IBindingMatcher registerBindingMatcher(@NonNull Class<?> clazz) {
+  public final IBindingMatcher registerBindingMatcher(@NonNull Class<? extends IBoundObject> clazz) {
     IBoundDefinitionModelComplex definition = getBoundDefinitionForClass(clazz);
     if (definition == null) {
       throw new IllegalArgumentException(String.format("Unable to find bound definition for class '%s'.",
@@ -160,13 +160,13 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public IBoundDefinitionModelComplex registerClassBinding(IBoundDefinitionModelComplex definition) {
+  public final IBoundDefinitionModelComplex registerClassBinding(IBoundDefinitionModelComplex definition) {
     Class<?> clazz = definition.getBoundClass();
     return boundClassToStrategyMap.computeIfAbsent(clazz, k -> definition);
   }
 
   @Override
-  public IBoundDefinitionModelComplex getBoundDefinitionForClass(@NonNull Class<?> clazz) {
+  public IBoundDefinitionModelComplex getBoundDefinitionForClass(@NonNull Class<? extends IBoundObject> clazz) {
     return moduleLoaderStrategy.getBoundDefinitionForClass(clazz);
   }
 
@@ -181,7 +181,9 @@ public class DefaultBindingContext implements IBindingContext {
    * A serializer returned by this method is thread-safe.
    */
   @Override
-  public <CLASS> ISerializer<CLASS> newSerializer(@NonNull Format format, @NonNull Class<CLASS> clazz) {
+  public <CLASS extends IBoundObject> ISerializer<CLASS> newSerializer(
+      @NonNull Format format,
+      @NonNull Class<CLASS> clazz) {
     Objects.requireNonNull(format, "format");
     IBoundDefinitionModelAssembly definition;
     try {
@@ -216,7 +218,9 @@ public class DefaultBindingContext implements IBindingContext {
    * A deserializer returned by this method is thread-safe.
    */
   @Override
-  public <CLASS> IDeserializer<CLASS> newDeserializer(@NonNull Format format, @NonNull Class<CLASS> clazz) {
+  public <CLASS extends IBoundObject> IDeserializer<CLASS> newDeserializer(
+      @NonNull Format format,
+      @NonNull Class<CLASS> clazz) {
     IBoundDefinitionModelAssembly definition;
     try {
       definition = IBoundDefinitionModelAssembly.class.cast(getBoundDefinitionForClass(clazz));
@@ -288,8 +292,8 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public Class<?> getBoundClassForRootXmlQName(@NonNull QName rootQName) {
-    Class<?> retval = null;
+  public Class<? extends IBoundObject> getBoundClassForRootXmlQName(@NonNull QName rootQName) {
+    Class<? extends IBoundObject> retval = null;
     for (IBindingMatcher matcher : getBindingMatchers()) {
       retval = matcher.getBoundClassForXmlQName(rootQName);
       if (retval != null) {
@@ -300,8 +304,8 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public Class<?> getBoundClassForRootJsonName(@NonNull String rootName) {
-    Class<?> retval = null;
+  public Class<? extends IBoundObject> getBoundClassForRootJsonName(@NonNull String rootName) {
+    Class<? extends IBoundObject> retval = null;
     for (IBindingMatcher matcher : getBindingMatchers()) {
       retval = matcher.getBoundClassForJsonName(rootName);
       if (retval != null) {
@@ -317,12 +321,12 @@ public class DefaultBindingContext implements IBindingContext {
   }
 
   @Override
-  public <CLASS> CLASS deepCopy(@NonNull CLASS other, Object parentInstance) throws BindingException {
-    IBoundDefinitionModel definition = getBoundDefinitionForClass(other.getClass());
+  public <CLASS extends IBoundObject> CLASS deepCopy(@NonNull CLASS other, IBoundObject parentInstance)
+      throws BindingException {
+    IBoundDefinitionModelComplex definition = getBoundDefinitionForClass(other.getClass());
     if (definition == null) {
       throw new IllegalStateException(String.format("Class '%s' is not bound", other.getClass().getName()));
     }
-    @SuppressWarnings("unchecked") CLASS retval = (CLASS) definition.deepCopyItem(other, parentInstance);
-    return retval;
+    return ObjectUtils.asType(definition.deepCopyItem(other, parentInstance));
   }
 }

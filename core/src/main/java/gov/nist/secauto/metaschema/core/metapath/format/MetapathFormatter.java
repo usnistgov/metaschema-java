@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.node.IModelNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IRootAssemblyNodeItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -60,7 +61,7 @@ public class MetapathFormatter implements IPathFormatter {
 
   @Override
   public String formatRootAssembly(IRootAssemblyNodeItem root) {
-    return root.getName();
+    return ObjectUtils.notNull(root.getName().getLocalPart());
   }
 
   @Override
@@ -88,7 +89,7 @@ public class MetapathFormatter implements IPathFormatter {
   @SuppressWarnings("null")
   @NonNull
   private static String formatModelPathSegment(@NonNull IModelNodeItem<?, ?> item) {
-    StringBuilder builder = new StringBuilder(item.getName())
+    StringBuilder builder = new StringBuilder(item.getName().getLocalPart())
         .append('[')
         .append(item.getPosition())
         .append(']');

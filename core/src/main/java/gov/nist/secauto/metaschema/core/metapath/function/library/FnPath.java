@@ -121,7 +121,7 @@ public final class FnPath {
    */
   @NonNull
   public static ISequence<IStringItem> fnPath(@NonNull ISequence<?> sequence) {
-    IItem item = FunctionUtils.getFirstItem(sequence, true);
+    IItem item = sequence.getFirstItem(true);
 
     ISequence<IStringItem> retval;
     if (item == null) {

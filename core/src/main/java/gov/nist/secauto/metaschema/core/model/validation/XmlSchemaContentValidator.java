@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model.validation;
 
+import gov.nist.secauto.metaschema.core.model.IResourceLocation;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint.Level;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -96,7 +97,7 @@ public class XmlSchemaContentValidator
     return errorHandler;
   }
 
-  public static class XmlValidationFinding implements IValidationFinding {
+  public static class XmlValidationFinding implements IValidationFinding, IResourceLocation {
     @NonNull
     private final URI documentUri;
     @NonNull
@@ -104,11 +105,24 @@ public class XmlSchemaContentValidator
     @NonNull
     private final Level severity;
 
-    public XmlValidationFinding(@NonNull Level severity, @NonNull SAXParseException exception,
+    public XmlValidationFinding(
+        @NonNull Level severity,
+        @NonNull SAXParseException exception,
         @NonNull URI documentUri) {
       this.documentUri = ObjectUtils.requireNonNull(documentUri, "documentUri");
       this.exception = ObjectUtils.requireNonNull(exception, "exception");
       this.severity = ObjectUtils.requireNonNull(severity, "severity");
+    }
+
+    @Override
+    public String getIdentifier() {
+      // always null
+      return null;
+    }
+
+    @Override
+    public Kind getKind() {
+      return Level.WARNING.equals(getSeverity()) ? Kind.PASS : Kind.FAIL;
     }
 
     @Override
@@ -121,6 +135,46 @@ public class XmlSchemaContentValidator
     public URI getDocumentUri() {
       String systemId = getCause().getSystemId();
       return systemId == null ? documentUri : URI.create(systemId);
+    }
+
+    @Override
+    public int getLine() {
+      return getCause().getLineNumber();
+    }
+
+    @Override
+    public int getColumn() {
+      return getCause().getColumnNumber();
+    }
+
+    @Override
+    public long getCharOffset() {
+      // not known
+      return -1;
+    }
+
+    @Override
+    public long getByteOffset() {
+      // not known
+      return -1;
+    }
+
+    @Override
+    public IResourceLocation getLocation() {
+      // TODO Auto-generated method stub
+      return this;
+    }
+
+    @Override
+    public String getPathKind() {
+      // not known
+      return null;
+    }
+
+    @Override
+    public String getPath() {
+      // not known
+      return null;
     }
 
     @SuppressWarnings("null")

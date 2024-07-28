@@ -34,8 +34,6 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
-import gov.nist.secauto.metaschema.core.metapath.StaticContext;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
@@ -135,10 +133,9 @@ public final class AnnotationGenerator {
 
     annotation.addMember("level", "$T.$L", IConstraint.Level.class, constraint.getLevel());
 
-    MetapathExpression target = constraint.getTarget();
-    String path = target.getPath();
-    if (!path.equals(getDefaultValue(annotationType, "target"))) {
-      annotation.addMember("target", "$S", path);
+    String target = constraint.getTarget();
+    if (!target.equals(getDefaultValue(annotationType, "target"))) {
+      annotation.addMember("target", "$S", target);
     }
   }
 
@@ -147,6 +144,7 @@ public final class AnnotationGenerator {
       @NonNull IFlagDefinition definition) {
     if (!definition.getConstraints().isEmpty()) {
       AnnotationSpec.Builder annotation = AnnotationSpec.builder(ValueConstraints.class);
+      assert annotation != null;
 
       applyAllowedValuesConstraints(annotation, definition.getAllowedValuesConstraints());
       applyIndexHasKeyConstraints(annotation, definition.getIndexHasKeyConstraints());
@@ -168,6 +166,7 @@ public final class AnnotationGenerator {
 
     if (!allowedValues.isEmpty() || !indexHasKey.isEmpty() || !matches.isEmpty() || !expects.isEmpty()) {
       AnnotationSpec.Builder annotation = AnnotationSpec.builder(ValueConstraints.class);
+      assert annotation != null;
 
       applyAllowedValuesConstraints(annotation, allowedValues);
       applyIndexHasKeyConstraints(annotation, indexHasKey);
@@ -197,8 +196,9 @@ public final class AnnotationGenerator {
     }
   }
 
-  private static void applyAllowedValuesConstraints(AnnotationSpec.Builder annotation,
-      List<? extends IAllowedValuesConstraint> constraints) {
+  private static void applyAllowedValuesConstraints(
+      @NonNull AnnotationSpec.Builder annotation,
+      @NonNull List<? extends IAllowedValuesConstraint> constraints) {
     for (IAllowedValuesConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(AllowedValues.class);
       buildConstraint(AllowedValues.class, constraintAnnotation, constraint);
@@ -225,8 +225,9 @@ public final class AnnotationGenerator {
     }
   }
 
-  private static void applyIndexHasKeyConstraints(AnnotationSpec.Builder annotation,
-      List<? extends IIndexHasKeyConstraint> constraints) {
+  private static void applyIndexHasKeyConstraints(
+      @NonNull AnnotationSpec.Builder annotation,
+      @NonNull List<? extends IIndexHasKeyConstraint> constraints) {
     for (IIndexHasKeyConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(IndexHasKey.class);
       buildConstraint(IndexHasKey.class, constraintAnnotation, constraint);
@@ -244,15 +245,15 @@ public final class AnnotationGenerator {
     }
   }
 
-  private static void buildKeyFields(@NonNull Builder constraintAnnotation,
+  private static void buildKeyFields(
+      @NonNull Builder constraintAnnotation,
       @NonNull List<? extends IKeyField> keyFields) {
     for (IKeyField key : keyFields) {
       AnnotationSpec.Builder keyAnnotation = AnnotationSpec.builder(KeyField.class);
 
-      MetapathExpression target = key.getTarget();
-      String path = target.getPath();
-      if (!path.equals(getDefaultValue(KeyField.class, "target"))) {
-        keyAnnotation.addMember("target", "$S", path);
+      String target = key.getTarget();
+      if (!target.equals(getDefaultValue(KeyField.class, "target"))) {
+        keyAnnotation.addMember("target", "$S", target);
       }
 
       Pattern pattern = key.getPattern();
@@ -269,8 +270,9 @@ public final class AnnotationGenerator {
     }
   }
 
-  private static void applyMatchesConstraints(AnnotationSpec.Builder annotation,
-      List<? extends IMatchesConstraint> constraints) {
+  private static void applyMatchesConstraints(
+      @NonNull AnnotationSpec.Builder annotation,
+      @NonNull List<? extends IMatchesConstraint> constraints) {
     for (IMatchesConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(Matches.class);
       buildConstraint(Matches.class, constraintAnnotation, constraint);
@@ -293,15 +295,15 @@ public final class AnnotationGenerator {
     }
   }
 
-  private static void applyExpectConstraints(AnnotationSpec.Builder annotation,
-      List<? extends IExpectConstraint> constraints) {
+  private static void applyExpectConstraints(
+      @NonNull AnnotationSpec.Builder annotation,
+      @NonNull List<? extends IExpectConstraint> constraints) {
     for (IExpectConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(Expect.class);
 
       buildConstraint(Expect.class, constraintAnnotation, constraint);
 
-      MetapathExpression test = constraint.getTest();
-      constraintAnnotation.addMember("test", "$S", test.getPath());
+      constraintAnnotation.addMember("test", "$S", constraint.getTest());
 
       if (constraint.getMessage() != null) {
         constraintAnnotation.addMember("message", "$S", constraint.getMessage());
@@ -316,8 +318,9 @@ public final class AnnotationGenerator {
     }
   }
 
-  private static void applyIndexConstraints(AnnotationSpec.Builder annotation,
-      List<? extends IIndexConstraint> constraints) {
+  private static void applyIndexConstraints(
+      @NonNull AnnotationSpec.Builder annotation,
+      @NonNull List<? extends IIndexConstraint> constraints) {
     for (IIndexConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = AnnotationSpec.builder(Index.class);
 
@@ -336,8 +339,9 @@ public final class AnnotationGenerator {
     }
   }
 
-  private static void applyUniqueConstraints(AnnotationSpec.Builder annotation,
-      List<? extends IUniqueConstraint> constraints) {
+  private static void applyUniqueConstraints(
+      @NonNull AnnotationSpec.Builder annotation,
+      @NonNull List<? extends IUniqueConstraint> constraints) {
     for (IUniqueConstraint constraint : constraints) {
       AnnotationSpec.Builder constraintAnnotation = ObjectUtils.notNull(AnnotationSpec.builder(IsUnique.class));
 
@@ -364,7 +368,7 @@ public final class AnnotationGenerator {
       @NonNull LogBuilder logBuilder) {
 
     LogBuilder warn = LOGGER.atWarn();
-    for (IDefinitionNodeItem<?, ?> item : instanceSet.asList()) {
+    for (IDefinitionNodeItem<?, ?> item : instanceSet.getValue()) {
       INamedInstance instance = item.getInstance();
       if (instance instanceof INamedModelInstanceAbsolute) {
         INamedModelInstanceAbsolute modelInstance = (INamedModelInstanceAbsolute) instance;
@@ -374,7 +378,7 @@ public final class AnnotationGenerator {
       } else {
         warn.log(String.format(
             "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that is not a model instance",
-            definition.getName(), constraint.getMinOccurs(), constraint.getTarget().getPath()));
+            definition.getName(), constraint.getMinOccurs(), constraint.getTarget()));
       }
     }
   }
@@ -393,14 +397,14 @@ public final class AnnotationGenerator {
         logBuilder.log(String.format(
             "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
                 + " targeted instance named '%s' that requires min-occurs=%d",
-            definition.getName(), minOccurs, constraint.getTarget().getPath(),
+            definition.getName(), minOccurs, constraint.getTarget(),
             modelInstance.getName(),
             modelInstance.getMinOccurs()));
       } else if (minOccurs < modelInstance.getMinOccurs()) {
         logBuilder.log(String.format(
             "Definition '%s' has min-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
                 + " targeted instance named '%s' that requires min-occurs=%d",
-            definition.getName(), minOccurs, constraint.getTarget().getPath(),
+            definition.getName(), minOccurs, constraint.getTarget(),
             modelInstance.getName(),
             modelInstance.getMinOccurs()));
       }
@@ -421,14 +425,14 @@ public final class AnnotationGenerator {
         logBuilder.log(String.format(
             "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that is redundant with a"
                 + " targeted instance named '%s' that requires max-occurs=%d",
-            definition.getName(), maxOccurs, constraint.getTarget().getPath(),
+            definition.getName(), maxOccurs, constraint.getTarget(),
             modelInstance.getName(),
             modelInstance.getMaxOccurs()));
       } else if (maxOccurs < modelInstance.getMaxOccurs()) {
         logBuilder.log(String.format(
             "Definition '%s' has max-occurs=%d cardinality constraint targeting '%s' that conflicts with a"
                 + " targeted instance named '%s' that requires max-occurs=%d",
-            definition.getName(), maxOccurs, constraint.getTarget().getPath(),
+            definition.getName(), maxOccurs, constraint.getTarget(),
             modelInstance.getName(),
             modelInstance.getMaxOccurs()));
       }
@@ -440,7 +444,7 @@ public final class AnnotationGenerator {
       @NonNull AnnotationSpec.Builder annotation,
       @NonNull List<? extends ICardinalityConstraint> constraints) {
 
-    DynamicContext dynamicContext = StaticContext.instance().dynamicContext();
+    DynamicContext dynamicContext = new DynamicContext();
     dynamicContext.disablePredicateEvaluation();
 
     for (ICardinalityConstraint constraint : constraints) {

@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.io;
 
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 
 import java.io.IOException;
@@ -53,8 +54,8 @@ public interface IProblemHandler {
    *           if an error occurred while handling the missing instances
    */
   void handleMissingInstances(
-      @NonNull IBoundDefinitionModel parentDefinition,
-      @NonNull Object targetObject,
-      @NonNull Collection<? extends IBoundProperty> unhandledInstances)
+      @NonNull IBoundDefinitionModelComplex parentDefinition,
+      @NonNull IBoundObject targetObject,
+      @NonNull Collection<? extends IBoundProperty<?>> unhandledInstances)
       throws IOException;
 }

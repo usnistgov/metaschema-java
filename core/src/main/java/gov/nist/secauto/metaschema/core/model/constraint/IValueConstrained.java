@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.core.model.constraint;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
@@ -42,7 +44,7 @@ public interface IValueConstrained extends IConstrained {
    * @return the constraints or an empty list
    */
   @NonNull
-  Map<String, ILet> getLetExpressions();
+  Map<QName, ILet> getLetExpressions();
 
   /**
    * Get the collection of allowed value constraints, if any.

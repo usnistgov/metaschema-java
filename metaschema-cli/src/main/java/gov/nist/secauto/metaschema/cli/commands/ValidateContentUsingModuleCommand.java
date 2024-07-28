@@ -54,6 +54,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -115,7 +116,7 @@ public class ValidateContentUsingModuleCommand
     return new OscalCommandExecutor(callingContext, commandLine);
   }
 
-  private class OscalCommandExecutor
+  private final class OscalCommandExecutor
       extends AbstractValidationCommandExecutor {
 
     private Path tempDir;
@@ -181,7 +182,7 @@ public class ValidateContentUsingModuleCommand
     }
 
     @Override
-    public List<Source> getXmlSchemas() throws IOException {
+    public List<Source> getXmlSchemas(@NonNull URL targetResource) throws IOException {
       Path schemaFile = Files.createTempFile(getTempDir(), "schema-", ".xml");
       assert schemaFile != null;
       IMutableConfiguration<SchemaGenerationFeature<?>> configuration = new DefaultConfiguration<>();
@@ -191,7 +192,7 @@ public class ValidateContentUsingModuleCommand
     }
 
     @Override
-    public JSONObject getJsonSchema() throws IOException {
+    public JSONObject getJsonSchema(@NonNull JSONObject json) throws IOException {
       Path schemaFile = Files.createTempFile(getTempDir(), "schema-", ".json");
       assert schemaFile != null;
       IMutableConfiguration<SchemaGenerationFeature<?>> configuration = new DefaultConfiguration<>();

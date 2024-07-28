@@ -34,6 +34,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
@@ -125,7 +126,7 @@ public class ModelDetector {
       throws IOException {
     byte[] buf = ObjectUtils.notNull(inputStream.readNBytes(getLookaheadLimit()));
 
-    Class<?> clazz;
+    Class<? extends IBoundObject> clazz;
     try (InputStream bis = new ByteArrayInputStream(buf)) {
       switch (format) {
       case JSON:
@@ -154,7 +155,7 @@ public class ModelDetector {
   }
 
   @NonNull
-  private Class<?> detectModelXmlClass(@NonNull InputStream is) throws IOException {
+  private Class<? extends IBoundObject> detectModelXmlClass(@NonNull InputStream is) throws IOException {
     QName startElementQName;
     try {
       XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
@@ -178,7 +179,7 @@ public class ModelDetector {
       throw new IOException(ex);
     }
 
-    Class<?> clazz = getBindingContext().getBoundClassForRootXmlQName(startElementQName);
+    Class<? extends IBoundObject> clazz = getBindingContext().getBoundClassForRootXmlQName(startElementQName);
     if (clazz == null) {
       throw new IOException("Unrecognized element name: " + startElementQName.toString());
     }
@@ -186,32 +187,31 @@ public class ModelDetector {
   }
 
   @Nullable
-  private Class<?> detectModelJsonClass(@NonNull JsonParser parser) throws IOException {
-    Class<?> retval = null;
+  private Class<? extends IBoundObject> detectModelJsonClass(@NonNull JsonParser parser) throws IOException {
+    Class<? extends IBoundObject> retval = null;
     JsonUtil.advanceAndAssert(parser, JsonToken.START_OBJECT);
     outer: while (JsonToken.FIELD_NAME.equals(parser.nextToken())) {
       String name = ObjectUtils.notNull(parser.getCurrentName());
-      if ("$schema".equals(name)) {
-        // do nothing
-        parser.nextToken();
-        // JsonUtil.skipNextValue(parser);
-      } else {
+      if (!"$schema".equals(name)) {
         IBindingContext bindingContext = getBindingContext();
         retval = bindingContext.getBoundClassForRootJsonName(name);
         break outer;
       }
+      // do nothing
+      parser.nextToken();
+      // JsonUtil.skipNextValue(parser);
     }
     return retval;
   }
 
   public static final class Result {
     @NonNull
-    private final Class<?> boundClass;
+    private final Class<? extends IBoundObject> boundClass;
     @NonNull
     private final InputStream dataStream;
 
     private Result(
-        @NonNull Class<?> clazz,
+        @NonNull Class<? extends IBoundObject> clazz,
         @NonNull InputStream is,
         @NonNull byte[] buf) {
       this.boundClass = clazz;
@@ -224,7 +224,7 @@ public class ModelDetector {
      * @return the Java class
      */
     @NonNull
-    public Class<?> getBoundClass() {
+    public Class<? extends IBoundObject> getBoundClass() {
       return boundClass;
     }
 

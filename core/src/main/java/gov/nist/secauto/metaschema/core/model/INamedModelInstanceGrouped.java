@@ -69,10 +69,19 @@ public interface INamedModelInstanceGrouped extends INamedModelInstance {
   }
 
   @Override
-  default String getJsonKeyFlagName() {
-    IChoiceGroupInstance choiceGroup = getParentContainer();
-    return JsonGroupAsBehavior.KEYED.equals(choiceGroup.getJsonGroupAsBehavior())
-        ? ObjectUtils.notNull(choiceGroup.getJsonKeyFlagName())
+  @Nullable
+  default IFlagInstance getEffectiveJsonKey() {
+    return JsonGroupAsBehavior.KEYED.equals(getParentContainer().getJsonGroupAsBehavior())
+        ? ObjectUtils.requireNonNull(getJsonKey())
         : null;
+  }
+
+  @Override
+  @Nullable
+  default IFlagInstance getJsonKey() {
+    String name = getParentContainer().getJsonKeyFlagInstanceName();
+    return name == null
+        ? null
+        : ObjectUtils.requireNonNull(getDefinition().getFlagInstanceByName(getContainingModule().toFlagQName(name)));
   }
 }

@@ -120,7 +120,7 @@ public interface IAnyUriItem extends IAnyAtomicItem {
    */
   @NonNull
   default IAnyUriItem resolve(@NonNull IAnyUriItem other) {
-    return IAnyUriItem.valueOf(ObjectUtils.notNull(asUri().resolve(other.asUri())));
+    return valueOf(ObjectUtils.notNull(asUri().resolve(other.asUri())));
   }
 
   @Override

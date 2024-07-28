@@ -26,46 +26,53 @@
 
 package gov.nist.secauto.metaschema.databind.model.impl;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundModule;
-import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public abstract class AbstractBoundDefinitionModelComplex<A extends Annotation>
-    implements IFeatureBoundContainerFlag, IBoundDefinitionModelComplex {
+    implements IBoundDefinitionModelComplex {
   @NonNull
-  private final Class<?> clazz;
+  private final Class<? extends IBoundObject> clazz;
   @NonNull
   private final A annotation;
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
   private final Lazy<IBoundModule> module;
+  @NonNull
+  private final Lazy<QName> qname;
+  @NonNull
+  private final Lazy<QName> definitionQName;
   @Nullable
   private final Method beforeDeserializeMethod;
   @Nullable
   private final Method afterDeserializeMethod;
 
   protected AbstractBoundDefinitionModelComplex(
-      @NonNull Class<?> clazz,
-      @NonNull Class<A> annotationClass,
+      @NonNull Class<? extends IBoundObject> clazz,
+      @NonNull A annotation,
+      @NonNull Class<? extends IBoundModule> moduleClass,
       @NonNull IBindingContext bindingContext) {
     this.clazz = clazz;
-    this.annotation = ModelUtil.getAnnotation(clazz, annotationClass);
+    this.annotation = annotation;
     this.bindingContext = bindingContext;
-    this.module = ObjectUtils.notNull(Lazy.lazy(() -> bindingContext.registerModule(getModuleClass())));
+    this.module = ObjectUtils.notNull(Lazy.lazy(() -> bindingContext.registerModule(moduleClass)));
+    this.qname = ObjectUtils.notNull(Lazy.lazy(() -> getContainingModule().toModelQName(getEffectiveName())));
+    this.definitionQName = ObjectUtils.notNull(Lazy.lazy(() -> getContainingModule().toModelQName(getName())));
     this.beforeDeserializeMethod = ClassIntrospector.getMatchingMethod(
         clazz,
         "beforeDeserialize",
@@ -76,21 +83,13 @@ public abstract class AbstractBoundDefinitionModelComplex<A extends Annotation>
         Object.class);
   }
 
-  @NonNull
-  protected abstract Class<? extends IBoundModule> getModuleClass();
-
   @Override
-  public Class<?> getBoundClass() {
+  public Class<? extends IBoundObject> getBoundClass() {
     return clazz;
   }
 
   public A getAnnotation() {
     return annotation;
-  }
-
-  @Override
-  public boolean isInline() {
-    return getBoundClass().getEnclosingClass() != null;
   }
 
   @Override
@@ -105,82 +104,31 @@ public abstract class AbstractBoundDefinitionModelComplex<A extends Annotation>
     return bindingContext;
   }
 
-  /**
-   * Gets a new instance of the bound class.
-   *
-   * @param <CLASS>
-   *          the type of the bound class
-   * @return a Java object for the class
-   * @throws RuntimeException
-   *           if the instance cannot be created due to a binding error
-   */
-  @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
+  @SuppressWarnings("null")
   @Override
-  @NonNull
-  public <CLASS> CLASS newInstance() {
-    Class<?> clazz = getBoundClass();
-    try {
-      @SuppressWarnings("unchecked") Constructor<CLASS> constructor
-          = (Constructor<CLASS>) clazz.getDeclaredConstructor();
-      return ObjectUtils.notNull(constructor.newInstance());
-    } catch (NoSuchMethodException ex) {
-      String msg = String.format("Class '%s' does not have a required no-arg constructor.", clazz.getName());
-      throw new RuntimeException(msg, ex);
-    } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-      throw new RuntimeException(ex);
-    }
+  public final QName getXmlQName() {
+    return qname.get();
   }
 
-  /**
-   * Calls the method named "beforeDeserialize" on each class in the object's
-   * hierarchy if the method exists on the class.
-   * <p>
-   * These methods can be used to set the initial state of the target bound object
-   * before data is read and applied during deserialization.
-   *
-   * @param targetObject
-   *          the data object target to call the method(s) on
-   * @param parentObject
-   *          the object target's parent object, which is used as the method
-   *          argument
-   * @throws BindingException
-   *           if an error occurs while calling the method
-   */
+  @SuppressWarnings("null")
   @Override
-  public void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
-    if (beforeDeserializeMethod != null) {
-      try {
-        beforeDeserializeMethod.invoke(targetObject, parentObject);
-      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-        throw new BindingException(ex);
-      }
-    }
+  public final QName getDefinitionQName() {
+    return definitionQName.get();
   }
 
-  /**
-   * Calls the method named "afterDeserialize" on each class in the object's
-   * hierarchy if the method exists.
-   * <p>
-   * These methods can be used to modify the state of the target bound object
-   * after data is read and applied during deserialization.
-   *
-   * @param targetObject
-   *          the data object target to call the method(s) on
-   * @param parentObject
-   *          the object target's parent object, which is used as the method
-   *          argument
-   * @throws BindingException
-   *           if an error occurs while calling the method
-   */
   @Override
-  public void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
-    if (afterDeserializeMethod != null) {
-      try {
-        afterDeserializeMethod.invoke(targetObject, parentObject);
-      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-        throw new BindingException(ex);
-      }
-    }
+  public boolean isInline() {
+    return getBoundClass().getEnclosingClass() != null;
+  }
+
+  @Override
+  public Method getBeforeDeserializeMethod() {
+    return beforeDeserializeMethod;
+  }
+
+  @Override
+  public Method getAfterDeserializeMethod() {
+    return afterDeserializeMethod;
   }
 
   // @Override
@@ -190,8 +138,8 @@ public abstract class AbstractBoundDefinitionModelComplex<A extends Annotation>
   // }
 
   @Override
-  public Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
-    Object instance = newInstance();
+  public IBoundObject deepCopyItem(IBoundObject item, IBoundObject parentInstance) throws BindingException {
+    IBoundObject instance = newInstance(() -> item.getMetaschemaData());
 
     callBeforeDeserialize(instance, parentInstance);
 
@@ -202,7 +150,7 @@ public abstract class AbstractBoundDefinitionModelComplex<A extends Annotation>
     return instance;
   }
 
-  protected void deepCopyItemInternal(@NonNull Object fromObject, @NonNull Object toObject)
+  protected void deepCopyItemInternal(@NonNull IBoundObject fromObject, @NonNull IBoundObject toObject)
       throws BindingException {
     for (IBoundInstanceFlag instance : getFlagInstances()) {
       instance.deepCopy(fromObject, toObject);

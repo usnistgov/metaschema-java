@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
@@ -34,6 +35,7 @@ import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,7 +51,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * This definition is considered "complex", since it is bound to a Java class.
  */
 public interface IBoundDefinitionModelFieldComplex
-    extends IBoundDefinitionModelField, IBoundDefinitionModelComplex {
+    extends IBoundDefinitionModelField<IBoundObject>, IBoundDefinitionModelComplex {
 
   // Complex Field Definition Features
   // =================================
@@ -68,7 +70,7 @@ public interface IBoundDefinitionModelFieldComplex
 
     Object fieldValueDefault = fieldValue.getDefaultValue();
     if (fieldValueDefault != null) {
-      retval = definition.newInstance();
+      retval = definition.newInstance(null);
       fieldValue.setValue(retval, fieldValueDefault);
 
       // since the field value is non-null, populate the flags
@@ -110,13 +112,13 @@ public interface IBoundDefinitionModelFieldComplex
 
   @Override
   @NonNull
-  default Map<String, IBoundProperty> getJsonProperties(@Nullable Predicate<IBoundInstanceFlag> flagFilter) {
+  default Map<String, IBoundProperty<?>> getJsonProperties(@Nullable Predicate<IBoundInstanceFlag> flagFilter) {
     Predicate<IBoundInstanceFlag> actualFlagFilter = flagFilter;
 
     IBoundFieldValue fieldValue = getFieldValue();
     IBoundInstanceFlag jsonValueKey = getDefinition().getJsonValueKeyFlagInstance();
     if (jsonValueKey != null) {
-      Predicate<IBoundInstanceFlag> jsonValueKeyFilter = (flag) -> !flag.equals(jsonValueKey);
+      Predicate<IBoundInstanceFlag> jsonValueKeyFilter = flag -> !flag.equals(jsonValueKey);
       actualFlagFilter = actualFlagFilter == null ? jsonValueKeyFilter : actualFlagFilter.and(jsonValueKeyFilter);
       // ensure the field value is omitted too!
       fieldValue = null;
@@ -139,30 +141,23 @@ public interface IBoundDefinitionModelFieldComplex
       flagStream = flagInstances.stream();
     }
 
-    Stream<? extends IBoundProperty> resultStream = fieldValue == null
+    Stream<? extends IBoundProperty<?>> resultStream = fieldValue == null
         ? flagStream
         : Stream.concat(flagStream, Stream.of(getFieldValue()));
 
     return ObjectUtils.notNull(resultStream
-        .collect(Collectors.toUnmodifiableMap(
-            (p) -> p.getJsonName(), (p) -> p)));
+        .collect(Collectors.toUnmodifiableMap(IBoundProperty::getJsonName, Function.identity())));
   }
 
   @Override
   @NonNull
-  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+  default IBoundObject readItem(IBoundObject parent, IItemReadHandler handler) throws IOException {
     return handler.readItemField(parent, this);
   }
 
   @Override
-  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+  default void writeItem(IBoundObject item, IItemWriteHandler handler) throws IOException {
     handler.writeItemField(item, this);
-  }
-
-  @Override
-  default boolean canHandleJsonPropertyName(String name) {
-    // not handled, since not root
-    return false;
   }
 
   @Override

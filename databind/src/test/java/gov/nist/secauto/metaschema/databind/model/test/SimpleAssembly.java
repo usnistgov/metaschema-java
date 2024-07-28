@@ -27,15 +27,18 @@
 package gov.nist.secauto.metaschema.databind.model.test;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.IntegerAdapter;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaData;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaAssembly;
 
 import java.math.BigInteger;
 
 @SuppressWarnings("PMD")
-@MetaschemaAssembly(name = "simple-assembly", rootName = "test", moduleClass = TestMetaschema.class,
-    rootNamespace = "http://example.com/ns")
-public class SimpleAssembly {
+@MetaschemaAssembly(name = "simple-assembly", rootName = "test", moduleClass = TestMetaschema.class)
+public class SimpleAssembly implements IBoundObject {
+  private final IMetaschemaData metaschemaData;
+
   @BoundFlag(name = "id")
   private String _id;
 
@@ -43,6 +46,16 @@ public class SimpleAssembly {
   private BigInteger _number;
 
   public SimpleAssembly() {
+    this(null);
+  }
+
+  public SimpleAssembly(IMetaschemaData metaschemaData) {
+    this.metaschemaData = metaschemaData;
+  }
+
+  @Override
+  public IMetaschemaData getMetaschemaData() {
+    return metaschemaData;
   }
 
   public String getId() {

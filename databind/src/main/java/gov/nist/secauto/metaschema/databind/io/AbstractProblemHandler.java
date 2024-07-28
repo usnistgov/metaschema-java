@@ -26,7 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.io;
 
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 
 import java.io.IOException;
@@ -38,9 +39,9 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
 
   @Override
   public void handleMissingInstances(
-      IBoundDefinitionModel parentDefinition,
-      Object targetObject,
-      Collection<? extends IBoundProperty> unhandledInstances) throws IOException {
+      IBoundDefinitionModelComplex parentDefinition,
+      IBoundObject targetObject,
+      Collection<? extends IBoundProperty<?>> unhandledInstances) throws IOException {
     applyDefaults(targetObject, unhandledInstances);
   }
 
@@ -58,8 +59,8 @@ public abstract class AbstractProblemHandler implements IProblemHandler {
    */
   protected static void applyDefaults(
       @NonNull Object targetObject,
-      @NonNull Collection<? extends IBoundProperty> unhandledInstances) throws IOException {
-    for (IBoundProperty instance : unhandledInstances) {
+      @NonNull Collection<? extends IBoundProperty<?>> unhandledInstances) throws IOException {
+    for (IBoundProperty<?> instance : unhandledInstances) {
       Object value = instance.getResolvedDefaultValue();
       if (value != null) {
         instance.setValue(targetObject, value);

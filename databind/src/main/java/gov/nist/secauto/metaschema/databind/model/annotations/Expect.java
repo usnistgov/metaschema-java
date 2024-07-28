@@ -52,6 +52,7 @@ public @interface Expect {
    *
    * @return the identifier if provided or an empty string otherwise
    */
+  @SuppressWarnings("PMD.ShortMethodName")
   @NonNull
   String id() default "";
 

@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.testing;
 
+import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
@@ -93,13 +94,13 @@ public final class FlagBuilder
 
     IFlagDefinition retval = mock(IFlagDefinition.class);
     applyDefinition(retval);
+
+    getContext().checking(new Expectations() {
+      {
+        allowing(retval).getJavaTypeAdapter();
+        will(returnValue(MetaschemaDataTypeProvider.STRING));
+      }
+    });
     return retval;
   }
-
-  // @Override
-  // public Object getValue(Object parentInstance) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  // }
 }

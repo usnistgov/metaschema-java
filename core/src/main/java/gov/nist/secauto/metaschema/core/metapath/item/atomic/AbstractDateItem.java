@@ -29,7 +29,7 @@ package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractDateItem<TYPE>
-    extends AbstractAnyAtomicItem<TYPE>
+    extends AbstractTemporalItem<TYPE>
     implements IDateItem {
   /**
    * Construct a new item with the provided {@code value}.
@@ -39,6 +39,11 @@ public abstract class AbstractDateItem<TYPE>
    */
   protected AbstractDateItem(@NonNull TYPE value) {
     super(value);
+  }
+
+  @Override
+  public boolean hasTimezone() {
+    return true;
   }
 
   @Override

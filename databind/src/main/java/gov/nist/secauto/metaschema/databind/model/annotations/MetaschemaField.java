@@ -87,15 +87,28 @@ public @interface MetaschemaField {
    */
   int index() default Integer.MIN_VALUE;
 
+  /**
+   * Get the name to use for data instances of this field.
+   * <p>
+   * This overrides the name provided by {@link #name()}.
+   * <p>
+   * The value {@link ModelUtil#NO_STRING_VALUE} indicates that there is no use
+   * name.
+   *
+   *
+   * @return the use name or {@link ModelUtil#NO_STRING_VALUE} if no use name is
+   *         provided
+   */
   @NonNull
   String useName() default ModelUtil.NO_STRING_VALUE;
 
   /**
    * The binary use name of the assembly.
    * <p>
-   * The value {@link Integer#MIN_VALUE} indicates that there is no use name.
+   * The value {@link Integer#MIN_VALUE} indicates that there is no index.
    *
-   * @return the index value
+   * @return the index value or {@link Integer#MIN_VALUE} if there is no index
+   *         value
    */
   int useIndex() default Integer.MIN_VALUE;
 

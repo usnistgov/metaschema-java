@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model.test;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaData;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
@@ -37,7 +39,9 @@ import java.util.Map;
 
 @SuppressWarnings("PMD")
 @MetaschemaAssembly(name = "only-model", moduleClass = TestMetaschema.class)
-public class OnlyModelBoundAssembly { // NOPMD - intentional
+public class OnlyModelBoundAssembly implements IBoundObject { // NOPMD - intentional
+  private final IMetaschemaData metaschemaData;
+
   /*
    * ================ = simple field = ================
    */
@@ -160,4 +164,17 @@ public class OnlyModelBoundAssembly { // NOPMD - intentional
       groupAs = @GroupAs(name = "keyed-assembly-items",
           inJson = JsonGroupAsBehavior.KEYED))
   private Map<String, FlaggedBoundAssembly> keyedAssembly;
+
+  public OnlyModelBoundAssembly() {
+    this(null);
+  }
+
+  public OnlyModelBoundAssembly(IMetaschemaData metaschemaData) {
+    this.metaschemaData = metaschemaData;
+  }
+
+  @Override
+  public IMetaschemaData getMetaschemaData() {
+    return metaschemaData;
+  }
 }

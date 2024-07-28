@@ -30,19 +30,19 @@ import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractModelInstanceCollectionInfo
-    implements IModelInstanceCollectionInfo {
+public abstract class AbstractModelInstanceCollectionInfo<ITEM>
+    implements IModelInstanceCollectionInfo<ITEM> {
 
   @NonNull
-  private final IBoundInstanceModel instance;
+  private final IBoundInstanceModel<ITEM> instance;
 
   public AbstractModelInstanceCollectionInfo(
-      @NonNull IBoundInstanceModel instance) {
+      @NonNull IBoundInstanceModel<ITEM> instance) {
     this.instance = instance;
   }
 
   @Override
-  public IBoundInstanceModel getInstance() {
+  public IBoundInstanceModel<ITEM> getInstance() {
     return instance;
   }
 }

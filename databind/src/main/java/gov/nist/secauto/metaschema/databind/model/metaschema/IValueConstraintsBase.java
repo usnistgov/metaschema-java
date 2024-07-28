@@ -26,11 +26,12 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.ConstraintLetExpression;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.ConstraintLetExpression;
 
 import java.util.List;
 
-public interface IValueConstraintsBase {
+public interface IValueConstraintsBase extends IBoundObject {
   List<ConstraintLetExpression> getLets();
 
   List<? extends IConstraintBase> getRules();

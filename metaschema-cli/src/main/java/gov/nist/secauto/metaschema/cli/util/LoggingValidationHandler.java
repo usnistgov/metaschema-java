@@ -42,9 +42,11 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.Ansi.Color;
 import org.xml.sax.SAXParseException;
 
+import java.net.URI;
 import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public final class LoggingValidationHandler {
   private static final Logger LOGGER = LogManager.getLogger(LoggingValidationHandler.class);
@@ -58,11 +60,13 @@ public final class LoggingValidationHandler {
     return instance(false);
   }
 
+  @SuppressFBWarnings(value = "SING_SINGLETON_GETTER_NOT_SYNCHRONIZED",
+      justification = "both values are class initialized")
   public static LoggingValidationHandler instance(boolean logExceptions) {
     return logExceptions ? LOG_EXCPTION_INSTANCE : NO_LOG_EXCPTION_INSTANCE;
   }
 
-  protected LoggingValidationHandler(boolean logExceptions) {
+  private LoggingValidationHandler(boolean logExceptions) {
     this.logExceptions = logExceptions;
   }
 
@@ -92,27 +96,37 @@ public final class LoggingValidationHandler {
   private void handleJsonValidationFinding(@NonNull JsonValidationFinding finding) {
     Ansi ansi = generatePreamble(finding.getSeverity());
 
-    getLogger(finding).log(
-        ansi.a('[')
-            .fgBright(Color.WHITE)
-            .a(finding.getCause().getPointerToViolation())
-            .reset()
-            .a(']')
-            .format(" %s [%s]",
-                finding.getMessage(),
-                finding.getDocumentUri().toString()));
+    ansi = ansi.a('[')
+        .fgBright(Color.WHITE)
+        .a(finding.getCause().getPointerToViolation())
+        .reset()
+        .a(']');
+
+    URI documentUri = finding.getDocumentUri();
+    ansi = documentUri == null
+        ? ansi.format(" %s", finding.getMessage())
+        : ansi.format(" %s [%s]", finding.getMessage(), documentUri.toString());
+
+    getLogger(finding).log(ansi);
   }
 
   private void handleXmlValidationFinding(XmlValidationFinding finding) {
     Ansi ansi = generatePreamble(finding.getSeverity());
     SAXParseException ex = finding.getCause();
 
-    getLogger(finding).log(
-        ansi.format("%s [%s{%d,%d}]",
+    URI documentUri = finding.getDocumentUri();
+    ansi = documentUri == null
+        ? ansi.format("%s [{%d,%d}]",
             finding.getMessage(),
-            finding.getDocumentUri().toString(),
             ex.getLineNumber(),
-            ex.getColumnNumber()));
+            ex.getColumnNumber())
+        : ansi.format("%s [%s{%d,%d}]",
+            finding.getMessage(),
+            documentUri.toString(),
+            ex.getLineNumber(),
+            ex.getColumnNumber());
+
+    getLogger(finding).log(ansi);
   }
 
   private void handleConstraintValidationFinding(@NonNull ConstraintValidationFinding finding) {

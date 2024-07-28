@@ -35,19 +35,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 /**
  * Represents a binding of Java data to a Metaschema module construct, i.e.
  * definition, instance, field value.
+ *
+ * @param <ITEM>
+ *          the Java type for associated bound objects
  */
-public interface IBoundModuleElement extends IItemValueHandler {
-  /**
-   * Determine if the provided JSON property or YAML key name is associated with
-   * this instance.
-   *
-   * @param name
-   *          the name of the property/key being parsed
-   * @return {@code true} if the instance will handle this name, or {@code false}
-   *         otherwise
-   */
-  boolean canHandleJsonPropertyName(@NonNull String name);
-
+public interface IBoundModuleElement<ITEM> extends IItemValueHandler<ITEM> {
   /**
    * Determine if the provided XML qualified name is associated with this
    * property.

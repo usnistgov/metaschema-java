@@ -33,7 +33,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLineAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class MarkupLineItemImpl
-    extends AbstractAnyAtomicItem<MarkupLine>
+    extends AbstractUntypedAtomicItem<MarkupLine>
     implements IMarkupItem {
 
   public MarkupLineItemImpl(@NonNull MarkupLine value) {

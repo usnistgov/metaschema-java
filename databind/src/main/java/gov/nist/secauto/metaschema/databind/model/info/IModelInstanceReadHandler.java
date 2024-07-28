@@ -33,17 +33,17 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IModelInstanceReadHandler {
+public interface IModelInstanceReadHandler<ITEM> {
   @Nullable
-  default Object readSingleton() throws IOException {
+  default ITEM readSingleton() throws IOException {
     return readItem();
   }
 
   @NonNull
-  List<?> readList() throws IOException;
+  List<ITEM> readList() throws IOException;
 
   @NonNull
-  Map<String, ?> readMap() throws IOException;
+  Map<String, ITEM> readMap() throws IOException;
 
   /**
    * Read the next item in the collection of items represented by the instance.
@@ -53,7 +53,7 @@ public interface IModelInstanceReadHandler {
    * @throws IOException
    *           if an error occurred while parsing the input
    */
-  Object readItem() throws IOException;
+  ITEM readItem() throws IOException;
 
   @Nullable
   String getJsonKeyFlagName();

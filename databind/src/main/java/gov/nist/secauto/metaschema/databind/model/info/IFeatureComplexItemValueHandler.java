@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaData;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
@@ -34,11 +36,12 @@ import gov.nist.secauto.metaschema.databind.model.IBoundProperty;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
+public interface IFeatureComplexItemValueHandler extends IItemValueHandler<IBoundObject> {
   /**
    * Get the Metaschema definition representing the bound complex data.
    *
@@ -56,15 +59,21 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   // @Nullable
   // String getJsonKeyFlagName();
 
+  /**
+   * Get the mapping of JSON property names to property bindings.
+   *
+   * @return the mapping
+   */
+  // REFACTOR: move JSON-specific methods to a binding cache implementation
   @NonNull
-  Map<String, IBoundProperty> getJsonProperties();
+  Map<String, IBoundProperty<?>> getJsonProperties();
 
   // REFACTOR: flatten implementations?
   @Override
   @NonNull
-  Object deepCopyItem(
-      @NonNull Object item,
-      @Nullable Object parentInstance) throws BindingException;
+  IBoundObject deepCopyItem(
+      @NonNull IBoundObject item,
+      @Nullable IBoundObject parentInstance) throws BindingException;
 
   /**
    * The class this binding is to.
@@ -72,25 +81,36 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
    * @return the bound class
    */
   @NonNull
-  Class<?> getBoundClass();
+  Class<? extends IBoundObject> getBoundClass();
 
   /**
    * Gets a new instance of the bound class.
    *
    * @param <CLASS>
    *          the type of the bound class
+   * @param supplier
+   *          the metaschema data generator used to capture parse information
+   *          (i.e., location)
    * @return a Java object for the class
    * @throws RuntimeException
    *           if the instance cannot be created due to a binding error
    */
   @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
   @NonNull
-  default <CLASS> CLASS newInstance() {
+  default <CLASS extends IBoundObject> CLASS newInstance(@Nullable Supplier<IMetaschemaData> supplier) {
     Class<?> clazz = getBoundClass();
     try {
-      @SuppressWarnings("unchecked") Constructor<CLASS> constructor
-          = (Constructor<CLASS>) clazz.getDeclaredConstructor();
-      return ObjectUtils.notNull(constructor.newInstance());
+      CLASS retval;
+      if (supplier != null) {
+        @SuppressWarnings("unchecked") Constructor<CLASS> constructor
+            = (Constructor<CLASS>) clazz.getDeclaredConstructor(IMetaschemaData.class);
+        retval = constructor.newInstance(supplier.get());
+      } else {
+        @SuppressWarnings("unchecked") Constructor<CLASS> constructor
+            = (Constructor<CLASS>) clazz.getDeclaredConstructor();
+        retval = constructor.newInstance();
+      }
+      return ObjectUtils.notNull(retval);
     } catch (NoSuchMethodException ex) {
       String msg = String.format("Class '%s' does not have a required no-arg constructor.", clazz.getName());
       throw new RuntimeException(msg, ex);
@@ -100,10 +120,10 @@ public interface IFeatureComplexItemValueHandler extends IItemValueHandler {
   }
 
   void callBeforeDeserialize(
-      @NonNull Object targetObject,
-      @Nullable Object parentObject) throws BindingException;
+      @NonNull IBoundObject targetObject,
+      @Nullable IBoundObject parentObject) throws BindingException;
 
   void callAfterDeserialize(
-      @NonNull Object targetObject,
-      @Nullable Object parentObject) throws BindingException;
+      @NonNull IBoundObject targetObject,
+      @Nullable IBoundObject parentObject) throws BindingException;
 }

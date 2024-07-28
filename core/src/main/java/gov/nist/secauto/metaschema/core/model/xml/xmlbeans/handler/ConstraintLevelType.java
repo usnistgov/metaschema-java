@@ -56,6 +56,9 @@ public final class ConstraintLevelType {
       case INFORMATIONAL:
         target.setStringValue("INFORMATIONAL");
         break;
+      case DEBUG:
+        target.setStringValue("DEBUG");
+        break;
       default:
         throw new UnsupportedOperationException(obj.name());
       }
@@ -84,6 +87,9 @@ public final class ConstraintLevelType {
       break;
     case "INFORMATIONAL":
       retval = IConstraint.Level.INFORMATIONAL;
+      break;
+    case "DEBUG":
+      retval = IConstraint.Level.DEBUG;
       break;
     default:
       throw new UnsupportedOperationException(value);

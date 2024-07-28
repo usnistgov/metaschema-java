@@ -27,50 +27,53 @@
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IContainerModelSupport;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModelField;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyGrouped;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldGrouped;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelNamedGrouped;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceGroupBinding;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.AssemblyModel;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 class ChoiceGroupModelContainerSupport
     implements IContainerModelSupport<
-        IBindingInstanceModelNamedGrouped,
-        IBindingInstanceModelNamedGrouped,
-        IBindingInstanceModelFieldGrouped,
-        IBindingInstanceModelAssemblyGrouped> {
+        INamedModelInstanceGrouped,
+        INamedModelInstanceGrouped,
+        IFieldInstanceGrouped,
+        IAssemblyInstanceGrouped> {
   @NonNull
-  private final Map<String, IBindingInstanceModelNamedGrouped> namedModelInstances;
+  private final Map<QName, INamedModelInstanceGrouped> namedModelInstances;
   @NonNull
-  private final Map<String, IBindingInstanceModelFieldGrouped> fieldInstances;
+  private final Map<QName, IFieldInstanceGrouped> fieldInstances;
   @NonNull
-  private final Map<String, IBindingInstanceModelAssemblyGrouped> assemblyInstances;
+  private final Map<QName, IAssemblyInstanceGrouped> assemblyInstances;
 
   @SuppressWarnings("PMD.ShortMethodName")
   public static IContainerModelSupport<
-      IBindingInstanceModelNamedGrouped,
-      IBindingInstanceModelNamedGrouped,
-      IBindingInstanceModelFieldGrouped,
-      IBindingInstanceModelAssemblyGrouped> of(
+      INamedModelInstanceGrouped,
+      INamedModelInstanceGrouped,
+      IFieldInstanceGrouped,
+      IAssemblyInstanceGrouped> of(
           @Nullable AssemblyModel.ChoiceGroup binding,
           @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
-          @NonNull IInstanceModelChoiceGroupBinding parent,
+          @NonNull IChoiceGroupInstance parent,
           @NonNull INodeItemFactory nodeItemFactory) {
     List<Object> instances;
     return binding == null || (instances = binding.getChoices()) == null || instances.isEmpty()
@@ -95,16 +98,17 @@ class ChoiceGroupModelContainerSupport
    *          the node item factory used to generate child nodes
    */
   @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap", "PMD.PrematureDeclaration" })
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   public ChoiceGroupModelContainerSupport(
       @NonNull AssemblyModel.ChoiceGroup binding,
       @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
-      @NonNull IInstanceModelChoiceGroupBinding parent,
+      @NonNull IChoiceGroupInstance parent,
       @NonNull INodeItemFactory nodeItemFactory) {
 
     // create temporary collections to store the child binding objects
-    final Map<String, IBindingInstanceModelNamedGrouped> namedModelInstances = new LinkedHashMap<>();
-    final Map<String, IBindingInstanceModelFieldGrouped> fieldInstances = new LinkedHashMap<>();
-    final Map<String, IBindingInstanceModelAssemblyGrouped> assemblyInstances = new LinkedHashMap<>();
+    final Map<QName, INamedModelInstanceGrouped> namedModelInstances = new LinkedHashMap<>();
+    final Map<QName, IFieldInstanceGrouped> fieldInstances = new LinkedHashMap<>();
+    final Map<QName, IAssemblyInstanceGrouped> assemblyInstances = new LinkedHashMap<>();
 
     // create counters to track child positions
     int assemblyReferencePosition = 0;
@@ -120,14 +124,14 @@ class ChoiceGroupModelContainerSupport
           = (IBoundInstanceModelGroupedAssembly) instance.getItemInstance(obj);
 
       if (obj instanceof AssemblyModel.ChoiceGroup.Assembly) {
-        IBindingInstanceModelAssemblyGrouped assembly = newInstance(
+        IAssemblyInstanceGrouped assembly = newInstance(
             (AssemblyModel.ChoiceGroup.Assembly) obj,
             objInstance,
             assemblyReferencePosition++,
             parent);
         addInstance(assembly, namedModelInstances, assemblyInstances);
       } else if (obj instanceof AssemblyModel.ChoiceGroup.DefineAssembly) {
-        IBindingInstanceModelAssemblyGrouped assembly = new InstanceModelGroupedAssemblyInline(
+        IAssemblyInstanceGrouped assembly = new InstanceModelGroupedAssemblyInline(
             (AssemblyModel.ChoiceGroup.DefineAssembly) obj,
             objInstance,
             assemblyInlineDefinitionPosition++,
@@ -135,14 +139,14 @@ class ChoiceGroupModelContainerSupport
             nodeItemFactory);
         addInstance(assembly, namedModelInstances, assemblyInstances);
       } else if (obj instanceof AssemblyModel.ChoiceGroup.Field) {
-        IBindingInstanceModelFieldGrouped field = newInstance(
+        IFieldInstanceGrouped field = newInstance(
             (AssemblyModel.ChoiceGroup.Field) obj,
             objInstance,
             fieldReferencePosition++,
             parent);
         addInstance(field, namedModelInstances, fieldInstances);
       } else if (obj instanceof AssemblyModel.ChoiceGroup.DefineField) {
-        IBindingInstanceModelFieldGrouped field = new InstanceModelGroupedFieldInline(
+        IFieldInstanceGrouped field = new InstanceModelGroupedFieldInline(
             (AssemblyModel.ChoiceGroup.DefineField) obj,
             objInstance,
             fieldInlineDefinitionPosition++,
@@ -166,34 +170,34 @@ class ChoiceGroupModelContainerSupport
   }
 
   protected static void addInstance(
-      @NonNull IBindingInstanceModelAssemblyGrouped assembly,
-      @NonNull Map<String, IBindingInstanceModelNamedGrouped> namedModelInstances,
-      @NonNull Map<String, IBindingInstanceModelAssemblyGrouped> assemblyInstances) {
-    String effectiveName = assembly.getEffectiveName();
+      @NonNull IAssemblyInstanceGrouped assembly,
+      @NonNull Map<QName, INamedModelInstanceGrouped> namedModelInstances,
+      @NonNull Map<QName, IAssemblyInstanceGrouped> assemblyInstances) {
+    QName effectiveName = assembly.getXmlQName();
     namedModelInstances.put(effectiveName, assembly);
     assemblyInstances.put(effectiveName, assembly);
   }
 
   protected static void addInstance(
-      @NonNull IBindingInstanceModelFieldGrouped field,
-      @NonNull Map<String, IBindingInstanceModelNamedGrouped> namedModelInstances,
-      @NonNull Map<String, IBindingInstanceModelFieldGrouped> fieldInstances) {
-    String effectiveName = field.getEffectiveName();
+      @NonNull IFieldInstanceGrouped field,
+      @NonNull Map<QName, INamedModelInstanceGrouped> namedModelInstances,
+      @NonNull Map<QName, IFieldInstanceGrouped> fieldInstances) {
+    QName effectiveName = field.getXmlQName();
     namedModelInstances.put(effectiveName, field);
     fieldInstances.put(effectiveName, field);
   }
 
   @NonNull
-  protected static IBindingInstanceModelAssemblyGrouped newInstance(
+  protected static IAssemblyInstanceGrouped newInstance(
       @NonNull AssemblyModel.ChoiceGroup.Assembly obj,
       @NonNull IBoundInstanceModelGroupedAssembly objInstance,
       int position,
-      @NonNull IInstanceModelChoiceGroupBinding parent) {
-    IBindingDefinitionAssembly owningDefinition = parent.getOwningDefinition();
-    IBindingModule module = owningDefinition.getContainingModule();
+      @NonNull IChoiceGroupInstance parent) {
+    IAssemblyDefinition owningDefinition = parent.getOwningDefinition();
+    IModule module = owningDefinition.getContainingModule();
 
-    String name = ObjectUtils.requireNonNull(obj.getRef());
-    IBindingDefinitionAssembly definition = module.getScopedAssemblyDefinitionByName(name);
+    QName name = parent.getContainingModule().toModelQName(ObjectUtils.requireNonNull(obj.getRef()));
+    IAssemblyDefinition definition = module.getScopedAssemblyDefinitionByName(name);
 
     if (definition == null) {
       throw new IllegalStateException(
@@ -206,16 +210,16 @@ class ChoiceGroupModelContainerSupport
   }
 
   @NonNull
-  protected static IBindingInstanceModelFieldGrouped newInstance(
+  protected static IFieldInstanceGrouped newInstance(
       @NonNull AssemblyModel.ChoiceGroup.Field obj,
       @NonNull IBoundInstanceModelGroupedAssembly objInstance,
       int position,
-      @NonNull IInstanceModelChoiceGroupBinding parent) {
-    IBindingDefinitionAssembly owningDefinition = parent.getOwningDefinition();
-    IBindingModule module = owningDefinition.getContainingModule();
+      @NonNull IChoiceGroupInstance parent) {
+    IAssemblyDefinition owningDefinition = parent.getOwningDefinition();
+    IModule module = owningDefinition.getContainingModule();
 
-    String name = ObjectUtils.requireNonNull(obj.getRef());
-    IBindingDefinitionModelField definition = module.getScopedFieldDefinitionByName(name);
+    QName name = parent.getContainingModule().toModelQName(ObjectUtils.requireNonNull(obj.getRef()));
+    IFieldDefinition definition = module.getScopedFieldDefinitionByName(name);
     if (definition == null) {
       throw new IllegalStateException(
           String.format("Unable to resolve field reference '%s' in definition '%s' in module '%s'",
@@ -228,22 +232,22 @@ class ChoiceGroupModelContainerSupport
 
   @SuppressWarnings("null")
   @Override
-  public Collection<IBindingInstanceModelNamedGrouped> getModelInstances() {
+  public Collection<INamedModelInstanceGrouped> getModelInstances() {
     return namedModelInstances.values();
   }
 
   @Override
-  public Map<String, IBindingInstanceModelNamedGrouped> getNamedModelInstanceMap() {
+  public Map<QName, INamedModelInstanceGrouped> getNamedModelInstanceMap() {
     return namedModelInstances;
   }
 
   @Override
-  public Map<String, IBindingInstanceModelFieldGrouped> getFieldInstanceMap() {
+  public Map<QName, IFieldInstanceGrouped> getFieldInstanceMap() {
     return fieldInstances;
   }
 
   @Override
-  public Map<String, IBindingInstanceModelAssemblyGrouped> getAssemblyInstanceMap() {
+  public Map<QName, IAssemblyInstanceGrouped> getAssemblyInstanceMap() {
     return assemblyInstances;
   }
 }

@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.datatype.adapter;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.core.datatype.AbstractDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IUuidItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -36,13 +37,15 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class UuidAdapter
     extends AbstractDataTypeAdapter<UUID, IUuidItem> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
-      List.of("uuid"));
+  private static final List<QName> NAMES = ObjectUtils.notNull(
+      List.of(new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "uuid")));
   public static final Pattern UUID_PATTERN
       = Pattern.compile("^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[45][0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$");
 
@@ -51,7 +54,7 @@ public class UuidAdapter
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

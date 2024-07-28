@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.databind.io.xml;
 import com.ctc.wstx.api.WstxOutputProperties;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.databind.io.SerializationFeature;
@@ -45,7 +46,7 @@ import javax.xml.stream.XMLStreamException;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class DefaultXmlSerializer<CLASS>
+public class DefaultXmlSerializer<CLASS extends IBoundObject>
     extends AbstractSerializer<CLASS> {
   private XMLOutputFactory2 xmlOutputFactory;
 
@@ -114,7 +115,7 @@ public class DefaultXmlSerializer<CLASS>
   }
 
   @Override
-  public void serialize(CLASS data, Writer writer) throws IOException {
+  public void serialize(IBoundObject data, Writer writer) throws IOException {
     XMLStreamWriter2 streamWriter = newXMLStreamWriter(writer);
     IOException caughtException = null;
     IBoundDefinitionModelAssembly definition = getDefinition();
@@ -125,9 +126,11 @@ public class DefaultXmlSerializer<CLASS>
     try {
       if (serializeRoot) {
         streamWriter.writeStartDocument("UTF-8", "1.0");
+        xmlGenerator.writeRoot(definition, data);
+      } else {
+        xmlGenerator.write(definition, data);
       }
 
-      xmlGenerator.write(definition, data);
       streamWriter.flush();
 
       if (serializeRoot) {

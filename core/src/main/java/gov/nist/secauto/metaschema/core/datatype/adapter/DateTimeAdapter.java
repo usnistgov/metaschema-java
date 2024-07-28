@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.core.datatype.AbstractCustomJavaDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.object.DateTime;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.function.InvalidValueForCastFunctionException;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDateItem;
@@ -44,23 +45,25 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DateTimeAdapter
     extends AbstractCustomJavaDataTypeAdapter<DateTime, IDateTimeItem> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
+  private static final List<QName> NAMES = ObjectUtils.notNull(
       List.of(
-          "date-time",
+          new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "date-time"),
           // for backwards compatibility with original type name
-          "dateTime"));
+          new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "dateTime")));
 
   DateTimeAdapter() {
     super(DateTime.class);
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

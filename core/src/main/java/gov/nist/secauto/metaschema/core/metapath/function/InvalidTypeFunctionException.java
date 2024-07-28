@@ -95,7 +95,7 @@ public class InvalidTypeFunctionException
   }
 
   @Override
-  protected String getCodePrefix() {
+  public String getCodePrefix() {
     return "FOTY";
   }
 }

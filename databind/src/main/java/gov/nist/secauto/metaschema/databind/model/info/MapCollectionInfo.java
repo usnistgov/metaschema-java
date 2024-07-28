@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -41,16 +42,17 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-class MapCollectionInfo
-    extends AbstractModelInstanceCollectionInfo {
+class MapCollectionInfo<ITEM>
+    extends AbstractModelInstanceCollectionInfo<ITEM> {
 
-  public MapCollectionInfo(@NonNull IBoundInstanceModel instance) {
+  public MapCollectionInfo(@NonNull IBoundInstanceModel<ITEM> instance) {
     super(instance);
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  public Collection<?> getItemsFromValue(Object value) {
-    return value == null ? CollectionUtil.emptyList() : ObjectUtils.notNull(((Map<?, ?>) value).values());
+  public Collection<ITEM> getItemsFromValue(Object value) {
+    return value == null ? CollectionUtil.emptyList() : ObjectUtils.notNull(((Map<?, ITEM>) value).values());
   }
 
   @Override
@@ -72,31 +74,31 @@ class MapCollectionInfo
   }
 
   @Override
-  public Class<?> getItemType() {
+  public Class<? extends ITEM> getItemType() {
     return getValueType();
   }
 
-  @SuppressWarnings("null")
+  @SuppressWarnings({ "null", "unchecked" })
   @NonNull
-  public Class<?> getValueType() {
+  public Class<? extends ITEM> getValueType() {
     ParameterizedType actualType = (ParameterizedType) getInstance().getType();
     // this is a Map so the second generic type is the value
-    return (Class<?>) actualType.getActualTypeArguments()[1];
+    return (Class<? extends ITEM>) actualType.getActualTypeArguments()[1];
   }
 
   @Override
-  public Map<String, ?> deepCopyItems(@NonNull Object fromInstance, @NonNull Object toInstance)
+  public Map<String, ITEM> deepCopyItems(@NonNull IBoundObject fromInstance, @NonNull IBoundObject toInstance)
       throws BindingException {
 
-    IBoundInstanceModel instance = getInstance();
-    Map<String, Object> copy = emptyValue();
-    for (Object item : getItemsFromParentInstance(fromInstance)) {
+    IBoundInstanceModel<ITEM> instance = getInstance();
+    Map<String, ITEM> copy = emptyValue();
+    for (ITEM item : getItemsFromParentInstance(fromInstance)) {
       assert item != null;
 
       IBoundInstanceFlag jsonKey = instance.getItemJsonKey(item);
       assert jsonKey != null;
 
-      Object itemCopy = instance.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance);
+      ITEM itemCopy = instance.deepCopyItem(ObjectUtils.requireNonNull(item), toInstance);
       String key = ObjectUtils.requireNonNull(jsonKey.getValue(itemCopy)).toString();
       copy.put(key, itemCopy);
     }
@@ -104,20 +106,20 @@ class MapCollectionInfo
   }
 
   @Override
-  public Map<String, Object> emptyValue() {
+  public Map<String, ITEM> emptyValue() {
     return new LinkedHashMap<>();
   }
 
   @Override
-  public Map<String, ?> readItems(IModelInstanceReadHandler handler) throws IOException {
+  public Map<String, ITEM> readItems(IModelInstanceReadHandler<ITEM> handler) throws IOException {
     return handler.readMap();
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public void writeItems(
-      IModelInstanceWriteHandler handler,
+      IModelInstanceWriteHandler<ITEM> handler,
       Object value) throws IOException {
-    handler.writeMap((Map<String, ?>) value);
+    handler.writeMap((Map<String, ITEM>) value);
   }
 }

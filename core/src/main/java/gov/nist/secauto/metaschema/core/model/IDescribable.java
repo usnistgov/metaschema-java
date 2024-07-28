@@ -48,4 +48,28 @@ public interface IDescribable {
   // from INamedModelElement
   @Nullable
   MarkupLine getDescription();
+
+  /**
+   * The resolved formal display name, which allows an instance to override a
+   * definition's name.
+   *
+   * @return the formal name or {@code null} if not defined
+   */
+  // from INamedModelElement
+  @Nullable
+  default String getEffectiveFormalName() {
+    return getFormalName();
+  }
+
+  /**
+   * Get the text that describes the basic use of the element, which allows an
+   * instance to override a definition's description.
+   *
+   * @return a line of markup text or {@code null} if not defined
+   */
+  // from INamedModelElement
+  @Nullable
+  default MarkupLine getEffectiveDescription() {
+    return getDescription();
+  }
 }

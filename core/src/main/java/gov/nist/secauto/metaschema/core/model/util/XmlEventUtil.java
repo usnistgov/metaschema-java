@@ -81,7 +81,9 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   @SuppressWarnings("null")
   @NonNull
   private static Object escape(@NonNull String data) {
-    return data.chars().mapToObj(c -> (char) c).map(c -> escape(c)).collect(Collectors.joining());
+    return data.chars()
+        .mapToObj(c -> (char) c)
+        .map(XmlEventUtil::escape).collect(Collectors.joining());
   }
 
   @SuppressWarnings("null")

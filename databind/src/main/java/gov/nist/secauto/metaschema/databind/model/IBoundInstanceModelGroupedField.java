@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
@@ -61,14 +62,11 @@ public interface IBoundInstanceModelGroupedField
   static IBoundInstanceModelGroupedField newInstance(
       @NonNull BoundGroupedField annotation,
       @NonNull IBoundInstanceModelChoiceGroup container) {
-    Class<?> clazz = annotation.binding();
+    Class<? extends IBoundObject> clazz = annotation.binding();
     IBindingContext bindingContext = container.getContainingDefinition().getBindingContext();
-    IBoundDefinitionModel definition = bindingContext.getBoundDefinitionForClass(clazz);
+    IBoundDefinitionModel<?> definition = bindingContext.getBoundDefinitionForClass(clazz);
 
-    IBoundInstanceModelGroupedField retval;
-    if (definition instanceof DefinitionField) {
-      retval = new InstanceModelGroupedFieldComplex(annotation, (DefinitionField) definition, container);
-    } else {
+    if (!(definition instanceof DefinitionField)) {
       Field field = container.getField();
       throw new IllegalStateException(String.format(
           "The '%s' annotation, bound to '%s', field '%s' on class '%s' is not bound to a Metaschema field",
@@ -77,19 +75,19 @@ public interface IBoundInstanceModelGroupedField
           field.toString(),
           field.getDeclaringClass().getName()));
     }
-    return retval;
+    return new InstanceModelGroupedFieldComplex(annotation, (DefinitionField) definition, container);
   }
 
   @Override
   IBoundDefinitionModelFieldComplex getDefinition();
 
   @Override
-  default Object readItem(Object parent, @NonNull IItemReadHandler handler) throws IOException {
+  default IBoundObject readItem(IBoundObject parent, @NonNull IItemReadHandler handler) throws IOException {
     return handler.readItemField(ObjectUtils.requireNonNull(parent, "parent"), this);
   }
 
   @Override
-  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+  default void writeItem(IBoundObject item, IItemWriteHandler handler) throws IOException {
     handler.writeItemField(item, this);
   }
 }

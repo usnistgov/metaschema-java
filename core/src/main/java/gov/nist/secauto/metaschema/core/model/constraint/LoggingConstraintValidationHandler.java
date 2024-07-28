@@ -250,4 +250,8 @@ public class LoggingConstraintValidationHandler
     }
   }
 
+  @Override
+  public void handlePass(IConstraint constraint, INodeItem node, INodeItem target) {
+    // do nothing
+  }
 }

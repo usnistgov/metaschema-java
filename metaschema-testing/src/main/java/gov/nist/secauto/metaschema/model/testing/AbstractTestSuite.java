@@ -140,30 +140,27 @@ public abstract class AbstractTestSuite {
   protected void deleteCollectionOnExit(Path path) {
     if (path != null) {
       Runtime.getRuntime().addShutdownHook(new Thread( // NOPMD - this is not a webapp
-          new Runnable() {
-            @Override
-            public void run() {
-              try {
-                Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-                  @Override
-                  public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Files.delete(file);
+          () -> {
+            try {
+              Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                  Files.delete(file);
+                  return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException ex) throws IOException {
+                  if (ex == null) {
+                    Files.delete(dir);
                     return FileVisitResult.CONTINUE;
                   }
-
-                  @Override
-                  public FileVisitResult postVisitDirectory(Path dir, IOException ex) throws IOException {
-                    if (ex == null) {
-                      Files.delete(dir);
-                      return FileVisitResult.CONTINUE;
-                    }
-                    // directory iteration failed for some reason
-                    throw ex;
-                  }
-                });
-              } catch (IOException ex) {
-                throw new JUnitException("Failed to delete collection: " + path, ex);
-              }
+                  // directory iteration failed for some reason
+                  throw ex;
+                }
+              });
+            } catch (IOException ex) {
+              throw new JUnitException("Failed to delete collection: " + path, ex);
             }
           }));
     }
@@ -381,8 +378,8 @@ public abstract class AbstractTestSuite {
     }
 
     @SuppressWarnings("rawtypes") ISerializer serializer
-        = context.newSerializer(getRequiredContentFormat(), object.getClass());
-    serializer.serialize(object, convertedContetPath, getWriteOpenOptions());
+        = context.newSerializer(getRequiredContentFormat(), ObjectUtils.asType(object.getClass()));
+    serializer.serialize(ObjectUtils.asType(object), convertedContetPath, getWriteOpenOptions());
 
     return convertedContetPath;
   }
@@ -497,6 +494,9 @@ public abstract class AbstractTestSuite {
       break;
     case INFORMATIONAL:
       logBuilder = LOGGER.atInfo();
+      break;
+    case DEBUG:
+      logBuilder = LOGGER.atDebug();
       break;
     default:
       throw new IllegalArgumentException("Unknown level: " + finding.getSeverity().name());

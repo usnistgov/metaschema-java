@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.testing.model;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaData;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
@@ -47,8 +49,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @MetaschemaAssembly(
     name = "assembly-with-fields",
     rootName = "root-assembly-with-fields",
-    moduleClass = MetaschemaModule.class)
-public class RootAssemblyWithFields {
+    moduleClass = TestModule.class)
+public class RootAssemblyWithFields implements IBoundObject {
+  private final IMetaschemaData metaschemaData;
+
   @BoundField
   private String defaultField;
 
@@ -76,6 +80,16 @@ public class RootAssemblyWithFields {
   private Map<String, JsonKeyField> field6;
 
   public RootAssemblyWithFields() {
+    this(null);
+  }
+
+  public RootAssemblyWithFields(IMetaschemaData metaschemaData) {
+    this.metaschemaData = metaschemaData;
+  }
+
+  @Override
+  public IMetaschemaData getMetaschemaData() {
+    return metaschemaData;
   }
 
   public String getField1() {
@@ -122,8 +136,10 @@ public class RootAssemblyWithFields {
   @SuppressWarnings("PMD")
   @MetaschemaField(
       name = "field-value-key",
-      moduleClass = MetaschemaModule.class)
-  public static class ValueKeyField {
+      moduleClass = TestModule.class)
+  public static class ValueKeyField implements IBoundObject {
+    private final IMetaschemaData metaschemaData;
+
     @BoundFlag
     private String flag;
 
@@ -131,6 +147,16 @@ public class RootAssemblyWithFields {
     private String _value;
 
     public ValueKeyField() {
+      this(null);
+    }
+
+    public ValueKeyField(IMetaschemaData metaschemaData) {
+      this.metaschemaData = metaschemaData;
+    }
+
+    @Override
+    public IMetaschemaData getMetaschemaData() {
+      return metaschemaData;
     }
 
     public String getFlag() {
@@ -145,8 +171,10 @@ public class RootAssemblyWithFields {
   @SuppressWarnings("PMD")
   @MetaschemaField(
       name = "field-default-value-key",
-      moduleClass = MetaschemaModule.class)
-  public static class DefaultValueKeyField {
+      moduleClass = TestModule.class)
+  public static class DefaultValueKeyField implements IBoundObject {
+    private final IMetaschemaData metaschemaData;
+
     @BoundFlag
     private String flag;
 
@@ -154,6 +182,16 @@ public class RootAssemblyWithFields {
     private String _value;
 
     public DefaultValueKeyField() {
+      this(null);
+    }
+
+    public DefaultValueKeyField(IMetaschemaData metaschemaData) {
+      this.metaschemaData = metaschemaData;
+    }
+
+    @Override
+    public IMetaschemaData getMetaschemaData() {
+      return metaschemaData;
     }
 
     public String getFlag() {
@@ -168,8 +206,10 @@ public class RootAssemblyWithFields {
   @SuppressWarnings("PMD")
   @MetaschemaField(
       name = "field-flag-value-key",
-      moduleClass = MetaschemaModule.class)
-  public static class FlagValueKeyField {
+      moduleClass = TestModule.class)
+  public static class FlagValueKeyField implements IBoundObject {
+    private final IMetaschemaData metaschemaData;
+
     @BoundFlag
     @JsonFieldValueKeyFlag
     private String flag;
@@ -178,6 +218,16 @@ public class RootAssemblyWithFields {
     private String _value;
 
     public FlagValueKeyField() {
+      this(null);
+    }
+
+    public FlagValueKeyField(IMetaschemaData metaschemaData) {
+      this.metaschemaData = metaschemaData;
+    }
+
+    @Override
+    public IMetaschemaData getMetaschemaData() {
+      return metaschemaData;
     }
 
     public String getFlag() {
@@ -192,8 +242,10 @@ public class RootAssemblyWithFields {
   @SuppressWarnings("PMD")
   @MetaschemaField(
       name = "field-json-key",
-      moduleClass = MetaschemaModule.class)
-  public static class JsonKeyField {
+      moduleClass = TestModule.class)
+  public static class JsonKeyField implements IBoundObject {
+    private final IMetaschemaData metaschemaData;
+
     @BoundFlag
     @JsonKey
     private String key;
@@ -206,6 +258,16 @@ public class RootAssemblyWithFields {
     private String _value;
 
     public JsonKeyField() {
+      this(null);
+    }
+
+    public JsonKeyField(IMetaschemaData metaschemaData) {
+      this.metaschemaData = metaschemaData;
+    }
+
+    @Override
+    public IMetaschemaData getMetaschemaData() {
+      return metaschemaData;
     }
 
     public String getKey() {

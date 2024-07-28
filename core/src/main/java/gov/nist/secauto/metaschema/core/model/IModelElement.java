@@ -35,7 +35,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * A marker interface for Metaschema constructs that can be members of a
  * Metaschema definition's model.
  */
-public interface IModelElement extends IDefaultable {
+public interface IModelElement extends IDefaultable, IMetapathQueryable {
 
   /**
    * Get the Metaschema model type of the information element.

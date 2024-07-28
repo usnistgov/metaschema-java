@@ -33,6 +33,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
@@ -61,16 +62,72 @@ class UriUtilsTest {
 
   @ParameterizedTest
   @MethodSource("provideValuesTestToUri")
-  void testToUri(@NonNull String location, boolean expectedResult) {
+  void testToUri(@NonNull String location, boolean expectedResult) throws URISyntaxException {
     boolean result = INVALID;
     Path cwd = Paths.get("");
-    try {
-      URI uri = UriUtils.toUri(location, cwd.toAbsolutePath().toUri());
-      result = VALID;
-      System.out.println(String.format("%s -> %s", location, uri.toASCIIString()));
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
+    URI uri = UriUtils.toUri(location, cwd.toAbsolutePath().toUri());
+    result = VALID;
+    // System.out.println(String.format("%s -> %s", location, uri.toASCIIString()));
     assertEquals(result, expectedResult);
+  }
+
+  private static Stream<Arguments> provideArgumentsTestRelativize() {
+    return Stream.of(
+        Arguments.of(
+            "http://example.com/this/file1.txt",
+            "http://example.com/this/file2.txt",
+            true,
+            "file2.txt"),
+        Arguments.of(
+            "http://example.com/this",
+            "http://example.com/this/that",
+            true,
+            "that"),
+        Arguments.of(
+            "http://example.com/this/",
+            "http://example.com/this/that",
+            true,
+            "that"),
+        Arguments.of(
+            "http://example.com/this/that",
+            "http://example.com/this/new",
+            true,
+            "new"),
+        Arguments.of(
+            "http://example.com/this/that/A",
+            "http://example.com/this/new/B",
+            true,
+            "../new/B"),
+        Arguments.of(
+            "http://example.com/this/that/",
+            "http://example.com/this/new/",
+            true,
+            "../new/"),
+        Arguments.of(
+            "http://example.com/this/that/A/",
+            "http://example.com/this/new/B",
+            true,
+            "../../new/B"),
+        Arguments.of(
+            "http://example.com/this/that/A/X/file1,text",
+            "http://example.com/this/that/A/file2.txt",
+            true,
+            "../file2.txt"),
+        Arguments.of(
+            "http://example.com/this/that/A/",
+            "http://example.org/this/new/B",
+            true,
+            "http://example.org/this/new/B"));
+  }
+
+  @ParameterizedTest
+  @MethodSource("provideArgumentsTestRelativize")
+  void testRelativize(@NonNull String uri1, @NonNull String uri2, boolean prepend, @NonNull String expected)
+      throws URISyntaxException {
+    URI thisUri = URI.create(uri1);
+    URI thatUri = URI.create(uri2);
+
+    URI result = UriUtils.relativize(thisUri, thatUri, prepend);
+    assertEquals(expected, result.toASCIIString());
   }
 }

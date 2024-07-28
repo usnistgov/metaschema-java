@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.codegen.config;
 
-import java.util.Collection;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -56,5 +56,5 @@ public interface IDefinitionBindingConfiguration {
    * @return a list of fully qualified type names for interfaces
    */
   @NonNull
-  Collection<String> getInterfacesToImplement();
+  List<String> getInterfacesToImplement();
 }

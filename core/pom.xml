@@ -169,9 +169,10 @@
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <configuration>
                         <excludes>
-                            <exclude>
-                                gov/nist/secauto/metaschema/core/model/xml/xmlbeans/**/*</exclude>
+							<!-- filter generated code -->
+                            <exclude>gov/nist/secauto/metaschema/core/model/xml/xmlbeans/**/*</exclude>
                             <exclude>org/apache/xmlbeans/**/*</exclude>
+                            <exclude>gov/nist/secauto/metaschema/core/metapath/antlr/*</exclude>
                         </excludes>
                     </configuration>
                 </plugin>

@@ -30,6 +30,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.DefaultBindingContext;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
@@ -75,8 +76,8 @@ public class AbstractBoundModelTestSupport {
   }
 
   @NonNull
-  protected IBoundDefinitionModel registerClassBinding(@NonNull Class<?> clazz) {
-    IBoundDefinitionModel definition = getBindingContext().getBoundDefinitionForClass(clazz);
+  protected IBoundDefinitionModelComplex registerClassBinding(@NonNull Class<? extends IBoundObject> clazz) {
+    IBoundDefinitionModelComplex definition = getBindingContext().getBoundDefinitionForClass(clazz);
     if (definition == null) {
       throw new IllegalArgumentException(String.format("Unable to find bound definition for class '%s'.",
           clazz.getName()));

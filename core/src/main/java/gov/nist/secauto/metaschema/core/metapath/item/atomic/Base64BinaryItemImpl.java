@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.item.atomic;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.Base64Adapter;
 import gov.nist.secauto.metaschema.core.datatype.adapter.MetaschemaDataTypeProvider;
+import gov.nist.secauto.metaschema.core.metapath.item.function.IMapKey;
 
 import java.nio.ByteBuffer;
 
@@ -52,6 +53,11 @@ class Base64BinaryItemImpl
   }
 
   @Override
+  public IMapKey asMapKey() {
+    return new MapKey();
+  }
+
+  @Override
   public int hashCode() {
     return asByteBuffer().hashCode();
   }
@@ -61,5 +67,24 @@ class Base64BinaryItemImpl
   public boolean equals(Object obj) {
     return this == obj
         || (obj instanceof IBase64BinaryItem && compareTo((IBase64BinaryItem) obj) == 0);
+  }
+
+  private final class MapKey implements IMapKey {
+    @Override
+    public IBase64BinaryItem getKey() {
+      return Base64BinaryItemImpl.this;
+    }
+
+    @Override
+    public int hashCode() {
+      return getKey().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      return this == obj ||
+          (obj instanceof MapKey
+              && getKey().equals(((MapKey) obj).getKey()));
+    }
   }
 }

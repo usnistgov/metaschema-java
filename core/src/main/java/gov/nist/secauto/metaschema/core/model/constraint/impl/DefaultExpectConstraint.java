@@ -53,7 +53,7 @@ public final class DefaultExpectConstraint
   private static final Pattern METAPATH_VALUE_TEMPLATE_PATTERN
       = Pattern.compile("(?<!\\\\)(\\{\\s*((?:(?:\\\\})|[^}])*)\\s*\\})");
   @NonNull
-  private final MetapathExpression test;
+  private final String test;
   private final String message;
 
   /**
@@ -90,18 +90,18 @@ public final class DefaultExpectConstraint
       @Nullable MarkupLine description,
       @NonNull ISource source,
       @NonNull Level level,
-      @NonNull MetapathExpression target,
+      @NonNull String target,
       @NonNull Map<IAttributable.Key, Set<String>> properties,
-      @NonNull MetapathExpression test,
+      @NonNull String test,
       @Nullable String message,
-      MarkupMultiline remarks) {
+      @Nullable MarkupMultiline remarks) {
     super(id, formalName, description, source, level, target, properties, remarks);
     this.test = Objects.requireNonNull(test);
     this.message = message;
   }
 
   @Override
-  public MetapathExpression getTest() {
+  public String getTest() {
     return test;
   }
 

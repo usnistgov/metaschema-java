@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.io;
 
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.io.File;
@@ -50,7 +51,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @param <CLASS>
  *          the Java type from which data can be written
  */
-public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationFeature<?>> {
+public interface ISerializer<CLASS extends IBoundObject> extends IMutableConfiguration<SerializationFeature<?>> {
 
   @Override
   ISerializer<CLASS> enableFeature(SerializationFeature<?> feature);
@@ -77,7 +78,7 @@ public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationF
    * @throws IOException
    *           if an error occurred while writing data to the stream
    */
-  default void serialize(@NonNull CLASS data, @NonNull OutputStream os) throws IOException {
+  default void serialize(@NonNull IBoundObject data, @NonNull OutputStream os) throws IOException {
     OutputStreamWriter writer = new OutputStreamWriter(os, StandardCharsets.UTF_8);
     serialize(data, writer);
     writer.flush();
@@ -96,7 +97,7 @@ public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationF
    *           if an error occurred while writing data to the file indicated by
    *           the {@code path} parameter
    */
-  default void serialize(@NonNull CLASS data, @NonNull Path path, OpenOption... openOptions) throws IOException {
+  default void serialize(@NonNull IBoundObject data, @NonNull Path path, OpenOption... openOptions) throws IOException {
     try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8, openOptions)) {
       assert writer != null;
       serialize(data, writer);
@@ -113,7 +114,7 @@ public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationF
    * @throws IOException
    *           if an error occurred while writing data to the stream
    */
-  default void serialize(@NonNull CLASS data, @NonNull File file) throws IOException {
+  default void serialize(@NonNull IBoundObject data, @NonNull File file) throws IOException {
     serialize(data, ObjectUtils.notNull(file.toPath()), StandardOpenOption.CREATE, StandardOpenOption.WRITE,
         StandardOpenOption.TRUNCATE_EXISTING);
   }
@@ -128,5 +129,5 @@ public interface ISerializer<CLASS> extends IMutableConfiguration<SerializationF
    * @throws IOException
    *           if an error occurred while writing data to the stream
    */
-  void serialize(@NonNull CLASS data, @NonNull Writer writer) throws IOException;
+  void serialize(@NonNull IBoundObject data, @NonNull Writer writer) throws IOException;
 }

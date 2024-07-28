@@ -28,12 +28,11 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractNamedModelInstanceGrouped;
+import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedAssemblyReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -45,9 +44,12 @@ import java.util.Set;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class XmlGroupedAssemblyInstance
-    extends AbstractNamedModelInstanceGrouped
-    implements IAssemblyInstanceGrouped,
-    IFeatureDefinitionReferenceInstance<IAssemblyDefinition, IAssemblyInstanceGrouped> {
+    extends AbstractAssemblyInstance<
+        IChoiceGroupInstance,
+        IAssemblyDefinition,
+        IAssemblyInstanceGrouped,
+        IAssemblyDefinition>
+    implements IAssemblyInstanceGrouped {
   @NonNull
   private final GroupedAssemblyReferenceType xmlObject;
 
@@ -72,14 +74,9 @@ public class XmlGroupedAssemblyInstance
    *
    * @return the underlying XML data
    */
+  @NonNull
   protected GroupedAssemblyReferenceType getXmlObject() {
     return xmlObject;
-  }
-
-  @Override
-  public IAssemblyDefinition getDefinition() {
-    // this will always be not null
-    return ObjectUtils.notNull(getContainingModule().getScopedAssemblyDefinitionByName(getName()));
   }
 
   // ----------------------------------------

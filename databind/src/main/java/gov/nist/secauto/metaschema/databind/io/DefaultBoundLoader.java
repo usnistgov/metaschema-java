@@ -31,9 +31,11 @@ import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.resource.AbstractResourceResolver;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
+import gov.nist.secauto.metaschema.databind.io.ModelDetector.Result;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -119,12 +121,12 @@ public class DefaultBoundLoader
   }
 
   @Override
-  public FormatDetector.Result detectFormat(@NonNull URI uri) throws IOException {
+  public Format detectFormat(@NonNull URI uri) throws IOException {
     URI resourceUri = resolve(uri);
     URL resource = resourceUri.toURL();
 
     try (InputStream is = ObjectUtils.notNull(resource.openStream())) {
-      return detectFormat(is);
+      return detectFormat(is).getFormat();
     }
   }
 
@@ -154,7 +156,12 @@ public class DefaultBoundLoader
   }
 
   @Override
-  public <CLASS> CLASS load(@NonNull URI uri) throws IOException {
+  public Result detectModel(InputStream is, Format format) throws IOException {
+    return getModelDetector().detect(is, format);
+  }
+
+  @Override
+  public <CLASS extends IBoundObject> CLASS load(@NonNull URI uri) throws IOException {
     URI resourceUri = resolve(uri);
     URL resource = resourceUri.toURL();
 
@@ -165,13 +172,13 @@ public class DefaultBoundLoader
 
   @Override
   @NonNull
-  public <CLASS> CLASS load(@NonNull InputStream is, @NonNull URI documentUri) throws IOException {
+  public <CLASS extends IBoundObject> CLASS load(@NonNull InputStream is, @NonNull URI documentUri) throws IOException {
     // TODO: avoid node item
     return INodeItem.toValue(loadAsNodeItem(is, documentUri));
   }
 
   @Override
-  public <CLASS> CLASS load(Class<CLASS> clazz, URI uri) throws IOException {
+  public <CLASS extends IBoundObject> CLASS load(Class<CLASS> clazz, URI uri) throws IOException {
     URI resourceUri = resolve(uri);
     URL resource = resourceUri.toURL();
 
@@ -181,7 +188,8 @@ public class DefaultBoundLoader
   }
 
   @Override
-  public <CLASS> CLASS load(Class<CLASS> clazz, InputStream is, URI documentUri) throws IOException {
+  public <CLASS extends IBoundObject> CLASS load(Class<CLASS> clazz, InputStream is, URI documentUri)
+      throws IOException {
     // we cannot close this stream, since it will cause the underlying stream to be
     // closed
     FormatDetector.Result match = getFormatDetector().detect(is);
@@ -193,8 +201,9 @@ public class DefaultBoundLoader
     }
   }
 
+  @Override
   @NonNull
-  private <CLASS> CLASS load(
+  public <CLASS extends IBoundObject> CLASS load(
       @NonNull Class<CLASS> clazz,
       @NonNull Format format,
       @NonNull InputStream is,
@@ -236,7 +245,7 @@ public class DefaultBoundLoader
 
   @Override
   public IDocumentNodeItem loadAsNodeItem(Format format, InputStream is, URI documentUri) throws IOException {
-    ModelDetector.Result modelMatch = getModelDetector().detect(is, format);
+    ModelDetector.Result modelMatch = detectModel(is, format);
 
     IDeserializer<?> deserializer = getDeserializer(
         modelMatch.getBoundClass(),
@@ -248,7 +257,7 @@ public class DefaultBoundLoader
   }
 
   @NonNull
-  private <CLASS> IDeserializer<CLASS> getDeserializer(
+  private <CLASS extends IBoundObject> IDeserializer<CLASS> getDeserializer(
       @NonNull Class<CLASS> clazz,
       @NonNull Format format,
       @NonNull IConfiguration<DeserializationFeature<?>> config) {

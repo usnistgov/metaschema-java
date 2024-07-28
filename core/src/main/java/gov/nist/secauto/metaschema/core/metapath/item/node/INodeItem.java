@@ -29,12 +29,15 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 import gov.nist.secauto.metaschema.core.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.core.metapath.format.IPathSegment;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.model.IResourceLocation;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -117,6 +120,14 @@ public interface INodeItem extends IItem, IPathSegment, INodeItemVisitable {
    * @return the base URI or {@code null} if it is unknown
    */
   URI getBaseUri();
+
+  /**
+   * Get the default namespace for the node.
+   *
+   * @return the URI
+   */
+  @NonNull
+  URI getNamespace();
 
   /**
    * Get the path for this node item as a Metapath.
@@ -228,7 +239,7 @@ public interface INodeItem extends IItem, IPathSegment, INodeItemVisitable {
   Collection<? extends IFlagNodeItem> getFlags();
 
   /**
-   * Lookup a flag and value data on this node by it's effective name.
+   * Lookup a flag and value data on this node by it's effective qualified name.
    *
    * @param name
    *          the effective name of the flag
@@ -236,7 +247,7 @@ public interface INodeItem extends IItem, IPathSegment, INodeItemVisitable {
    *         was found
    */
   @Nullable
-  IFlagNodeItem getFlagByName(@NonNull String name);
+  IFlagNodeItem getFlagByName(@NonNull QName name);
 
   /**
    * Get the flags and value data associated with this node as a stream.
@@ -277,7 +288,7 @@ public interface INodeItem extends IItem, IPathSegment, INodeItemVisitable {
    *         empty list if an instance with that name is not present
    */
   @NonNull
-  List<? extends IModelNodeItem<?, ?>> getModelItemsByName(@NonNull String name);
+  List<? extends IModelNodeItem<?, ?>> getModelItemsByName(@NonNull QName name);
 
   /**
    * Get the model items (i.e., fields, assemblies) and value data associated this
@@ -288,6 +299,9 @@ public interface INodeItem extends IItem, IPathSegment, INodeItemVisitable {
   @SuppressWarnings("null")
   @NonNull
   default Stream<? extends IModelNodeItem<?, ?>> modelItems() {
-    return getModelItems().stream().flatMap(list -> list.stream());
+    return getModelItems().stream().flatMap(Collection::stream);
   }
+
+  @Nullable
+  IResourceLocation getLocation();
 }

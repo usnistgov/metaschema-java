@@ -27,11 +27,13 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.model.AbstractModule;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
-import gov.nist.secauto.metaschema.databind.model.annotations.Module;
+import gov.nist.secauto.metaschema.databind.model.annotations.MetaschemaModule;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -43,6 +45,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
@@ -51,19 +55,19 @@ public abstract class AbstractBoundModule
         IBoundModule,
         IBoundDefinitionModelComplex,
         IBoundDefinitionFlag,
-        IBoundDefinitionModelField,
+        IBoundDefinitionModelField<?>,
         IBoundDefinitionModelAssembly>
     implements IBoundModule {
   @NonNull
   private final IBindingContext bindingContext;
   @NonNull
-  private final Lazy<Map<String, IBoundDefinitionModelAssembly>> assemblyDefinitions;
+  private final Lazy<Map<QName, IBoundDefinitionModelAssembly>> assemblyDefinitions;
   @NonNull
-  private final Lazy<Map<String, IBoundDefinitionModelField>> fieldDefinitions;
+  private final Lazy<Map<QName, IBoundDefinitionModelField<?>>> fieldDefinitions;
 
   /**
    * Create a new Module instance for a given class annotated by the
-   * {@link Module} annotation.
+   * {@link MetaschemaModule} annotation.
    * <p>
    * Will also load any imported Metaschemas.
    *
@@ -79,12 +83,12 @@ public abstract class AbstractBoundModule
       @NonNull Class<? extends IBoundModule> clazz,
       @NonNull IBindingContext bindingContext) {
 
-    if (!clazz.isAnnotationPresent(Module.class)) {
+    if (!clazz.isAnnotationPresent(MetaschemaModule.class)) {
       throw new IllegalStateException(String.format("The class '%s' is missing the '%s' annotation",
-          clazz.getCanonicalName(), Module.class.getCanonicalName()));
+          clazz.getCanonicalName(), MetaschemaModule.class.getCanonicalName()));
     }
 
-    Module moduleAnnotation = clazz.getAnnotation(Module.class);
+    MetaschemaModule moduleAnnotation = clazz.getAnnotation(MetaschemaModule.class);
 
     List<IBoundModule> importedModules;
     if (moduleAnnotation.imports().length > 0) {
@@ -140,16 +144,16 @@ public abstract class AbstractBoundModule
               .requireNonNull(bindingContext.getBoundDefinitionForClass(clazz));
         })
         .collect(Collectors.toUnmodifiableMap(
-            IBoundDefinitionModelAssembly::getName,
+            IBoundDefinitionModelAssembly::getDefinitionQName,
             Function.identity()))));
     this.fieldDefinitions = ObjectUtils.notNull(Lazy.lazy(() -> Arrays.stream(getFieldClasses())
         .map(clazz -> {
           assert clazz != null;
-          return (IBoundDefinitionModelField) ObjectUtils
+          return (IBoundDefinitionModelField<?>) ObjectUtils
               .requireNonNull(bindingContext.getBoundDefinitionForClass(clazz));
         })
         .collect(Collectors.toUnmodifiableMap(
-            IBoundDefinitionModelField::getName,
+            IBoundDefinitionModelField::getDefinitionQName,
             Function.identity()))));
   }
 
@@ -165,16 +169,12 @@ public abstract class AbstractBoundModule
    *
    * @return the annotations
    */
+  @SuppressWarnings({ "null", "unchecked" })
   @NonNull
-  protected Class<?>[] getAssemblyClasses() {
-    Class<?>[] retval;
-    if (getClass().isAnnotationPresent(Module.class)) {
-      Module moduleAnnotation = getClass().getAnnotation(Module.class);
-      retval = moduleAnnotation.assemblies();
-    } else {
-      retval = new Class<?>[] {};
-    }
-    return retval;
+  protected Class<? extends IBoundObject>[] getAssemblyClasses() {
+    return getClass().isAnnotationPresent(MetaschemaModule.class)
+        ? getClass().getAnnotation(MetaschemaModule.class).assemblies()
+        : (Class<? extends IBoundObject>[]) Array.newInstance(Class.class, 0);
   }
 
   /**
@@ -182,16 +182,12 @@ public abstract class AbstractBoundModule
    *
    * @return the annotations
    */
+  @SuppressWarnings({ "null", "unchecked" })
   @NonNull
-  protected Class<?>[] getFieldClasses() {
-    Class<?>[] retval;
-    if (getClass().isAnnotationPresent(Module.class)) {
-      Module moduleAnnotation = getClass().getAnnotation(Module.class);
-      retval = moduleAnnotation.fields();
-    } else {
-      retval = new Class<?>[] {};
-    }
-    return retval;
+  protected Class<? extends IBoundObject>[] getFieldClasses() {
+    return getClass().isAnnotationPresent(MetaschemaModule.class)
+        ? getClass().getAnnotation(MetaschemaModule.class).fields()
+        : (Class<? extends IBoundObject>[]) Array.newInstance(Class.class, 0);
   }
 
   /**
@@ -199,7 +195,7 @@ public abstract class AbstractBoundModule
    *
    * @return the mapping
    */
-  protected Map<String, IBoundDefinitionModelAssembly> getAssemblyDefinitionMap() {
+  protected Map<QName, IBoundDefinitionModelAssembly> getAssemblyDefinitionMap() {
     return assemblyDefinitions.get();
   }
 
@@ -210,7 +206,7 @@ public abstract class AbstractBoundModule
   }
 
   @Override
-  public IBoundDefinitionModelAssembly getAssemblyDefinitionByName(@NonNull String name) {
+  public IBoundDefinitionModelAssembly getAssemblyDefinitionByName(@NonNull QName name) {
     return getAssemblyDefinitionMap().get(name);
   }
 
@@ -219,18 +215,18 @@ public abstract class AbstractBoundModule
    *
    * @return the mapping
    */
-  protected Map<String, IBoundDefinitionModelField> getFieldDefinitionMap() {
+  protected Map<QName, IBoundDefinitionModelField<?>> getFieldDefinitionMap() {
     return fieldDefinitions.get();
   }
 
   @SuppressWarnings("null")
   @Override
-  public Collection<IBoundDefinitionModelField> getFieldDefinitions() {
+  public Collection<IBoundDefinitionModelField<?>> getFieldDefinitions() {
     return getFieldDefinitionMap().values();
   }
 
   @Override
-  public IBoundDefinitionModelField getFieldDefinitionByName(@NonNull String name) {
+  public IBoundDefinitionModelField<?> getFieldDefinitionByName(@NonNull QName name) {
     return getFieldDefinitionMap().get(name);
   }
 
@@ -242,7 +238,7 @@ public abstract class AbstractBoundModule
   }
 
   @Override
-  public IBoundDefinitionFlag getFlagDefinitionByName(@NonNull String name) {
+  public IBoundDefinitionFlag getFlagDefinitionByName(@NonNull QName name) {
     // Flags are always inline, so they do not have separate definitions
     return null;
   }

@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.databind.io.json;
 
+import com.fasterxml.jackson.core.JsonParser;
+
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.model.util.JsonUtil;
 import gov.nist.secauto.metaschema.databind.io.AbstractProblemHandler;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
@@ -45,16 +48,15 @@ public class DefaultJsonProblemHandler
     IGNORED_FIELD_NAMES.add(JSON_SCHEMA_FIELD_NAME);
   }
 
-  @SuppressWarnings("resource")
   @Override
   public boolean handleUnknownProperty(
       IBoundDefinitionModelComplex classBinding,
-      Object targetObject,
+      IBoundObject targetObject,
       String fieldName,
-      IJsonParsingContext.IInstanceReader reader) throws IOException {
+      JsonParser parser) throws IOException {
     boolean retval = false;
     if (IGNORED_FIELD_NAMES.contains(fieldName)) {
-      JsonUtil.skipNextValue(reader.getJsonParser());
+      JsonUtil.skipNextValue(parser);
       retval = true;
     }
     return retval;

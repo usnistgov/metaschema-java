@@ -32,6 +32,7 @@ import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression.ResultType;
 import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
+import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultIndex;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
@@ -182,13 +183,14 @@ public interface IIndex {
       @NonNull INodeItem item,
       @NonNull IKeyField keyField,
       @NonNull DynamicContext dynamicContext) {
-    MetapathExpression keyPath = keyField.getTarget();
+    String keyPath = keyField.getTarget();
+    MetapathExpression keyMetapath = MetapathExpression.compile(keyPath, dynamicContext.getStaticContext());
 
-    INodeItem keyItem;
+    IItem keyItem;
     try {
-      keyItem = keyPath.evaluateAs(item, ResultType.NODE, dynamicContext);
+      keyItem = keyMetapath.evaluateAs(item, ResultType.ITEM, dynamicContext);
     } catch (InvalidTypeMetapathException ex) {
-      throw new MetapathException("Key path did not result in a single node", ex);
+      throw new MetapathException("Key path did not result in a single item", ex);
     }
 
     String keyValue = null;
@@ -197,7 +199,7 @@ public interface IIndex {
       assert keyValue != null;
       Pattern pattern = keyField.getPattern();
       if (pattern != null) {
-        keyValue = applyPattern(keyItem, keyValue, pattern);
+        keyValue = applyPattern(keyMetapath, keyValue, pattern);
       }
     } // empty key
     return keyValue;
@@ -214,19 +216,19 @@ public interface IIndex {
    *          the current key value
    * @return the final key value
    */
-  private static String applyPattern(@NonNull INodeItem keyItem, @NonNull String keyValue,
+  private static String applyPattern(@NonNull MetapathExpression keyMetapath, @NonNull String keyValue,
       @NonNull Pattern pattern) {
     Matcher matcher = pattern.matcher(keyValue);
     if (!matcher.matches()) {
       throw new MetapathException(
           String.format("Key field declares the pattern '%s' which does not match the value '%s' of node '%s'",
-              pattern.pattern(), keyValue, keyItem.getMetapath()));
+              pattern.pattern(), keyValue, keyMetapath));
     }
 
     if (matcher.groupCount() != 1) {
       throw new MetapathException(String.format(
           "The first group was not a match for value '%s' of node '%s' for key field pattern '%s'",
-          keyValue, keyItem.getMetapath(), pattern.pattern()));
+          keyValue, keyMetapath, pattern.pattern()));
     }
     return matcher.group(1);
   }

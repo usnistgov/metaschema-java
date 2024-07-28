@@ -41,7 +41,7 @@ public class InvalidValueForCastFunctionException
    *          the exception message
    */
   public InvalidValueForCastFunctionException(String message) {
-    super(InvalidArgumentFunctionException.INVALID_VALUE_FOR_CAST, message);
+    super(INVALID_VALUE_FOR_CAST, message);
   }
 
   /**
@@ -54,7 +54,7 @@ public class InvalidValueForCastFunctionException
    *          the original exception cause
    */
   public InvalidValueForCastFunctionException(String message, Throwable cause) {
-    super(InvalidArgumentFunctionException.INVALID_VALUE_FOR_CAST, message, cause);
+    super(INVALID_VALUE_FOR_CAST, message, cause);
   }
 
   /**
@@ -64,7 +64,7 @@ public class InvalidValueForCastFunctionException
    *          the original exception cause
    */
   public InvalidValueForCastFunctionException(Throwable cause) {
-    super(InvalidArgumentFunctionException.INVALID_VALUE_FOR_CAST, cause);
+    super(INVALID_VALUE_FOR_CAST, cause);
   }
 
 }

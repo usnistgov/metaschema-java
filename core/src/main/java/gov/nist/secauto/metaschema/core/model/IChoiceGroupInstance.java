@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import java.util.Locale;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IChoiceGroupInstance
     extends IModelInstanceAbsolute, IContainerModelGrouped {
@@ -83,6 +84,18 @@ public interface IChoiceGroupInstance
   default boolean isEffectiveValueWrappedInXml() {
     return true;
   }
+
+  /**
+   * Get the effective name of the JSON key flag, if a JSON key is configured.
+   * <p>
+   * This name is expected to be in the same namespace as the containing model
+   * element (i.e. choice group, assembly, field).
+   *
+   * @return the name of the JSON key flag if configured, or {@code null}
+   *         otherwise
+   */
+  @Nullable
+  String getJsonKeyFlagInstanceName();
 
   /**
    * Get the named model instance for the provided choice group item.

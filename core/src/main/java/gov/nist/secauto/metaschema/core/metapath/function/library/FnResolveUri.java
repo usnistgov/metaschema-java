@@ -102,7 +102,7 @@ public final class FnResolveUri {
       return ISequence.empty(); // NOPMD - readability
     }
 
-    IStringItem relativeString = FunctionUtils.getFirstItem(relativeSequence, true);
+    IStringItem relativeString = relativeSequence.getFirstItem(true);
     IAnyUriItem resolvedUri = null;
     if (relativeString != null) {
       resolvedUri = fnResolveUri(relativeString, null, dynamicContext);
@@ -143,7 +143,7 @@ public final class FnResolveUri {
     }
 
     ISequence<? extends IStringItem> baseSequence = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1)));
-    IStringItem baseString = FunctionUtils.getFirstItem(baseSequence, true);
+    IStringItem baseString = baseSequence.getFirstItem(true);
 
     if (baseString == null) {
       throw new InvalidArgumentFunctionException(
@@ -152,7 +152,7 @@ public final class FnResolveUri {
     }
     IAnyUriItem baseUri = IAnyUriItem.cast(baseString);
 
-    IStringItem relativeString = FunctionUtils.getFirstItem(relativeSequence, true);
+    IStringItem relativeString = relativeSequence.getFirstItem(true);
 
     IAnyUriItem resolvedUri = null;
     if (relativeString != null) {

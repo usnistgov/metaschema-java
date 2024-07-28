@@ -28,19 +28,17 @@ package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IContainerModel;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.AssemblyReferenceType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.MarkupLineDatatype;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.UseNameType;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.Map;
 import java.util.Set;
@@ -48,9 +46,13 @@ import java.util.Set;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class XmlAssemblyInstance
-    extends AbstractInstance<IContainerModel>
-    implements IAssemblyInstanceAbsolute,
-    IFeatureDefinitionReferenceInstance<IAssemblyDefinition, IAssemblyInstanceAbsolute> {
+    extends AbstractAssemblyInstance<
+        IContainerModel,
+        IAssemblyDefinition,
+        IAssemblyInstanceAbsolute,
+        IAssemblyDefinition>
+    implements IAssemblyInstanceAbsolute {
+  @NonNull
   private final AssemblyReferenceType xmlObject;
 
   /**
@@ -69,13 +71,6 @@ class XmlAssemblyInstance
     this.xmlObject = xmlObject;
   }
 
-  @Override
-  public IAssemblyDefinition getDefinition() {
-    // This will always be not null
-    return ObjectUtils.notNull(getContainingModule()
-        .getScopedAssemblyDefinitionByName(getName()));
-  }
-
   // ----------------------------------------
   // - Start XmlBeans driven code - CPD-OFF -
   // ----------------------------------------
@@ -85,6 +80,7 @@ class XmlAssemblyInstance
    *
    * @return the underlying XML data
    */
+  @NonNull
   protected AssemblyReferenceType getXmlObject() {
     return xmlObject;
   }

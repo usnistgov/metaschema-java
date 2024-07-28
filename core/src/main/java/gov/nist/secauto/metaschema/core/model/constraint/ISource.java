@@ -26,9 +26,9 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.model.constraint.impl.ExternalModelSource;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.ExternalSource;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.InternalModelSource;
+import gov.nist.secauto.metaschema.core.model.constraint.impl.UnknownInternalModelSource;
 
 import java.net.URI;
 
@@ -59,7 +59,7 @@ public interface ISource {
    */
   @NonNull
   static ISource modelSource() {
-    return InternalModelSource.singleton();
+    return UnknownInternalModelSource.instance();
   }
 
   /**
@@ -74,7 +74,7 @@ public interface ISource {
    */
   @NonNull
   static ISource modelSource(@Nullable URI location) {
-    return location == null ? modelSource() : ExternalModelSource.instance(location);
+    return location == null ? modelSource() : InternalModelSource.instance(location);
   }
 
   /**

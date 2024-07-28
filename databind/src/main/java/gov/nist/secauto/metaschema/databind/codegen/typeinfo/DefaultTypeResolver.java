@@ -51,9 +51,12 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -84,7 +87,7 @@ class DefaultTypeResolver implements ITypeResolver {
   public IAssemblyDefinitionTypeInfo getTypeInfo(@NonNull IAssemblyDefinition definition) {
     return ObjectUtils.notNull(assemblyDefinitionToTypeInfoMap.computeIfAbsent(
         definition,
-        (def) -> IAssemblyDefinitionTypeInfo.newTypeInfo(ObjectUtils.notNull(def),
+        def -> IAssemblyDefinitionTypeInfo.newTypeInfo(ObjectUtils.notNull(def),
             this)));
   }
 
@@ -92,7 +95,7 @@ class DefaultTypeResolver implements ITypeResolver {
   public IFieldDefinitionTypeInfo getTypeInfo(@NonNull IFieldDefinition definition) {
     return ObjectUtils.notNull(fieldDefinitionToTypeInfoMap.computeIfAbsent(
         definition,
-        (def) -> IFieldDefinitionTypeInfo.newTypeInfo(ObjectUtils.notNull(def),
+        def -> IFieldDefinitionTypeInfo.newTypeInfo(ObjectUtils.notNull(def),
             this)));
   }
 
@@ -176,7 +179,7 @@ class DefaultTypeResolver implements ITypeResolver {
   public ClassName getClassName(@NonNull IModelDefinition definition) {
     return ObjectUtils.notNull(definitionToTypeMap.computeIfAbsent(
         definition,
-        (def) -> {
+        def -> {
           String packageName = getBindingConfiguration().getPackageNameForModule(def.getContainingModule());
           String suggestedClassName = getBindingConfiguration().getClassName(definition);
           return getFlagContainerClassName(def, packageName, suggestedClassName);
@@ -198,7 +201,7 @@ class DefaultTypeResolver implements ITypeResolver {
   public ClassName getClassName(IModule module) {
     return ObjectUtils.notNull(moduleToTypeMap.computeIfAbsent(
         module,
-        (mod) -> {
+        mod -> {
           assert mod != null;
           String packageName = getBindingConfiguration().getPackageNameForModule(mod);
           String className = getBindingConfiguration().getClassName(mod);
@@ -216,7 +219,7 @@ class DefaultTypeResolver implements ITypeResolver {
   protected Set<String> getClassNamesFor(@NonNull String packageOrTypeName) {
     return ObjectUtils.notNull(packageToClassNamesMap.computeIfAbsent(
         packageOrTypeName,
-        (pkg) -> Collections.synchronizedSet(new HashSet<>())));
+        pkg -> Collections.synchronizedSet(new LinkedHashSet<>())));
   }
 
   protected boolean isClassNameClash(@NonNull String packageOrTypeName, @NonNull String className) {
@@ -269,6 +272,14 @@ class DefaultTypeResolver implements ITypeResolver {
       retval = ClassName.bestGuess(className);
     }
     return retval;
+  }
+
+  @Override
+  public List<ClassName> getSuperinterfaces(IModelDefinition definition) {
+    List<String> classNames = bindingConfiguration.getQualifiedSuperinterfaceClassNames(definition);
+    return classNames.stream()
+        .map(ClassName::bestGuess)
+        .collect(Collectors.toUnmodifiableList());
   }
 
   @Override

@@ -63,19 +63,19 @@ public final class ConstraintSupport {
       try {
         Arrays.stream(valueAnnotation.lets())
             .map(annotation -> ConstraintFactory.newLetExpression(annotation, source))
-            .forEachOrdered(let -> set.addLetExpression(let));
+            .forEachOrdered(set::addLetExpression);
         Arrays.stream(valueAnnotation.allowedValues())
             .map(annotation -> ConstraintFactory.newAllowedValuesConstraint(annotation, source))
-            .forEachOrdered(constraint -> set.addConstraint(constraint));
+            .forEachOrdered(set::addConstraint);
         Arrays.stream(valueAnnotation.matches())
             .map(annotation -> ConstraintFactory.newMatchesConstraint(annotation, source))
-            .forEachOrdered(constraint -> set.addConstraint(constraint));
+            .forEachOrdered(set::addConstraint);
         Arrays.stream(valueAnnotation.indexHasKey())
             .map(annotation -> ConstraintFactory.newIndexHasKeyConstraint(annotation, source))
-            .forEachOrdered(constraint -> set.addConstraint(constraint));
+            .forEachOrdered(set::addConstraint);
         Arrays.stream(valueAnnotation.expect())
             .map(annotation -> ConstraintFactory.newExpectConstraint(annotation, source))
-            .forEachOrdered(constraint -> set.addConstraint(constraint));
+            .forEachOrdered(set::addConstraint);
       } catch (MetapathException ex) {
         throw new MetapathException(
             String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()),
@@ -104,15 +104,15 @@ public final class ConstraintSupport {
       try {
         Arrays.stream(assemblyAnnotation.index())
             .map(annotation -> ConstraintFactory.newIndexConstraint(annotation, source))
-            .forEachOrdered(constraint -> set.addConstraint(constraint));
+            .forEachOrdered(set::addConstraint);
 
         Arrays.stream(assemblyAnnotation.unique())
             .map(annotation -> ConstraintFactory.newUniqueConstraint(annotation, source))
-            .forEachOrdered(constraint -> set.addConstraint(constraint));
+            .forEachOrdered(set::addConstraint);
 
         Arrays.stream(assemblyAnnotation.cardinality())
             .map(annotation -> ConstraintFactory.newCardinalityConstraint(annotation, source))
-            .forEachOrdered(constraint -> set.addConstraint(constraint));
+            .forEachOrdered(set::addConstraint);
       } catch (MetapathException ex) {
         throw new MetapathException(
             String.format("Unable to compile a Metapath in '%s'. %s", source.getSource(), ex.getLocalizedMessage()),

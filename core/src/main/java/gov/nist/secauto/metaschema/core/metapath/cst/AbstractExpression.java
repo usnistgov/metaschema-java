@@ -28,9 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.cst;
 
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.TypeMetapathException;
-import gov.nist.secauto.metaschema.core.metapath.function.FunctionUtils;
 import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
-import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -54,9 +52,7 @@ public abstract class AbstractExpression implements IExpression {
   @Nullable
   public static IAnyAtomicItem getFirstDataItem(@NonNull ISequence<?> sequence,
       boolean requireSingleton) {
-    IItem item = FunctionUtils.getFirstItem(sequence, requireSingleton);
-
-    return item == null ? null : FnData.fnDataItem(item);
+    return FnData.fnData(sequence).getFirstItem(requireSingleton);
   }
 
   @Override

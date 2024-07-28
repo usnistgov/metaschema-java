@@ -38,7 +38,7 @@
                         <configuration>
                             <metaschemaDir>../../../../core/metaschema/schema/metaschema</metaschemaDir>
                             <includes>
-                                <include>*-metaschema.xml</include>
+                                <include>metaschema-module-metaschema.xml</include>
                             </includes>
                             <constraints>
                                 <constraint>../../../../core/metaschema/schema/metaschema/metaschema-module-constraints.xml</constraint>

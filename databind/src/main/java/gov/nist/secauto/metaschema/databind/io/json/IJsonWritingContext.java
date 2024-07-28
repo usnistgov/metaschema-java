@@ -29,8 +29,7 @@ package gov.nist.secauto.metaschema.databind.io.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import gov.nist.secauto.metaschema.databind.io.IWritingContext;
-import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
-public interface IJsonWritingContext extends IWritingContext<JsonGenerator>, IItemWriteHandler {
+public interface IJsonWritingContext extends IWritingContext<JsonGenerator> {
   // no additional methods
 }

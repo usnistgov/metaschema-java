@@ -73,7 +73,7 @@ public final class FnTail {
       @NonNull DynamicContext dynamicContext,
       IItem focus) {
     ISequence<?> items = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
-    return ISequence.of(fnTail(items));
+    return ISequence.ofCollection(fnTail(items));
   }
 
   /**

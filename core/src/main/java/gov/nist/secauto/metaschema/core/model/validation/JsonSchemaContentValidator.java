@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model.validation;
 
+import gov.nist.secauto.metaschema.core.model.IResourceLocation;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraint;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -92,9 +93,7 @@ public class JsonSchemaContentValidator
       schema.validate(json);
       retval = IValidationResult.PASSING_RESULT;
     } catch (ValidationException ex) {
-      retval = new JsonValidationResult(
-          handleValidationException(ex, documentUri)
-              .collect(Collectors.toList()));
+      retval = new JsonValidationResult(handleValidationException(ex, documentUri).collect(Collectors.toList()));
     }
 
     return retval;
@@ -118,9 +117,22 @@ public class JsonSchemaContentValidator
     @NonNull
     private final URI documentUri;
 
-    public JsonValidationFinding(@NonNull ValidationException exception, @NonNull URI documentUri) {
+    public JsonValidationFinding(
+        @NonNull ValidationException exception,
+        @NonNull URI documentUri) {
       this.exception = ObjectUtils.requireNonNull(exception, "exception");
       this.documentUri = ObjectUtils.requireNonNull(documentUri, "documentUri");
+    }
+
+    @Override
+    public String getIdentifier() {
+      // always null
+      return null;
+    }
+
+    @Override
+    public Kind getKind() {
+      return IValidationFinding.Kind.FAIL;
     }
 
     @Override
@@ -131,6 +143,22 @@ public class JsonSchemaContentValidator
     @Override
     public URI getDocumentUri() {
       return documentUri;
+    }
+
+    @Override
+    public IResourceLocation getLocation() {
+      // not known
+      return null;
+    }
+
+    @Override
+    public String getPathKind() {
+      return "JSON-pointer";
+    }
+
+    @Override
+    public String getPath() {
+      return getCause().getPointerToViolation();
     }
 
     @SuppressWarnings("null")

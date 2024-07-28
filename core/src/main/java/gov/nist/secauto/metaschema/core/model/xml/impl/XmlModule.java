@@ -32,9 +32,9 @@ import gov.nist.secauto.metaschema.core.model.AbstractModule;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaModule;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
-import gov.nist.secauto.metaschema.core.model.xml.IXmlModule;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GlobalFlagDefinitionType;
@@ -56,27 +56,27 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
 
 @SuppressWarnings("PMD.CouplingBetweenObjects")
 public class XmlModule
     extends AbstractModule<
-        IXmlModule,
+        IMetaschemaModule,
         IModelDefinition,
         IFlagDefinition,
         IFieldDefinition,
         IAssemblyDefinition>
-    implements IXmlModule {
+    implements IMetaschemaModule {
   private static final Logger LOGGER = LogManager.getLogger(XmlModule.class);
 
   @NonNull
   private final URI location;
   @NonNull
   private final METASCHEMADocument module;
-  private final Map<String, IFlagDefinition> flagDefinitions;
-  private final Map<String, IFieldDefinition> fieldDefinitions;
-  private final Map<String, IAssemblyDefinition> assemblyDefinitions;
-  private final Map<String, IAssemblyDefinition> rootAssemblyDefinitions;
+  private final Lazy<Definitions> definitions;
 
   /**
    * Constructs a new Metaschema instance.
@@ -93,81 +93,13 @@ public class XmlModule
   public XmlModule( // NOPMD - unavoidable
       @NonNull URI resource,
       @NonNull METASCHEMADocument moduleXml,
-      @NonNull List<IXmlModule> importedModules) throws MetaschemaException {
+      @NonNull List<? extends IMetaschemaModule> importedModules) throws MetaschemaException {
     super(importedModules);
     this.location = ObjectUtils.requireNonNull(resource, "resource");
     Objects.requireNonNull(moduleXml.getMETASCHEMA());
     this.module = moduleXml;
 
-    METASCHEMA metaschemaNode = module.getMETASCHEMA();
-
-    // handle definitions in this module
-    // TODO: switch implementation to use the XmlObjectParser
-    {
-      // start with flag definitions
-      try (XmlCursor cursor = metaschemaNode.newCursor()) {
-        cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-flag");
-
-        Map<String, IFlagDefinition> flagDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
-        while (cursor.toNextSelection()) {
-          GlobalFlagDefinitionType obj = ObjectUtils.notNull((GlobalFlagDefinitionType) cursor.getObject());
-          XmlGlobalFlagDefinition flag = new XmlGlobalFlagDefinition(obj, this); // NOPMD - intentional
-          if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("New flag definition '{}'", flag.toCoordinates());
-          }
-          flagDefinitions.put(flag.getName(), flag);
-        }
-        this.flagDefinitions
-            = flagDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagDefinitions);
-      }
-    }
-
-    {
-      // now field definitions
-      try (XmlCursor cursor = metaschemaNode.newCursor()) {
-        cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-field");
-
-        Map<String, IFieldDefinition> fieldDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
-        while (cursor.toNextSelection()) {
-          GlobalFieldDefinitionType obj = ObjectUtils.notNull((GlobalFieldDefinitionType) cursor.getObject());
-          XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition(obj, this); // NOPMD - intentional
-          if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("New field definition '{}'", field.toCoordinates());
-          }
-          fieldDefinitions.put(field.getName(), field);
-        }
-        this.fieldDefinitions
-            = fieldDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(fieldDefinitions);
-      }
-    }
-
-    {
-      // finally assembly definitions
-      Map<String, IAssemblyDefinition> assemblyDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
-      Map<String, IAssemblyDefinition> rootAssemblyDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
-
-      try (XmlCursor cursor = metaschemaNode.newCursor()) {
-        cursor.selectPath(
-            "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-assembly");
-
-        while (cursor.toNextSelection()) {
-          GlobalAssemblyDefinitionType obj = ObjectUtils.notNull((GlobalAssemblyDefinitionType) cursor.getObject());
-          XmlGlobalAssemblyDefinition assembly = new XmlGlobalAssemblyDefinition(obj, this); // NOPMD - intentional
-          if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("New assembly definition '{}'", assembly.toCoordinates());
-          }
-          assemblyDefinitions.put(assembly.getName(), assembly);
-          if (assembly.isRoot()) {
-            rootAssemblyDefinitions.put(ObjectUtils.notNull(assembly.getRootName()), assembly);
-          }
-        }
-
-        this.assemblyDefinitions
-            = assemblyDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(assemblyDefinitions);
-        this.rootAssemblyDefinitions = rootAssemblyDefinitions.isEmpty() ? Collections.emptyMap()
-            : Collections.unmodifiableMap(rootAssemblyDefinitions);
-      }
-    }
+    this.definitions = Lazy.lazy(() -> new Definitions(ObjectUtils.requireNonNull(module.getMETASCHEMA())));
   }
 
   @NonNull
@@ -223,34 +155,31 @@ public class XmlModule
     return URI.create(getXmlModule().getJsonBaseUri());
   }
 
-  private Map<String, IAssemblyDefinition> getAssemblyDefinitionMap() {
-    return assemblyDefinitions;
+  @NonNull
+  private Definitions getDefinitions() {
+    return ObjectUtils.notNull(definitions.get());
   }
 
   @SuppressWarnings("null")
   @Override
   public Collection<IAssemblyDefinition> getAssemblyDefinitions() {
-    return getAssemblyDefinitionMap().values();
+    return getDefinitions().getAssemblyDefinitionMap().values();
   }
 
   @Override
-  public IAssemblyDefinition getAssemblyDefinitionByName(@NonNull String name) {
-    return getAssemblyDefinitionMap().get(name);
-  }
-
-  private Map<String, IFieldDefinition> getFieldDefinitionMap() {
-    return fieldDefinitions;
+  public IAssemblyDefinition getAssemblyDefinitionByName(@NonNull QName name) {
+    return getDefinitions().getAssemblyDefinitionMap().get(name);
   }
 
   @SuppressWarnings("null")
   @Override
   public Collection<IFieldDefinition> getFieldDefinitions() {
-    return getFieldDefinitionMap().values();
+    return getDefinitions().getFieldDefinitionMap().values();
   }
 
   @Override
-  public IFieldDefinition getFieldDefinitionByName(@NonNull String name) {
-    return getFieldDefinitionMap().get(name);
+  public IFieldDefinition getFieldDefinitionByName(@NonNull QName name) {
+    return getDefinitions().getFieldDefinitionMap().get(name);
   }
 
   @SuppressWarnings("null")
@@ -260,28 +189,117 @@ public class XmlModule
         .collect(Collectors.toList());
   }
 
-  private Map<String, IFlagDefinition> getFlagDefinitionMap() {
-    return flagDefinitions;
-  }
-
   @SuppressWarnings("null")
   @Override
   public Collection<IFlagDefinition> getFlagDefinitions() {
-    return getFlagDefinitionMap().values();
+    return getDefinitions().getFlagDefinitionMap().values();
   }
 
   @Override
-  public IFlagDefinition getFlagDefinitionByName(@NonNull String name) {
-    return getFlagDefinitionMap().get(name);
-  }
-
-  private Map<String, ? extends IAssemblyDefinition> getRootAssemblyDefinitionMap() {
-    return rootAssemblyDefinitions;
+  public IFlagDefinition getFlagDefinitionByName(@NonNull QName name) {
+    return getDefinitions().getFlagDefinitionMap().get(name);
   }
 
   @SuppressWarnings("null")
   @Override
   public Collection<? extends IAssemblyDefinition> getRootAssemblyDefinitions() {
-    return getRootAssemblyDefinitionMap().values();
+    return getDefinitions().getRootAssemblyDefinitionMap().values();
+  }
+
+  private final class Definitions {
+    private final Map<QName, IFlagDefinition> flagDefinitions;
+    private final Map<QName, IFieldDefinition> fieldDefinitions;
+    private final Map<QName, IAssemblyDefinition> assemblyDefinitions;
+    private final Map<QName, IAssemblyDefinition> rootAssemblyDefinitions;
+
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
+    private Definitions(@NonNull METASCHEMA metaschemaNode) {
+
+      // handle definitions in this module
+      // TODO: switch implementation to use the XmlObjectParser
+      {
+        // start with flag definitions
+        try (XmlCursor cursor = metaschemaNode.newCursor()) {
+          cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-flag");
+
+          Map<QName, IFlagDefinition> flagDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
+          while (cursor.toNextSelection()) {
+            GlobalFlagDefinitionType obj = ObjectUtils.notNull((GlobalFlagDefinitionType) cursor.getObject());
+            XmlGlobalFlagDefinition flag = new XmlGlobalFlagDefinition(obj, XmlModule.this); // NOPMD - intentional
+            if (LOGGER.isTraceEnabled()) {
+              LOGGER.trace("New flag definition '{}'", flag.toCoordinates());
+            }
+            flagDefinitions.put(flag.getDefinitionQName(), flag);
+          }
+          this.flagDefinitions
+              = flagDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(flagDefinitions);
+        }
+      }
+
+      {
+        // now field definitions
+        try (XmlCursor cursor = metaschemaNode.newCursor()) {
+          cursor.selectPath("declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-field");
+
+          Map<QName, IFieldDefinition> fieldDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
+          while (cursor.toNextSelection()) {
+            GlobalFieldDefinitionType obj = ObjectUtils.notNull((GlobalFieldDefinitionType) cursor.getObject());
+            XmlGlobalFieldDefinition field = new XmlGlobalFieldDefinition(obj, XmlModule.this); // NOPMD - intentional
+            if (LOGGER.isTraceEnabled()) {
+              LOGGER.trace("New field definition '{}'", field.toCoordinates());
+            }
+            fieldDefinitions.put(field.getDefinitionQName(), field);
+          }
+          this.fieldDefinitions
+              = fieldDefinitions.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(fieldDefinitions);
+        }
+      }
+
+      {
+        // finally assembly definitions
+        Map<QName, IAssemblyDefinition> assemblyDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
+        Map<QName, IAssemblyDefinition> rootAssemblyDefinitions = new LinkedHashMap<>(); // NOPMD - intentional
+
+        try (XmlCursor cursor = metaschemaNode.newCursor()) {
+          cursor.selectPath(
+              "declare namespace m='http://csrc.nist.gov/ns/oscal/metaschema/1.0';$this/m:define-assembly");
+
+          while (cursor.toNextSelection()) {
+            GlobalAssemblyDefinitionType obj = ObjectUtils.notNull((GlobalAssemblyDefinitionType) cursor.getObject());
+            XmlGlobalAssemblyDefinition assembly = new XmlGlobalAssemblyDefinition(obj, XmlModule.this);
+            if (LOGGER.isTraceEnabled()) {
+              LOGGER.trace("New assembly definition '{}'", assembly.toCoordinates());
+            }
+            assemblyDefinitions.put(assembly.getDefinitionQName(), assembly);
+            if (assembly.isRoot()) {
+              rootAssemblyDefinitions.put(ObjectUtils.notNull(assembly.getRootXmlQName()), assembly);
+            }
+          }
+
+          this.assemblyDefinitions
+              = assemblyDefinitions.isEmpty() ? Collections.emptyMap()
+                  : Collections.unmodifiableMap(assemblyDefinitions);
+          this.rootAssemblyDefinitions = rootAssemblyDefinitions.isEmpty() ? Collections.emptyMap()
+              : Collections.unmodifiableMap(rootAssemblyDefinitions);
+        }
+      }
+    }
+
+    public Map<QName, IFlagDefinition> getFlagDefinitionMap() {
+      return flagDefinitions;
+    }
+
+    public Map<QName, IFieldDefinition> getFieldDefinitionMap() {
+      return fieldDefinitions;
+    }
+
+    public Map<QName, IAssemblyDefinition> getAssemblyDefinitionMap() {
+      return assemblyDefinitions;
+    }
+
+    public Map<QName, ? extends IAssemblyDefinition> getRootAssemblyDefinitionMap() {
+      return rootAssemblyDefinitions;
+    }
+
   }
 }

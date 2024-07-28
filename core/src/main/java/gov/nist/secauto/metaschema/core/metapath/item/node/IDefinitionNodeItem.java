@@ -28,8 +28,15 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.IResourceLocation;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.net.URI;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface IDefinitionNodeItem<D extends IDefinition, I extends INamedInstance> extends INodeItem {
   /**
@@ -38,9 +45,16 @@ public interface IDefinitionNodeItem<D extends IDefinition, I extends INamedInst
    * @return the item's name
    */
   @NonNull
-  default String getName() {
+  default QName getName() {
     I instance = getInstance();
-    return instance == null ? getDefinition().getEffectiveName() : instance.getEffectiveName();
+    return instance == null
+        ? getDefinition().getXmlQName()
+        : instance.getXmlQName();
+  }
+
+  @Override
+  default URI getNamespace() {
+    return ObjectUtils.notNull(URI.create(getName().getNamespaceURI()));
   }
 
   /**
@@ -57,4 +71,11 @@ public interface IDefinitionNodeItem<D extends IDefinition, I extends INamedInst
    * @return the instance of the segment, or {@code null} if it doesn't have one
    */
   I getInstance();
+
+  @Override
+  @Nullable
+  default IResourceLocation getLocation() {
+    Object value = getValue();
+    return value == null ? null : getDefinition().getLocation(value);
+  }
 }

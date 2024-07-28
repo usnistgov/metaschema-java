@@ -28,8 +28,10 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractFieldInstance;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelFieldComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
@@ -45,34 +47,46 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class InstanceModelGroupedFieldComplex
-    extends AbstractBoundInstanceModelGroupedNamed<BoundGroupedField>
-    implements IBoundInstanceModelGroupedField,
-    IFeatureDefinitionReferenceInstance<IBoundDefinitionModelFieldComplex, IBoundInstanceModelGroupedField> {
+    extends AbstractFieldInstance<
+        IBoundInstanceModelChoiceGroup,
+        IBoundDefinitionModelFieldComplex,
+        IBoundInstanceModelGroupedField,
+        IBoundDefinitionModelAssembly>
+
+    // extends AbstractBoundInstanceModelGroupedNamed<BoundGroupedField>
+    implements IBoundInstanceModelGroupedField {
+  @NonNull
+  private final BoundGroupedField annotation;
   @NonNull
   private final DefinitionField definition;
   @NonNull
-  private final Lazy<Map<String, IBoundProperty>> jsonProperties;
+  private final Lazy<Map<String, IBoundProperty<?>>> jsonProperties;
 
   public InstanceModelGroupedFieldComplex(
       @NonNull BoundGroupedField annotation,
       @NonNull DefinitionField definition,
       @NonNull IBoundInstanceModelChoiceGroup container) {
-    super(annotation, container);
+    super(container);
+    this.annotation = annotation;
     this.definition = definition;
     this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> {
       Predicate<IBoundInstanceFlag> flagFilter = null;
-      IBoundInstanceFlag jsonKey = getJsonKey();
+      IBoundInstanceFlag jsonKey = getEffectiveJsonKey();
       if (jsonKey != null) {
-        flagFilter = (flag) -> !jsonKey.equals(flag);
+        flagFilter = flag -> !jsonKey.equals(flag);
       }
 
       IBoundInstanceFlag jsonValueKey = getDefinition().getJsonValueKeyFlagInstance();
       if (jsonValueKey != null) {
-        Predicate<IBoundInstanceFlag> jsonValueKeyFilter = (flag) -> !flag.equals(jsonValueKey);
+        Predicate<IBoundInstanceFlag> jsonValueKeyFilter = flag -> !flag.equals(jsonValueKey);
         flagFilter = flagFilter == null ? jsonValueKeyFilter : flagFilter.and(jsonValueKeyFilter);
       }
       return getDefinition().getJsonProperties(flagFilter);
     }));
+  }
+
+  private BoundGroupedField getAnnotation() {
+    return annotation;
   }
 
   // ------------------------------------------
@@ -80,7 +94,12 @@ public class InstanceModelGroupedFieldComplex
   // ------------------------------------------
 
   @Override
-  public Map<String, IBoundProperty> getJsonProperties() {
+  public Class<? extends IBoundObject> getBoundClass() {
+    return getAnnotation().binding();
+  }
+
+  @Override
+  public Map<String, IBoundProperty<?>> getJsonProperties() {
     return ObjectUtils.notNull(jsonProperties.get());
   }
 
@@ -116,12 +135,7 @@ public class InstanceModelGroupedFieldComplex
 
   @Override
   public Integer getUseIndex() {
-    return ModelUtil.resolveNullOrInteger(getAnnotation().useIndex());
-  }
-
-  @Override
-  public Class<?> getBoundClass() {
-    return getAnnotation().binding();
+    return ModelUtil.resolveDefaultInteger(getAnnotation().useIndex());
   }
 
   // ----------------------------------------

@@ -55,7 +55,7 @@ public class Except
 
   @Override
   protected ISequence<?> applyFilterTo(@NonNull ISequence<?> result, @NonNull List<? extends IItem> items) {
-    return ISequence.of(result.asStream()
+    return ISequence.of(result.stream()
         .filter(item -> !items.contains(item)));
   }
 

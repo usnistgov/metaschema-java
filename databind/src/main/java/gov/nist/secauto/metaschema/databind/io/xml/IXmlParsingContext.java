@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.io.xml;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.databind.io.IParsingContext;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
@@ -39,10 +40,6 @@ import javax.xml.stream.XMLStreamConstants;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXmlProblemHandler> {
-
-  // boolean readItems(
-  // @NonNull IBoundInstanceModel instance,
-  // @NonNull Object parentObject) throws IOException, XMLStreamException;
 
   /**
    * Parses XML into a bound object based on the provided {@code definition}.
@@ -64,6 +61,8 @@ public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXm
    * Read the data associated with the {@code instance} and apply it to the
    * provided {@code parentObject}.
    *
+   * @param <T>
+   *          the item Java type
    * @param instance
    *          the instance to parse data for
    * @param parentObject
@@ -77,8 +76,8 @@ public interface IXmlParsingContext extends IParsingContext<XMLEventReader2, IXm
    *           if an error occurred while parsing the input
    *
    */
-  boolean readItems(
-      @NonNull IBoundInstanceModel instance,
-      @NonNull Object parentObject,
+  <T> boolean readItems(
+      @NonNull IBoundInstanceModel<T> instance,
+      @NonNull IBoundObject parentObject,
       boolean parseGrouping) throws IOException;
 }

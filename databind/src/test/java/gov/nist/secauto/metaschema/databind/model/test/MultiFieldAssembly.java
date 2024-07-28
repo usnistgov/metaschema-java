@@ -26,6 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.model.test;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaData;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.core.model.XmlGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
@@ -42,7 +44,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 // Used
 @SuppressWarnings("PMD")
 @MetaschemaAssembly(name = "test-field", moduleClass = TestMetaschema.class)
-public class MultiFieldAssembly {
+public class MultiFieldAssembly implements IBoundObject {
+  private final IMetaschemaData metaschemaData;
+
   @BoundField
   private String field1;
 
@@ -60,6 +64,16 @@ public class MultiFieldAssembly {
   private DefaultValueKeyField field4;
 
   public MultiFieldAssembly() {
+    this(null);
+  }
+
+  public MultiFieldAssembly(IMetaschemaData metaschemaData) {
+    this.metaschemaData = metaschemaData;
+  }
+
+  @Override
+  public IMetaschemaData getMetaschemaData() {
+    return metaschemaData;
   }
 
   public String getField1() {
@@ -91,7 +105,9 @@ public class MultiFieldAssembly {
   @MetaschemaField(
       name = "field-value-key",
       moduleClass = TestMetaschema.class)
-  public static class ValueKeyField {
+  public static class ValueKeyField implements IBoundObject {
+    private final IMetaschemaData metaschemaData;
+
     @BoundFlag
     private String flag;
 
@@ -99,6 +115,16 @@ public class MultiFieldAssembly {
     private String _value;
 
     public ValueKeyField() {
+      this(null);
+    }
+
+    public ValueKeyField(IMetaschemaData metaschemaData) {
+      this.metaschemaData = metaschemaData;
+    }
+
+    @Override
+    public IMetaschemaData getMetaschemaData() {
+      return metaschemaData;
     }
 
     public String getValue() {
@@ -110,7 +136,9 @@ public class MultiFieldAssembly {
   @MetaschemaField(
       name = "field-default-value-key",
       moduleClass = TestMetaschema.class)
-  public static class DefaultValueKeyField {
+  public static class DefaultValueKeyField implements IBoundObject {
+    private final IMetaschemaData metaschemaData;
+
     @BoundFlag
     private String flag;
 
@@ -118,6 +146,16 @@ public class MultiFieldAssembly {
     private String _value;
 
     public DefaultValueKeyField() {
+      this(null);
+    }
+
+    public DefaultValueKeyField(IMetaschemaData metaschemaData) {
+      this.metaschemaData = metaschemaData;
+    }
+
+    @Override
+    public IMetaschemaData getMetaschemaData() {
+      return metaschemaData;
     }
 
     public String getValue() {

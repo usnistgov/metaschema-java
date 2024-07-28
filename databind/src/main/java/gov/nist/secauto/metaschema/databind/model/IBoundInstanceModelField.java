@@ -27,6 +27,7 @@
 package gov.nist.secauto.metaschema.databind.model;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.model.impl.DefinitionField;
@@ -39,10 +40,10 @@ import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IBoundInstanceModelField extends IBoundInstanceModelNamed, IFieldInstanceAbsolute {
+public interface IBoundInstanceModelField<ITEM> extends IBoundInstanceModelNamed<ITEM>, IFieldInstanceAbsolute {
 
   @Override
-  IBoundDefinitionModelField getDefinition();
+  IBoundDefinitionModelField<ITEM> getDefinition();
 
   /**
    * Create a new bound field instance.
@@ -54,23 +55,26 @@ public interface IBoundInstanceModelField extends IBoundInstanceModelNamed, IFie
    * @return the new instance
    */
   @NonNull
-  static IBoundInstanceModelField newInstance(
+  static IBoundInstanceModelField<?> newInstance(
       @NonNull Field field,
       @NonNull IBoundDefinitionModelAssembly containingDefinition) {
     Class<?> itemType = IBoundInstanceModel.getItemType(field);
-    IBindingContext bindingContext = containingDefinition.getBindingContext();
-    IBoundDefinitionModel definition = bindingContext.getBoundDefinitionForClass(itemType);
 
-    IBoundInstanceModelField retval;
-    if (definition == null) {
-      retval = new InstanceModelFieldScalar(field, containingDefinition);
-    } else if (definition instanceof DefinitionField) {
-      retval = new InstanceModelFieldComplex(field, (DefinitionField) definition, containingDefinition);
+    IBoundInstanceModelField<?> retval;
+    if (IBoundObject.class.isAssignableFrom(itemType)) {
+      IBindingContext bindingContext = containingDefinition.getBindingContext();
+      IBoundDefinitionModel<?> definition
+          = bindingContext.getBoundDefinitionForClass(itemType.asSubclass(IBoundObject.class));
+      if (definition == null) {
+        throw new IllegalStateException(String.format(
+            "The field '%s' on class '%s' is not bound to a Metaschema field",
+            field.toString(),
+            field.getDeclaringClass().getName()));
+      }
+      retval = InstanceModelFieldComplex.newInstance(field, (DefinitionField) definition, containingDefinition);
     } else {
-      throw new IllegalStateException(String.format(
-          "The field '%s' on class '%s' is not bound to a Metaschema field",
-          field.toString(),
-          field.getDeclaringClass().getName()));
+
+      retval = InstanceModelFieldScalar.newInstance(field, containingDefinition);
     }
     return retval;
   }

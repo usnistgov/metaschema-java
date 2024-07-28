@@ -35,6 +35,10 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>metaschema-databind</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>metaschema-databind-modules</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>com.google.auto.service</groupId>

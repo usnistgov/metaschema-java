@@ -28,7 +28,6 @@ package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.IAllowedValuesConstraint;
@@ -45,29 +44,32 @@ import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IUniqueConstraint;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.ConstraintLetExpression;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.ConstraintValueEnum;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.FlagAllowedValues;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.FlagExpect;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.FlagIndexHasKey;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.FlagMatches;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.KeyConstraintField;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.Property;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.Remarks;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.TargetedAllowedValuesConstraint;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.TargetedExpectConstraint;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.TargetedHasCardinalityConstraint;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.TargetedIndexConstraint;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.TargetedIndexHasKeyConstraint;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.TargetedIsUniqueConstraint;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.TargetedMatchesConstraint;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IConstraintBase;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IModelConstraintsBase;
 import gov.nist.secauto.metaschema.databind.model.metaschema.IValueConstraintsBase;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.ConstraintLetExpression;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.ConstraintValueEnum;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagAllowedValues;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagExpect;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagIndexHasKey;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FlagMatches;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.KeyConstraintField;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Property;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Remarks;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedAllowedValuesConstraint;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedExpectConstraint;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedHasCardinalityConstraint;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedIndexConstraint;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedIndexHasKeyConstraint;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedIsUniqueConstraint;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.TargetedMatchesConstraint;
+import gov.nist.secauto.metaschema.databind.model.metaschema.IValueTargetedConstraintsBase;
 
 import java.math.BigInteger;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -101,16 +103,27 @@ public final class ConstraintBindingSupport {
     }
   }
 
-  public static void parseLet(
+  public static void parse(
       @NonNull IValueConstrained constraintSet,
-      @NonNull IValueConstraintsBase constraints,
+      @NonNull IValueTargetedConstraintsBase constraints,
       @NonNull ISource source) {
-    // parse let expressions
-    for (ConstraintLetExpression letObj : constraints.getLets()) {
-      ILet let = ILet.of(
-          ObjectUtils.requireNonNull(letObj.getVar()),
-          ObjectUtils.requireNonNull(letObj.getExpression()), source);
-      constraintSet.addLetExpression(let);
+    parseLet(constraintSet, constraints, source);
+
+    // parse rules
+    for (IConstraintBase ruleObj : constraints.getRules()) {
+      if (ruleObj instanceof TargetedAllowedValuesConstraint) {
+        IAllowedValuesConstraint constraint = newAllowedValues((TargetedAllowedValuesConstraint) ruleObj, source);
+        constraintSet.addConstraint(constraint);
+      } else if (ruleObj instanceof TargetedExpectConstraint) {
+        IExpectConstraint constraint = newExpect((TargetedExpectConstraint) ruleObj, source);
+        constraintSet.addConstraint(constraint);
+      } else if (ruleObj instanceof TargetedIndexHasKeyConstraint) {
+        IIndexHasKeyConstraint constraint = newIndexHasKey((TargetedIndexHasKeyConstraint) ruleObj, source);
+        constraintSet.addConstraint(constraint);
+      } else if (ruleObj instanceof TargetedMatchesConstraint) {
+        IMatchesConstraint constraint = newMatches((TargetedMatchesConstraint) ruleObj, source);
+        constraintSet.addConstraint(constraint);
+      }
     }
   }
 
@@ -144,6 +157,19 @@ public final class ConstraintBindingSupport {
         IUniqueConstraint constraint = newUnique((TargetedIsUniqueConstraint) ruleObj, source);
         constraintSet.addConstraint(constraint);
       }
+    }
+  }
+
+  public static void parseLet(
+      @NonNull IValueConstrained constraintSet,
+      @NonNull IValueConstraintsBase constraints,
+      @NonNull ISource source) {
+    // parse let expressions
+    for (ConstraintLetExpression letObj : constraints.getLets()) {
+      ILet let = ILet.of(
+          ObjectUtils.requireNonNull(new QName(letObj.getVar())),
+          ObjectUtils.requireNonNull(letObj.getExpression()), source);
+      constraintSet.addLetExpression(let);
     }
   }
 
@@ -370,10 +396,10 @@ public final class ConstraintBindingSupport {
   }
 
   @NonNull
-  private static MetapathExpression target(@Nullable String target) {
+  private static String target(@Nullable String target) {
     return target == null
-        ? MetapathExpression.CONTEXT_NODE
-        : MetapathExpression.compile(target);
+        ? IConstraint.DEFAULT_TARGET_METAPATH
+        : target;
   }
 
   @NonNull
@@ -392,6 +418,9 @@ public final class ConstraintBindingSupport {
         break;
       case "INFORMATIONAL":
         retval = IConstraint.Level.INFORMATIONAL;
+        break;
+      case "DEBUG":
+        retval = IConstraint.Level.DEBUG;
         break;
       default:
         throw new UnsupportedOperationException(level);

@@ -41,8 +41,8 @@ import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefini
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundChoiceGroup;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -93,12 +93,12 @@ public class ChoiceGroupTypeInfoImpl
       annotation.addMember("maxOccurs", "$L", maxOccurs);
     }
 
-    String jsonKeyName = choiceGroup.getJsonKeyFlagName();
+    String jsonKeyName = choiceGroup.getJsonKeyFlagInstanceName();
     if (jsonKeyName != null) {
       annotation.addMember("jsonKey", "$S", jsonKeyName);
     }
 
-    Set<IModelDefinition> retval = new HashSet<>();
+    Set<IModelDefinition> retval = new LinkedHashSet<>();
 
     IAssemblyDefinitionTypeInfo parentTypeInfo = getParentTypeInfo();
     ITypeResolver typeResolver = parentTypeInfo.getTypeResolver();
@@ -124,52 +124,6 @@ public class ChoiceGroupTypeInfoImpl
           annotation,
           typeBuilder,
           referencedDefinitions.get(className).size() > 1));
-
-      // Class<?> groupedAnnotationType;
-      // if (modelInstance instanceof IFieldInstanceGrouped) {
-      // groupedAnnotationType = BoundGroupedField.class;
-      // } else if (modelInstance instanceof IAssemblyInstanceGrouped) {
-      // groupedAnnotationType = BoundGroupedAssembly.class;
-      // } else {
-      // throw new UnsupportedOperationException(String.format("Unsuported named model
-      // instance type '%s'.",
-      // instanceTypeInfo.getClass().getName()));
-      // }
-      // AnnotationSpec.Builder memberAnnotation =
-      // ObjectUtils.notNull(AnnotationSpec.builder(groupedAnnotationType));
-
-      // instanceTypeInfo.buildBindingAnnotationCommon(memberAnnotation);
-      //
-      // IContainerFlag definition = modelInstance.getDefinition();
-      // TypeName instanceTypeName;
-      // if (definition.isInline()) {
-      // retval.add(definition);
-      // instanceTypeName = typeResolver.getClassName(definition);
-      // } else {
-      // // build the definition
-      // throw new UnsupportedOperationException("implement");
-      // // ClassName extendedClassName = typeResolver.getClassName(definition);
-      // // ClassName parentClassName = getParentDefinitionTypeInfo().getClassName();
-      // // ClassName extendingClassName =
-      // typeResolver.getSubclassName(parentClassName,
-      // // definition, modelInstance);
-      // //
-      // // IModelDefinitionTypeInfo referencedClassTypeInfo =
-      // // typeResolver.getTypeInfo(definition);
-      // // typeResolver.getSubClassName(instanceTypeInfo, );
-      // // instanceTypeName = instanceTypeInfo.getJavaItemType();
-      // }
-      //
-      // memberAnnotation.addMember("binding", "$T.class",
-      // instanceTypeInfo.getJavaItemType());
-      //
-      // if (modelInstance instanceof IFieldInstanceGrouped) {
-      // annotation.addMember("fields", "$L",
-      // instanceTypeInfo.generateMemberAnnotation().build());
-      // } else if (modelInstance instanceof IAssemblyInstanceGrouped) {
-      // annotation.addMember("assemblies", "$L",
-      // instanceTypeInfo.generateMemberAnnotation().build());
-      // }
     }
 
     if (maxOccurs == -1 || maxOccurs > 1) {
