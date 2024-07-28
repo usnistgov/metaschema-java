@@ -7,9 +7,9 @@
 		<version>1.0.0-M2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>metaschema-databind-metaschema</artifactId>
+	<artifactId>metaschema-databind-modules</artifactId>
 
-	<name>Metaschema Format Databinding</name>
+	<name>Metaschema Modules</name>
 
 	<url>${site.url}${project.artifactId}/</url>
 	<distributionManagement>
@@ -60,6 +60,27 @@
 			<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-toolchains-plugin</artifactId>
+					<version>${plugin.maven-toolchains.version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>toolchain</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<toolchains>
+							<jdk>
+								<version>11</version>
+								<vendor>temurin</vendor>
+							</jdk>
+						</toolchains>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
 					<configuration>
 						<excludeRoots>
@@ -75,6 +96,13 @@
 							**/gov/nist/secauto/metaschema/metaschema/model/**/*</excludes>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>com.github.spotbugs</groupId>
+					<artifactId>spotbugs-maven-plugin</artifactId>
+					<configuration>
+						<excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -83,8 +111,59 @@
 				<artifactId>metaschema-maven-plugin</artifactId>
 				<version>${project.version}</version>
 				<executions>
+<!--					<execution>-->
+<!--						<id>metaschema-codegen</id>-->
+<!--						<phase>generate-sources</phase>-->
+<!--						<goals>-->
+<!--							<goal>generate-sources</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<metaschemaDir>${project.basedir}/../core/metaschema/schema/metaschema</metaschemaDir>-->
+<!--							<outputDirectory>${project.build.directory}/generated-sources/metaschema</outputDirectory>-->
+<!--							<configs>-->
+<!--								<config>${project.basedir}/src/main/metaschema-bindings/metaschema-metaschema-bindings.xml</config>-->
+<!--							</configs>-->
+<!--							<includes>-->
+<!--								<include>metaschema-module-metaschema.xml</include>-->
+<!--							</includes>-->
+<!--						</configuration>-->
+<!--					</execution>-->
 					<execution>
-						<id>metaschema-codegen</id>
+						<id>metaschema-xml-schema</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-schemas</goal>
+						</goals>
+						<configuration>
+							<metaschemaDir>${project.basedir}/../core/metaschema/schema/metaschema</metaschemaDir>
+							<outputDirectory>${project.build.directory}/generated-resources/schema/xml</outputDirectory>
+							<includes>
+								<include>metaschema-module-metaschema.xml</include>
+							</includes>
+							<formats>
+								<format>xsd</format>
+							</formats>
+						</configuration>
+					</execution>
+					<execution>
+						<id>metaschema-json-schema</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-schemas</goal>
+						</goals>
+						<configuration>
+							<metaschemaDir>${project.basedir}/../core/metaschema/schema/metaschema</metaschemaDir>
+							<outputDirectory>${project.build.directory}/generated-resources/schema/json</outputDirectory>
+							<includes>
+								<include>metaschema-module-metaschema.xml</include>
+							</includes>
+							<formats>
+								<format>json</format>
+							</formats>
+						</configuration>
+					</execution>
+					<execution>
+						<id>sarif-codegen</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>generate-sources</goal>
@@ -92,47 +171,45 @@
 						<configuration>
 							<metaschemaDir>${project.basedir}/../core/metaschema/schema/metaschema</metaschemaDir>
 							<outputDirectory>${project.build.directory}/generated-sources/metaschema</outputDirectory>
-							<configs>
-								<config>
-									${project.basedir}/src/main/metaschema-bindings/metaschema-metaschema-bindings.xml</config>
-							</configs>
 							<includes>
-								<include>metaschema-module-metaschema.xml</include>
+								<include>sarif-module.xml</include>
 							</includes>
 						</configuration>
 					</execution>
-<!--					<execution>-->
-<!--						<id>generate-xml-schemas</id>-->
-<!--						<goals>-->
-<!--							<goal>generate-schemas</goal>-->
-<!--						</goals>-->
-<!--						<configuration>-->
-<!--							<metaschemaDir>${project.basedir}/../core/metaschema/schema/metaschema</metaschemaDir>-->
-<!--							<outputDirectory>${project.build.directory}/generated-resources/metaschema/schema/xml</outputDirectory>-->
-<!--							<includes>-->
-<!--								<include>metaschema-metaschema.xml</include>-->
-<!--							</includes>-->
-<!--							<formats>-->
-<!--								<format>xsd</format>-->
-<!--							</formats>-->
-<!--						</configuration>-->
-<!--					</execution>-->
-<!--					<execution>-->
-<!--						<id>generate-json-schemas</id>-->
-<!--						<goals>-->
-<!--							<goal>generate-schemas</goal>-->
-<!--						</goals>-->
-<!--						<configuration>-->
-<!--							<metaschemaDir>${project.basedir}/../core/metaschema/schema/metaschema</metaschemaDir>-->
-<!--							<outputDirectory>${project.build.directory}/generated-resources/oscal/schema/json</outputDirectory>-->
-<!--							<includes>-->
-<!--								<include>metaschema-metaschema.xml</include>-->
-<!--							</includes>-->
-<!--							<formats>-->
-<!--								<format>json</format>-->
-<!--							</formats>-->
-<!--						</configuration>-->
-<!--					</execution>-->
+					<execution>
+						<id>sarif-xml-schema</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-schemas</goal>
+						</goals>
+						<configuration>
+							<metaschemaDir>${project.basedir}/../core/metaschema/schema/metaschema</metaschemaDir>
+							<outputDirectory>${project.build.directory}/generated-resources/schema/xml</outputDirectory>
+							<includes>
+								<include>sarif-module.xml</include>
+							</includes>
+							<formats>
+								<format>xsd</format>
+							</formats>
+						</configuration>
+					</execution>
+					<execution>
+						<id>sarif-json-schema</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-schemas</goal>
+						</goals>
+						<configuration>
+							<metaschemaDir>${project.basedir}/../core/metaschema/schema/metaschema</metaschemaDir>
+							<outputDirectory>${project.build.directory}/generated-resources/schema/json</outputDirectory>
+							<includes>
+								<include>sarif-module.xml</include>
+							</includes>
+							<formats>
+								<format>json</format>
+							</formats>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>

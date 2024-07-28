@@ -31,6 +31,7 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -43,8 +44,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Module field.
  * <p>
  * For XML serialization, the {@link #useName()} identifies the name of the
- * element to use and the {@link #namespace()} identifies the namespace of this
- * element.
+ * element to use for this element.
  * <p>
  * For JSON and YAML serializations, the {@link #useName()} identifies the
  * property/item name to use.
@@ -115,16 +115,6 @@ public @interface BoundGroupedField {
   Class<? extends IDataTypeAdapter<?>> typeAdapter() default NullJavaTypeAdapter.class;
 
   /**
-   * The namespace to use for associated XML elements.
-   * <p>
-   * If the value is "##default", then element name is derived from the namespace
-   * provided in the package-info.
-   *
-   * @return the namespace
-   */
-  String namespace() default ModelUtil.DEFAULT_STRING_VALUE;
-
-  /**
    * Get any remarks for this field.
    *
    * @return a markdown string or {@code "##none"} if no remarks are provided
@@ -158,5 +148,5 @@ public @interface BoundGroupedField {
    * @return the bound class
    */
   @NonNull
-  Class<?> binding();
+  Class<? extends IBoundObject> binding();
 }

@@ -30,6 +30,7 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.ClassUtils;
 import gov.nist.secauto.metaschema.databind.codegen.xmlbeans.JavaModelBindingType;
@@ -49,6 +50,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,7 +60,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class DefaultBindingConfiguration implements IBindingConfiguration {
   private final Map<String, String> namespaceToPackageNameMap = new ConcurrentHashMap<>();
-  // metaschema location -> ModelType -> Definition Name -> IBindingConfiguration
+  // metaschema location -> ModelType -> Definition name -> IBindingConfiguration
   private final Map<String, MetaschemaBindingConfiguration> moduleUrlToMetaschemaBindingConfigurationMap
       = new ConcurrentHashMap<>();
 
@@ -79,7 +81,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   @Nullable
   public IDefinitionBindingConfiguration getBindingConfigurationForDefinition(
       @NonNull IModelDefinition definition) {
-    String moduleUri = ObjectUtils.notNull(definition.getContainingModule().getLocation().toString());
+    String moduleUri = ObjectUtils.notNull(definition.getContainingModule().getLocation().toASCIIString());
     String definitionName = definition.getName();
 
     MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(moduleUri);
@@ -104,12 +106,9 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   @Override
   public String getQualifiedBaseClassName(IModelDefinition definition) {
     IDefinitionBindingConfiguration config = getBindingConfigurationForDefinition(definition);
-
-    String retval = null;
-    if (config != null) {
-      retval = config.getQualifiedBaseClassName();
-    }
-    return retval;
+    return config == null
+        ? null
+        : config.getQualifiedBaseClassName();
   }
 
   @Override
@@ -131,6 +130,14 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   public @NonNull String getClassName(@NonNull IModule module) {
     // TODO: make this configurable
     return ClassUtils.toClassName(module.getShortName() + "Module");
+  }
+
+  @Override
+  public List<String> getQualifiedSuperinterfaceClassNames(IModelDefinition definition) {
+    IDefinitionBindingConfiguration config = getBindingConfigurationForDefinition(definition);
+    return config == null
+        ? CollectionUtil.emptyList()
+        : config.getInterfacesToImplement();
   }
 
   /**
@@ -236,7 +243,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    *           if an error occurred while reading the {@code file}
    */
   public void load(Path file) throws IOException {
-    URL resource = file.toUri().toURL();
+    URL resource = file.toAbsolutePath().normalize().toUri().toURL();
     load(resource);
   }
 
@@ -249,8 +256,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
    *           if an error occurred while reading the {@code file}
    */
   public void load(File file) throws IOException {
-    URL resource = file.toURI().toURL();
-    load(resource);
+    load(file.toPath());
   }
 
   /**
@@ -299,7 +305,7 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
       throws MalformedURLException, URISyntaxException {
     String href = metaschema.getHref();
     URL moduleUrl = new URL(configResource, href);
-    String moduleUri = ObjectUtils.notNull(moduleUrl.toURI().toString());
+    String moduleUri = ObjectUtils.notNull(moduleUrl.toURI().normalize().toString());
 
     MetaschemaBindingConfiguration metaschemaConfig = getMetaschemaBindingConfiguration(moduleUri);
     if (metaschemaConfig == null) {
@@ -325,12 +331,9 @@ public class DefaultBindingConfiguration implements IBindingConfiguration {
   private static IMutableDefinitionBindingConfiguration processDefinitionBindingConfiguration(
       @Nullable IDefinitionBindingConfiguration oldConfig,
       @NonNull ObjectDefinitionBindingType objectDefinitionBinding) {
-    IMutableDefinitionBindingConfiguration config;
-    if (oldConfig != null) {
-      config = new DefaultDefinitionBindingConfiguration(oldConfig);
-    } else {
-      config = new DefaultDefinitionBindingConfiguration();
-    }
+    IMutableDefinitionBindingConfiguration config = oldConfig == null
+        ? new DefaultDefinitionBindingConfiguration()
+        : new DefaultDefinitionBindingConfiguration(oldConfig);
 
     if (objectDefinitionBinding.isSetJava()) {
       JavaObjectDefinitionBindingType java = objectDefinitionBinding.getJava();

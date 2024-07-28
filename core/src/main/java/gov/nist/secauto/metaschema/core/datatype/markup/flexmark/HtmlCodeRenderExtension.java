@@ -57,7 +57,12 @@ public class HtmlCodeRenderExtension
     implements HtmlRenderer.HtmlRendererExtension {
   private static final Pattern EOL_PATTERN = Pattern.compile("\r\n|\r|\n");
 
-  public static HtmlCodeRenderExtension create() {
+  /**
+   * Construct a new extension instance.
+   *
+   * @return the instance
+   */
+  public static HtmlCodeRenderExtension newInstance() {
     return new HtmlCodeRenderExtension();
   }
 

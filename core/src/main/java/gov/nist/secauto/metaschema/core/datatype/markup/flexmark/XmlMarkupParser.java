@@ -74,6 +74,11 @@ public final class XmlMarkupParser {
   @NonNull
   private static final XmlMarkupParser SINGLETON = new XmlMarkupParser();
 
+  /**
+   * Get the singleton markup parser instance.
+   *
+   * @return the instance
+   */
   @SuppressWarnings("PMD.AvoidSynchronizedAtMethodLevel")
   @NonNull
   public static synchronized XmlMarkupParser instance() {
@@ -84,6 +89,15 @@ public final class XmlMarkupParser {
     // disable construction
   }
 
+  /**
+   * Parse a single line of markup from XHTML.
+   *
+   * @param reader
+   *          the XML event stream reader
+   * @return the markup string
+   * @throws XMLStreamException
+   *           if an error occurred while parsing
+   */
   public MarkupLine parseMarkupline(XMLEventReader2 reader) throws XMLStreamException { // NOPMD - acceptable
     StringBuilder buffer = new StringBuilder();
     parseContents(reader, null, buffer);
@@ -91,6 +105,15 @@ public final class XmlMarkupParser {
     return html.isEmpty() ? null : MarkupLine.fromHtml(html);
   }
 
+  /**
+   * Parse a markup multiline from XHTML.
+   *
+   * @param reader
+   *          the XML event stream reader
+   * @return the markup string
+   * @throws XMLStreamException
+   *           if an error occurred while parsing
+   */
   public MarkupMultiline parseMarkupMultiline(XMLEventReader2 reader) throws XMLStreamException {
     StringBuilder buffer = new StringBuilder();
     parseToString(reader, buffer);
@@ -102,6 +125,16 @@ public final class XmlMarkupParser {
     return html.isEmpty() ? null : MarkupMultiline.fromHtml(html);
   }
 
+  /**
+   * Parse a markup multiline from XHTML.
+   *
+   * @param reader
+   *          the XML event stream reader
+   * @param buffer
+   *          the markup string buffer
+   * @throws XMLStreamException
+   *           if an error occurred while parsing
+   */
   private void parseToString(XMLEventReader2 reader, StringBuilder buffer) // NOPMD - acceptable
       throws XMLStreamException {
     // if (LOGGER.isDebugEnabled()) {

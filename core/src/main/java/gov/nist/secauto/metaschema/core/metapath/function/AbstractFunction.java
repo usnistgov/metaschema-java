@@ -28,13 +28,13 @@ package gov.nist.secauto.metaschema.core.metapath.function;
 
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 abstract class AbstractFunction implements IFunction {
   @NonNull
-  private final String name;
-  @NonNull
-  private final String namespace;
+  private final QName qname;
   @NonNull
   private final List<IArgument> arguments;
 
@@ -42,19 +42,19 @@ abstract class AbstractFunction implements IFunction {
       @NonNull String name,
       @NonNull String namespace,
       @NonNull List<IArgument> arguments) {
-    this.name = name;
-    this.namespace = namespace;
+    this(new QName(namespace, name), arguments);
+  }
+
+  protected AbstractFunction(
+      @NonNull QName qname,
+      @NonNull List<IArgument> arguments) {
+    this.qname = qname;
     this.arguments = arguments;
   }
 
   @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public String getNamespace() {
-    return namespace;
+  public QName getQName() {
+    return qname;
   }
 
   @Override

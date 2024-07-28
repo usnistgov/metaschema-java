@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
@@ -41,18 +42,19 @@ import java.util.Map;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IModelInstanceCollectionInfo {
+// REFACTOR: parameterize the item type?
+public interface IModelInstanceCollectionInfo<ITEM> {
 
   @SuppressWarnings("PMD.ShortMethodName")
   @NonNull
-  static IModelInstanceCollectionInfo of(
-      @NonNull IBoundInstanceModel instance) {
+  static <T> IModelInstanceCollectionInfo<T> of(
+      @NonNull IBoundInstanceModel<T> instance) {
 
     // create the collection info
     Type type = instance.getType();
     Field field = instance.getField();
 
-    IModelInstanceCollectionInfo retval;
+    IModelInstanceCollectionInfo<T> retval;
     if (instance.getMaxOccurs() == -1 || instance.getMaxOccurs() > 1) {
       // collection case
       JsonGroupAsBehavior jsonGroupAs = instance.getJsonGroupAsBehavior();
@@ -89,7 +91,7 @@ public interface IModelInstanceCollectionInfo {
               field.getType().getName(),
               Map.class.getName()));
         }
-        retval = new MapCollectionInfo(instance);
+        retval = new MapCollectionInfo<>(instance);
       } else {
         if (!List.class.isAssignableFrom(rawType)) {
           throw new IllegalArgumentException(String.format(
@@ -99,7 +101,7 @@ public interface IModelInstanceCollectionInfo {
               field.getType().getName(),
               List.class.getName()));
         }
-        retval = new ListCollectionInfo(instance);
+        retval = new ListCollectionInfo<>(instance);
       }
     } else {
       // single value case
@@ -111,7 +113,7 @@ public interface IModelInstanceCollectionInfo {
             field.getDeclaringClass().getName(),
             field.getType().getName()));
       }
-      retval = new SingletonCollectionInfo(instance);
+      retval = new SingletonCollectionInfo<>(instance);
     }
     return retval;
   }
@@ -122,7 +124,7 @@ public interface IModelInstanceCollectionInfo {
    * @return the instance binding
    */
   @NonNull
-  IBoundInstanceModel getInstance();
+  IBoundInstanceModel<ITEM> getInstance();
 
   /**
    * Get the number of items associated with the value.
@@ -149,20 +151,20 @@ public interface IModelInstanceCollectionInfo {
    * @return the raw type of the bound object
    */
   @NonNull
-  Class<?> getItemType();
+  Class<? extends ITEM> getItemType();
 
   @NonNull
-  default Collection<? extends Object> getItemsFromParentInstance(@NonNull Object parentInstance) {
+  default Collection<? extends ITEM> getItemsFromParentInstance(@NonNull Object parentInstance) {
     Object value = getInstance().getValue(parentInstance);
     return getItemsFromValue(value);
   }
 
   @NonNull
-  Collection<? extends Object> getItemsFromValue(Object value);
+  Collection<? extends ITEM> getItemsFromValue(Object value);
 
   Object emptyValue();
 
-  Object deepCopyItems(@NonNull Object fromObject, @NonNull Object toObject) throws BindingException;
+  Object deepCopyItems(@NonNull IBoundObject fromObject, @NonNull IBoundObject toObject) throws BindingException;
 
   /**
    * Read the value data for the model instance.
@@ -176,9 +178,9 @@ public interface IModelInstanceCollectionInfo {
    *           if there was an error when reading the data
    */
   @NonNull
-  Object readItems(@NonNull IModelInstanceReadHandler handler) throws IOException;
+  Object readItems(@NonNull IModelInstanceReadHandler<ITEM> handler) throws IOException;
 
-  <T> void writeItems(
-      @NonNull IModelInstanceWriteHandler handler,
+  void writeItems(
+      @NonNull IModelInstanceWriteHandler<ITEM> handler,
       @NonNull Object value) throws IOException;
 }

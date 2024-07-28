@@ -79,7 +79,7 @@ public final class FnCeiling {
     ISequence<? extends INumericItem> sequence = FunctionUtils.asType(
         ObjectUtils.requireNonNull(arguments.get(0)));
 
-    INumericItem item = FunctionUtils.getFirstItem(sequence, true);
+    INumericItem item = sequence.getFirstItem(true);
     if (item == null) {
       return ISequence.empty(); // NOPMD - readability
     }

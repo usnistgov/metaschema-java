@@ -27,11 +27,10 @@
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.AbstractInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
-import gov.nist.secauto.metaschema.core.model.IFeatureContainerModelGrouped;
 import gov.nist.secauto.metaschema.core.model.IFieldInstanceGrouped;
 import gov.nist.secauto.metaschema.core.model.IModule;
 import gov.nist.secauto.metaschema.core.model.INamedModelInstanceGrouped;
@@ -56,9 +55,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 class XmlChoiceGroupInstance
-    extends AbstractInstance<IAssemblyDefinition>
-    implements IChoiceGroupInstance,
-    IFeatureContainerModelGrouped<INamedModelInstanceGrouped, IFieldInstanceGrouped, IAssemblyInstanceGrouped> {
+    extends AbstractChoiceGroupInstance<
+        IAssemblyDefinition,
+        INamedModelInstanceGrouped,
+        IFieldInstanceGrouped,
+        IAssemblyInstanceGrouped> {
   @NonNull
   private final GroupedChoiceType xmlObject;
   @NonNull
@@ -108,11 +109,11 @@ class XmlChoiceGroupInstance
   public String getJsonDiscriminatorProperty() {
     return getXmlObject().isSetDiscriminator()
         ? ObjectUtils.requireNonNull(getXmlObject().getDiscriminator())
-        : IChoiceGroupInstance.DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME;
+        : DEFAULT_JSON_DISCRIMINATOR_PROPERTY_NAME;
   }
 
   @Override
-  public String getJsonKeyFlagName() {
+  public String getJsonKeyFlagInstanceName() {
     return getXmlObject().isSetJsonKey() ? getXmlObject().getJsonKey().getFlagRef() : null;
   }
 
@@ -241,13 +242,13 @@ class XmlChoiceGroupInstance
     }
 
     public void append(@NonNull IFieldInstanceGrouped instance) {
-      String key = instance.getEffectiveName();
+      QName key = instance.getXmlQName();
       getFieldInstanceMap().put(key, instance);
       getNamedModelInstanceMap().put(key, instance);
     }
 
     public void append(@NonNull IAssemblyInstanceGrouped instance) {
-      String key = instance.getEffectiveName();
+      QName key = instance.getXmlQName();
       getAssemblyInstanceMap().put(key, instance);
       getNamedModelInstanceMap().put(key, instance);
     }

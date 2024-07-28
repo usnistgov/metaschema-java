@@ -42,7 +42,7 @@ class RootSlashOnlyTest
 
   @Test
   void testRootSlashOnlyPathUsingDocument() {
-    IDocumentNodeItem nodeContext = newDocumentNodeContext();
+    IDocumentNodeItem nodeContext = newDocumentNodeMock();
     assert nodeContext != null;
 
     RootSlashOnlyPath expr = new RootSlashOnlyPath();
@@ -54,7 +54,7 @@ class RootSlashOnlyTest
 
   @Test
   void testRootSlashOnlyPathUsingNonDocument() {
-    INodeItem item = newNonDocumentNodeContext("non-document");
+    INodeItem item = newNonDocumentNodeMock("non-document");
     assert item != null;
 
     RootSlashOnlyPath expr = new RootSlashOnlyPath();

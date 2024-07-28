@@ -36,12 +36,12 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public abstract class AbstractModelInstanceWriteHandler
-    implements IModelInstanceWriteHandler {
+public abstract class AbstractModelInstanceWriteHandler<ITEM>
+    implements IModelInstanceWriteHandler<ITEM> {
   @NonNull
-  private final IBoundInstanceModel instance;
+  private final IBoundInstanceModel<ITEM> instance;
 
-  public AbstractModelInstanceWriteHandler(@NonNull IBoundInstanceModel instance) {
+  public AbstractModelInstanceWriteHandler(@NonNull IBoundInstanceModel<ITEM> instance) {
     this.instance = instance;
   }
 
@@ -50,7 +50,7 @@ public abstract class AbstractModelInstanceWriteHandler
    *
    * @return the instance
    */
-  public IBoundInstanceModel getInstance() {
+  public IBoundInstanceModel<ITEM> getInstance() {
     return instance;
   }
 
@@ -60,22 +60,22 @@ public abstract class AbstractModelInstanceWriteHandler
    * @return the info
    */
   @NonNull
-  public IModelInstanceCollectionInfo getCollectionInfo() {
+  public IModelInstanceCollectionInfo<ITEM> getCollectionInfo() {
     return instance.getCollectionInfo();
   }
 
   @Override
-  public void writeList(List<?> items) throws IOException {
+  public void writeList(List<ITEM> items) throws IOException {
     writeCollection(items);
   }
 
   @Override
-  public void writeMap(Map<String, ?> items) throws IOException {
+  public void writeMap(Map<String, ITEM> items) throws IOException {
     writeCollection(ObjectUtils.notNull(items.values()));
   }
 
-  private void writeCollection(@NonNull Collection<?> items) throws IOException {
-    for (Object item : items) {
+  private void writeCollection(@NonNull Collection<ITEM> items) throws IOException {
+    for (ITEM item : items) {
       writeItem(ObjectUtils.requireNonNull(item));
     }
   }

@@ -30,6 +30,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import gov.nist.secauto.metaschema.core.datatype.AbstractDataTypeAdapter;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IDecimalItem;
@@ -41,6 +42,8 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class DecimalAdapter
@@ -51,15 +54,15 @@ public class DecimalAdapter
   @NonNull
   private static final BigDecimal DECIMAL_BOOLEAN_FALSE = new BigDecimal("0.0");
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
-      List.of("decimal"));
+  private static final List<QName> NAMES = ObjectUtils.notNull(
+      List.of(new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "decimal")));
 
   DecimalAdapter() {
     super(BigDecimal.class);
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

@@ -54,27 +54,25 @@ public interface IIndexConstraint extends IKeyConstraint {
   }
 
   /**
-   * Get a new constraint builder.
+   * Create a new constraint builder.
+   *
+   * @param name
+   *          the identifier for the index
    *
    * @return the builder
    */
   @NonNull
-  static Builder builder() {
-    return new Builder();
+  static Builder builder(@NonNull String name) {
+    return new Builder(name);
   }
 
   final class Builder
       extends AbstractKeyConstraintBuilder<Builder, DefaultIndexConstraint> {
-    private String name;
-
-    private Builder() {
-      // disable construction
-    }
-
     @NonNull
-    public Builder name(@NonNull String name) {
+    private final String name;
+
+    private Builder(@NonNull String name) {
       this.name = name;
-      return this;
     }
 
     @Override
@@ -82,14 +80,8 @@ public interface IIndexConstraint extends IKeyConstraint {
       return this;
     }
 
-    @Override
-    protected void validate() {
-      super.validate();
-
-      ObjectUtils.requireNonNull(name);
-    }
-
-    protected String getName() {
+    @NonNull
+    private String getName() {
       return name;
     }
 
@@ -103,7 +95,7 @@ public interface IIndexConstraint extends IKeyConstraint {
           getLevel(),
           getTarget(),
           getProperties(),
-          ObjectUtils.notNull(getName()),
+          getName(),
           getKeyFields(),
           getRemarks());
     }

@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IIntegerItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.List;
 
@@ -80,11 +79,8 @@ public final class FnCompare {
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
       IItem focus) {
-    IStringItem comparand1 = FunctionUtils.getFirstItem(
-        FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0))), true);
-
-    IStringItem comparand2 = FunctionUtils.getFirstItem(
-        FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true);
+    IStringItem comparand1 = FunctionUtils.asTypeOrNull(arguments.get(0).getFirstItem(true));
+    IStringItem comparand2 = FunctionUtils.asTypeOrNull(arguments.get(1).getFirstItem(true));
 
     ISequence<IIntegerItem> retval;
     if (comparand1 == null || comparand2 == null) {

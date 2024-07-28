@@ -44,6 +44,7 @@ public abstract class AbstractJsonProperty<I extends IInstance>
   }
 
   @Override
+  @NonNull
   public I getInstance() {
     return instance;
   }

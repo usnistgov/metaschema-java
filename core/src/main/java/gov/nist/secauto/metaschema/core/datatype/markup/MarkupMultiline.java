@@ -43,7 +43,7 @@ public class MarkupMultiline
    *
    * @param html
    *          the HTML
-   * @return the multiline markup instance
+   * @return the markup instance
    */
   @NonNull
   public static MarkupMultiline fromHtml(@NonNull String html) {
@@ -59,7 +59,7 @@ public class MarkupMultiline
    *
    * @param markdown
    *          the markup
-   * @return the multiline markup instance
+   * @return the markup instance
    */
   @NonNull
   public static MarkupMultiline fromMarkdown(@NonNull String markdown) {

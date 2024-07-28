@@ -69,7 +69,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- *
+ * Supports the production of HTML content based on a markup syntax tree.
+ * <p>
  * This implementation is stateless.
  *
  * @param <T>
@@ -81,10 +82,23 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class MarkupVisitor<T, E extends Throwable> implements IMarkupVisitor<T, E> {
   private final boolean handleBlockElements;
 
+  /**
+   * Construct a new visitor.
+   *
+   * @param handleBlockElements
+   *          {@code true} process block content or {@code false} process the tree
+   *          as a single line of markup
+   */
   public MarkupVisitor(boolean handleBlockElements) {
     this.handleBlockElements = handleBlockElements;
   }
 
+  /**
+   * Determine block processing state.
+   *
+   * @return {@code true} process block content or {@code false} process the tree
+   *         as a single line of markup
+   */
   protected boolean isHandleBlockElements() {
     return handleBlockElements;
   }
@@ -94,13 +108,33 @@ public class MarkupVisitor<T, E extends Throwable> implements IMarkupVisitor<T, 
     visitChildren(document, writer);
   }
 
-  protected void visitChildren(@NonNull Node parentNode, @NonNull IMarkupWriter<T, E> writer) throws E {
-    for (Node node : parentNode.getChildren()) {
+  /**
+   * Process child nodes of the provided parent.
+   *
+   * @param parent
+   *          the node whose children are to be processed
+   * @param writer
+   *          the markup writer used to write the HTML
+   * @throws E
+   *           if an error occurred while writing
+   */
+  protected void visitChildren(@NonNull Node parent, @NonNull IMarkupWriter<T, E> writer) throws E {
+    for (Node node : parent.getChildren()) {
       assert node != null;
       visit(node, writer);
     }
   }
 
+  /**
+   * Process a node.
+   *
+   * @param node
+   *          the node to process
+   * @param writer
+   *          the markup writer used to write the HTML
+   * @throws E
+   *           if an error occurred while writing
+   */
   protected void visit(@NonNull Node node, @NonNull IMarkupWriter<T, E> writer) throws E {
     boolean handled = processInlineElements(node, writer);
     if (!handled && node instanceof Block) {
@@ -118,7 +152,19 @@ public class MarkupVisitor<T, E extends Throwable> implements IMarkupVisitor<T, 
     }
   }
 
-  protected boolean processInlineElements( // NOPMD dispatch method
+  /**
+   * Process a node that represents an inline element.
+   *
+   * @param node
+   *          the node to process
+   * @param writer
+   *          the markup writer used to write the HTML
+   * @return {@code true} if the node was processed or {@code false} otherwise
+   * @throws E
+   *           if an error occurred while writing
+   */
+  @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.CognitiveComplexity", "PMD.NcssCount" })
+  protected boolean processInlineElements(
       @NonNull Node node,
       @NonNull IMarkupWriter<T, E> writer) throws E { // NOPMD - acceptable
     boolean retval = true;
@@ -172,7 +218,19 @@ public class MarkupVisitor<T, E extends Throwable> implements IMarkupVisitor<T, 
     return retval;
   }
 
-  protected boolean processBlockElements( // NOPMD dispatch method
+  /**
+   * Process a node that represents a block element.
+   *
+   * @param node
+   *          the node to process
+   * @param writer
+   *          the markup writer used to write the HTML
+   * @return {@code true} if the node was processed or {@code false} otherwise
+   * @throws E
+   *           if an error occurred while writing
+   */
+  @SuppressWarnings("PMD.CyclomaticComplexity")
+  protected boolean processBlockElements(
       @NonNull Node node,
       @NonNull IMarkupWriter<T, E> writer) throws E {
     boolean retval = true;

@@ -30,23 +30,22 @@ import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.AbstractGlobalFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
+import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaModule;
 import gov.nist.secauto.metaschema.core.model.ModuleScopeEnum;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
 import gov.nist.secauto.metaschema.core.model.constraint.IValueConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ValueConstraintSet;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModelField;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceFlag;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FieldConstraints;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.JsonKey;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.JsonValueKeyFlag;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.METASCHEMA;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.FieldConstraints;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.JsonKey;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.JsonValueKeyFlag;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.METASCHEMA;
 
 import java.util.Map;
 import java.util.Set;
@@ -56,9 +55,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 public class DefinitionFieldGlobal
-    extends AbstractDefinition<METASCHEMA.DefineField>
-    implements IBindingDefinitionModelField,
-    IFeatureBindingContainerFlag {
+    extends AbstractGlobalFieldDefinition<IMetaschemaModule, IFieldInstance, IFlagInstance> {
+  @NonNull
+  private final METASCHEMA.DefineField binding;
   @NonNull
   private final Map<IAttributable.Key, Set<String>> properties;
   @NonNull
@@ -66,7 +65,7 @@ public class DefinitionFieldGlobal
   @Nullable
   private final Object defaultValue;
   @NonNull
-  private final Lazy<IContainerFlagSupport<IBindingInstanceFlag>> flagContainer;
+  private final Lazy<IContainerFlagSupport<IFlagInstance>> flagContainer;
   @NonNull
   private final Lazy<IValueConstrained> valueConstraints;
   @NonNull
@@ -76,31 +75,41 @@ public class DefinitionFieldGlobal
       @NonNull METASCHEMA.DefineField binding,
       @NonNull IBoundInstanceModelGroupedAssembly bindingInstance,
       int position,
-      @NonNull IBindingModule module) {
-    super(binding, module);
-    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(getBinding().getProps()));
-    this.javaTypeAdapter = ModelSupport.dataType(getBinding().getAsType());
-    this.defaultValue = ModelSupport.defaultValue(getBinding().getDefault(), this.javaTypeAdapter);
-    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> FlagContainerSupport.of(
-        binding.getFlags(),
-        bindingInstance,
-        this)));
+      @NonNull IMetaschemaModule module) {
+    super(module);
+    this.binding = binding;
+    this.properties = ModelSupport.parseProperties(ObjectUtils.requireNonNull(binding.getProps()));
+    this.javaTypeAdapter = ModelSupport.dataType(binding.getAsType());
+    this.defaultValue = ModelSupport.defaultValue(binding.getDefault(), this.javaTypeAdapter);
+    this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> {
+      JsonKey jsonKey = binding.getJsonKey();
+      return FlagContainerSupport.newFlagContainer(
+          binding.getFlags(),
+          bindingInstance,
+          this,
+          jsonKey == null ? null : jsonKey.getFlagRef());
+    }));
     this.valueConstraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IValueConstrained retval = new ValueConstraintSet();
-      FieldConstraints constraints = getBinding().getConstraint();
+      FieldConstraints constraints = binding.getConstraint();
       if (constraints != null) {
         ConstraintBindingSupport.parse(retval, constraints, ISource.modelSource(module.getLocation()));
       }
       return retval;
     }));
-    this.boundNodeItem = ObjectUtils.notNull(
-        Lazy.lazy(() -> (IAssemblyNodeItem) getContainingModule().getBoundNodeItem()
-            .getModelItemsByName(bindingInstance.getEffectiveName())
-            .get(position)));
+    this.boundNodeItem = ObjectUtils.notNull(Lazy.lazy(() -> ObjectUtils.requireNonNull(ModelSupport.toNodeItem(
+        module,
+        bindingInstance.getXmlQName(),
+        position))));
+  }
+
+  @NonNull
+  protected METASCHEMA.DefineField getBinding() {
+    return binding;
   }
 
   @Override
-  public IContainerFlagSupport<IBindingInstanceFlag> getFlagContainer() {
+  public IContainerFlagSupport<IFlagInstance> getFlagContainer() {
     return ObjectUtils.notNull(flagContainer.get());
   }
 
@@ -123,6 +132,15 @@ public class DefinitionFieldGlobal
   public Object getDefaultValue() {
     return defaultValue;
   }
+
+  @Override
+  public IAssemblyNodeItem getNodeItem() {
+    return boundNodeItem.get();
+  }
+
+  // ---------------------------------------
+  // - Start binding driven code - CPD-OFF -
+  // ---------------------------------------
 
   @Override
   public String getFormalName() {
@@ -165,16 +183,12 @@ public class DefinitionFieldGlobal
   }
 
   @Override
-  public String getJsonKeyFlagName() {
-    JsonKey jsonKey = getBinding().getJsonKey();
-    return jsonKey == null ? null : jsonKey.getFlagRef();
-  }
-
-  @Override
   public IFlagInstance getJsonValueKeyFlagInstance() {
     JsonValueKeyFlag obj = getBinding().getJsonValueKeyFlag();
-    String flagName = obj == null ? null : obj.getFlagRef();
-    return flagName == null ? null : getFlagInstanceByName(flagName);
+    String name = obj == null ? null : obj.getFlagRef();
+    return name == null ? null
+        : ObjectUtils.requireNonNull(getFlagInstanceByName(
+            getContainingModule().toFlagQName(name)));
   }
 
   @Override
@@ -182,9 +196,4 @@ public class DefinitionFieldGlobal
     return getBinding().getJsonValueKey();
   }
 
-  @SuppressWarnings("null")
-  @Override
-  public INodeItem getBoundNodeItem() {
-    return boundNodeItem.get();
-  }
 }

@@ -45,7 +45,7 @@ public interface ISequenceType {
 
     @Override
     public Occurrence getOccurrence() {
-      return null;
+      return Occurrence.ZERO;
     }
 
     @Override
@@ -53,6 +53,23 @@ public interface ISequenceType {
       return "()";
     }
   };
+
+  /**
+   * Create new sequence type using the provide type and occurrence.
+   *
+   * @param type
+   *          the sequence item type
+   * @param occurrence
+   *          the expected occurrence of the sequence
+   * @return the new sequence type
+   */
+  @SuppressWarnings("PMD.ShortMethodName")
+  @NonNull
+  static ISequenceType of(@NonNull Class<? extends IItem> type, @NonNull Occurrence occurrence) {
+    return Occurrence.ZERO.equals(occurrence)
+        ? EMPTY
+        : new SequenceTypeImpl(type, occurrence);
+  }
 
   /**
    * Determine if the sequence is empty (if it holds any data) or not.
@@ -71,8 +88,8 @@ public interface ISequenceType {
   /**
    * Get the occurrence of the sequence.
    *
-   * @return the occurrence of the sequence or {@code null} if the sequence is
-   *         empty
+   * @return the occurrence of the sequence or {@code Occurrence#ZERO} if the
+   *         sequence is empty
    */
   Occurrence getOccurrence();
 
@@ -81,5 +98,6 @@ public interface ISequenceType {
    *
    * @return the signature
    */
+  @NonNull
   String toSignature();
 }

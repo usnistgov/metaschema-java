@@ -26,7 +26,6 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
@@ -38,12 +37,35 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Metapath expression.
  */
 public interface ITargetedConstraints extends IValueConstrained {
+  /**
+   * Get the Metapath expression used to identify the target of the constraint.
+   *
+   * @return the uncompiled Metapath expression
+   */
   @NonNull
-  MetapathExpression getTargetExpression();
+  String getTargetExpression();
 
+  /**
+   * Apply the constraint to the provided definition.
+   *
+   * @param definition
+   *          the definition to apply the constraint to
+   */
   void target(@NonNull IFlagDefinition definition);
 
+  /**
+   * Apply the constraint to the provided definition.
+   *
+   * @param definition
+   *          the definition to apply the constraint to
+   */
   void target(@NonNull IFieldDefinition definition);
 
+  /**
+   * Apply the constraint to the provided definition.
+   *
+   * @param definition
+   *          the definition to apply the constraint to
+   */
   void target(@NonNull IAssemblyDefinition definition);
 }

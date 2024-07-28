@@ -3,7 +3,55 @@
 	xmlns="https://csrc.nist.gov/ns/metaschema-binding/1.0">
 	<model-binding namespace="http://csrc.nist.gov/ns/oscal/metaschema/1.0">
 		<java>
-			<use-package-name>gov.nist.secauto.metaschema.databind.metaschema</use-package-name>
+			<use-package-name>gov.nist.secauto.metaschema.databind.binding.metaschema</use-package-name>
 		</java>
 	</model-binding>
+	<metaschema-binding
+		href="../../../../core/metaschema/schema/metaschema/metaschema-module-metaschema.xml">
+		<define-assembly-binding name="group-as">
+			<java>
+				<use-class-name>GroupingAs</use-class-name>
+			</java>
+		</define-assembly-binding>
+		<define-assembly-binding name="assembly-constraints">
+			<java>
+				<implement-interface>gov.nist.secauto.metaschema.databind.model.metaschema.IModelConstraintsBase</implement-interface>
+			</java>
+		</define-assembly-binding>
+		<define-assembly-binding name="constraint-value-enum">
+			<java>
+				<extend-base-class>gov.nist.secauto.metaschema.databind.model.metaschema.impl.AbstractAllowedValue</extend-base-class>
+			</java>
+		</define-assembly-binding>
+		<define-assembly-binding name="field-constraints">
+			<java>
+				<implement-interface>gov.nist.secauto.metaschema.databind.model.metaschema.IValueTargetedConstraintsBase</implement-interface>
+			</java>
+		</define-assembly-binding>
+		<define-assembly-binding name="flag-allowed-values">
+			<java>
+				<implement-interface>gov.nist.secauto.metaschema.databind.model.metaschema.IConstraintBase</implement-interface>
+			</java>
+		</define-assembly-binding>
+		<define-assembly-binding name="flag-constraints">
+			<java>
+				<implement-interface>gov.nist.secauto.metaschema.databind.model.metaschema.IValueConstraintsBase</implement-interface>
+			</java>
+		</define-assembly-binding>
+		<define-assembly-binding name="flag-expect">
+			<java>
+				<implement-interface>gov.nist.secauto.metaschema.databind.model.metaschema.IConstraintBase</implement-interface>
+			</java>
+		</define-assembly-binding>
+		<define-assembly-binding name="flag-index-has-key">
+			<java>
+				<implement-interface>gov.nist.secauto.metaschema.databind.model.metaschema.IConstraintBase</implement-interface>
+			</java>
+		</define-assembly-binding>
+		<define-assembly-binding name="flag-matches">
+			<java>
+				<implement-interface>gov.nist.secauto.metaschema.databind.model.metaschema.IConstraintBase</implement-interface>
+			</java>
+		</define-assembly-binding>
+	</metaschema-binding>
 </metaschema-bindings>

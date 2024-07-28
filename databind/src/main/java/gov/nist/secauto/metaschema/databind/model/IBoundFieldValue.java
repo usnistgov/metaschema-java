@@ -26,7 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.info.IFeatureScalarItemValueHandler;
@@ -34,20 +34,13 @@ import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
-import java.util.Collection;
 
 import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IBoundFieldValue extends IFeatureScalarItemValueHandler, IBoundProperty {
-
-  @Override
-  default IBoundFieldValue getInstance() {
-    return this;
-  }
-
+public interface IBoundFieldValue extends IFeatureScalarItemValueHandler, IBoundProperty<Object> {
   @Override
   @Nullable
   Object getDefaultValue();
@@ -90,22 +83,7 @@ public interface IBoundFieldValue extends IFeatureScalarItemValueHandler, IBound
   }
 
   @Override
-  default Object getValue(Object parent) {
-    return IBoundProperty.super.getValue(parent);
-  }
-
-  @Override
-  default void setValue(Object parentObject, Object value) {
-    IBoundProperty.super.setValue(parentObject, value);
-  }
-
-  @Override
-  default Collection<? extends Object> getItemValues(Object value) {
-    return value == null ? CollectionUtil.emptyList() : CollectionUtil.singleton(value);
-  }
-
-  @Override
-  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+  default Object readItem(IBoundObject parent, IItemReadHandler handler) throws IOException {
     return handler.readItemFieldValue(ObjectUtils.requireNonNull(parent, "parent"), this);
   }
 
@@ -115,15 +93,9 @@ public interface IBoundFieldValue extends IFeatureScalarItemValueHandler, IBound
   }
 
   @Override
-  default void deepCopy(@NonNull Object fromInstance, @NonNull Object toInstance) throws BindingException {
+  default void deepCopy(@NonNull IBoundObject fromInstance, @NonNull IBoundObject toInstance) throws BindingException {
     Object value = getValue(fromInstance);
     setValue(toInstance, value);
-  }
-
-  @Override
-  default boolean canHandleJsonPropertyName(String name) {
-    // REFACTOR: Is this correct?
-    return name.equals(getJsonValueKeyName());
   }
 
   @Override

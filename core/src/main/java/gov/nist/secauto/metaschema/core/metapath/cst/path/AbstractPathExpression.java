@@ -35,6 +35,7 @@ import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.ItemUtils;
 import gov.nist.secauto.metaschema.core.metapath.item.node.ICycledAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.stream.Stream;
 
@@ -68,15 +69,15 @@ public abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
       @NonNull IExpression expression,
       @NonNull DynamicContext dynamicContext,
       @NonNull ISequence<?> outerFocus) {
-
-    outerFocus.collect();
+    // ensure the sequence is backed by a list
+    outerFocus.getValue();
 
     // check the current focus
     @SuppressWarnings("unchecked") Stream<? extends INodeItem> nodeMatches
-        = (Stream<? extends INodeItem>) expression.accept(dynamicContext, outerFocus).asStream();
+        = (Stream<? extends INodeItem>) expression.accept(dynamicContext, outerFocus).stream();
 
-    Stream<? extends INodeItem> childMatches = outerFocus.asStream()
-        .map(item -> ItemUtils.checkItemIsNodeItemForStep(item))
+    Stream<? extends INodeItem> childMatches = outerFocus.stream()
+        .map(ItemUtils::checkItemIsNodeItemForStep)
         .flatMap(focusedNode -> {
 
           Stream<? extends INodeItem> matches;
@@ -92,7 +93,7 @@ public abstract class AbstractPathExpression<RESULT_TYPE extends IItem>
             matches = searchExpression(
                 expression,
                 dynamicContext,
-                ISequence.of(Stream.concat(flags, modelItems)));
+                ISequence.of(ObjectUtils.notNull(Stream.concat(flags, modelItems))));
           }
           return matches;
         });

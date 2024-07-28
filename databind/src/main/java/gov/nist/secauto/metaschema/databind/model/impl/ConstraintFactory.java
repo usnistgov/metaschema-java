@@ -30,7 +30,6 @@ import gov.nist.secauto.metaschema.core.datatype.DataTypeService;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.IAttributable;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractConstraintBuilder;
 import gov.nist.secauto.metaschema.core.model.constraint.AbstractKeyConstraintBuilder;
@@ -68,6 +67,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -83,7 +84,7 @@ final class ConstraintFactory {
   }
 
   @NonNull
-  static MetapathExpression toMetapath(@NonNull String metapath) {
+  static String toMetapath(@NonNull String metapath) {
     String path = metapath;
     if (path.startsWith("/")) {
       String newPath = "." + path;
@@ -95,12 +96,12 @@ final class ConstraintFactory {
             .append("' is not properly contextualized using '.'. Using '")
             .append(newPath)
             .append("' instead.");
-        LOGGER.atInfo().log(builder.toString());
+        LOGGER.atWarn().log(builder.toString());
       }
       path = newPath;
     }
 
-    return path.isBlank() ? IConstraint.DEFAULT_TARGET : MetapathExpression.compile(path);
+    return path.isBlank() ? IConstraint.DEFAULT_TARGET_METAPATH : path;
   }
 
   @NonNull
@@ -204,7 +205,7 @@ final class ConstraintFactory {
     applyRemarks(builder, constraint.remarks());
 
     applyAllowedValues(builder, constraint);
-    builder.allowedOther(constraint.allowOthers());
+    builder.allowsOther(constraint.allowOthers());
     builder.extensible(constraint.extensible());
 
     return builder.build();
@@ -270,7 +271,7 @@ final class ConstraintFactory {
 
   @NonNull
   static IIndexConstraint newIndexConstraint(@NonNull Index constraint, @NonNull ISource source) {
-    IIndexConstraint.Builder builder = IIndexConstraint.builder();
+    IIndexConstraint.Builder builder = IIndexConstraint.builder(constraint.name());
     applyId(builder, constraint.id());
     applyFormalName(builder, constraint.formalName());
     applyDescription(builder, constraint.description());
@@ -281,7 +282,6 @@ final class ConstraintFactory {
     applyProperties(builder, constraint.properties());
     applyRemarks(builder, constraint.remarks());
 
-    builder.name(constraint.name());
     applyKeyFields(builder, constraint.keyFields());
 
     return builder.build();
@@ -291,7 +291,7 @@ final class ConstraintFactory {
   static IIndexHasKeyConstraint newIndexHasKeyConstraint(
       @NonNull IndexHasKey constraint,
       @NonNull ISource source) {
-    IIndexHasKeyConstraint.Builder builder = IIndexHasKeyConstraint.builder();
+    IIndexHasKeyConstraint.Builder builder = IIndexHasKeyConstraint.builder(constraint.indexName());
     applyId(builder, constraint.id());
     applyFormalName(builder, constraint.formalName());
     applyDescription(builder, constraint.description());
@@ -302,7 +302,6 @@ final class ConstraintFactory {
     applyProperties(builder, constraint.properties());
     applyRemarks(builder, constraint.remarks());
 
-    builder.name(constraint.indexName());
     applyKeyFields(builder, constraint.keyFields());
 
     return builder.build();
@@ -364,6 +363,6 @@ final class ConstraintFactory {
 
   @NonNull
   static ILet newLetExpression(@NonNull Let annotation, @NonNull ISource source) {
-    return ILet.of(annotation.name(), annotation.target(), source);
+    return ILet.of(new QName(annotation.name()), annotation.target(), source);
   }
 }

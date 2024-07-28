@@ -77,7 +77,7 @@ class DefaultFieldPropertyTest {
 
       MetaschemaJsonReader parser = new MetaschemaJsonReader(jsonParser);
 
-      SimpleAssembly obj = parser.readProperty(classBinding, classBinding.getRootJsonName());
+      SimpleAssembly obj = parser.readObjectRoot(classBinding, classBinding.getRootJsonName());
       assert obj != null;
 
       assertAll(

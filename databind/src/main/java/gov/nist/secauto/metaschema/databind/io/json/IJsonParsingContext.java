@@ -31,18 +31,10 @@ import com.fasterxml.jackson.core.JsonParser;
 import gov.nist.secauto.metaschema.databind.io.IParsingContext;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 public interface IJsonParsingContext extends IParsingContext<JsonParser, IJsonProblemHandler> {
   // no additional methods
 
   interface IInstanceReader extends IItemReadHandler {
-    @NonNull
-    JsonParser getJsonParser();
-  }
-
-  interface ItemReader extends IItemReadHandler {
     // no additional methods
   }
-
 }

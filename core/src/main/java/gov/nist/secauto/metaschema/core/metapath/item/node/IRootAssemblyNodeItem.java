@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.core.model.IAssemblyInstance;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -44,9 +45,7 @@ public interface IRootAssemblyNodeItem extends IAssemblyNodeItem {
    * This overrides the default behavior using the root name for the assembly.
    */
   @Override
-  default String getName() {
-    return ObjectUtils.requireNonNull(getDefinition().getRootName());
-  }
+  QName getName();
 
   /**
    * Get the parent document node item for this root.

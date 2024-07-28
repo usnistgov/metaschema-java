@@ -37,6 +37,10 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Provides the means to aggregate multiple validation result sets into a single
+ * result set.
+ */
 public final class AggregateValidationResult implements IValidationResult {
   @NonNull
   private final List<IValidationFinding> findings;
@@ -48,10 +52,13 @@ public final class AggregateValidationResult implements IValidationResult {
     this.highestSeverity = highestSeverity;
   }
 
-  public static IValidationResult aggregate(@NonNull IValidationResult result) {
-    return result;
-  }
-
+  /**
+   * Aggregate multiple provided results into a single result set.
+   *
+   * @param results
+   *          the results to aggregate
+   * @return the combined results
+   */
   public static IValidationResult aggregate(@NonNull IValidationResult... results) {
     Stream<? extends IValidationFinding> stream = Stream.empty();
     for (IValidationResult result : results) {
@@ -61,7 +68,7 @@ public final class AggregateValidationResult implements IValidationResult {
     return aggregate(stream);
   }
 
-  public static IValidationResult aggregate(@NonNull Stream<? extends IValidationFinding> findingStream) {
+  private static IValidationResult aggregate(@NonNull Stream<? extends IValidationFinding> findingStream) {
     AtomicReference<Level> highestSeverity = new AtomicReference<>(Level.INFORMATIONAL);
 
     List<IValidationFinding> findings = new LinkedList<>();
@@ -85,5 +92,4 @@ public final class AggregateValidationResult implements IValidationResult {
   public List<? extends IValidationFinding> getFindings() {
     return findings;
   }
-
 }

@@ -49,12 +49,27 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
     extends ICustomJavaDataType<TYPE> {
+  /**
+   * Get the underlying Flexmark factory supporting markup serialization.
+   *
+   * @return the factory
+   */
   @NonNull
   FlexmarkFactory getFlexmarkFactory();
 
+  /**
+   * Get the top-level Flexmark document node for the markup.
+   *
+   * @return the node
+   */
   @NonNull
   Document getDocument();
 
+  /**
+   * Determine if the markup has no contents.
+   *
+   * @return {@code true} if the markup has no contents or {@code false} otherwise
+   */
   boolean isEmpty();
 
   // /**
@@ -73,15 +88,49 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
   // throws
   // XMLStreamException;
 
+  /**
+   * Get the HyperText Markup Language (HTML) representation of this markup
+   * string.
+   *
+   * @return the HTML
+   */
   @NonNull
   String toHtml();
 
+  /**
+   * Get the Extensible HyperText Markup Language (XHTML) representation of this
+   * markup string.
+   *
+   * @param namespace
+   *          the XML namespace to use for XHTML elements
+   *
+   * @return the XHTML
+   * @throws XMLStreamException
+   *           if an error occurred while establishing or writing to the
+   *           underlying XML stream
+   * @throws IOException
+   *           if an error occurred while generating the XHTML data
+   */
   @NonNull
   String toXHtml(@NonNull String namespace) throws XMLStreamException, IOException;
 
+  /**
+   * Get the Commonmark Markdown representation of this markup string.
+   *
+   * @return the Markdown
+   */
   @NonNull
   String toMarkdown();
 
+  /**
+   * Get a Markdown representation of this markup string, which will be created by
+   * the provided formatter.
+   *
+   * @param formatter
+   *          the specific Markdown formatter to use in producing the Markdown
+   *
+   * @return the Markdown
+   */
   @NonNull
   String toMarkdown(@NonNull Formatter formatter);
 
@@ -93,6 +142,11 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
   @NonNull
   Stream<Node> getNodesAsStream();
 
+  /**
+   * Get markup inserts used as place holders within the string.
+   *
+   * @return a list of insets or an empty list if no inserts are present
+   */
   @NonNull
   default List<InsertAnchorNode> getInserts() {
     return getInserts(insert -> true);
@@ -118,10 +172,37 @@ public interface IMarkupString<TYPE extends IMarkupString<TYPE>>
    */
   boolean isBlock();
 
+  /**
+   * Write the Extensible HyperText Markup Language (XHTML) representation of this
+   * markup string to the provided stream writer.
+   *
+   * @param namespace
+   *          the XML namespace to use for XHTML elements
+   * @param streamWriter
+   *          the XML stream to write to
+   * @throws XMLStreamException
+   *           if an error occurred while establishing or writing to the XML
+   *           stream
+   */
   void writeXHtml(
       @NonNull String namespace,
       @NonNull XMLStreamWriter2 streamWriter) throws XMLStreamException;
 
+  /**
+   * Write the Extensible HyperText Markup Language (XHTML) representation of this
+   * markup string to the provided stream writer using the provided XML event
+   * factory.
+   *
+   * @param namespace
+   *          the XML namespace to use for XHTML elements
+   * @param eventFactory
+   *          the XML event factory used to generate XML events to write
+   * @param eventWriter
+   *          the XML event stream to write to
+   * @throws XMLStreamException
+   *           if an error occurred while establishing or writing to the XML
+   *           stream
+   */
   void writeXHtml(
       @NonNull String namespace,
       @NonNull XMLEventFactory2 eventFactory,

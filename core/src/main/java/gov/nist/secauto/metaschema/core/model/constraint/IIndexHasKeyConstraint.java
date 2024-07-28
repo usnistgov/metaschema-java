@@ -37,6 +37,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * {@link IIndexConstraint}.
  */
 public interface IIndexHasKeyConstraint extends IKeyConstraint {
+  /**
+   * The name of the index used to verify cross references.
+   *
+   * @return the index name
+   */
   @NonNull
   String getIndexName();
 
@@ -45,23 +50,25 @@ public interface IIndexHasKeyConstraint extends IKeyConstraint {
     return visitor.visitIndexHasKeyConstraint(this, state);
   }
 
+  /**
+   * Create a new constraint builder.
+   *
+   * @param useIndex
+   *          the index name
+   * @return the builder
+   */
   @NonNull
-  static Builder builder() {
-    return new Builder();
+  static Builder builder(@NonNull String useIndex) {
+    return new Builder(useIndex);
   }
 
   final class Builder
       extends AbstractKeyConstraintBuilder<Builder, IIndexHasKeyConstraint> {
-    private String indexName;
-
-    private Builder() {
-      // disable construction
-    }
-
     @NonNull
-    public Builder name(@NonNull String name) {
-      this.indexName = name;
-      return this;
+    private final String indexName;
+
+    private Builder(@NonNull String useIndex) {
+      this.indexName = useIndex;
     }
 
     @Override
@@ -69,14 +76,8 @@ public interface IIndexHasKeyConstraint extends IKeyConstraint {
       return this;
     }
 
-    @Override
-    protected void validate() {
-      super.validate();
-
-      ObjectUtils.requireNonNull(indexName);
-    }
-
-    protected String getIndexName() {
+    @NonNull
+    private String getIndexName() {
       return indexName;
     }
 
@@ -90,7 +91,7 @@ public interface IIndexHasKeyConstraint extends IKeyConstraint {
           getLevel(),
           getTarget(),
           getProperties(),
-          ObjectUtils.notNull(getIndexName()),
+          getIndexName(),
           getKeyFields(),
           getRemarks());
     }

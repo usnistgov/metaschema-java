@@ -37,6 +37,11 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * An implementation of the
+ * <a href="https://www.w3.org/TR/xpath-31/#id-for-expressions">For
+ * expression</a> supporting variable-based iteration.
+ */
 @SuppressWarnings("PMD.ShortClassName")
 public class For implements IExpression {
   @NonNull
@@ -44,16 +49,34 @@ public class For implements IExpression {
   @NonNull
   private final IExpression returnExpression;
 
+  /**
+   * Construct a new let expression using the provided variable and return clause.
+   *
+   * @param variable
+   *          the variable declaration
+   * @param returnExpr
+   *          the return clause that makes use of variables for evaluation
+   */
   public For(@NonNull VariableDeclaration variable, @NonNull IExpression returnExpr) {
     this.variable = variable;
     this.returnExpression = returnExpr;
   }
 
+  /**
+   * Get the variable declaration.
+   *
+   * @return the variable declaration expression
+   */
   @NonNull
   protected Let.VariableDeclaration getVariable() {
     return variable;
   }
 
+  /**
+   * Get the return expression.
+   *
+   * @return the return expression
+   */
   @NonNull
   protected IExpression getReturnExpression() {
     return returnExpression;
@@ -79,9 +102,9 @@ public class For implements IExpression {
 
     List<IItem> retval = new LinkedList<>();
     for (IItem item : variableResult) {
-      subDynamicContext.bindVariableValue(variable.getName().getValue(), ISequence.of(item));
+      subDynamicContext.bindVariableValue(variable.getName(), ISequence.of(item));
       retval.addAll(getReturnExpression().accept(subDynamicContext, focus));
     }
-    return ISequence.of(retval);
+    return ISequence.ofCollection(retval);
   }
 }

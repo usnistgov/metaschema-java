@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.datatype.markup.flexmark;
 
 import com.vladsch.flexmark.parser.ListOptions;
 
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.impl.AbstractMarkupWriter;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -53,6 +54,18 @@ public class MarkupXmlEventWriter
   @NonNull
   protected final XMLEventFactory2 eventFactory;
 
+  /**
+   * Construct a new event writer.
+   *
+   * @param namespace
+   *          the XML namespace to use for XMHTML content
+   * @param listOptions
+   *          list production options
+   * @param writer
+   *          the XML event stream to write to
+   * @param eventFactory
+   *          the XML event factory used to generate XML events
+   */
   public MarkupXmlEventWriter(
       @NonNull String namespace,
       @NonNull ListOptions listOptions,
@@ -62,11 +75,23 @@ public class MarkupXmlEventWriter
     this.eventFactory = Objects.requireNonNull(eventFactory, "eventFactory");
   }
 
+  /**
+   * Get the XML event factory used to generate XML events.
+   *
+   * @return the XML event factory
+   */
   @NonNull
   protected XMLEventFactory2 getEventFactory() {
     return eventFactory;
   }
 
+  /**
+   * Get XML events for the provided attributes.
+   *
+   * @param attributes
+   *          the mapping of attribute name to value
+   * @return the list of attribute events
+   */
   @NonNull
   protected List<Attribute> handleAttributes(@NonNull Map<String, String> attributes) {
     List<Attribute> attrs;

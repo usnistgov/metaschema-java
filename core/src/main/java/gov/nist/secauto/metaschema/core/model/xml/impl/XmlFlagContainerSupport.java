@@ -27,7 +27,9 @@
 package gov.nist.secauto.metaschema.core.model.xml.impl;
 
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFlagContainerBuilder;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
@@ -39,14 +41,12 @@ import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.GroupedInlineFieldDef
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineAssemblyDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFieldDefinitionType;
 import gov.nist.secauto.metaschema.core.model.xml.xmlbeans.InlineFlagDefinitionType;
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -54,12 +54,14 @@ import javax.xml.namespace.QName;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-@SuppressWarnings("PMD.NullAssignment") // readability
-class XmlFlagContainerSupport
-    extends DefaultContainerFlagSupport<IFlagInstance> {
+/**
+ * Supports parsing Metaschema assembly and field XMLBeans objects that contain
+ * flags.
+ */
+final class XmlFlagContainerSupport {
   @SuppressWarnings("PMD.UseConcurrentHashMap")
   @NonNull
-  private static final XmlObjectParser<Pair<IModelDefinition, Map<String, IFlagInstance>>> XML_MODEL_PARSER
+  private static final XmlObjectParser<Pair<IModelDefinition, IFlagContainerBuilder<IFlagInstance>>> XML_MODEL_PARSER
       = new XmlObjectParser<>(ObjectUtils.notNull(
           Map.ofEntries(
               Map.entry(new QName(IModule.XML_NAMESPACE, "flag"),
@@ -68,9 +70,10 @@ class XmlFlagContainerSupport
                   XmlFlagContainerSupport::handleDefineFlag)))) {
 
         @Override
-        protected Handler<Pair<IModelDefinition, Map<String, IFlagInstance>>> identifyHandler(XmlCursor cursor,
+        protected Handler<Pair<IModelDefinition, IFlagContainerBuilder<IFlagInstance>>> identifyHandler(
+            XmlCursor cursor,
             XmlObject obj) {
-          Handler<Pair<IModelDefinition, Map<String, IFlagInstance>>> retval;
+          Handler<Pair<IModelDefinition, IFlagContainerBuilder<IFlagInstance>>> retval;
           if (obj instanceof FlagReferenceType) {
             retval = XmlFlagContainerSupport::handleFlag;
           } else if (obj instanceof InlineFlagDefinitionType) {
@@ -84,146 +87,169 @@ class XmlFlagContainerSupport
 
   private static void handleFlag( // NOPMD false positive
       @NonNull XmlObject obj,
-      Pair<IModelDefinition, Map<String, IFlagInstance>> state) {
+      Pair<IModelDefinition, IFlagContainerBuilder<IFlagInstance>> state) {
     XmlFlagInstance flagInstance = new XmlFlagInstance(
         (FlagReferenceType) obj,
         ObjectUtils.notNull(state.getLeft()));
-    state.getRight().put(flagInstance.getEffectiveName(), flagInstance);
+    state.getRight().flag(flagInstance);
   }
 
   private static void handleDefineFlag( // NOPMD false positive
       @NonNull XmlObject obj,
-      Pair<IModelDefinition, Map<String, IFlagInstance>> state) {
+      Pair<IModelDefinition, IFlagContainerBuilder<IFlagInstance>> state) {
     XmlInlineFlagDefinition flagInstance = new XmlInlineFlagDefinition(
         (InlineFlagDefinitionType) obj,
         ObjectUtils.notNull(state.getLeft()));
-    state.getRight().put(flagInstance.getEffectiveName(), flagInstance);
-  }
-
-  protected XmlFlagContainerSupport(
-      @NonNull Map<String, IFlagInstance> flagInstanceMap,
-      @Nullable String jsonKeyFlagName) {
-    super(flagInstanceMap,
-        jsonKeyFlagName == null ? null : ObjectUtils.requireNonNull(flagInstanceMap.get(jsonKeyFlagName)));
+    state.getRight().flag(flagInstance);
   }
 
   /**
-   * Generate a set of constraints from the provided XMLBeans instance.
+   * Generate a flag container from the provided XMLBeans instance.
    *
    * @param xmlField
    *          the XMLBeans instance
    * @param container
    *          the field containing the flag
    */
-  public XmlFlagContainerSupport(
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  static IContainerFlagSupport<IFlagInstance> newInstance(
       @NonNull GlobalFieldDefinitionType xmlField,
       @NonNull IFieldDefinition container) {
-    this(
-        xmlField.getFlagList().size() > 0 || xmlField.getDefineFlagList().size() > 0
-            ? parseLocalFlags(xmlField, container)
-            : CollectionUtil.emptyMap(),
-        xmlField.isSetJsonKey() ? xmlField.getJsonKey().getFlagRef() : null);
+    if (!xmlField.getFlagList().isEmpty() || !xmlField.getDefineFlagList().isEmpty()) {
+      IFlagContainerBuilder<IFlagInstance> builder = xmlField.isSetJsonKey()
+          ? IContainerFlagSupport.builder(container.getContainingModule().toFlagQName(
+              ObjectUtils.requireNonNull(xmlField.getJsonKey().getFlagRef())))
+          : IContainerFlagSupport.builder();
+      parseLocalFlags(xmlField, container, builder);
+      return builder.build();
+    }
+    return IContainerFlagSupport.empty();
   }
 
   /**
-   * Generate a set of constraints from the provided XMLBeans instance.
+   * Generate a flag container from the provided XMLBeans instance.
    *
    * @param xmlField
    *          the XMLBeans instance
    * @param container
    *          the field containing the flag
    */
-  public XmlFlagContainerSupport(
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  static IContainerFlagSupport<IFlagInstance> newInstance(
       @NonNull InlineFieldDefinitionType xmlField,
       @NonNull IFieldDefinition container) {
-    this(
-        xmlField.getFlagList().size() > 0 || xmlField.getDefineFlagList().size() > 0
-            ? parseLocalFlags(xmlField, container)
-            : CollectionUtil.emptyMap(),
-        xmlField.isSetJsonKey() ? xmlField.getJsonKey().getFlagRef() : null);
+    if (!xmlField.getFlagList().isEmpty() || !xmlField.getDefineFlagList().isEmpty()) {
+      IFlagContainerBuilder<IFlagInstance> builder = xmlField.isSetJsonKey()
+          ? IContainerFlagSupport.builder(container.getContainingModule().toFlagQName(
+              ObjectUtils.requireNonNull(xmlField.getJsonKey().getFlagRef())))
+          : IContainerFlagSupport.builder();
+      parseLocalFlags(xmlField, container, builder);
+      return builder.build();
+    }
+    return IContainerFlagSupport.empty();
   }
 
   /**
-   * Generate a set of constraints from the provided XMLBeans instance.
+   * Generate a flag container from the provided XMLBeans instance.
    *
    * @param xmlField
    *          the XMLBeans instance
    * @param container
    *          the field containing the flag
    */
-  public XmlFlagContainerSupport(
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  static IContainerFlagSupport<IFlagInstance> newInstance(
       @NonNull GroupedInlineFieldDefinitionType xmlField,
-      @NonNull IFieldDefinition container) {
-    this(
-        xmlField.getFlagList().size() > 0 || xmlField.getDefineFlagList().size() > 0
-            ? parseLocalFlags(xmlField, container)
-            : CollectionUtil.emptyMap(),
-        null);
+      @NonNull IFieldDefinition container,
+      @Nullable String jsonKeyName) {
+    if (!xmlField.getFlagList().isEmpty() || !xmlField.getDefineFlagList().isEmpty()) {
+      IFlagContainerBuilder<IFlagInstance> builder = jsonKeyName == null
+          ? IContainerFlagSupport.builder()
+          : IContainerFlagSupport.builder(container.getContainingModule().toFlagQName(jsonKeyName));
+      parseLocalFlags(xmlField, container, builder);
+      return builder.build();
+    }
+    return IContainerFlagSupport.empty();
   }
 
   /**
-   * Generate a set of constraints from the provided XMLBeans instance.
+   * Generate a flag container from the provided XMLBeans instance.
    *
-   * @param xmlAssembly
+   * @param xmlField
    *          the XMLBeans instance
    * @param container
-   *          the assembly containing the flag
+   *          the field containing the flag
    */
-  public XmlFlagContainerSupport(
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  static IContainerFlagSupport<IFlagInstance> newInstance(
       @NonNull GlobalAssemblyDefinitionType xmlAssembly,
       @NonNull IAssemblyDefinition container) {
-    this(
-        xmlAssembly.getFlagList().size() > 0 || xmlAssembly.getDefineFlagList().size() > 0
-            ? parseLocalFlags(xmlAssembly, container)
-            : CollectionUtil.emptyMap(),
-        xmlAssembly.isSetJsonKey() ? xmlAssembly.getJsonKey().getFlagRef() : null);
+    if (!xmlAssembly.getFlagList().isEmpty() || !xmlAssembly.getDefineFlagList().isEmpty()) {
+      IFlagContainerBuilder<IFlagInstance> builder = xmlAssembly.isSetJsonKey()
+          ? IContainerFlagSupport.builder(container.getContainingModule().toFlagQName(
+              ObjectUtils.requireNonNull(xmlAssembly.getJsonKey().getFlagRef())))
+          : IContainerFlagSupport.builder();
+      parseLocalFlags(xmlAssembly, container, builder);
+      return builder.build();
+    }
+    return IContainerFlagSupport.empty();
   }
 
   /**
-   * Generate a set of constraints from the provided XMLBeans instance.
+   * Generate a flag container from the provided XMLBeans instance.
    *
-   * @param xmlAssembly
+   * @param xmlField
    *          the XMLBeans instance
    * @param container
-   *          the assembly containing the flag
+   *          the field containing the flag
    */
-  public XmlFlagContainerSupport(
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  static IContainerFlagSupport<IFlagInstance> newInstance(
       @NonNull InlineAssemblyDefinitionType xmlAssembly,
       @NonNull IAssemblyDefinition container) {
-    this(
-        xmlAssembly.getFlagList().size() > 0 || xmlAssembly.getDefineFlagList().size() > 0
-            ? parseLocalFlags(xmlAssembly, container)
-            : CollectionUtil.emptyMap(),
-        xmlAssembly.isSetJsonKey() ? xmlAssembly.getJsonKey().getFlagRef() : null);
+    if (!xmlAssembly.getFlagList().isEmpty() || !xmlAssembly.getDefineFlagList().isEmpty()) {
+      IFlagContainerBuilder<IFlagInstance> builder = xmlAssembly.isSetJsonKey()
+          ? IContainerFlagSupport.builder(container.getContainingModule().toFlagQName(
+              ObjectUtils.requireNonNull(xmlAssembly.getJsonKey().getFlagRef())))
+          : IContainerFlagSupport.builder();
+      parseLocalFlags(xmlAssembly, container, builder);
+      return builder.build();
+    }
+    return IContainerFlagSupport.empty();
   }
 
   /**
-   * Generate a set of constraints from the provided XMLBeans instance.
+   * Generate a flag container from the provided XMLBeans instance.
    *
-   * @param xmlAssembly
+   * @param xmlField
    *          the XMLBeans instance
    * @param container
-   *          the assembly containing the flag
+   *          the field containing the flag
    */
-  public XmlFlagContainerSupport(
+  @SuppressWarnings("PMD.OnlyOneReturn")
+  static IContainerFlagSupport<IFlagInstance> newInstance(
       @NonNull GroupedInlineAssemblyDefinitionType xmlAssembly,
-      @NonNull IAssemblyDefinition container) {
-    this(
-        xmlAssembly.getFlagList().size() > 0 || xmlAssembly.getDefineFlagList().size() > 0
-            ? parseLocalFlags(xmlAssembly, container)
-            : CollectionUtil.emptyMap(),
-        null);
+      @NonNull IAssemblyDefinition container,
+      @Nullable String jsonKeyName) {
+    if (!xmlAssembly.getFlagList().isEmpty() || !xmlAssembly.getDefineFlagList().isEmpty()) {
+      IFlagContainerBuilder<IFlagInstance> builder = jsonKeyName == null
+          ? IContainerFlagSupport.builder()
+          : IContainerFlagSupport.builder(container.getContainingModule().toFlagQName(jsonKeyName));
+      parseLocalFlags(xmlAssembly, container, builder);
+      return builder.build();
+    }
+    return IContainerFlagSupport.empty();
   }
 
-  @NonNull
-  private static Map<String, IFlagInstance> parseLocalFlags(
+  private static void parseLocalFlags(
       @NonNull XmlObject xmlObject,
-      @NonNull IModelDefinition parent) {
+      @NonNull IModelDefinition parent,
+      @NonNull IFlagContainerBuilder<IFlagInstance> builder) {
     // handle flags
-    Map<String, IFlagInstance> flagInstances = new LinkedHashMap<>(); // NOPMD - intentional
+    XML_MODEL_PARSER.parse(xmlObject, Pair.of(parent, builder));
+  }
 
-    XML_MODEL_PARSER.parse(xmlObject, Pair.of(parent, flagInstances));
-
-    return flagInstances.isEmpty() ? CollectionUtil.emptyMap() : CollectionUtil.unmodifiableMap(flagInstances);
+  private XmlFlagContainerSupport() {
+    // disable construction
   }
 }

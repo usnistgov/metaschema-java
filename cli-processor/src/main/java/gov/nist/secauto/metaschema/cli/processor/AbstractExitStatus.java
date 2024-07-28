@@ -106,10 +106,10 @@ public abstract class AbstractExitStatus implements ExitStatus {
 
       if (message != null && !message.isEmpty()) {
         logBuilder.log(message);
-      } else if (throwable != null && showStackTrace) {
+      } else if (showStackTrace && throwable != null) {
         // log the throwable
         logBuilder.log();
-      }
+      } // otherwise there is nothing to log
     }
   }
 

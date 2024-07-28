@@ -108,7 +108,7 @@ public interface IAllowedValuesConstraint extends IConstraint {
   }
 
   /**
-   * Get a new constraint builder.
+   * Create a new constraint builder.
    *
    * @return the builder
    */
@@ -129,24 +129,54 @@ public interface IAllowedValuesConstraint extends IConstraint {
       // disable construction
     }
 
+    /**
+     * Use the provided allowed value to validate associated values.
+     *
+     * @param allowedValue
+     *          an expected allowed value
+     * @return this builder
+     */
     @NonNull
     public Builder allowedValue(@NonNull IAllowedValue allowedValue) {
       this.allowedValues.put(allowedValue.getValue(), allowedValue);
       return this;
     }
 
+    /**
+     * Use the provided allowed values to validate associated values.
+     *
+     * @param allowedValues
+     *          an expected allowed values
+     * @return this builder
+     */
     @NonNull
     public Builder allowedValues(@NonNull Map<String, IAllowedValue> allowedValues) {
       this.allowedValues.putAll(allowedValues);
       return this;
     }
 
+    /**
+     * Determine if unspecified values are allowed and will result in the constraint
+     * always passing.
+     *
+     * @param bool
+     *          {@code true} if other values are allowed or {@code false} otherwise
+     * @return this builder
+     */
     @NonNull
-    public Builder allowedOther(boolean bool) {
+    public Builder allowsOther(boolean bool) {
       this.allowedOther = bool;
       return this;
     }
 
+    /**
+     * Determine the allowed scope of extension for other constraints matching this
+     * constraint's target.
+     *
+     * @param extensible
+     *          the degree of allowed extension
+     * @return this builder
+     */
     @NonNull
     public Builder extensible(@NonNull Extensible extensible) {
       this.extensible = extensible;
@@ -159,16 +189,16 @@ public interface IAllowedValuesConstraint extends IConstraint {
     }
 
     @NonNull
-    protected Map<String, IAllowedValue> getAllowedValues() {
+    private Map<String, IAllowedValue> getAllowedValues() {
       return allowedValues;
     }
 
-    protected boolean isAllowedOther() {
+    private boolean isAllowedOther() {
       return allowedOther;
     }
 
     @NonNull
-    protected Extensible getExtensible() {
+    private Extensible getExtensible() {
       return extensible;
     }
 

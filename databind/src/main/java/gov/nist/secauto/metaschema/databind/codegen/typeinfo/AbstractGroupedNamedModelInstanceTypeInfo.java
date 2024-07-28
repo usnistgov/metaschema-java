@@ -37,7 +37,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.lang.model.element.Modifier;
@@ -83,7 +83,7 @@ public abstract class AbstractGroupedNamedModelInstanceTypeInfo<I extends INamed
 
     TypeInfoUtils.buildCommonBindingAnnotationValues(getInstance(), memberAnnotation);
 
-    Set<IModelDefinition> retval = new HashSet<>();
+    Set<IModelDefinition> retval = new LinkedHashSet<>();
 
     I instance = getInstance();
     IModelDefinition definition = getInstance().getDefinition();
@@ -106,7 +106,7 @@ public abstract class AbstractGroupedNamedModelInstanceTypeInfo<I extends INamed
 
       TypeSpec.Builder subClass = TypeSpec.classBuilder(itemTypeName);
       subClass.superclass(extendedClassName);
-      subClass.addModifiers(Modifier.PUBLIC, Modifier.STATIC);
+      subClass.addModifiers(Modifier.PUBLIC, Modifier.STATIC); // , Modifier.FINAL);
       // subClass.addField(
       // FieldSpec.builder(String.class, "DISCRIMINATOR", Modifier.PUBLIC,
       // Modifier.STATIC, Modifier.FINAL)

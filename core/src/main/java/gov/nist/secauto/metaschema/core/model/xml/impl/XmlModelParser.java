@@ -43,6 +43,13 @@ public final class XmlModelParser {
     // disable construction
   }
 
+  /**
+   * Get the group-as/@in-json value based on the XMLBeans representation.
+   *
+   * @param groupAs
+   *          the XMLBeans value
+   * @return the in-json value
+   */
   @NonNull
   public static JsonGroupAsBehavior getJsonGroupAsBehavior(@Nullable GroupAsType groupAs) {
     JsonGroupAsBehavior retval = IGroupable.DEFAULT_JSON_GROUP_AS_BEHAVIOR;
@@ -52,6 +59,13 @@ public final class XmlModelParser {
     return retval;
   }
 
+  /**
+   * Get the group-as/@in-xml value based on the XMLBeans representation.
+   *
+   * @param groupAs
+   *          the XMLBeans value
+   * @return the in-xml value
+   */
   @NonNull
   public static XmlGroupAsBehavior getXmlGroupAsBehavior(@Nullable GroupAsType groupAs) {
     XmlGroupAsBehavior retval = IGroupable.DEFAULT_XML_GROUP_AS_BEHAVIOR;
@@ -61,6 +75,13 @@ public final class XmlModelParser {
     return retval;
   }
 
+  /**
+   * Convert the XMLBeans max occurrence to an integer value.
+   *
+   * @param value
+   *          the XMLBeans value
+   * @return the integer value
+   */
   public static int getMinOccurs(@Nullable BigInteger value) {
     int retval = IGroupable.DEFAULT_GROUP_AS_MIN_OCCURS;
     if (value != null) {
@@ -69,11 +90,20 @@ public final class XmlModelParser {
     return retval;
   }
 
+  /**
+   * Convert the XMLBeans max occurrence to an integer value.
+   * <p>
+   * If the source value is "unbounded", the the value {@code -1} is used.
+   *
+   * @param value
+   *          the XMLBeans value
+   * @return the integer value
+   */
   public static int getMaxOccurs(@Nullable Object value) {
     int retval = IGroupable.DEFAULT_GROUP_AS_MAX_OCCURS;
     if (value != null) {
       if (value instanceof String) {
-        // unbounded
+        // must be "unbounded"
         retval = -1;
       } else if (value instanceof BigInteger) {
         retval = ((BigInteger) value).intValueExact();

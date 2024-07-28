@@ -42,9 +42,12 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents an assembly or field instance bound to Java data.
+ *
+ * @param <ITEM>
+ *          the Java type for associated bound objects
  */
-public interface IBoundInstanceModel
-    extends IBoundInstance, IModelInstanceAbsolute {
+public interface IBoundInstanceModel<ITEM>
+    extends IBoundInstance<ITEM>, IModelInstanceAbsolute {
   /**
    * Get the collection Java item type for the Java field associated with this
    * instance.
@@ -71,6 +74,39 @@ public interface IBoundInstanceModel
       itemType = rawType;
     }
     return itemType;
+  }
+
+  /**
+   * Get the collection Java item type for the Java field associated with this
+   * instance.
+   *
+   * @param <TYPE>
+   *          the item's expected Java type
+   * @param field
+   *          the Java field for the instance
+   * @param expectedItemType
+   *          the item's expected Java type, which may be a super type of the
+   *          item's type
+   * @return the Java item type
+   */
+  @NonNull
+  static <TYPE> Class<? extends TYPE> getItemType(@NonNull Field field, @NonNull Class<TYPE> expectedItemType) {
+    Type fieldType = field.getGenericType();
+    Class<?> rawType = ObjectUtils.notNull(
+        (Class<?>) (fieldType instanceof ParameterizedType ? ((ParameterizedType) fieldType).getRawType() : fieldType));
+
+    Class<?> itemType;
+    if (Map.class.isAssignableFrom(rawType)) {
+      // this is a Map so the second generic type is the value
+      itemType = ObjectUtils.notNull((Class<?>) ((ParameterizedType) fieldType).getActualTypeArguments()[1]);
+    } else if (List.class.isAssignableFrom(rawType)) {
+      // this is a List so there is only a single generic type
+      itemType = ObjectUtils.notNull((Class<?>) ((ParameterizedType) fieldType).getActualTypeArguments()[0]);
+    } else {
+      // non-collection
+      itemType = rawType;
+    }
+    return ObjectUtils.notNull(itemType.asSubclass(expectedItemType));
   }
 
   @Override
@@ -102,7 +138,7 @@ public interface IBoundInstanceModel
    * @return the collection Java binding information
    */
   @NonNull
-  IModelInstanceCollectionInfo getCollectionInfo();
+  IModelInstanceCollectionInfo<ITEM> getCollectionInfo();
 
   /**
    * Get the JSON key flag for the provided item.
@@ -113,24 +149,4 @@ public interface IBoundInstanceModel
    */
   @Nullable
   IBoundInstanceFlag getItemJsonKey(@NonNull Object item);
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Always bound to a field.
-   */
-  @Override
-  default Object getValue(Object parent) {
-    return IBoundInstance.super.getValue(parent);
-  }
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Always bound to a field.
-   */
-  @Override
-  default void setValue(Object parentObject, Object value) {
-    IBoundInstance.super.setValue(parentObject, value);
-  }
 }

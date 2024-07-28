@@ -38,12 +38,15 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * <li>"scalar", meaning they have only a scalar field value, or</li>
  * <li>"complex", meaning they allow flags and are bound to a Java class.
  * </ul>
+ *
+ * @param <ITEM>
+ *          the Java type for associated bound objects
  */
-public interface IBoundDefinitionModelField
-    extends IFieldDefinition, IBoundDefinitionModel {
+public interface IBoundDefinitionModelField<ITEM>
+    extends IFieldDefinition, IBoundDefinitionModel<ITEM> {
 
   @Override
-  default IBoundInstanceModelField getInlineInstance() {
+  default IBoundInstanceModelField<ITEM> getInlineInstance() {
     // never inline
     return null;
   }

@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model.info;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 
 import java.io.IOException;
@@ -33,7 +34,14 @@ import java.io.IOException;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-public interface IItemValueHandler {
+/**
+ * A feature interface for handling read, writing, and copying item objects,
+ * which are the data building blocks of a Metaschema module instance.
+ *
+ * @param <TYPE>
+ *          the Java type of the item
+ */
+public interface IItemValueHandler<TYPE> {
   /**
    * Parse and return an item.
    *
@@ -47,8 +55,8 @@ public interface IItemValueHandler {
    *           if an error occurred while parsing
    */
   @NonNull
-  Object readItem(
-      @Nullable Object parent,
+  TYPE readItem(
+      @Nullable IBoundObject parent,
       @NonNull IItemReadHandler handler) throws IOException;
 
   /**
@@ -62,7 +70,7 @@ public interface IItemValueHandler {
    *           if an error occurred while writing
    */
   void writeItem(
-      @NonNull Object item,
+      @NonNull TYPE item,
       @NonNull IItemWriteHandler handler) throws IOException;
 
   /**
@@ -77,5 +85,5 @@ public interface IItemValueHandler {
    *           if an error occurred while analyzing the bound objects
    */
   @NonNull
-  Object deepCopyItem(@NonNull Object item, @Nullable Object parentInstance) throws BindingException;
+  TYPE deepCopyItem(@NonNull TYPE item, @Nullable IBoundObject parentInstance) throws BindingException;
 }

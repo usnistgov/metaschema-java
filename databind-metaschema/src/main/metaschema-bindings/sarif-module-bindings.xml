@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metaschema-bindings
+	xmlns="https://csrc.nist.gov/ns/metaschema-binding/1.0">
+	<model-binding namespace="http://csrc.nist.gov/ns/oscal/metaschema/1.0">
+		<java>
+			<use-package-name>gov.nist.secauto.metaschema.databind.binding.sarif</use-package-name>
+		</java>
+	</model-binding>
+</metaschema-bindings>

@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -56,7 +57,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 //TODO: implement getProperties()
-public class DefinitionField
+public final class DefinitionField
     extends AbstractBoundDefinitionModelComplex<MetaschemaField>
     implements IBoundDefinitionModelFieldComplex {
   @NonNull
@@ -68,7 +69,7 @@ public class DefinitionField
   @NonNull
   private final Lazy<IValueConstrained> constraints;
   @NonNull
-  private final Lazy<Map<String, IBoundProperty>> jsonProperties;
+  private final Lazy<Map<String, IBoundProperty<?>>> jsonProperties;
 
   /**
    * Collect all fields that are part of the model for this class.
@@ -83,12 +84,7 @@ public class DefinitionField
 
     Field retval = null;
     for (Field field : fields) {
-      if (!field.isAnnotationPresent(BoundFieldValue.class)) {
-        // skip fields that aren't a field or assembly instance
-        continue;
-      }
-
-      if (field.isAnnotationPresent(Ignore.class)) {
+      if (!field.isAnnotationPresent(BoundFieldValue.class) || field.isAnnotationPresent(Ignore.class)) {
         // skip this field, since it is ignored
         continue;
       }
@@ -112,11 +108,23 @@ public class DefinitionField
    *          the Java class the definition is bound to
    * @param bindingContext
    *          the Metaschema binding context managing this class
+   * @return the instance
    */
-  public DefinitionField(
-      @NonNull Class<?> clazz,
+  @NonNull
+  public static DefinitionField newInstance(
+      @NonNull Class<? extends IBoundObject> clazz,
       @NonNull IBindingContext bindingContext) {
-    super(clazz, MetaschemaField.class, bindingContext);
+    MetaschemaField annotation = ModelUtil.getAnnotation(clazz, MetaschemaField.class);
+    Class<? extends IBoundModule> moduleClass = annotation.moduleClass();
+    return new DefinitionField(clazz, annotation, moduleClass, bindingContext);
+  }
+
+  private DefinitionField(
+      @NonNull Class<? extends IBoundObject> clazz,
+      @NonNull MetaschemaField annotation,
+      @NonNull Class<? extends IBoundModule> moduleClass,
+      @NonNull IBindingContext bindingContext) {
+    super(clazz, annotation, moduleClass, bindingContext);
     Field field = getFieldValueField(getBoundClass());
     if (field == null) {
       throw new IllegalArgumentException(
@@ -124,7 +132,7 @@ public class DefinitionField
               clazz.getName(),
               BoundFieldValue.class.getName())); // NOPMD false positive
     }
-    this.fieldValue = new FieldValue(field, BoundFieldValue.class);
+    this.fieldValue = new FieldValue(field, BoundFieldValue.class, bindingContext);
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(this, this::handleFlagInstance)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
       IModelConstrained retval = new AssemblyConstraintSet();
@@ -134,7 +142,7 @@ public class DefinitionField
     }));
     this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> {
       IBoundInstanceFlag jsonValueKey = getJsonValueKeyFlagInstance();
-      Predicate<IBoundInstanceFlag> flagFilter = jsonValueKey == null ? null : (flag) -> !flag.equals(jsonValueKey);
+      Predicate<IBoundInstanceFlag> flagFilter = jsonValueKey == null ? null : flag -> !flag.equals(jsonValueKey);
       return getJsonProperties(flagFilter);
     }));
   }
@@ -165,7 +173,7 @@ public class DefinitionField
   }
 
   @Override
-  protected void deepCopyItemInternal(Object fromObject, Object toObject) throws BindingException {
+  protected void deepCopyItemInternal(IBoundObject fromObject, IBoundObject toObject) throws BindingException {
     // copy the flags
     super.deepCopyItemInternal(fromObject, toObject);
 
@@ -184,18 +192,13 @@ public class DefinitionField
   }
 
   @Override
-  public IBoundInstanceFlag getJsonKeyFlagInstance() {
-    return getFlagContainer().getJsonKeyFlagInstance();
-  }
-
-  @Override
   @NonNull
   public IValueConstrained getConstraintSupport() {
     return ObjectUtils.notNull(constraints.get());
   }
 
   @Override
-  public Map<String, IBoundProperty> getJsonProperties() {
+  public Map<String, IBoundProperty<?>> getJsonProperties() {
     return ObjectUtils.notNull(jsonProperties.get());
   }
 
@@ -220,7 +223,7 @@ public class DefinitionField
   @Override
   @Nullable
   public Integer getIndex() {
-    return ModelUtil.resolveNullOrInteger(getAnnotation().index());
+    return ModelUtil.resolveDefaultInteger(getAnnotation().index());
   }
 
   @Override
@@ -229,15 +232,12 @@ public class DefinitionField
     return ModelUtil.resolveToMarkupMultiline(getAnnotation().description());
   }
 
-  @Override
-  @NonNull
-  protected Class<? extends IBoundModule> getModuleClass() {
-    return getAnnotation().moduleClass();
-  }
-
   protected class FieldValue
-      extends AbstractBoundAnnotatedJavaField<BoundFieldValue>
       implements IBoundFieldValue {
+    @NonNull
+    private final Field javaField;
+    @NonNull
+    private final BoundFieldValue annotation;
     @NonNull
     private final IDataTypeAdapter<?> javaTypeAdapter;
     @Nullable
@@ -250,15 +250,40 @@ public class DefinitionField
      *          the Java field the field value is bound to
      * @param annotationClass
      *          the field value binding annotation Java class
+     * @param bindingContext
+     *          the Metaschema binding context managing this class
      */
     protected FieldValue(
         @NonNull Field javaField,
-        @NonNull Class<BoundFieldValue> annotationClass) {
-      super(javaField, annotationClass);
+        @NonNull Class<BoundFieldValue> annotationClass,
+        @NonNull IBindingContext bindingContext) {
+      this.javaField = javaField;
+      this.annotation = ModelUtil.getAnnotation(javaField, annotationClass);
       this.javaTypeAdapter = ModelUtil.getDataTypeAdapter(
-          getAnnotation().typeAdapter(),
-          getBindingContext());
-      this.defaultValue = ModelUtil.resolveNullOrValue(getAnnotation().defaultValue(), this.javaTypeAdapter);
+          this.annotation.typeAdapter(),
+          bindingContext);
+      this.defaultValue = ModelUtil.resolveDefaultValue(this.annotation.defaultValue(), this.javaTypeAdapter);
+    }
+
+    /**
+     * Get the bound Java field.
+     *
+     * @return the bound Java field
+     */
+    @Override
+    @NonNull
+    public Field getField() {
+      return javaField;
+    }
+
+    /**
+     * Get the binding Java annotation.
+     *
+     * @return the binding Java annotation
+     */
+    @NonNull
+    public BoundFieldValue getAnnotation() {
+      return annotation;
     }
 
     @Override

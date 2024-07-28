@@ -27,68 +27,72 @@
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItemFactory;
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
+import gov.nist.secauto.metaschema.core.model.IChoiceInstance;
 import gov.nist.secauto.metaschema.core.model.IContainerModelAssemblySupport;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelNamedAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceBinding;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IInstanceModelChoiceGroupBinding;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel.Choice;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyModel.ChoiceGroup;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyReference;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FieldReference;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.InlineDefineAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.InlineDefineField;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.AssemblyModel;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.AssemblyModel.Choice;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.AssemblyModel.ChoiceGroup;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.AssemblyReference;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.FieldReference;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.InlineDefineAssembly;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.InlineDefineField;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 class AssemblyModelContainerSupport
     extends AbstractBindingModelContainerSupport
     implements IContainerModelAssemblySupport<
-        IBindingInstanceModelAbsolute,
-        IBindingInstanceModelNamedAbsolute,
-        IBindingInstanceModelFieldAbsolute,
-        IBindingInstanceModelAssemblyAbsolute,
-        IInstanceModelChoiceBinding,
-        IInstanceModelChoiceGroupBinding> {
+        IModelInstanceAbsolute,
+        INamedModelInstanceAbsolute,
+        IFieldInstanceAbsolute,
+        IAssemblyInstanceAbsolute,
+        IChoiceInstance,
+        IChoiceGroupInstance> {
   @NonNull
-  private final List<IBindingInstanceModelAbsolute> modelInstances;
+  private final List<IModelInstanceAbsolute> modelInstances;
   @NonNull
-  private final Map<String, IBindingInstanceModelNamedAbsolute> namedModelInstances;
+  private final Map<QName, INamedModelInstanceAbsolute> namedModelInstances;
   @NonNull
-  private final Map<String, IBindingInstanceModelFieldAbsolute> fieldInstances;
+  private final Map<QName, IFieldInstanceAbsolute> fieldInstances;
   @NonNull
-  private final Map<String, IBindingInstanceModelAssemblyAbsolute> assemblyInstances;
+  private final Map<QName, IAssemblyInstanceAbsolute> assemblyInstances;
   @NonNull
-  private final List<IInstanceModelChoiceBinding> choiceInstances;
+  private final List<IChoiceInstance> choiceInstances;
   @NonNull
-  private final Map<String, IInstanceModelChoiceGroupBinding> choiceGroupInstances;
+  private final Map<String, IChoiceGroupInstance> choiceGroupInstances;
 
   @SuppressWarnings("PMD.ShortMethodName")
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   public static IContainerModelAssemblySupport<
-      IBindingInstanceModelAbsolute,
-      IBindingInstanceModelNamedAbsolute,
-      IBindingInstanceModelFieldAbsolute,
-      IBindingInstanceModelAssemblyAbsolute,
-      IInstanceModelChoiceBinding,
-      IInstanceModelChoiceGroupBinding> of(
+      IModelInstanceAbsolute,
+      INamedModelInstanceAbsolute,
+      IFieldInstanceAbsolute,
+      IAssemblyInstanceAbsolute,
+      IChoiceInstance,
+      IChoiceGroupInstance> of(
           @Nullable AssemblyModel binding,
           @NonNull IBoundInstanceModelAssembly bindingInstance,
-          @NonNull IBindingDefinitionAssembly parent,
+          @NonNull IAssemblyDefinition parent,
           @NonNull INodeItemFactory nodeItemFactory) {
     List<Object> instances;
     return binding == null || (instances = binding.getInstances()) == null || instances.isEmpty()
@@ -113,19 +117,20 @@ class AssemblyModelContainerSupport
    *          the node item factory used to generate child nodes
    */
   @SuppressWarnings({ "PMD.AvoidInstantiatingObjectsInLoops", "PMD.UseConcurrentHashMap", "PMD.PrematureDeclaration" })
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   protected AssemblyModelContainerSupport(
       @NonNull AssemblyModel model,
       @NonNull IBoundInstanceModelAssembly modelInstance,
-      @NonNull IBindingDefinitionAssembly parent,
+      @NonNull IAssemblyDefinition parent,
       @NonNull INodeItemFactory nodeItemFactory) {
 
     // create temporary collections to store the child binding objects
-    final List<IBindingInstanceModelAbsolute> modelInstances = new LinkedList<>();
-    final Map<String, IBindingInstanceModelNamedAbsolute> namedModelInstances = new LinkedHashMap<>();
-    final Map<String, IBindingInstanceModelFieldAbsolute> fieldInstances = new LinkedHashMap<>();
-    final Map<String, IBindingInstanceModelAssemblyAbsolute> assemblyInstances = new LinkedHashMap<>();
-    final List<IInstanceModelChoiceBinding> choiceInstances = new LinkedList<>();
-    final Map<String, IInstanceModelChoiceGroupBinding> choiceGroupInstances = new LinkedHashMap<>();
+    final List<IModelInstanceAbsolute> modelInstances = new LinkedList<>();
+    final Map<QName, INamedModelInstanceAbsolute> namedModelInstances = new LinkedHashMap<>();
+    final Map<QName, IFieldInstanceAbsolute> fieldInstances = new LinkedHashMap<>();
+    final Map<QName, IAssemblyInstanceAbsolute> assemblyInstances = new LinkedHashMap<>();
+    final List<IChoiceInstance> choiceInstances = new LinkedList<>();
+    final Map<String, IChoiceGroupInstance> choiceGroupInstances = new LinkedHashMap<>();
 
     // create counters to track child positions
     int assemblyReferencePosition = 0;
@@ -143,14 +148,14 @@ class AssemblyModelContainerSupport
           = (IBoundInstanceModelGroupedAssembly) instance.getItemInstance(obj);
 
       if (obj instanceof AssemblyReference) {
-        IBindingInstanceModelAssemblyAbsolute assembly = newInstance(
+        IAssemblyInstanceAbsolute assembly = newInstance(
             (AssemblyReference) obj,
             objInstance,
             assemblyReferencePosition++,
             parent);
         addInstance(assembly, modelInstances, namedModelInstances, assemblyInstances);
       } else if (obj instanceof InlineDefineAssembly) {
-        IBindingInstanceModelAssemblyAbsolute assembly = new InstanceModelAssemblyInline(
+        IAssemblyInstanceAbsolute assembly = new InstanceModelAssemblyInline(
             (InlineDefineAssembly) obj,
             objInstance,
             assemblyInlineDefinitionPosition++,
@@ -158,21 +163,21 @@ class AssemblyModelContainerSupport
             nodeItemFactory);
         addInstance(assembly, modelInstances, namedModelInstances, assemblyInstances);
       } else if (obj instanceof FieldReference) {
-        IBindingInstanceModelFieldAbsolute field = newInstance(
+        IFieldInstanceAbsolute field = newInstance(
             (FieldReference) obj,
             objInstance,
             fieldReferencePosition++,
             parent);
         addInstance(field, modelInstances, namedModelInstances, fieldInstances);
       } else if (obj instanceof InlineDefineField) {
-        IBindingInstanceModelFieldAbsolute field = new InstanceModelFieldInline(
+        IFieldInstanceAbsolute field = new InstanceModelFieldInline(
             (InlineDefineField) obj,
             objInstance,
             fieldInlineDefinitionPosition++,
             parent);
         addInstance(field, modelInstances, namedModelInstances, fieldInstances);
       } else if (obj instanceof AssemblyModel.Choice) {
-        IInstanceModelChoiceBinding choice = new InstanceModelChoice(
+        IChoiceInstance choice = new InstanceModelChoice(
             (Choice) obj,
             objInstance,
             choicePosition++,
@@ -181,7 +186,7 @@ class AssemblyModelContainerSupport
         modelInstances.add(choice);
         choiceInstances.add(choice);
       } else if (obj instanceof AssemblyModel.ChoiceGroup) {
-        IInstanceModelChoiceGroupBinding choiceGroup = new InstanceModelChoiceGroup(
+        IChoiceGroupInstance choiceGroup = new InstanceModelChoiceGroup(
             (ChoiceGroup) obj,
             objInstance,
             choiceGroupPosition++,
@@ -215,32 +220,32 @@ class AssemblyModelContainerSupport
   }
 
   @Override
-  public List<IBindingInstanceModelAbsolute> getModelInstances() {
+  public List<IModelInstanceAbsolute> getModelInstances() {
     return modelInstances;
   }
 
   @Override
-  public Map<String, IBindingInstanceModelNamedAbsolute> getNamedModelInstanceMap() {
+  public Map<QName, INamedModelInstanceAbsolute> getNamedModelInstanceMap() {
     return namedModelInstances;
   }
 
   @Override
-  public Map<String, IBindingInstanceModelFieldAbsolute> getFieldInstanceMap() {
+  public Map<QName, IFieldInstanceAbsolute> getFieldInstanceMap() {
     return fieldInstances;
   }
 
   @Override
-  public Map<String, IBindingInstanceModelAssemblyAbsolute> getAssemblyInstanceMap() {
+  public Map<QName, IAssemblyInstanceAbsolute> getAssemblyInstanceMap() {
     return assemblyInstances;
   }
 
   @Override
-  public List<IInstanceModelChoiceBinding> getChoiceInstances() {
+  public List<IChoiceInstance> getChoiceInstances() {
     return choiceInstances;
   }
 
   @Override
-  public Map<String, IInstanceModelChoiceGroupBinding> getChoiceGroupInstanceMap() {
+  public Map<String, IChoiceGroupInstance> getChoiceGroupInstanceMap() {
     return choiceGroupInstances;
   }
 }

@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -103,7 +104,7 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
         "The cardinality '%d' is below the required minimum '%d' for items matching '%s'.",
         targets.size(),
         constraint.getMinOccurs(),
-        constraint.getTarget().getPath());
+        constraint.getTarget());
   }
 
   /**
@@ -203,6 +204,8 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
    *          the target matching the constraint
    * @param value
    *          the target's value
+   * @param pattern
+   *          the expected pattern
    * @return the new message
    */
   @SuppressWarnings("null")
@@ -211,10 +214,11 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
       @NonNull IMatchesConstraint constraint,
       @NonNull INodeItem node,
       @NonNull INodeItem target,
-      @NonNull String value) {
+      @NonNull String value,
+      @NonNull Pattern pattern) {
     return String.format("Value '%s' did not match the pattern '%s' at path '%s'",
         value,
-        constraint.getPattern().pattern(),
+        pattern.pattern(),
         toPath(target));
   }
 
@@ -230,6 +234,8 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
    *          the target matching the constraint
    * @param value
    *          the target's value
+   * @param adapter
+   *          the expected data type adapter
    * @return the new message
    */
   @SuppressWarnings("null")
@@ -238,8 +244,8 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
       @NonNull IMatchesConstraint constraint,
       @NonNull INodeItem node,
       @NonNull INodeItem target,
-      @NonNull String value) {
-    IDataTypeAdapter<?> adapter = constraint.getDataType();
+      @NonNull String value,
+      @NonNull IDataTypeAdapter<?> adapter) {
     return String.format("Value '%s' did not conform to the data type '%s' at path '%s'", value,
         adapter.getPreferredName(), toPath(target));
   }
@@ -261,17 +267,17 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
    */
   @SuppressWarnings("null")
   @NonNull
-  protected CharSequence newExpectViolationMessage(
+  protected String newExpectViolationMessage(
       @NonNull IExpectConstraint constraint,
       @SuppressWarnings("unused") @NonNull INodeItem node,
       @NonNull INodeItem target,
       @NonNull DynamicContext dynamicContext) {
-    CharSequence message;
+    String message;
     if (constraint.getMessage() != null) {
       message = constraint.generateMessage(target, dynamicContext);
     } else {
       message = String.format("Expect constraint '%s' did not match the data at path '%s'",
-          constraint.getTest().getPath(),
+          constraint.getTest(),
           toPath(target));
     }
     return message;
@@ -289,13 +295,13 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
    */
   @SuppressWarnings("null")
   @NonNull
-  protected CharSequence newAllowedValuesViolationMessage(
+  protected String newAllowedValuesViolationMessage(
       @NonNull List<IAllowedValuesConstraint> constraints,
       @NonNull INodeItem target) {
 
     String allowedValues = constraints.stream()
         .flatMap(constraint -> constraint.getAllowedValues().values().stream())
-        .map(allowedValue -> allowedValue.getValue())
+        .map(IAllowedValue::getValue)
         .sorted()
         .distinct()
         .collect(CustomCollectors.joiningWithOxfordComma("or"));
@@ -318,7 +324,7 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
    */
   @SuppressWarnings("null")
   @NonNull
-  protected CharSequence newIndexDuplicateViolationMessage(
+  protected String newIndexDuplicateViolationMessage(
       @NonNull IIndexConstraint constraint,
       @NonNull INodeItem node) {
     return String.format("Duplicate index named '%s' found at path '%s'",
@@ -342,7 +348,7 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
    */
   @SuppressWarnings("null")
   @NonNull
-  protected CharSequence newIndexMissMessage(
+  protected String newIndexMissMessage(
       @NonNull IIndexHasKeyConstraint constraint,
       @NonNull INodeItem node,
       @NonNull INodeItem target,
@@ -372,8 +378,8 @@ public abstract class AbstractConstraintValidationHandler implements IConstraint
    */
   @SuppressWarnings("null")
   @NonNull
-  protected CharSequence newGenericValidationViolationMessage(
-      @NonNull IConstraint constraint,
+  protected String newMissingIndexViolationMessage(
+      @NonNull IIndexHasKeyConstraint constraint,
       @NonNull INodeItem node,
       @NonNull INodeItem target,
       @NonNull String message) {

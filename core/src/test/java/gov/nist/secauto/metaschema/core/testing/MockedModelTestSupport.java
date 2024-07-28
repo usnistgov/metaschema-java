@@ -37,16 +37,31 @@ public class MockedModelTestSupport implements IMockFactory {
   @NonNull
   Mockery context = new JUnit5Mockery();
 
+  /**
+   * Get a new flag builder.
+   *
+   * @return the builder
+   */
   @NonNull
   protected FlagBuilder flag() {
     return FlagBuilder.builder(context);
   }
 
+  /**
+   * Get a new field builder.
+   *
+   * @return the builder
+   */
   @NonNull
   protected FieldBuilder field() {
     return FieldBuilder.builder(context);
   }
 
+  /**
+   * Get a new assembly builder.
+   *
+   * @return the builder
+   */
   @NonNull
   protected AssemblyBuilder assembly() {
     return AssemblyBuilder.builder(context);

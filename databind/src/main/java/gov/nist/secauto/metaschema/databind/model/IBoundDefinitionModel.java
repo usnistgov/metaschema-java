@@ -26,20 +26,31 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
-import gov.nist.secauto.metaschema.core.model.IModelDefinition;
+import gov.nist.secauto.metaschema.core.model.IFeatureContainerFlag;
+import gov.nist.secauto.metaschema.databind.IBindingContext;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Represents a field or assembly instance bound to Java data.
+ *
+ * @param <ITEM>
+ *          the Java type for associated bound objects
  */
-// REFACTOR: rename to IBoundDefinitionModelNamed
-public interface IBoundDefinitionModel
-    extends IBoundDefinition, IBoundContainerFlag, IModelDefinition {
-  // @NonNull
-  // Class<?> getBoundClass();
+public interface IBoundDefinitionModel<ITEM>
+    extends IBoundModuleElement<ITEM>, IFeatureContainerFlag<IBoundInstanceFlag> {
+  /**
+   * Get the binding context used for the definition.
+   *
+   * @return the binding context
+   */
+  @NonNull
+  IBindingContext getBindingContext();
 
   @Override
-  IBoundInstanceModelNamed getInlineInstance();
+  IBoundInstanceModelNamed<ITEM> getInlineInstance();
 
-  @Override
-  IBoundInstanceFlag getJsonKeyFlagInstance();
+  //
+  // @Override
+  // IBoundInstanceFlag getJsonKeyFlagInstance();
 }

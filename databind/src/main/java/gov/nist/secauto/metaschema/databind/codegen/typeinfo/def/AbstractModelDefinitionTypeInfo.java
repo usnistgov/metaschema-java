@@ -37,6 +37,7 @@ import gov.nist.secauto.metaschema.databind.codegen.typeinfo.FlagInstanceTypeInf
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFlagInstanceTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IInstanceTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IPropertyTypeInfo;
+import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import org.apache.logging.log4j.LogManager;
@@ -44,6 +45,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -62,6 +64,9 @@ public abstract class AbstractModelDefinitionTypeInfo<DEF extends IModelDefiniti
   private final ClassName className;
   @Nullable
   private final ClassName baseClassName;
+  @NonNull
+  private final List<ClassName> superinterfaces;
+  @NonNull
   private final Lazy<Map<String, IFlagInstanceTypeInfo>> flagTypeInfos;
 
   public AbstractModelDefinitionTypeInfo(
@@ -71,10 +76,11 @@ public abstract class AbstractModelDefinitionTypeInfo<DEF extends IModelDefiniti
     this.typeResolver = typeResolver;
     this.className = typeResolver.getClassName(definition);
     this.baseClassName = typeResolver.getBaseClassName(definition);
+    this.superinterfaces = typeResolver.getSuperinterfaces(definition);
     this.flagTypeInfos = ObjectUtils.notNull(Lazy.lazy(() -> flags()
         .collect(CustomCollectors.toMap(
-            (typeInfo) -> typeInfo.getPropertyName(),
-            (typeInfo) -> typeInfo,
+            ITypeInfo::getPropertyName,
+            CustomCollectors.identity(),
             (key, v1, v2) -> {
               if (LOGGER.isErrorEnabled()) {
                 LOGGER.error(String.format("Unexpected duplicate flag property name '%s'", key));
@@ -102,6 +108,11 @@ public abstract class AbstractModelDefinitionTypeInfo<DEF extends IModelDefiniti
   @Override
   public ClassName getBaseClassName() {
     return baseClassName;
+  }
+
+  @Override
+  public List<ClassName> getSuperinterfaces() {
+    return superinterfaces;
   }
 
   private Stream<IFlagInstanceTypeInfo> flags() {

@@ -27,7 +27,10 @@
 package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.IResourceLocation;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import java.net.URI;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import nl.talsmasoftware.lazy4j.Lazy;
@@ -48,6 +51,11 @@ class ModuleNodeItemImpl
   }
 
   @Override
+  public URI getNamespace() {
+    return getModule().getXmlNamespace();
+  }
+
+  @Override
   public IModule getModule() {
     return module;
   }
@@ -58,4 +66,9 @@ class ModuleNodeItemImpl
     return model.get();
   }
 
+  @Override
+  public IResourceLocation getLocation() {
+    // no location
+    return null;
+  }
 }

@@ -10,33 +10,44 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldInstance;
 import gov.nist.secauto.metaschema.core.testing.MockedModelTestSupport;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 import org.jmock.Expectations;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 class DefaultNodeItemFactoryTest
     extends MockedModelTestSupport {
+  @NonNull
+  private static final URI NS_URI = ObjectUtils.notNull(URI.create("http://example.com/ns"));
+  @NonNull
+  private static final String NS = ObjectUtils.notNull(NS_URI.toASCIIString());
+
   @Test
   void testGenerateFlags() {
     DefaultNodeItemFactory nodeFactory = DefaultNodeItemFactory.instance();
 
     IAssemblyDefinition parent = assembly()
+        .namespace(NS_URI)
         .name("assembly1")
         .toDefinition();
 
     IFieldInstance fieldInstance = field()
+        .namespace(NS_URI)
         .name("field1")
         .flags(List.of(
-            flag().name("flag1")))
+            flag().namespace(NS_URI).name("flag1")))
         .toInstance(parent);
 
     Object fieldValue = "test value";
@@ -44,7 +55,7 @@ class DefaultNodeItemFactoryTest
     // setup the value calls
     getContext().checking(new Expectations() {
       { // NOPMD - intentional
-        allowing(fieldInstance.getDefinition().getFlagInstanceByName("flag1")).getValue(fieldValue);
+        allowing(fieldInstance.getDefinition().getFlagInstanceByName(new QName(NS, "flag1"))).getValue(fieldValue);
         will(returnValue("flag1 value"));
       }
     });
@@ -55,18 +66,19 @@ class DefaultNodeItemFactoryTest
     Collection<? extends IFlagNodeItem> flagItems = field.getFlags();
     assertThat(flagItems, containsInAnyOrder(
         allOf(
-            match("name", flag -> flag.getName(), equalTo("flag1")),
+            match("name", flag -> flag.getName(), equalTo(new QName(NS, "flag1"))),
             match("value", flag -> flag.getValue(), equalTo("flag1 value"))))); // NOPMD
   }
 
   @Test
   void testGenerateModelItems() {
     IAssemblyDefinition assembly = assembly()
+        .namespace(NS_URI)
         .name("assembly1")
         .flags(List.of(
-            flag().name("flag1")))
+            flag().namespace(NS_URI).name("flag1")))
         .modelInstances(List.of(
-            field().name("field1")))
+            field().namespace(NS_URI).name("field1")))
         .toDefinition();
 
     Object assemblyValue = "assembly value";
@@ -76,11 +88,11 @@ class DefaultNodeItemFactoryTest
     // Setup the value calls
     getContext().checking(new Expectations() {
       { // NOPMD - intentional
-        allowing(assembly.getFlagInstanceByName("flag1")).getValue(assemblyValue);
+        allowing(assembly.getFlagInstanceByName(new QName(NS, "flag1"))).getValue(assemblyValue);
         will(returnValue(flagValue));
-        allowing(assembly.getNamedModelInstanceByName("field1")).getValue(assemblyValue);
+        allowing(assembly.getNamedModelInstanceByName(new QName(NS, "field1"))).getValue(assemblyValue);
         will(returnValue(fieldValue));
-        allowing(assembly.getNamedModelInstanceByName("field1")).getItemValues(fieldValue);
+        allowing(assembly.getNamedModelInstanceByName(new QName(NS, "field1"))).getItemValues(fieldValue);
         will(returnValue(List.of(fieldValue)));
       }
     });
@@ -93,11 +105,11 @@ class DefaultNodeItemFactoryTest
     assertAll(
         () -> assertThat(flagItems, containsInAnyOrder(
             allOf(
-                match("name", flag -> flag.getName(), equalTo("flag1")),
+                match("name", flag -> flag.getName(), equalTo(new QName(NS, "flag1"))),
                 match("value", flag -> flag.getValue(), equalTo("flag1 value"))))),
         () -> assertThat(modelItems, containsInAnyOrder(
             allOf(
-                match("name", model -> model.getName(), equalTo("field1")),
+                match("name", model -> model.getName(), equalTo(new QName(NS, "field1"))),
                 match("value", model -> model.getValue(), equalTo("field1 value"))))));
   }
 

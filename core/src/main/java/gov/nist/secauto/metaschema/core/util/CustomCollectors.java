@@ -40,17 +40,28 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public final class CustomCollectors {
-  private CustomCollectors() {
-    // disable
-  }
-
+  /**
+   * An implementation of {@link Function#identity()} that respects non-nullness.
+   *
+   * @param <T>
+   *          the Java type of the identity object
+   * @return the identity function
+   */
   @SuppressWarnings("null")
   @NonNull
   public static <T> Function<T, T> identity() {
     return Function.identity();
   }
 
+  /**
+   * Joins a sequence of string values using oxford-style serial commas.
+   *
+   * @param conjunction
+   *          the conjunction to use after the penultimate comma (e.g., and, or)
+   * @return a collector that will perform the joining
+   */
   public static Collector<CharSequence, ?, String> joiningWithOxfordComma(@NonNull String conjunction) {
     return Collectors.collectingAndThen(Collectors.toList(), withOxfordComma(conjunction));
   }
@@ -124,6 +135,26 @@ public final class CustomCollectors {
     return uniqueRoles.values().stream();
   }
 
+  /**
+   * Produces a map collector that uses the provided key and value mappers, and a
+   * duplicate hander to manage duplicate key insertion.
+   *
+   * @param <T>
+   *          the item Java type
+   * @param <K>
+   *          the map key Java type
+   * @param <V>
+   *          the map value Java type
+   * @param keyMapper
+   *          the function used to produce the map's key based on the provided
+   *          item
+   * @param valueMapper
+   *          the function used to produce the map's value based on the provided
+   *          item
+   * @param duplicateHander
+   *          the handler used to manage duplicate key insertion
+   * @return the collector
+   */
   @NonNull
   public static <T, K, V> Collector<T, ?, Map<K, V>> toMap(
       @NonNull Function<? super T, ? extends K> keyMapper,
@@ -132,6 +163,30 @@ public final class CustomCollectors {
     return toMap(keyMapper, valueMapper, duplicateHander, HashMap::new);
   }
 
+  /**
+   * Produces a map collector that uses the provided key and value mappers, and a
+   * duplicate hander to manage duplicate key insertion.
+   *
+   * @param <T>
+   *          the item Java type
+   * @param <K>
+   *          the map key Java type
+   * @param <V>
+   *          the map value Java type
+   * @param <M>
+   *          the Java type of the resulting map
+   * @param keyMapper
+   *          the function used to produce the map's key based on the provided
+   *          item
+   * @param valueMapper
+   *          the function used to produce the map's value based on the provided
+   *          item
+   * @param duplicateHander
+   *          the handler used to manage duplicate key insertion
+   * @param supplier
+   *          the supplier used to create the resulting map
+   * @return the collector
+   */
   @NonNull
   public static <T, K, V, M extends Map<K, V>> Collector<T, ?, M> toMap(
       @NonNull Function<? super T, ? extends K> keyMapper,
@@ -163,19 +218,57 @@ public final class CustomCollectors {
             }));
   }
 
+  /**
+   * A handler that supports resolving duplicate keys while inserting values into
+   * a map.
+   *
+   * @param <K>
+   *          the Java type of the map's keys
+   * @param <V>
+   *          the Java type of the map's values
+   */
   @FunctionalInterface
   public interface DuplicateHandler<K, V> {
+    /**
+     * The handler callback.
+     *
+     * @param key
+     *          the duplicate key
+     * @param value1
+     *          the first value associated with the key
+     * @param value2
+     *          the second value associated with the key
+     * @return the value to insert into the map
+     */
     @NonNull
     V handle(K key, @NonNull V value1, V value2);
   }
 
+  /**
+   * A binary operator that will always use the first of two values.
+   *
+   * @param <T>
+   *          the item type
+   * @return the operator
+   */
   @NonNull
   public static <T> BinaryOperator<T> useFirstMapper() {
     return (value1, value2) -> value1;
   }
 
+  /**
+   * A binary operator that will always use the second of two values.
+   *
+   * @param <T>
+   *          the item type
+   * @return the operator
+   */
   @NonNull
   public static <T> BinaryOperator<T> useLastMapper() {
     return (value1, value2) -> value2;
+  }
+
+  private CustomCollectors() {
+    // disable construction
   }
 }

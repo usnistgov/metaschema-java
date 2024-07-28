@@ -76,8 +76,9 @@ public interface IArgument {
    */
   final class Builder {
     private String name;
+    @NonNull
     private Class<? extends IItem> type = IItem.class;
-    private Occurrence occurrence = Occurrence.ONE;
+    private Occurrence occurrence;
 
     private Builder() {
       // construct a new non-initialized builder
@@ -177,7 +178,7 @@ public interface IArgument {
     public IArgument build() {
       return new ArgumentImpl(
           ObjectUtils.requireNonNull(name, "the argument name must not be null"),
-          new SequenceTypeImpl(type, occurrence));
+          ISequenceType.of(type, ObjectUtils.requireNonNull(occurrence, "occurrence")));
     }
   }
 }

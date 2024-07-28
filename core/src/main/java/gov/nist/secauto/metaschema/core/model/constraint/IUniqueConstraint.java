@@ -45,6 +45,11 @@ public interface IUniqueConstraint extends IKeyConstraint {
     return visitor.visitUniqueConstraint(this, state);
   }
 
+  /**
+   * Create a new constraint builder.
+   *
+   * @return the builder
+   */
   @NonNull
   static Builder builder() {
     return new Builder();

@@ -39,6 +39,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 
@@ -91,7 +92,9 @@ public interface IFunction {
    * @return the function's name
    */
   @NonNull
-  String getName();
+  default String getName() {
+    return ObjectUtils.notNull(getQName().getLocalPart());
+  }
 
   /**
    * Retrieve the namespace of the function.
@@ -99,7 +102,9 @@ public interface IFunction {
    * @return the function's namespace
    */
   @NonNull
-  String getNamespace();
+  default String getNamespace() {
+    return ObjectUtils.notNull(getQName().getNamespaceURI());
+  }
 
   /**
    * Retrieve the namespace qualified name of the function.
@@ -107,9 +112,7 @@ public interface IFunction {
    * @return the namespace qualified name
    */
   @NonNull
-  default QName getQName() {
-    return new QName(getNamespace(), getName());
-  }
+  QName getQName();
 
   /**
    * Retrieve the set of assigned function properties.
@@ -223,7 +226,16 @@ public interface IFunction {
    *
    * @return the signature
    */
-  String toSignature();
+  @NonNull
+  default String toSignature() {
+    return ObjectUtils.notNull(String.format("Q{%s}%s(%s) as %s",
+        getNamespace(),
+        getName(),
+        getArguments().isEmpty() ? ""
+            : getArguments().stream().map(IArgument::toSignature).collect(Collectors.joining(","))
+                + (isArityUnbounded() ? ", ..." : ""),
+        getResult().toSignature()));
+  }
 
   /**
    * Construct a new function signature builder.
@@ -247,7 +259,9 @@ public interface IFunction {
     private final EnumSet<FunctionProperty> properties = EnumSet.noneOf(FunctionProperty.class);
     @NonNull
     private final List<IArgument> arguments = new LinkedList<>();
+    @NonNull
     private Class<? extends IItem> returnType = IItem.class;
+    @NonNull
     private Occurrence returnOccurrence = Occurrence.ONE;
     private IFunctionExecutor functionHandler;
 
@@ -500,15 +514,6 @@ public interface IFunction {
      */
     @NonNull
     public IFunction build() {
-      ISequenceType sequenceType;
-      if (returnType == null) {
-        sequenceType = ISequenceType.EMPTY;
-      } else {
-        sequenceType = new SequenceTypeImpl(
-            returnType,
-            ObjectUtils.requireNonNull(returnOccurrence, "the return occurrence must not be null"));
-      }
-
       if (properties.contains(FunctionProperty.UNBOUNDED_ARITY) && arguments.isEmpty()) {
         throw new IllegalStateException("to allow unbounded arity, at least one argument must be provided");
       }
@@ -518,7 +523,7 @@ public interface IFunction {
           ObjectUtils.requireNonNull(namespace, "the namespace must not be null"),
           properties,
           new ArrayList<>(arguments),
-          sequenceType,
+          ISequenceType.of(returnType, returnOccurrence),
           ObjectUtils.requireNonNull(functionHandler, "the function handler must not be null"));
     }
   }

@@ -36,7 +36,7 @@ import java.time.temporal.ChronoUnit;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public interface IDateItem extends IAnyAtomicItem {
+public interface IDateItem extends ITemporalItem {
 
   /**
    * Construct a new date item using the provided string {@code value}.
@@ -100,28 +100,8 @@ public interface IDateItem extends IAnyAtomicItem {
     return cast(item);
   }
 
-  /**
-   * Get the "wrapped" date value.
-   *
-   * @return the underlying date value
-   */
-  @NonNull
-  ZonedDateTime asZonedDateTime();
-
   @Override
   default int compareTo(IAnyAtomicItem item) {
     return compareTo(cast(item));
-  }
-
-  /**
-   * Compares this value with the argument.
-   *
-   * @param item
-   *          the item to compare with this value
-   * @return a negative integer, zero, or a positive integer if this value is less
-   *         than, equal to, or greater than the {@code item}.
-   */
-  default int compareTo(@NonNull IDateItem item) {
-    return asZonedDateTime().compareTo(item.asZonedDateTime());
   }
 }

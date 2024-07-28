@@ -42,6 +42,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.talsmasoftware.lazy4j.Lazy;
@@ -116,7 +118,7 @@ public abstract class AbstractModule<
   }
 
   @Override
-  public FL getExportedFlagDefinitionByName(String name) {
+  public FL getExportedFlagDefinitionByName(QName name) {
     return getExports().getExportedFlagDefinitionMap().get(name);
   }
 
@@ -127,7 +129,7 @@ public abstract class AbstractModule<
   }
 
   @Override
-  public FI getExportedFieldDefinitionByName(String name) {
+  public FI getExportedFieldDefinitionByName(QName name) {
     return getExports().getExportedFieldDefinitionMap().get(name);
   }
 
@@ -138,13 +140,20 @@ public abstract class AbstractModule<
   }
 
   @Override
-  public A getExportedAssemblyDefinitionByName(String name) {
+  public A getExportedAssemblyDefinitionByName(QName name) {
     return getExports().getExportedAssemblyDefinitionMap().get(name);
+  }
+
+  @Override
+  public A getExportedRootAssemblyDefinitionByName(QName name) {
+    return getExports().getExportedRootAssemblyDefinitionMap().get(name);
   }
 
   @SuppressWarnings({ "unused", "PMD.UnusedPrivateMethod" }) // used by lambda
   private static <DEF extends IDefinition> DEF handleShadowedDefinitions(
-      @SuppressWarnings("unused") @NonNull String key, @NonNull DEF oldDef, @NonNull DEF newDef) {
+      @SuppressWarnings("unused") @NonNull QName key,
+      @NonNull DEF oldDef,
+      @NonNull DEF newDef) {
     if (!oldDef.equals(newDef) && LOGGER.isWarnEnabled()) {
       LOGGER.warn("The {} '{}' from metaschema '{}' is shadowing '{}' from metaschema '{}'",
           newDef.getModelType().name().toLowerCase(Locale.ROOT),
@@ -158,11 +167,13 @@ public abstract class AbstractModule<
 
   private class Exports {
     @NonNull
-    private final Map<String, FL> exportedFlagDefinitions;
+    private final Map<QName, FL> exportedFlagDefinitions;
     @NonNull
-    private final Map<String, FI> exportedFieldDefinitions;
+    private final Map<QName, FI> exportedFieldDefinitions;
     @NonNull
-    private final Map<String, A> exportedAssemblyDefinitions;
+    private final Map<QName, A> exportedAssemblyDefinitions;
+    @NonNull
+    private final Map<QName, A> exportedRootAssemblyDefinitions;
 
     @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public Exports(@NonNull List<? extends M> importedModules) {
@@ -196,19 +207,19 @@ public abstract class AbstractModule<
       // Build the maps. Definitions from this module will take priority, with
       // shadowing being reported when a definition from this module has the same name
       // as an imported one
-      Map<String, FL> exportedFlagDefinitions = flags.collect(
+      Map<QName, FL> exportedFlagDefinitions = flags.collect(
           CustomCollectors.toMap(
-              IFlagDefinition::getName,
+              IFlagDefinition::getDefinitionQName,
               CustomCollectors.identity(),
               AbstractModule::handleShadowedDefinitions));
-      Map<String, FI> exportedFieldDefinitions = fields.collect(
+      Map<QName, FI> exportedFieldDefinitions = fields.collect(
           CustomCollectors.toMap(
-              IFieldDefinition::getName,
+              IFieldDefinition::getDefinitionQName,
               CustomCollectors.identity(),
               AbstractModule::handleShadowedDefinitions));
-      Map<String, A> exportedAssemblyDefinitions = assemblies.collect(
+      Map<QName, A> exportedAssemblyDefinitions = assemblies.collect(
           CustomCollectors.toMap(
-              IAssemblyDefinition::getName,
+              IAssemblyDefinition::getDefinitionQName,
               CustomCollectors.identity(),
               AbstractModule::handleShadowedDefinitions));
 
@@ -221,22 +232,34 @@ public abstract class AbstractModule<
       this.exportedAssemblyDefinitions = exportedAssemblyDefinitions.isEmpty()
           ? CollectionUtil.emptyMap()
           : CollectionUtil.unmodifiableMap(exportedAssemblyDefinitions);
-
+      this.exportedRootAssemblyDefinitions = exportedAssemblyDefinitions.isEmpty()
+          ? CollectionUtil.emptyMap()
+          : CollectionUtil.unmodifiableMap(ObjectUtils.notNull(exportedAssemblyDefinitions.values().stream()
+              .filter(IAssemblyDefinition::isRoot)
+              .collect(CustomCollectors.toMap(
+                  IAssemblyDefinition::getRootXmlQName,
+                  CustomCollectors.identity(),
+                  AbstractModule::handleShadowedDefinitions))));
     }
 
     @NonNull
-    public Map<String, FL> getExportedFlagDefinitionMap() {
+    public Map<QName, FL> getExportedFlagDefinitionMap() {
       return this.exportedFlagDefinitions;
     }
 
     @NonNull
-    public Map<String, FI> getExportedFieldDefinitionMap() {
+    public Map<QName, FI> getExportedFieldDefinitionMap() {
       return this.exportedFieldDefinitions;
     }
 
     @NonNull
-    public Map<String, A> getExportedAssemblyDefinitionMap() {
+    public Map<QName, A> getExportedAssemblyDefinitionMap() {
       return this.exportedAssemblyDefinitions;
+    }
+
+    @NonNull
+    public Map<QName, A> getExportedRootAssemblyDefinitionMap() {
+      return this.exportedRootAssemblyDefinitions;
     }
   }
 }

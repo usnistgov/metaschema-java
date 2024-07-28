@@ -28,7 +28,8 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
-import gov.nist.secauto.metaschema.core.model.IFeatureDefinitionReferenceInstance;
+import gov.nist.secauto.metaschema.core.model.AbstractAssemblyInstance;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
@@ -38,12 +39,14 @@ import gov.nist.secauto.metaschema.databind.model.IGroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 import gov.nist.secauto.metaschema.databind.model.annotations.ModelUtil;
+import gov.nist.secauto.metaschema.databind.model.info.IModelInstanceCollectionInfo;
 
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.function.Predicate;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 /**
@@ -51,16 +54,25 @@ import nl.talsmasoftware.lazy4j.Lazy;
  * supported by a bound definition class.
  */
 // TODO: implement getProperties()
-public class InstanceModelAssemblyComplex
-    extends AbstractBoundInstanceModelJavaField<BoundAssembly>
-    implements IBoundInstanceModelAssembly,
-    IFeatureDefinitionReferenceInstance<IBoundDefinitionModelAssembly, IBoundInstanceModelAssembly> {
+public final class InstanceModelAssemblyComplex
+    extends AbstractAssemblyInstance<
+        IBoundDefinitionModelAssembly,
+        IBoundDefinitionModelAssembly,
+        IBoundInstanceModelAssembly,
+        IBoundDefinitionModelAssembly>
+    implements IBoundInstanceModelAssembly, IFeatureInstanceModelGroupAs<IBoundObject> {
+  @NonNull
+  private final Field javaField;
+  @NonNull
+  private final BoundAssembly annotation;
+  @NonNull
+  private final Lazy<IModelInstanceCollectionInfo<IBoundObject>> collectionInfo;
   @NonNull
   private final IBoundDefinitionModelAssembly definition;
   @NonNull
   private final IGroupAs groupAs;
   @NonNull
-  private final Lazy<Map<String, IBoundProperty>> jsonProperties;
+  private final Lazy<Map<String, IBoundProperty<?>>> jsonProperties;
 
   /**
    * Construct a new field instance bound to a Java field, supported by a bound
@@ -72,35 +84,75 @@ public class InstanceModelAssemblyComplex
    *          the assembly definition this instance is bound to
    * @param containingDefinition
    *          the definition containing this instance
+   * @return the instance
    */
-  public InstanceModelAssemblyComplex(
+  @NonNull
+  public static InstanceModelAssemblyComplex newInstance(
       @NonNull Field javaField,
       @NonNull IBoundDefinitionModelAssembly definition,
       @NonNull IBoundDefinitionModelAssembly containingDefinition) {
-    super(javaField, BoundAssembly.class, containingDefinition);
-    this.definition = definition;
-    this.groupAs = ModelUtil.groupAs(getAnnotation().groupAs());
-    if (getMaxOccurs() == -1 || getMaxOccurs() > 1) {
-      if (IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
+    BoundAssembly annotation = ModelUtil.getAnnotation(javaField, BoundAssembly.class);
+    IGroupAs groupAs = ModelUtil.resolveDefaultGroupAs(
+        annotation.groupAs(),
+        containingDefinition.getContainingModule());
+    if (annotation.maxOccurs() == -1 || annotation.maxOccurs() > 1) {
+      if (IGroupAs.SINGLETON_GROUP_AS.equals(groupAs)) {
         throw new IllegalStateException(String.format("Field '%s' on class '%s' is missing the '%s' annotation.",
-            getField().getName(),
+            javaField.getName(),
             containingDefinition.getBoundClass().getName(),
             GroupAs.class.getName()));
       }
-    } else if (!IGroupAs.SINGLETON_GROUP_AS.equals(this.groupAs)) {
+    } else if (!IGroupAs.SINGLETON_GROUP_AS.equals(groupAs)) {
       // max is 1 and a groupAs is set
       throw new IllegalStateException(
           String.format(
               "Field '%s' on class '%s' has the '%s' annotation, but maxOccurs=1. A groupAs must not be specfied.",
-              getField().getName(),
+              javaField.getName(),
               containingDefinition.getBoundClass().getName(),
               GroupAs.class.getName()));
     }
+    return new InstanceModelAssemblyComplex(javaField, annotation, groupAs, definition, containingDefinition);
+  }
+
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
+  private InstanceModelAssemblyComplex(
+      @NonNull Field javaField,
+      @NonNull BoundAssembly annotation,
+      @NonNull IGroupAs groupAs,
+      @NonNull IBoundDefinitionModelAssembly definition,
+      @NonNull IBoundDefinitionModelAssembly containingDefinition) {
+    super(containingDefinition);
+    this.javaField = javaField;
+    this.annotation = annotation;
+    this.groupAs = groupAs;
+    this.collectionInfo = ObjectUtils.notNull(Lazy.lazy(() -> IModelInstanceCollectionInfo.of(this)));
+    this.definition = definition;
     this.jsonProperties = ObjectUtils.notNull(Lazy.lazy(() -> {
-      IBoundInstanceFlag jsonKey = getJsonKey();
-      Predicate<IBoundInstanceFlag> flagFilter = jsonKey == null ? null : (flag) -> !jsonKey.equals(flag);
+      IBoundInstanceFlag jsonKey = getEffectiveJsonKey();
+      Predicate<IBoundInstanceFlag> flagFilter = jsonKey == null ? null : flag -> !jsonKey.equals(flag);
       return getDefinition().getJsonProperties(flagFilter);
     }));
+  }
+
+  @Override
+  public Field getField() {
+    return javaField;
+  }
+
+  /**
+   * Get the binding Java annotation.
+   *
+   * @return the binding Java annotation
+   */
+  @NonNull
+  public BoundAssembly getAnnotation() {
+    return annotation;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public IModelInstanceCollectionInfo<IBoundObject> getCollectionInfo() {
+    return collectionInfo.get();
   }
 
   // ------------------------------------------
@@ -108,7 +160,7 @@ public class InstanceModelAssemblyComplex
   // ------------------------------------------
 
   @Override
-  public Map<String, IBoundProperty> getJsonProperties() {
+  public Map<String, IBoundProperty<?>> getJsonProperties() {
     return ObjectUtils.notNull(jsonProperties.get());
   }
 
@@ -144,12 +196,12 @@ public class InstanceModelAssemblyComplex
   }
 
   @Override
-  public final int getMinOccurs() {
+  public int getMinOccurs() {
     return getAnnotation().minOccurs();
   }
 
   @Override
-  public final int getMaxOccurs() {
+  public int getMaxOccurs() {
     return getAnnotation().maxOccurs();
   }
 

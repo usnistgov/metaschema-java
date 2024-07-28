@@ -42,6 +42,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
@@ -165,9 +167,9 @@ public class DefaultContainerModelAssemblySupport<
    */
   protected DefaultContainerModelAssemblySupport(
       @NonNull List<MI> instances,
-      @NonNull Map<String, NMI> namedModelInstances,
-      @NonNull Map<String, FI> fieldInstances,
-      @NonNull Map<String, AI> assemblyInstances,
+      @NonNull Map<QName, NMI> namedModelInstances,
+      @NonNull Map<QName, FI> fieldInstances,
+      @NonNull Map<QName, AI> assemblyInstances,
       @NonNull List<CI> choiceInstances,
       @NonNull Map<String, CGI> choiceGroupInstances) {
     super(instances, namedModelInstances, fieldInstances, assemblyInstances);

@@ -30,9 +30,12 @@ import gov.nist.secauto.metaschema.core.model.constraint.IFeatureValueConstraine
 
 import java.util.Locale;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import javax.xml.namespace.QName;
 
-public interface IDefinition extends IModelElement, INamed, IAttributable, IFeatureValueConstrained {
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
+public interface IDefinition extends INamedModelElement, IAttributable, IFeatureValueConstrained {
 
   @NonNull
   ModuleScopeEnum DEFAULT_DEFINITION_MODEL_SCOPE = ModuleScopeEnum.INHERITED;
@@ -48,6 +51,21 @@ public interface IDefinition extends IModelElement, INamed, IAttributable, IFeat
   }
 
   /**
+   * The qualified name for the definition.
+   * <p>
+   * This name is the combination of the definition's namespace, which is the
+   * module's namespace, and the definition's name.
+   *
+   * @return the definition's qualified name
+   */
+  @NonNull
+  default QName getDefinitionQName() {
+    return new QName(
+        getContainingModule().getXmlNamespace().toASCIIString(),
+        getName());
+  }
+
+  /**
    * Determine if the definition is defined inline, meaning the definition is
    * declared where it is used.
    *
@@ -55,7 +73,7 @@ public interface IDefinition extends IModelElement, INamed, IAttributable, IFeat
    *         the definition is able to be globally referenced
    */
   default boolean isInline() {
-    return false;
+    return getInlineInstance() != null;
   }
 
   /**
@@ -90,4 +108,16 @@ public interface IDefinition extends IModelElement, INamed, IAttributable, IFeat
         hashCode());
   }
 
+  /**
+   * Get the resource location information for the provided item, if known.
+   *
+   * @param itemValue
+   *          the item to get the location information for
+   *
+   * @return the resource location information, or {@code null} if not known
+   */
+  @Nullable
+  default IResourceLocation getLocation(@NonNull Object itemValue) {
+    return itemValue instanceof IBoundObject ? ((IBoundObject) itemValue).getMetaschemaData() : null;
+  }
 }

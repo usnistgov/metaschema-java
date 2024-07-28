@@ -35,6 +35,12 @@ import java.util.regex.Pattern;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * An implementation of the
+ * <a href="https://www.w3.org/TR/xpath-31/#id-literals">String Literal
+ * Expression</a> supporting the creation of a Metapath constant literal
+ * {@link IStringItem}.
+ */
 public class StringLiteral
     extends AbstractLiteralExpression<IStringItem, String> {
 

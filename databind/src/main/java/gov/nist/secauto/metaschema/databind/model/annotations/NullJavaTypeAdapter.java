@@ -31,9 +31,12 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 import gov.nist.secauto.metaschema.core.datatype.AbstractDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
+import gov.nist.secauto.metaschema.core.metapath.item.function.IMapKey;
 import gov.nist.secauto.metaschema.databind.model.annotations.NullJavaTypeAdapter.VoidItem;
 
 import java.util.List;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -53,7 +56,6 @@ public class NullJavaTypeAdapter
    */
   public NullJavaTypeAdapter(@NonNull Class<Void> clazz) {
     super(clazz);
-    throw new UnsupportedOperationException(NOT_VALID);
   }
 
   @Override
@@ -77,7 +79,7 @@ public class NullJavaTypeAdapter
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     throw new UnsupportedOperationException(NOT_VALID);
   }
 
@@ -118,6 +120,11 @@ public class NullJavaTypeAdapter
 
     @Override
     public int compareTo(IAnyAtomicItem item) {
+      throw new UnsupportedOperationException(NOT_VALID);
+    }
+
+    @Override
+    public IMapKey asMapKey() {
       throw new UnsupportedOperationException(NOT_VALID);
     }
   }

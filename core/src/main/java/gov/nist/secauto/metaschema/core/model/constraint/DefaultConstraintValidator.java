@@ -26,6 +26,9 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
+import gov.nist.secauto.metaschema.core.configuration.DefaultConfiguration;
+import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
+import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
@@ -36,7 +39,6 @@ import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.core.metapath.item.node.AbstractNodeItemVisitor;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IAssemblyNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
-import gov.nist.secauto.metaschema.core.metapath.item.node.IDocumentNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFieldNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
@@ -45,7 +47,9 @@ import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
 import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -58,6 +62,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -66,8 +72,12 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * <p>
  * This class is not thread safe.
  */
-@SuppressWarnings("PMD.CouplingBetweenObjects")
-public class DefaultConstraintValidator implements IConstraintValidator { // NOPMD - intentional
+@SuppressWarnings({
+    "PMD.CouplingBetweenObjects",
+    "PMD.GodClass" // provides validators for all types
+})
+public class DefaultConstraintValidator
+    implements IConstraintValidator, IMutableConfiguration<ValidationFeature<?>> { // NOPMD - intentional
   private static final Logger LOGGER = LogManager.getLogger(DefaultConstraintValidator.class);
 
   @NonNull
@@ -78,6 +88,8 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   private final Map<String, List<KeyRef>> indexNameToKeyRefMap = new ConcurrentHashMap<>();
   @NonNull
   private final IConstraintValidationHandler handler;
+  @NonNull
+  private final IMutableConfiguration<ValidationFeature<?>> configuration;
 
   /**
    * Construct a new constraint validator instance.
@@ -85,8 +97,53 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
    * @param handler
    *          the validation handler to use for handling constraint violations
    */
-  public DefaultConstraintValidator(@NonNull IConstraintValidationHandler handler) {
+  public DefaultConstraintValidator(
+      @NonNull IConstraintValidationHandler handler) {
     this.handler = handler;
+    this.configuration = new DefaultConfiguration<>();
+  }
+
+  /**
+   * Get the current configuration of the serializer/deserializer.
+   *
+   * @return the configuration
+   */
+  @NonNull
+  protected IMutableConfiguration<ValidationFeature<?>> getConfiguration() {
+    return configuration;
+  }
+
+  @Override
+  public DefaultConstraintValidator enableFeature(ValidationFeature<?> feature) {
+    return set(feature, true);
+  }
+
+  @Override
+  public DefaultConstraintValidator disableFeature(ValidationFeature<?> feature) {
+    return set(feature, false);
+  }
+
+  @Override
+  public DefaultConstraintValidator applyConfiguration(
+      @NonNull IConfiguration<ValidationFeature<?>> other) {
+    getConfiguration().applyConfiguration(other);
+    return this;
+  }
+
+  @Override
+  public DefaultConstraintValidator set(ValidationFeature<?> feature, Object value) {
+    getConfiguration().set(feature, value);
+    return this;
+  }
+
+  @Override
+  public boolean isFeatureEnabled(ValidationFeature<?> feature) {
+    return getConfiguration().isFeatureEnabled(feature);
+  }
+
+  @Override
+  public Map<ValidationFeature<?>, Object> getFeatureValues() {
+    return getConfiguration().getFeatureValues();
   }
 
   /**
@@ -223,14 +280,23 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       @NonNull ISequence<? extends INodeItem> targets) {
     int itemCount = targets.size();
 
+    IConstraintValidationHandler handler = getConstraintValidationHandler();
+
+    boolean violation = false;
     Integer minOccurs = constraint.getMinOccurs();
     if (minOccurs != null && itemCount < minOccurs) {
-      getConstraintValidationHandler().handleCardinalityMinimumViolation(constraint, node, targets);
+      handler.handleCardinalityMinimumViolation(constraint, node, targets);
+      violation = true;
     }
 
     Integer maxOccurs = constraint.getMaxOccurs();
     if (maxOccurs != null && itemCount > maxOccurs) {
-      getConstraintValidationHandler().handleCardinalityMaximumViolation(constraint, node, targets);
+      handler.handleCardinalityMaximumViolation(constraint, node, targets);
+      violation = true;
+    }
+
+    if (!violation) {
+      handlePass(constraint, node, node);
     }
   }
 
@@ -282,27 +348,39 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       @NonNull ISequence<? extends INodeItem> targets,
       @NonNull DynamicContext dynamicContext) {
     String indexName = constraint.getName();
-    if (indexNameToIndexMap.containsKey(indexName)) {
-      getConstraintValidationHandler().handleIndexDuplicateViolation(constraint, node);
-      return; // NOPMD - readability
-    }
 
-    IIndex index = IIndex.newInstance(constraint.getKeyFields());
-    targets.asStream()
-        .forEachOrdered(item -> {
-          assert item != null;
-          if (item.hasValue()) {
-            try {
-              INodeItem oldItem = index.put(item, dynamicContext);
-              if (oldItem != null) {
-                getConstraintValidationHandler().handleIndexDuplicateKeyViolation(constraint, node, oldItem, item);
+    IConstraintValidationHandler handler = getConstraintValidationHandler();
+    if (indexNameToIndexMap.containsKey(indexName)) {
+      handler.handleIndexDuplicateViolation(constraint, node);
+    } else {
+      IIndex index = IIndex.newInstance(constraint.getKeyFields());
+      targets.stream()
+          .forEachOrdered(item -> {
+            assert item != null;
+            if (item.hasValue()) {
+              try {
+                INodeItem oldItem = index.put(item, dynamicContext);
+                if (oldItem == null) {
+                  handlePass(constraint, node, item);
+                } else {
+                  handler.handleIndexDuplicateKeyViolation(constraint, node, oldItem, item);
+                }
+              } catch (MetapathException ex) {
+                handler.handleKeyMatchError(constraint, node, item, ex);
               }
-            } catch (MetapathException ex) {
-              getConstraintValidationHandler().handleKeyMatchError(constraint, node, item, ex);
             }
-          }
-        });
-    indexNameToIndexMap.put(indexName, index);
+          });
+      indexNameToIndexMap.put(indexName, index);
+    }
+  }
+
+  private void handlePass(
+      @NonNull IConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem item) {
+    if (isFeatureEnabled(ValidationFeature.VALIDATE_GENERATE_PASS_FINDINGS)) {
+      getConstraintValidationHandler().handlePass(constraint, node, item);
+    }
   }
 
   /**
@@ -352,18 +430,22 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       @NonNull IAssemblyNodeItem node,
       @NonNull ISequence<? extends INodeItem> targets,
       @NonNull DynamicContext dynamicContext) {
+
+    IConstraintValidationHandler handler = getConstraintValidationHandler();
     IIndex index = IIndex.newInstance(constraint.getKeyFields());
-    targets.asStream()
+    targets.stream()
         .forEachOrdered(item -> {
           assert item != null;
           if (item.hasValue()) {
             try {
               INodeItem oldItem = index.put(item, dynamicContext);
-              if (oldItem != null) {
-                getConstraintValidationHandler().handleUniqueKeyViolation(constraint, node, oldItem, item);
+              if (oldItem == null) {
+                handlePass(constraint, node, item);
+              } else {
+                handler.handleUniqueKeyViolation(constraint, node, oldItem, item);
               }
             } catch (MetapathException ex) {
-              getConstraintValidationHandler().handleKeyMatchError(constraint, node, item, ex);
+              handler.handleKeyMatchError(constraint, node, item, ex);
               throw ex;
             }
           }
@@ -414,28 +496,43 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       @NonNull IMatchesConstraint constraint,
       @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets) {
-    targets.asStream()
+    targets.stream()
         .forEachOrdered(item -> {
           assert item != null;
           if (item.hasValue()) {
-            String value = FnData.fnDataItem(item).asString();
-
-            Pattern pattern = constraint.getPattern();
-            if (pattern != null && !pattern.asMatchPredicate().test(value)) {
-              // failed pattern match
-              getConstraintValidationHandler().handleMatchPatternViolation(constraint, node, item, value);
-            }
-
-            IDataTypeAdapter<?> adapter = constraint.getDataType();
-            if (adapter != null) {
-              try {
-                adapter.parse(value);
-              } catch (IllegalArgumentException ex) {
-                getConstraintValidationHandler().handleMatchDatatypeViolation(constraint, node, item, value, ex);
-              }
-            }
+            validateMatchesItem(constraint, node, item);
           }
         });
+  }
+
+  private void validateMatchesItem(
+      @NonNull IMatchesConstraint constraint,
+      @NonNull INodeItem node,
+      @NonNull INodeItem item) {
+    String value = FnData.fnDataItem(item).asString();
+
+    IConstraintValidationHandler handler = getConstraintValidationHandler();
+    boolean valid = true;
+    Pattern pattern = constraint.getPattern();
+    if (pattern != null && !pattern.asMatchPredicate().test(value)) {
+      // failed pattern match
+      handler.handleMatchPatternViolation(constraint, node, item, value, pattern);
+      valid = false;
+    }
+
+    IDataTypeAdapter<?> adapter = constraint.getDataType();
+    if (adapter != null) {
+      try {
+        adapter.parse(value);
+      } catch (IllegalArgumentException ex) {
+        handler.handleMatchDatatypeViolation(constraint, node, item, value, adapter, ex);
+        valid = false;
+      }
+    }
+
+    if (valid) {
+      handlePass(constraint, node, item);
+    }
   }
 
   /**
@@ -486,7 +583,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       indexNameToKeyRefMap.put(indexName, keyRefItems);
     }
 
-    KeyRef keyRef = new KeyRef(constraint, node, new ArrayList<>(targets.asList()));
+    KeyRef keyRef = new KeyRef(constraint, node, new ArrayList<>(targets.getValue()));
     keyRefItems.add(keyRef);
   }
 
@@ -533,16 +630,21 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       @NonNull INodeItem node,
       @NonNull ISequence<? extends INodeItem> targets,
       @NonNull DynamicContext dynamicContext) {
-    targets.asStream()
-        .map(item -> (INodeItem) item)
+    MetapathExpression metapath = MetapathExpression.compile(
+        constraint.getTest(),
+        dynamicContext.getStaticContext());
+
+    IConstraintValidationHandler handler = getConstraintValidationHandler();
+    targets.stream()
         .forEachOrdered(item -> {
           assert item != null;
           if (item.hasValue()) {
-            MetapathExpression metapath = constraint.getTest();
             try {
               ISequence<?> result = metapath.evaluate(item, dynamicContext);
-              if (!FnBoolean.fnBoolean(result).toBoolean()) {
-                getConstraintValidationHandler().handleExpectViolation(constraint, node, item, dynamicContext);
+              if (FnBoolean.fnBoolean(result).toBoolean()) {
+                handlePass(constraint, node, item);
+              } else {
+                handler.handleExpectViolation(constraint, node, item, dynamicContext);
               }
             } catch (MetapathException ex) {
               rethrowConstraintError(constraint, item, ex);
@@ -569,7 +671,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       @NonNull DynamicContext dynamicContext) {
     for (IAllowedValuesConstraint constraint : constraints) {
       ISequence<? extends IDefinitionNodeItem<?, ?>> targets = constraint.matchTargets(item, dynamicContext);
-      validateAllowedValues(constraint, targets);
+      validateAllowedValues(constraint, item, targets);
     }
   }
 
@@ -579,18 +681,22 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
    *
    * @param constraint
    *          the constraint to execute
+   * @param node
+   *          the original focus of Metapath evaluation for identifying the
+   *          targets
    * @param targets
    *          the focus of Metapath evaluation for evaluating any constraint
    *          Metapath clauses
    */
   private void validateAllowedValues(
       @NonNull IAllowedValuesConstraint constraint,
+      @NonNull IDefinitionNodeItem<?, ?> node,
       @NonNull ISequence<? extends IDefinitionNodeItem<?, ?>> targets) {
-    targets.asStream().forEachOrdered(item -> {
+    targets.stream().forEachOrdered(item -> {
       assert item != null;
       if (item.hasValue()) {
         try {
-          updateValueStatus(item, constraint);
+          updateValueStatus(item, constraint, node);
         } catch (MetapathException ex) {
           rethrowConstraintError(constraint, item, ex);
         }
@@ -610,7 +716,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     String id = constraint.getId();
     if (id == null) {
       builder.append(" targeting the metapath '")
-          .append(constraint.getTarget().getPath())
+          .append(constraint.getTarget())
           .append('\'');
     } else {
       builder.append(" with id '")
@@ -632,9 +738,15 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
    * @param targetItem
    *          the item whose value is targeted by the constraint
    * @param allowedValues
-   *          the set of allowed values
+   *          the allowed values constraint
+   * @param node
+   *          the original focus of Metapath evaluation for identifying the
+   *          targets
    */
-  protected void updateValueStatus(@NonNull INodeItem targetItem, @NonNull IAllowedValuesConstraint allowedValues) {
+  protected void updateValueStatus(
+      @NonNull INodeItem targetItem,
+      @NonNull IAllowedValuesConstraint allowedValues,
+      @NonNull IDefinitionNodeItem<?, ?> node) {
     // constraint.getAllowedValues().containsKey(value)
 
     @Nullable ValueStatus valueStatus = valueMap.get(targetItem);
@@ -643,7 +755,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       valueMap.put(targetItem, valueStatus);
     }
 
-    valueStatus.registerAllowedValue(allowedValues);
+    valueStatus.registerAllowedValue(allowedValues, node);
   }
 
   /**
@@ -664,41 +776,56 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
   public void finalizeValidation(DynamicContext dynamicContext) {
     // key references
     for (Map.Entry<String, List<KeyRef>> entry : indexNameToKeyRefMap.entrySet()) {
-      String indexName = entry.getKey();
+      String indexName = ObjectUtils.notNull(entry.getKey());
       IIndex index = indexNameToIndexMap.get(indexName);
 
       List<KeyRef> keyRefs = entry.getValue();
 
       for (KeyRef keyRef : keyRefs) {
         IIndexHasKeyConstraint constraint = keyRef.getConstraint();
-        for (INodeItem item : keyRef.getTargets()) {
+
+        INodeItem node = keyRef.getNode();
+        List<INodeItem> targets = keyRef.getTargets();
+        for (INodeItem item : targets) {
           assert item != null;
 
-          try {
-            List<String> key = IIndex.toKey(item, constraint.getKeyFields(), dynamicContext);
-
-            if (index == null) {
-              getConstraintValidationHandler().handleGenericValidationViolation(constraint, keyRef.getNode(), item,
-                  String.format("Key reference to undefined index with name '%s'", indexName));
-            } else {
-
-              INodeItem referencedItem = index.get(key);
-
-              if (referencedItem == null) {
-                getConstraintValidationHandler().handleIndexMiss(constraint, keyRef.getNode(), item, key);
-              }
-            }
-          } catch (MetapathException ex) {
-            getConstraintValidationHandler().handleKeyMatchError(constraint, keyRef.getNode(), item, ex);
-          }
+          validateKeyRef(constraint, node, item, indexName, index, dynamicContext);
         }
       }
     }
   }
 
+  private void validateKeyRef(
+      @NonNull IIndexHasKeyConstraint constraint,
+      @NonNull INodeItem contextNode,
+      @NonNull INodeItem item,
+      @NonNull String indexName,
+      @Nullable IIndex index,
+      @NonNull DynamicContext dynamicContext) {
+    IConstraintValidationHandler handler = getConstraintValidationHandler();
+    try {
+      List<String> key = IIndex.toKey(item, constraint.getKeyFields(), dynamicContext);
+
+      if (index == null) {
+        handler.handleMissingIndexViolation(constraint, contextNode, item, ObjectUtils.notNull(
+            String.format("Key reference to undefined index with name '%s'", indexName)));
+      } else {
+        INodeItem referencedItem = index.get(key);
+
+        if (referencedItem == null) {
+          handler.handleIndexMiss(constraint, contextNode, item, key);
+        } else {
+          handlePass(constraint, contextNode, item);
+        }
+      }
+    } catch (MetapathException ex) {
+      handler.handleKeyMatchError(constraint, contextNode, item, ex);
+    }
+  }
+
   private class ValueStatus {
     @NonNull
-    private final List<IAllowedValuesConstraint> constraints = new LinkedList<>();
+    private final List<Pair<IAllowedValuesConstraint, IDefinitionNodeItem<?, ?>>> constraints = new LinkedList<>();
     @NonNull
     private final String value;
     @NonNull
@@ -712,8 +839,10 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       this.value = FnData.fnDataItem(item).asString();
     }
 
-    public void registerAllowedValue(@NonNull IAllowedValuesConstraint allowedValues) {
-      this.constraints.add(allowedValues);
+    public void registerAllowedValue(
+        @NonNull IAllowedValuesConstraint allowedValues,
+        @NonNull IDefinitionNodeItem<?, ?> node) {
+      this.constraints.add(Pair.of(allowedValues, node));
       if (!allowedValues.isAllowedOther()) {
         // record the most restrictive value
         allowOthers = false;
@@ -742,10 +871,14 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
       if (!constraints.isEmpty()) {
         boolean match = false;
         List<IAllowedValuesConstraint> failedConstraints = new LinkedList<>();
-        for (IAllowedValuesConstraint allowedValues : constraints) {
+        IConstraintValidationHandler handler = getConstraintValidationHandler();
+        for (Pair<IAllowedValuesConstraint, IDefinitionNodeItem<?, ?>> pair : constraints) {
+          IAllowedValuesConstraint allowedValues = pair.getLeft();
+          IDefinitionNodeItem<?, ?> node = ObjectUtils.notNull(pair.getRight());
           IAllowedValue matchingValue = allowedValues.getAllowedValue(value);
           if (matchingValue != null) {
             match = true;
+            handlePass(allowedValues, node, item);
           } else if (IAllowedValuesConstraint.Extensible.NONE.equals(allowedValues.getExtensible())) {
             // hard failure, since no other values can satisfy this constraint
             failedConstraints = CollectionUtil.singletonList(allowedValues);
@@ -758,7 +891,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
 
         // it's not a failure if allow others is true
         if (!match && !allowOthers) {
-          getConstraintValidationHandler().handleAllowedValuesViolation(failedConstraints, item);
+          handler.handleAllowedValuesViolation(failedConstraints, item);
         }
       }
     }
@@ -770,7 +903,7 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
     @NonNull
     private DynamicContext handleLetStatements(
         @NonNull INodeItem focus,
-        @NonNull Map<String, ILet> letExpressions,
+        @NonNull Map<QName, ILet> letExpressions,
         @NonNull DynamicContext dynamicContext) {
 
       DynamicContext retval;
@@ -781,18 +914,17 @@ public class DefaultConstraintValidator implements IConstraintValidator { // NOP
         final DynamicContext subContext = dynamicContext.subContext();
 
         for (ILet let : lets) {
-          String name = let.getName();
+          QName name = let.getName();
           ISequence<?> result = let.getValueExpression().evaluate(focus, subContext);
+
+          // ensure the sequence is list backed
+          result.getValue();
+
           subContext.bindVariableValue(name, result);
         }
         retval = subContext;
       }
       return retval;
-    }
-
-    @Override
-    public Void visitDocument(@NonNull IDocumentNodeItem item, DynamicContext context) {
-      return super.visitDocument(item, context);
     }
 
     @Override

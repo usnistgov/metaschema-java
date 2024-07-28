@@ -37,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.StaticContext;
 import gov.nist.secauto.metaschema.core.metapath.format.IPathFormatter;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IFlagNodeItem;
@@ -53,32 +52,41 @@ import org.jmock.lib.action.CustomAction;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.net.URI;
 import java.util.List;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 @SuppressWarnings("PMD.TooManyStaticImports")
 class DefaultConstraintValidatorTest {
+  private static final String NS = URI.create("http://example.com/ns").toASCIIString();
+
   @RegisterExtension
   Mockery context = new JUnit5Mockery();
+
+  @NonNull
+  private static QName qname(@NonNull String name) {
+    return new QName(NS, name);
+  }
 
   @SuppressWarnings("null")
   @Test
   void testAllowedValuesAllowOther() {
     MockNodeItemFactory itemFactory = new MockNodeItemFactory(context);
 
-    IFlagNodeItem flag = itemFactory.flag("value", IStringItem.valueOf("value"));
+    IFlagNodeItem flag = itemFactory.flag(qname("value"), IStringItem.valueOf("value"));
 
     IFlagDefinition flagDefinition = context.mock(IFlagDefinition.class);
 
     IAllowedValuesConstraint allowedValues = IAllowedValuesConstraint.builder()
         .source(ISource.modelSource())
         .allowedValue(IAllowedValue.of("other", MarkupLine.fromMarkdown("some documentation")))
-        .allowedOther(true)
+        .allowsOther(true)
         .build();
 
-    DynamicContext dynamicContext = StaticContext.builder()
-        .build().dynamicContext();
+    DynamicContext dynamicContext = new DynamicContext();
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
@@ -114,26 +122,25 @@ class DefaultConstraintValidatorTest {
   void testAllowedValuesMultipleAllowOther() {
     MockNodeItemFactory itemFactory = new MockNodeItemFactory(context);
 
-    IFlagNodeItem flag = itemFactory.flag("value", IStringItem.valueOf("value"));
+    IFlagNodeItem flag = itemFactory.flag(qname("value"), IStringItem.valueOf("value"));
 
     IFlagDefinition flagDefinition = context.mock(IFlagDefinition.class);
 
     IAllowedValuesConstraint allowedValues1 = IAllowedValuesConstraint.builder()
         .source(ISource.modelSource())
         .allowedValue(IAllowedValue.of("other", MarkupLine.fromMarkdown("some documentation")))
-        .allowedOther(true)
+        .allowsOther(true)
         .build();
     IAllowedValuesConstraint allowedValues2 = IAllowedValuesConstraint.builder()
         .source(ISource.modelSource())
         .allowedValue(IAllowedValue.of("other2", MarkupLine.fromMarkdown("some documentation")))
-        .allowedOther(true)
+        .allowsOther(true)
         .build();
 
     List<? extends IAllowedValuesConstraint> allowedValuesConstraints
         = List.of(allowedValues1, allowedValues2);
 
-    DynamicContext dynamicContext = StaticContext.builder()
-        .build().dynamicContext();
+    DynamicContext dynamicContext = new DynamicContext();
 
     context.checking(new Expectations() {
       { // NOPMD - intentional
@@ -169,27 +176,26 @@ class DefaultConstraintValidatorTest {
   void testMultipleAllowedValuesConflictingAllowOther() {
     MockNodeItemFactory itemFactory = new MockNodeItemFactory(context);
 
-    IFlagNodeItem flag1 = itemFactory.flag("value", IStringItem.valueOf("value"));
-    IFlagNodeItem flag2 = itemFactory.flag("other2", IStringItem.valueOf("other2"));
+    IFlagNodeItem flag1 = itemFactory.flag(qname("value"), IStringItem.valueOf("value"));
+    IFlagNodeItem flag2 = itemFactory.flag(qname("other2"), IStringItem.valueOf("other2"));
 
     IFlagDefinition flagDefinition = context.mock(IFlagDefinition.class);
 
     IAllowedValuesConstraint allowedValues1 = IAllowedValuesConstraint.builder()
         .source(ISource.modelSource())
         .allowedValue(IAllowedValue.of("other", MarkupLine.fromMarkdown("some documentation")))
-        .allowedOther(true)
+        .allowsOther(true)
         .build();
     IAllowedValuesConstraint allowedValues2 = IAllowedValuesConstraint.builder()
         .source(ISource.modelSource())
         .allowedValue(IAllowedValue.of("other2", MarkupLine.fromMarkdown("some documentation")))
-        .allowedOther(false)
+        .allowsOther(false)
         .build();
 
     List<? extends IAllowedValuesConstraint> allowedValuesConstraints
         = List.of(allowedValues1, allowedValues2);
 
-    DynamicContext dynamicContext = StaticContext.builder()
-        .build().dynamicContext();
+    DynamicContext dynamicContext = new DynamicContext();
 
     context.checking(new Expectations() {
       { // NOPMD - intentional

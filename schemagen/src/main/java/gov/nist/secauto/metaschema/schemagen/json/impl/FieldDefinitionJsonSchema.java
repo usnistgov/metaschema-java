@@ -69,9 +69,9 @@ public class FieldDefinitionJsonSchema
 
     Collection<? extends IFlagInstance> flags = definition.getFlagInstances();
     String discriminatorProperty = getDiscriminatorProperty();
-    IFlagInstance jsonKeyFlag = definition.getJsonKeyFlagInstance();
+    IFlagInstance jsonKeyFlag = definition.getJsonKey();
     if (discriminatorProperty == null
-        && (flags.isEmpty() || (jsonKeyFlag != null && flags.size() == 1))) { // NOPMD readability
+        && (flags.isEmpty() || jsonKeyFlag != null && flags.size() == 1)) { // NOPMD readability
       // field is a simple data type value if there are no flags or if the only flag
       // is a JSON key
       IDataTypeJsonSchema schema = state.getDataTypeSchemaForDefinition(definition);

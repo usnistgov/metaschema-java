@@ -27,6 +27,8 @@
 package gov.nist.secauto.metaschema.databind.model.test;
 
 import gov.nist.secauto.metaschema.core.datatype.adapter.UuidAdapter;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
+import gov.nist.secauto.metaschema.core.model.IMetaschemaData;
 import gov.nist.secauto.metaschema.core.model.JsonGroupAsBehavior;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundAssembly;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundField;
@@ -39,7 +41,9 @@ import java.util.Map;
 import java.util.UUID;
 
 @MetaschemaAssembly(name = "root", rootName = "root", moduleClass = TestMetaschema.class)
-public class RootBoundAssembly {
+public class RootBoundAssembly implements IBoundObject {
+  private final IMetaschemaData metaschemaData;
+
   @BoundFlag(name = "uuid", defaultValue = "374dd648-b247-483c-afd8-a66ba8876070", typeAdapter = UuidAdapter.class)
   private UUID uuid; // NOPMD - intentional
 
@@ -68,4 +72,17 @@ public class RootBoundAssembly {
       groupAs = @GroupAs(name = "singleton-or-array-assembly-items",
           inJson = JsonGroupAsBehavior.SINGLETON_OR_LIST))
   private List<OnlyModelBoundAssembly> singletonOrArrayAssembly; // NOPMD - intentional
+
+  public RootBoundAssembly() {
+    this(null);
+  }
+
+  public RootBoundAssembly(IMetaschemaData metaschemaData) {
+    this.metaschemaData = metaschemaData;
+  }
+
+  @Override
+  public IMetaschemaData getMetaschemaData() {
+    return metaschemaData;
+  }
 }

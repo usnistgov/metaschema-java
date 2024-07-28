@@ -32,6 +32,8 @@ import gov.nist.secauto.metaschema.databind.IBindingContext;
 import java.net.URI;
 import java.util.Collection;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public interface IBoundModule
@@ -39,7 +41,7 @@ public interface IBoundModule
         IBoundModule,
         IBoundDefinitionModelComplex,
         IBoundDefinitionFlag,
-        IBoundDefinitionModelField,
+        IBoundDefinitionModelField<?>,
         IBoundDefinitionModelAssembly> {
 
   /**
@@ -60,11 +62,11 @@ public interface IBoundModule
   Collection<IBoundDefinitionModelAssembly> getAssemblyDefinitions();
 
   @Override
-  IBoundDefinitionModelAssembly getAssemblyDefinitionByName(@NonNull String name);
+  IBoundDefinitionModelAssembly getAssemblyDefinitionByName(@NonNull QName name);
 
   @Override
-  Collection<IBoundDefinitionModelField> getFieldDefinitions();
+  Collection<IBoundDefinitionModelField<?>> getFieldDefinitions();
 
   @Override
-  IBoundDefinitionModelField getFieldDefinitionByName(@NonNull String name);
+  IBoundDefinitionModelField<?> getFieldDefinitionByName(@NonNull QName name);
 }

@@ -50,17 +50,22 @@ import com.vladsch.flexmark.parser.InlineParserExtensionFactory;
 import com.vladsch.flexmark.parser.LightInlineParser;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.NodeVisitorBase;
 import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.data.DataKey;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
-import com.vladsch.flexmark.util.misc.Extension;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
+
+import gov.nist.secauto.metaschema.core.datatype.markup.IMarkupString;
 
 import org.jsoup.nodes.Element;
 
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,7 +78,12 @@ public class InsertAnchorExtension
       = new DataKey<>("ENABLE_INLINE_INSERT_ANCHORS", true);
   public static final DataKey<Boolean> ENABLE_RENDERING = new DataKey<>("ENABLE_RENDERING", true);
 
-  public static Extension create() {
+  /**
+   * Construct a new extension instance.
+   *
+   * @return the instance
+   */
+  public static InsertAnchorExtension newInstance() {
     return new InsertAnchorExtension();
   }
 
@@ -138,26 +148,13 @@ public class InsertAnchorExtension
       }
     }
 
-    // @Override
-    // public Set<NodeRenderingHandler<?>> getNodeRenderingHandlers() {
-    // HashSet<NodeRenderingHandler<?>> set = new
-    // HashSet<NodeRenderingHandler<?>>();
-    // set.add(new NodeRenderingHandler<Macro>(Macro.class, new
-    // CustomNodeRenderer<Macro>() {
-    // @Override
-    // public void render(Macro node, NodeRendererContext context, HtmlWriter html)
-    // {
-    // MacroNodeRenderer.this.render(node, context, html); }
-    // }));
     public static class Factory implements NodeRendererFactory {
 
       @Override
       public NodeRenderer apply(DataHolder options) {
         return new InsertAnchorNodeRenderer(options);
       }
-
     }
-
   }
 
   private static class InsertAnchorInlineParser implements InlineParserExtension {
@@ -304,32 +301,64 @@ public class InsertAnchorExtension
       extends Node {
 
     @NonNull
-    private BasedSequence type;
+    private final BasedSequence type;
     @NonNull
     private BasedSequence idReference;
 
+    /**
+     * Construct a new Metaschema insert node.
+     *
+     * @param type
+     *          the type of insertion
+     * @param idReference
+     *          the identifier of the given type to use to determine what to insert
+     */
     @SuppressWarnings("null")
     public InsertAnchorNode(@NonNull String type, @NonNull String idReference) {
       this(CharSubSequence.of(type), CharSubSequence.of(idReference));
     }
 
-    public InsertAnchorNode(@NonNull BasedSequence type, @NonNull BasedSequence idReference) {
+    /**
+     * Construct a new Metaschema insert node.
+     *
+     * @param type
+     *          the type of insertion
+     * @param idReference
+     *          the identifier of the given type to use to determine what to insert
+     */
+    protected InsertAnchorNode(@NonNull BasedSequence type, @NonNull BasedSequence idReference) {
       this.type = type;
       this.idReference = idReference;
     }
 
+    /**
+     * Get the type of insertion.
+     *
+     * @return the type of insertion
+     */
     @NonNull
     public BasedSequence getType() {
       return type;
     }
 
+    /**
+     * Get the identifier of the given type to use to determine what to insert.
+     *
+     * @return the identifier
+     */
     @NonNull
     public BasedSequence getIdReference() {
       return idReference;
     }
 
-    public void setIdReference(@NonNull BasedSequence value) {
-      this.idReference = value;
+    /**
+     * Set the identifier of the given type to use to determine what to insert.
+     *
+     * @param idReference
+     *          the identifier
+     */
+    public void setIdReference(@NonNull BasedSequence idReference) {
+      this.idReference = idReference;
     }
 
     @Override
@@ -343,6 +372,62 @@ public class InsertAnchorExtension
     public void getAstExtra(StringBuilder out) {
       segmentSpanChars(out, getType(), "type");
       segmentSpanChars(out, getIdReference(), "id-ref");
+    }
+  }
+
+  /**
+   * Used to collect insert nodes.
+   */
+  public static class InsertVisitor
+      extends NodeVisitorBase {
+    @NonNull
+    private final List<InsertAnchorNode> inserts = new LinkedList<>();
+    @NonNull
+    private final Predicate<InsertAnchorNode> filter;
+
+    /**
+     * Construct a new visitor that will use the provided filter to visit matching
+     * insert nodes.
+     *
+     * @param filter
+     *          the match criteria to use to identify matching insert nodes
+     */
+    public InsertVisitor(@NonNull Predicate<InsertAnchorNode> filter) {
+      this.filter = filter;
+    }
+
+    /**
+     * Process markup to identify insert nodes.
+     *
+     * @param markup
+     *          the markup to process
+     * @return this visitor
+     */
+    public InsertVisitor processNode(@NonNull IMarkupString<?> markup) {
+      visit(markup.getDocument());
+      return this;
+    }
+
+    @Override
+    protected void visit(Node node) {
+      if (node instanceof InsertAnchorNode) {
+        InsertAnchorNode insert = (InsertAnchorNode) node;
+        if (filter.test(insert)) {
+          inserts.add((InsertAnchorNode) node);
+        }
+      } else {
+        visitChildren(node);
+      }
+    }
+
+    /**
+     * Get the collected insert nodes.
+     *
+     * @return the nodes
+     */
+    @NonNull
+    public List<InsertAnchorNode> getInserts() {
+      return inserts;
     }
   }
 }

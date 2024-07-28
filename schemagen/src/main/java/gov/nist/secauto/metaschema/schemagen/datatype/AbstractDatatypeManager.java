@@ -89,7 +89,7 @@ public abstract class AbstractDatatypeManager implements IDatatypeManager {
     synchronized (this) {
       String name = datatypeToTypeMap.get(datatype);
       if (name == null) {
-        name = getDatatypeTranslationMap().get(datatype.getPreferredName());
+        name = getDatatypeTranslationMap().get(datatype.getPreferredName().getLocalPart());
         datatypeToTypeMap.put(datatype, name);
       }
       return name;

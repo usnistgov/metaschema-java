@@ -33,7 +33,7 @@ import java.math.MathContext;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractIntegerItem
-    extends AbstractAnyAtomicItem<BigInteger>
+    extends AbstractDecimalItem<BigInteger>
     implements IIntegerItem {
   /**
    * Construct a new item with the provided {@code value}.

@@ -65,6 +65,11 @@ public interface ICardinalityConstraint extends IConstraint {
     return visitor.visitCardinalityConstraint(this, state);
   }
 
+  /**
+   * Create a new constraint builder.
+   *
+   * @return the builder
+   */
   @NonNull
   static Builder builder() {
     return new Builder();
@@ -79,11 +84,25 @@ public interface ICardinalityConstraint extends IConstraint {
       // disable construction
     }
 
+    /**
+     * Use the provided minimum occurrence to validate associated targets.
+     *
+     * @param value
+     *          the expected occurrence
+     * @return this builder
+     */
     public Builder minOccurs(int value) {
       this.minOccurs = value;
       return this;
     }
 
+    /**
+     * Use the provided maximum occurrence to validate associated targets.
+     *
+     * @param value
+     *          the expected occurrence
+     * @return this builder
+     */
     public Builder maxOccurs(int value) {
       this.maxOccurs = value;
       return this;
@@ -103,11 +122,11 @@ public interface ICardinalityConstraint extends IConstraint {
       }
     }
 
-    protected Integer getMinOccurs() {
+    private Integer getMinOccurs() {
       return minOccurs;
     }
 
-    protected Integer getMaxOccurs() {
+    private Integer getMaxOccurs() {
       return maxOccurs;
     }
 

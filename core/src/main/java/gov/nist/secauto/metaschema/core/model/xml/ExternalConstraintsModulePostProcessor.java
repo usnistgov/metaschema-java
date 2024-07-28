@@ -26,9 +26,11 @@
 
 package gov.nist.secauto.metaschema.core.model.xml;
 
+import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression.ResultType;
+import gov.nist.secauto.metaschema.core.metapath.StaticContext;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IDefinitionNodeItem;
 import gov.nist.secauto.metaschema.core.metapath.item.node.IModuleNodeItem;
@@ -50,11 +52,23 @@ import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * A module loading post processor that integrates applicable external
+ * constraints into a given module when loaded.
+ *
+ * @see ModuleLoader#ModuleLoader(List)
+ */
 public class ExternalConstraintsModulePostProcessor implements IModuleLoader.IModulePostProcessor {
   private static final Logger LOGGER = LogManager.getLogger(ExternalConstraintsModulePostProcessor.class);
   @NonNull
   private final List<IConstraintSet> registeredConstraintSets;
 
+  /**
+   * Create a new post processor.
+   *
+   * @param additionalConstraintSets
+   *          the external constraint sets to apply
+   */
   public ExternalConstraintsModulePostProcessor(@NonNull Collection<IConstraintSet> additionalConstraintSets) {
     this.registeredConstraintSets = ObjectUtils.notNull(additionalConstraintSets.stream()
         .flatMap(set -> Stream.concat(
@@ -64,6 +78,11 @@ public class ExternalConstraintsModulePostProcessor implements IModuleLoader.IMo
         .collect(Collectors.toUnmodifiableList()));
   }
 
+  /**
+   * Get the external constraint sets associated with this post processor.
+   *
+   * @return the list of constraint sets
+   */
   protected List<IConstraintSet> getRegisteredConstraintSets() {
     return registeredConstraintSets;
   }
@@ -73,23 +92,40 @@ public class ExternalConstraintsModulePostProcessor implements IModuleLoader.IMo
     ConstraintComposingVisitor visitor = new ConstraintComposingVisitor();
     IModuleNodeItem moduleItem = INodeItemFactory.instance().newModuleNodeItem(module);
 
-    for (IConstraintSet set : getRegisteredConstraintSets()) {
-      for (ITargetedConstraints targeted : set.getTargetedConstraintsForModule(module)) {
-        // apply targeted constraints
-        MetapathExpression targetExpression = targeted.getTargetExpression();
-        ISequence<?> items = targetExpression.evaluateAs(moduleItem, ResultType.SEQUENCE);
+    StaticContext staticContext = StaticContext.builder()
+        .defaultModelNamespace(module.getXmlNamespace())
+        .build();
+    DynamicContext dynamicContext = new DynamicContext(staticContext);
 
-        if (items != null && !items.isEmpty()) {
-          for (IItem item : items) {
-            if (item instanceof IDefinitionNodeItem) {
-              ((IDefinitionNodeItem<?, ?>) item).accept(visitor, targeted);
-            } else {
-              // log error
-              if (LOGGER.isErrorEnabled()) {
-                LOGGER.atError().log("Found non-definition item '{}' while applying external constraints.",
-                    item.toString());
-              }
-            }
+    for (IConstraintSet set : getRegisteredConstraintSets()) {
+      assert set != null;
+      applyConstraints(module, moduleItem, set, visitor, dynamicContext);
+    }
+  }
+
+  private static void applyConstraints(
+      @NonNull IModule module,
+      @NonNull IModuleNodeItem moduleItem,
+      @NonNull IConstraintSet set,
+      @NonNull ConstraintComposingVisitor visitor,
+      @NonNull DynamicContext dynamicContext) {
+    for (ITargetedConstraints targeted : set.getTargetedConstraintsForModule(module)) {
+      // apply targeted constraints
+      String targetExpression = targeted.getTargetExpression();
+      MetapathExpression metapath = MetapathExpression.compile(targetExpression, dynamicContext.getStaticContext());
+      ISequence<?> items = metapath.evaluateAs(moduleItem, ResultType.SEQUENCE, dynamicContext);
+      assert items != null;
+
+      for (IItem item : items) {
+        if (item instanceof IDefinitionNodeItem) {
+          ((IDefinitionNodeItem<?, ?>) item).accept(visitor, targeted);
+        } else {
+          // log error
+          if (LOGGER.isErrorEnabled()) {
+            LOGGER.atError().log(
+                "Found non-definition item '{}' while applying external constraints using target expression '{}'.",
+                item.toString(),
+                targetExpression);
           }
         }
       }

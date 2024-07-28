@@ -35,14 +35,17 @@ import gov.nist.secauto.metaschema.core.metapath.cst.math.Modulo;
 import gov.nist.secauto.metaschema.core.metapath.cst.math.Multiplication;
 import gov.nist.secauto.metaschema.core.metapath.cst.math.Subtraction;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Axis;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.ContextItem;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Flag;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.ModelInstance;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.NameTest;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RelativeDoubleSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RelativeSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RootDoubleSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashOnlyPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.RootSlashPath;
 import gov.nist.secauto.metaschema.core.metapath.cst.path.Step;
+import gov.nist.secauto.metaschema.core.metapath.cst.path.Wildcard;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -64,6 +67,7 @@ public final class CSTPrinter {
     return new CSTPrinterVisitor().visit(expr);
   }
 
+  @SuppressWarnings("PMD.ExcessivePublicCount")
   private static final class CSTPrinterVisitor
       extends AbstractExpressionVisitor<String, State> {
 
@@ -180,7 +184,7 @@ public final class CSTPrinter {
     }
 
     @Override
-    public String visitFunctionCall(FunctionCall expr, State context) {
+    public String visitFunctionCall(StaticFunctionCall expr, State context) {
       return appendNode(expr, super.visitFunctionCall(expr, context), context);
     }
 
@@ -220,7 +224,7 @@ public final class CSTPrinter {
     }
 
     @Override
-    public String visitName(Name expr, State context) {
+    public String visitName(NameTest expr, State context) {
       return appendNode(expr, super.visitName(expr, context), context);
     }
 
@@ -240,7 +244,7 @@ public final class CSTPrinter {
     }
 
     @Override
-    public String visitPredicate(Predicate expr, State context) {
+    public String visitPredicate(PredicateExpression expr, State context) {
       return appendNode(expr, super.visitPredicate(expr, context), context);
     }
 
@@ -334,6 +338,40 @@ public final class CSTPrinter {
       return appendNode(expr, super.visitSimpleMap(expr, context), context);
     }
 
+    @Override
+    public String visitArray(ArraySequenceConstructor expr, State context) {
+      return appendNode(expr, super.visitArray(expr, context), context);
+    }
+
+    @Override
+    public String visitArray(ArraySquareConstructor expr, State context) {
+      return appendNode(expr, super.visitArray(expr, context), context);
+    }
+
+    @Override
+    public String visitPostfixLookup(PostfixLookup expr, State context) {
+      return appendNode(expr, super.visitPostfixLookup(expr, context), context);
+    }
+
+    @Override
+    public String visitFunctionCallAccessor(FunctionCallAccessor expr, State context) {
+      return appendNode(expr, super.visitFunctionCallAccessor(expr, context), context);
+    }
+
+    @Override
+    public String visitUnaryLookup(UnaryLookup expr, State context) {
+      return appendNode(expr, super.visitUnaryLookup(expr, context), context);
+    }
+
+    @Override
+    public String visitMapConstructor(MapConstructor expr, State context) {
+      return appendNode(expr, super.visitMapConstructor(expr, context), context);
+    }
+
+    @Override
+    public String visitMapConstructorEntry(MapConstructor.Entry expr, State context) {
+      return appendNode(expr, super.visitMapConstructorEntry(expr, context), context);
+    }
   }
 
   static class State {

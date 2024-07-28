@@ -76,7 +76,7 @@ public final class FnDoc {
       IItem focus) {
     ISequence<? extends IStringItem> arg = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
 
-    IStringItem item = FunctionUtils.getFirstItem(arg, true);
+    IStringItem item = arg.getFirstItem(true);
 
     return item == null ? ISequence.empty() : ISequence.of(fnDoc(item, dynamicContext));
   }

@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 import gov.nist.secauto.metaschema.core.model.IContainerFlagSupport;
 import gov.nist.secauto.metaschema.core.util.CollectionUtil;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.BoundFlag;
 import gov.nist.secauto.metaschema.databind.model.annotations.Ignore;
@@ -45,18 +46,22 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class FlagContainerSupport implements IContainerFlagSupport<IBoundInstanceFlag> {
   @NonNull
-  private final Map<String, IBoundInstanceFlag> flagInstances;
+  private final Map<QName, IBoundInstanceFlag> flagInstances;
   @Nullable
   private IBoundInstanceFlag jsonKeyFlag;
 
   @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   public FlagContainerSupport(
-      @NonNull AbstractBoundDefinitionModelComplex<?> definition,
+      @NonNull IBoundDefinitionModelComplex definition,
       @Nullable Consumer<IBoundInstanceFlag> peeker) {
     Class<?> clazz = definition.getBoundClass();
 
@@ -80,7 +85,7 @@ public class FlagContainerSupport implements IContainerFlagSupport<IBoundInstanc
     this.flagInstances = CollectionUtil.unmodifiableMap(ObjectUtils.notNull(instances
         .peek(intermediate)
         .collect(Collectors.toMap(
-            IBoundInstanceFlag::getEffectiveName,
+            IBoundInstanceFlag::getXmlQName,
             Function.identity(),
             (v1, v2) -> v2,
             LinkedHashMap::new))));
@@ -107,12 +112,7 @@ public class FlagContainerSupport implements IContainerFlagSupport<IBoundInstanc
     }
 
     for (Field field : fields) {
-      if (!field.isAnnotationPresent(BoundFlag.class)) {
-        // skip non-flag fields
-        continue;
-      }
-
-      if (field.isAnnotationPresent(Ignore.class)) {
+      if (!field.isAnnotationPresent(BoundFlag.class) || field.isAnnotationPresent(Ignore.class)) {
         // skip this field, since it is ignored
         continue;
       }
@@ -136,10 +136,11 @@ public class FlagContainerSupport implements IContainerFlagSupport<IBoundInstanc
 
   @Override
   @NonNull
-  public Map<String, IBoundInstanceFlag> getFlagInstanceMap() {
+  public Map<QName, IBoundInstanceFlag> getFlagInstanceMap() {
     return flagInstances;
   }
 
+  @Override
   public IBoundInstanceFlag getJsonKeyFlagInstance() {
     return jsonKeyFlag;
   }

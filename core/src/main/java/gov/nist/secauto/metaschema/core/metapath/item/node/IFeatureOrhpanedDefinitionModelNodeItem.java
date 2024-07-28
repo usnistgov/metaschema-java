@@ -28,7 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.model.IDefinition;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
-import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 
 /**
  * A mixin interface used to identify that the implementation is a
@@ -44,7 +44,7 @@ import gov.nist.secauto.metaschema.core.model.INamedInstance;
  * @param <I>
  *          the type of the instance that could be created from the definition
  */
-interface IFeatureOrhpanedDefinitionModelNodeItem<D extends IModelDefinition, I extends INamedInstance>
+interface IFeatureOrhpanedDefinitionModelNodeItem<D extends IModelDefinition, I extends INamedModelInstance>
     extends IModelNodeItem<D, I>, IFeatureOrhpanedDefinitionNodeItem<D, I> {
 
   @Override

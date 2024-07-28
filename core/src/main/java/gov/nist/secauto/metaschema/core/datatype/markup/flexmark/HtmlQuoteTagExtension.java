@@ -61,7 +61,12 @@ public class HtmlQuoteTagExtension
     implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension,
     FlexmarkHtmlConverter.HtmlConverterExtension {
 
-  public static HtmlQuoteTagExtension create() {
+  /**
+   * Construct a new extension instance.
+   *
+   * @return the instance
+   */
+  public static HtmlQuoteTagExtension newInstance() {
     return new HtmlQuoteTagExtension();
   }
 
@@ -172,6 +177,13 @@ public class HtmlQuoteTagExtension
   public static class DoubleQuoteNode
       extends TypographicQuotes {
 
+    /**
+     * Construct a new double quote node.
+     *
+     * @param node
+     *          the typographic information pertaining to a double quote
+     */
+    @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
     public DoubleQuoteNode(TypographicQuotes node) {
       super(node.getOpeningMarker(), node.getText(), node.getClosingMarker());
       setTypographicOpening(node.getTypographicOpening());

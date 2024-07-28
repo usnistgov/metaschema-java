@@ -26,11 +26,8 @@
 
 package gov.nist.secauto.metaschema.databind.codegen.config;
 
-import gov.nist.secauto.metaschema.core.util.CollectionUtil;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -41,7 +38,7 @@ public class DefaultDefinitionBindingConfiguration implements IMutableDefinition
   @Nullable
   private String baseClassName;
   @NonNull
-  private final Set<String> interfacesToImplement = new HashSet<>();
+  private final List<String> interfacesToImplement = new LinkedList<>();
 
   /**
    * Create a new definition binding configuration.
@@ -84,9 +81,8 @@ public class DefaultDefinitionBindingConfiguration implements IMutableDefinition
   }
 
   @Override
-  public Collection<String> getInterfacesToImplement() {
-    return interfacesToImplement.isEmpty() ? CollectionUtil.emptySet()
-        : CollectionUtil.unmodifiableCollection(interfacesToImplement);
+  public List<String> getInterfacesToImplement() {
+    return interfacesToImplement;
   }
 
   @Override

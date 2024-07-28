@@ -81,7 +81,9 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   @SuppressWarnings("null")
   @NonNull
   private static Object escape(@NonNull String data) {
-    return data.chars().mapToObj(c -> (char) c).map(c -> escape(c)).collect(Collectors.joining());
+    return data.chars()
+        .mapToObj(c -> (char) c)
+        .map(XmlEventUtil::escape).collect(Collectors.joining());
   }
 
   @SuppressWarnings("null")
@@ -107,7 +109,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * {@link XMLEvent}.
    *
    * @param xmlEvent
-   *          the event to generate the message for
+   *          the XML event to generate the message for
    * @return the message
    */
   @NonNull
@@ -160,7 +162,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * reader.
    *
    * @param reader
-   *          the stream reader
+   *          the XML event stream reader
    * @return the generated string
    */
   @NonNull
@@ -190,7 +192,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * Retrieve the resource location of {@code event}.
    *
    * @param event
-   *          the event to identify the location for
+   *          the XML event to identify the location for
    * @return the location or {@code null} if the location is unknown
    */
   @Nullable
@@ -213,7 +215,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * Retrieve the name of the node associated with {@code event}.
    *
    * @param event
-   *          the event to get the {@link QName} for
+   *          the XML event to get the {@link QName} for
    * @return the name of the node or {@code null} if the event is not a start or
    *         end element
    */
@@ -234,7 +236,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * Get the event name of the {@code event}.
    *
    * @param event
-   *          the event to get the event name for
+   *          the XML event to get the event name for
    * @return the event name
    */
   @NonNull
@@ -265,7 +267,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * {@code eventType} is reached or the end of stream is found.
    *
    * @param reader
-   *          the event reader to advance
+   *          the XML event reader to advance
    * @param eventType
    *          the event type to stop on as defined by {@link XMLStreamConstants}
    * @return the next event of the specified type or {@code null} if the end of
@@ -294,6 +296,15 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     return xmlEvent;
   }
 
+  /**
+   * Skip over the next element in the event stream.
+   *
+   * @param reader
+   *          the XML event stream reader
+   * @return the next XML event
+   * @throws XMLStreamException
+   *           if an error occurred while reading the event stream
+   */
   @SuppressWarnings("PMD.OnlyOneReturn")
   public static XMLEvent skipElement(@NonNull XMLEventReader2 reader) throws XMLStreamException {
     XMLEvent xmlEvent = reader.peek();
@@ -323,7 +334,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * Skip over any processing instructions.
    *
    * @param reader
-   *          the event reader to advance
+   *          the XML event reader to advance
    * @return the last processing instruction event or the reader's next event if
    *         no processing instruction was found
    * @throws XMLStreamException
@@ -342,7 +353,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * Skip over any whitespace.
    *
    * @param reader
-   *          the event reader to advance
+   *          the XML event reader to advance
    * @return the last character event containing whitespace or the reader's next
    *         event if no character event was found
    * @throws XMLStreamException
@@ -369,7 +380,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * provided {@code expectedQName}.
    *
    * @param event
-   *          the event
+   *          the XML event
    * @param expectedQName
    *          the expected element name
    * @return {@code true} if the next event matches the {@code expectedQName}
@@ -384,7 +395,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * Determine if the {@code event} is an end of document event.
    *
    * @param event
-   *          the event
+   *          the XML event
    * @return {@code true} if the next event is an end of document event
    */
   public static boolean isEventEndDocument(XMLEvent event) {
@@ -416,7 +427,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * the type identified by {@code presumedEventType}.
    *
    * @param reader
-   *          the event reader
+   *          the XML event reader
    * @param presumedEventType
    *          the expected event type as defined by {@link XMLStreamConstants}
    * @return the next event
@@ -434,7 +445,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
    * by {@code presumedName}.
    *
    * @param reader
-   *          the event reader
+   *          the XML event reader
    * @param presumedEventType
    *          the expected event type as defined by {@link XMLStreamConstants}
    * @param presumedName
@@ -458,6 +469,20 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     return retval;
   }
 
+  /**
+   * Ensure that the next event is an XML start element that matches the presumed
+   * name.
+   *
+   * @param reader
+   *          the XML event reader
+   * @param presumedName
+   *          the qualified name of the expected next event
+   * @return the XML start element event
+   * @throws IOException
+   *           if an error occurred while parsing the resource
+   * @throws XMLStreamException
+   *           if an error occurred while parsing the XML event stream
+   */
   @NonNull
   public static StartElement requireStartElement(
       @NonNull XMLEventReader2 reader,
@@ -472,6 +497,20 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     return ObjectUtils.notNull(retval.asStartElement());
   }
 
+  /**
+   * Ensure that the next event is an XML start element that matches the presumed
+   * name.
+   *
+   * @param reader
+   *          the XML event reader
+   * @param presumedName
+   *          the qualified name of the expected next event
+   * @return the XML start element event
+   * @throws IOException
+   *           if an error occurred while parsing the resource
+   * @throws XMLStreamException
+   *           if an error occurred while parsing the XML event stream
+   */
   @NonNull
   public static EndElement requireEndElement(
       @NonNull XMLEventReader2 reader,
@@ -487,7 +526,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   }
 
   /**
-   * Assert that the next event from {@code reader} is of the type identified by
+   * Ensure that the next event from {@code reader} is of the type identified by
    * {@code presumedEventType}.
    *
    * @param reader
@@ -508,7 +547,7 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
   }
 
   /**
-   * Assert that the next event from {@code reader} is of the type identified by
+   * Ensure that the next event from {@code reader} is of the type identified by
    * {@code presumedEventType} and has the name identified by
    * {@code presumedName}.
    *
@@ -541,17 +580,43 @@ public final class XmlEventUtil { // NOPMD this is a set of utility methods
     return nextEvent;
   }
 
+  /**
+   * Generate a location string for the current location in the XML event stream.
+   *
+   * @param event
+   *          an XML event
+   * @return the location string
+   */
   public static CharSequence generateLocationMessage(@NonNull XMLEvent event) {
     Location location = toLocation(event);
     return location == null ? "" : generateLocationMessage(location);
   }
 
+  /**
+   * Generate a location string for the current location in the XML event stream.
+   *
+   * @param location
+   *          an XML event stream location
+   * @return the location string
+   */
   public static CharSequence generateLocationMessage(@NonNull Location location) {
     return new StringBuilder(12)
         .append(" at ")
         .append(XmlEventUtil.toString(location));
   }
 
+  /**
+   * Generate a message intended for error reporting based on a presumed event.
+   *
+   * @param event
+   *          the current XML event
+   * @param presumedEventType
+   *          the expected event type ({@link XMLEvent#getEventType()})
+   * @param presumedName
+   *          the expected event qualified name or {@code null} if there is no
+   *          expectation
+   * @return the message string
+   */
   public static CharSequence generateExpectedMessage(
       @Nullable XMLEvent event,
       int presumedEventType,

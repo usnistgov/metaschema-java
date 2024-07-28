@@ -42,7 +42,7 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IAssemblyDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.model.annotations.GroupAs;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -100,7 +100,7 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstanceAbso
   public Set<IModelDefinition> buildField(
       TypeSpec.Builder typeBuilder,
       FieldSpec.Builder fieldBuilder) {
-    Set<IModelDefinition> retval = new HashSet<>(super.buildField(typeBuilder, fieldBuilder));
+    Set<IModelDefinition> retval = new LinkedHashSet<>(super.buildField(typeBuilder, fieldBuilder));
 
     AnnotationSpec.Builder annotation = newBindingAnnotation();
 
@@ -120,14 +120,7 @@ abstract class AbstractModelInstanceTypeInfo<INSTANCE extends IModelInstanceAbso
     groupAsAnnoation.addMember("name", "$S",
         ObjectUtils.requireNonNull(modelInstance.getGroupAsName(), "The grouping name must be non-null"));
 
-    String groupAsNamespace = modelInstance.getGroupAsXmlNamespace();
-    if (groupAsNamespace == null) {
-      groupAsAnnoation.addMember("namespace", "$S", "##default");
-    } else if (groupAsNamespace.isEmpty()) {
-      groupAsAnnoation.addMember("namespace", "$S", "##none");
-    } else if (!modelInstance.getContainingModule().getXmlNamespace().toASCIIString().equals(groupAsNamespace)) {
-      groupAsAnnoation.addMember("namespace", "$S", groupAsNamespace);
-    } // otherwise use the ##default
+    // TODO: handle group-as namespace as a prefix
 
     JsonGroupAsBehavior jsonGroupAsBehavior = modelInstance.getJsonGroupAsBehavior();
     assert jsonGroupAsBehavior != null;

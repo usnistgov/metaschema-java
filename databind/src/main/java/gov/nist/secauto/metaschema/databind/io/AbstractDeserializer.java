@@ -31,6 +31,7 @@ import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.StaticContext;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.model.constraint.DefaultConstraintValidator;
 import gov.nist.secauto.metaschema.core.model.constraint.IConstraintValidationHandler;
 import gov.nist.secauto.metaschema.core.model.constraint.LoggingConstraintValidationHandler;
@@ -49,7 +50,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @param <CLASS>
  *          the bound class to deserialize to
  */
-public abstract class AbstractDeserializer<CLASS>
+public abstract class AbstractDeserializer<CLASS extends IBoundObject>
     extends AbstractSerializationBase<DeserializationFeature<?>>
     implements IDeserializer<CLASS> {
 
@@ -101,7 +102,10 @@ public abstract class AbstractDeserializer<CLASS>
     }
 
     if (isValidating()) {
-      DynamicContext dynamicContext = StaticContext.instance().dynamicContext();
+      DynamicContext dynamicContext = new DynamicContext(
+          StaticContext.builder()
+              .defaultModelNamespace(nodeItem.getNamespace())
+              .build());
       dynamicContext.setDocumentLoader(getBindingContext().newBoundLoader());
       DefaultConstraintValidator validator = new DefaultConstraintValidator(getConstraintValidationHandler());
       validator.validate(nodeItem, dynamicContext);

@@ -27,9 +27,9 @@
 package gov.nist.secauto.metaschema.core.metapath.item.node;
 
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
-import gov.nist.secauto.metaschema.core.model.INamedInstance;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstance;
 
-public interface IModelNodeItem<D extends IModelDefinition, I extends INamedInstance>
+public interface IModelNodeItem<D extends IModelDefinition, I extends INamedModelInstance>
     extends IDefinitionNodeItem<D, I> {
 
   /**

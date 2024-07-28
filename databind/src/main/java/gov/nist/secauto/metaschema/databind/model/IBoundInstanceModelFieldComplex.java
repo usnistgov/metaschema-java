@@ -26,24 +26,17 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
+import gov.nist.secauto.metaschema.databind.model.info.IFeatureComplexItemValueHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemReadHandler;
 import gov.nist.secauto.metaschema.databind.model.info.IItemWriteHandler;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 public interface IBoundInstanceModelFieldComplex
-    extends IBoundInstanceModelField, IBoundInstanceModelNamedComplex {
-
-  @Override
-  default IBoundInstanceModelFieldComplex getInstance() {
-    return this;
-  }
+    extends IBoundInstanceModelField<IBoundObject>, IFeatureComplexItemValueHandler {
 
   @Override
   IBoundDefinitionModelFieldComplex getDefinition();
@@ -55,38 +48,32 @@ public interface IBoundInstanceModelFieldComplex
   }
 
   @Override
-  @NonNull
-  default QName getXmlQName() {
-    return ObjectUtils.notNull(IBoundInstanceModelField.super.getXmlQName());
-  }
-
-  @Override
-  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+  default IBoundObject readItem(IBoundObject parent, IItemReadHandler handler) throws IOException {
     return handler.readItemField(ObjectUtils.requireNonNull(parent, "parent"), this);
   }
 
   @Override
-  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+  default void writeItem(IBoundObject item, IItemWriteHandler handler) throws IOException {
     handler.writeItemField(item, this);
   }
 
   @Override
-  default Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
+  default IBoundObject deepCopyItem(IBoundObject item, IBoundObject parentInstance) throws BindingException {
     return getDefinition().deepCopyItem(item, parentInstance);
   }
 
   @Override
-  default Class<?> getBoundClass() {
+  default Class<? extends IBoundObject> getBoundClass() {
     return getDefinition().getBoundClass();
   }
 
   @Override
-  default void callBeforeDeserialize(Object targetObject, Object parentObject) throws BindingException {
+  default void callBeforeDeserialize(IBoundObject targetObject, IBoundObject parentObject) throws BindingException {
     getDefinition().callBeforeDeserialize(targetObject, parentObject);
   }
 
   @Override
-  default void callAfterDeserialize(Object targetObject, Object parentObject) throws BindingException {
+  default void callAfterDeserialize(IBoundObject targetObject, IBoundObject parentObject) throws BindingException {
     getDefinition().callAfterDeserialize(targetObject, parentObject);
   }
 }

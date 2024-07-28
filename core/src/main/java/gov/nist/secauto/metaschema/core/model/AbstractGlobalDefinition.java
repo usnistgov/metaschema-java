@@ -1,0 +1,111 @@
+/*
+ * Portions of this software was developed by employees of the National Institute
+ * of Standards and Technology (NIST), an agency of the Federal Government and is
+ * being made available as a public service. Pursuant to title 17 United States
+ * Code Section 105, works of NIST employees are not subject to copyright
+ * protection in the United States. This software may be subject to foreign
+ * copyright. Permission in the United States and in foreign countries, to the
+ * extent that NIST may hold copyright, to use, copy, modify, create derivative
+ * works, and distribute this software and its documentation without fee is hereby
+ * granted on a non-exclusive basis, provided that this notice and disclaimer
+ * of warranty appears in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS' WITHOUT ANY WARRANTY OF ANY KIND, EITHER
+ * EXPRESSED, IMPLIED, OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTY
+ * THAT THE SOFTWARE WILL CONFORM TO SPECIFICATIONS, ANY IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND FREEDOM FROM
+ * INFRINGEMENT, AND ANY WARRANTY THAT THE DOCUMENTATION WILL CONFORM TO THE
+ * SOFTWARE, OR ANY WARRANTY THAT THE SOFTWARE WILL BE ERROR FREE.  IN NO EVENT
+ * SHALL NIST BE LIABLE FOR ANY DAMAGES, INCLUDING, BUT NOT LIMITED TO, DIRECT,
+ * INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES, ARISING OUT OF, RESULTING FROM,
+ * OR IN ANY WAY CONNECTED WITH THIS SOFTWARE, WHETHER OR NOT BASED UPON WARRANTY,
+ * CONTRACT, TORT, OR OTHERWISE, WHETHER OR NOT INJURY WAS SUSTAINED BY PERSONS OR
+ * PROPERTY OR OTHERWISE, AND WHETHER OR NOT LOSS WAS SUSTAINED FROM, OR AROSE OUT
+ * OF THE RESULTS OF, OR USE OF, THE SOFTWARE OR SERVICES PROVIDED HEREUNDER.
+ */
+
+package gov.nist.secauto.metaschema.core.model;
+
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
+
+import javax.xml.namespace.QName;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+import nl.talsmasoftware.lazy4j.Lazy;
+
+/**
+ * A base class for definitions defined globally within a Metaschema module.
+ *
+ * @param <MODULE>
+ *          the Java type of the containing module
+ * @param <INSTANCE>
+ *          the expected Java type of an instance of this definition
+ */
+public abstract class AbstractGlobalDefinition<MODULE extends IModule, INSTANCE extends INamedInstance>
+    implements IDefinition {
+  @NonNull
+  private final MODULE module;
+  @NonNull
+  private final Lazy<QName> qname;
+  @NonNull
+  private final Lazy<QName> definitionQName;
+
+  /**
+   * Construct a new global definition.
+   *
+   * @param module
+   *          the parent module containing this instance
+   * @param initializer
+   *          the callback used to generate qualified names
+   */
+  protected AbstractGlobalDefinition(@NonNull MODULE module, @NonNull NameInitializer initializer) {
+    this.module = module;
+    this.qname = ObjectUtils.notNull(Lazy.lazy(() -> initializer.apply(getEffectiveName())));
+    this.definitionQName = ObjectUtils.notNull(Lazy.lazy(() -> initializer.apply(getName())));
+  }
+
+  @Override
+  public final MODULE getContainingModule() {
+    return module;
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public final QName getXmlQName() {
+    return qname.get();
+  }
+
+  @SuppressWarnings("null")
+  @Override
+  public final QName getDefinitionQName() {
+    return definitionQName.get();
+  }
+
+  @Override
+  public final boolean isInline() {
+    // never inline
+    return false;
+  }
+
+  @Override
+  public final INSTANCE getInlineInstance() {
+    // never inline
+    return null;
+  }
+
+  /**
+   * Provides a callback for generating a qualified name from a name.
+   */
+  @FunctionalInterface
+  public interface NameInitializer {
+    /**
+     * Produce a qualified name by parsing the provided name.
+     *
+     * @param name
+     *          the name to parse
+     * @return the qualified name for the provided name
+     */
+    @NonNull
+    QName apply(@NonNull String name);
+  }
+}

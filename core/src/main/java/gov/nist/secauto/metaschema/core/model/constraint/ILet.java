@@ -30,6 +30,8 @@ import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultLet;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 @SuppressWarnings("PMD.ShortClassName")
@@ -49,7 +51,7 @@ public interface ILet {
   @SuppressWarnings("PMD.ShortMethodName")
   @NonNull
   static ILet of(
-      @NonNull String name,
+      @NonNull QName name,
       @NonNull String valueExpression,
       @NonNull ISource source) {
     try {
@@ -79,7 +81,7 @@ public interface ILet {
   @SuppressWarnings("PMD.ShortMethodName")
   @NonNull
   static ILet of(
-      @NonNull String name,
+      @NonNull QName name,
       @NonNull MetapathExpression valueExpression,
       @NonNull ISource source) {
     return new DefaultLet(name, valueExpression, source);
@@ -91,7 +93,7 @@ public interface ILet {
    * @return the name
    */
   @NonNull
-  String getName();
+  QName getName();
 
   /**
    * Get the Metapath expression to use to query the value.

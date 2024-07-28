@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.io;
 
 import gov.nist.secauto.metaschema.core.configuration.IConfiguration;
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -38,7 +39,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @param <CLASS>
  *          the bound class to serialize from
  */
-public abstract class AbstractSerializer<CLASS>
+public abstract class AbstractSerializer<CLASS extends IBoundObject>
     extends AbstractSerializationBase<SerializationFeature<?>>
     implements ISerializer<CLASS> {
 

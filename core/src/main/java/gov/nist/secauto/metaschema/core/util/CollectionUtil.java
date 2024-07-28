@@ -45,12 +45,8 @@ import java.util.stream.StreamSupport;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public final class CollectionUtil {
-
-  private CollectionUtil() {
-    // disable construction
-  }
-
   /**
    * Get a {@link Stream} for the provided {@link Iterable}.
    *
@@ -161,16 +157,44 @@ public final class CollectionUtil {
     return ObjectUtils.notNull(retval);
   }
 
+  /**
+   * Require that the provided collection contains at least a single item.
+   *
+   * @param <T>
+   *          the Java type of the collection
+   * @param <U>
+   *          the Java type of the collection's items
+   * @param collection
+   *          the collection to test
+   * @return the provided collection
+   * @throws IllegalStateException
+   *           if the collection is empty
+   */
   @NonNull
-  public static <T extends Collection<A>, A> T requireNonEmpty(@NonNull T collection) {
+  public static <T extends Collection<U>, U> T requireNonEmpty(@NonNull T collection) {
     if (collection.isEmpty()) {
       throw new IllegalStateException();
     }
     return collection;
   }
 
+  /**
+   * Require that the provided collection contains at least a single item.
+   *
+   * @param <T>
+   *          the Java type of the collection
+   * @param <U>
+   *          the Java type of the collection's items
+   * @param collection
+   *          the collection to test
+   * @param message
+   *          the exception message to use if the collection is empty
+   * @return the provided collection
+   * @throws IllegalStateException
+   *           if the collection is empty
+   */
   @NonNull
-  public static <T extends Collection<A>, A> T requireNonEmpty(@NonNull T collection, @NonNull String message) {
+  public static <T extends Collection<U>, U> T requireNonEmpty(@NonNull T collection, @NonNull String message) {
     if (collection.isEmpty()) {
       throw new IllegalStateException(message);
     }
@@ -178,14 +202,14 @@ public final class CollectionUtil {
   }
 
   /**
-   * A wrapper of the {@link Collections#unmodifiableCollection(Collection)}
-   * method that ensure a {@link NonNull} result is returned.
+   * An implementation of {@link Collections#unmodifiableCollection(Collection)}
+   * that respects non-nullness.
    *
    * @param <T>
    *          the collection's item type
    * @param collection
    *          the collection
-   * @return a non-null unmodifiable instance of the provided collection
+   * @return an unmodifiable view of the collection
    */
   @SuppressWarnings("null")
   @NonNull
@@ -193,69 +217,188 @@ public final class CollectionUtil {
     return Collections.unmodifiableCollection(collection);
   }
 
+  /**
+   * An implementation of {@link Collections#singleton(Object)} that respects
+   * non-nullness.
+   *
+   * @param <T>
+   *          the Java type of the set items
+   * @param instance
+   *          the singleton item to use
+   * @return an unmodifiable set containing the singleton item
+   */
   @SuppressWarnings("null")
   @NonNull
-  public static <T> Set<T> singleton(@NonNull T value) {
-    return Collections.singleton(value);
+  public static <T> Set<T> singleton(@NonNull T instance) {
+    return Collections.singleton(instance);
   }
 
+  /**
+   * An implementation of {@link Collections#emptySet()} that respects
+   * non-nullness.
+   *
+   * @param <T>
+   *          the Java type of the set items
+   * @return an unmodifiable empty set
+   */
   @SuppressWarnings("null")
   @NonNull
   public static <T> Set<T> emptySet() {
     return Collections.emptySet();
   }
 
+  /**
+   * An implementation of {@link Collections#unmodifiableSet(Set)} that respects
+   * non-nullness.
+   *
+   * @param <T>
+   *          the Java type of the set items
+   * @param set
+   *          the set to prevent modification of
+   * @return an unmodifiable view of the set
+   */
   @SuppressWarnings("null")
   @NonNull
   public static <T> Set<T> unmodifiableSet(@NonNull Set<T> set) {
     return Collections.unmodifiableSet(set);
   }
 
+  /**
+   * Provides an unmodifiable list containing the provided list.
+   * <p>
+   * If the provided list is {@code null}, an empty list will be provided.
+   *
+   * @param <T>
+   *          the Java type of the list items
+   * @param list
+   *          the list, which may be {@code null}
+   * @return an unmodifiable list containing the items
+   */
   @NonNull
   public static <T> List<T> listOrEmpty(@Nullable List<T> list) {
-    return list == null ? emptyList() : list;
+    return list == null ? emptyList() : unmodifiableList(list);
   }
 
+  /**
+   * Generates a new unmodifiable list containing the provided items.
+   * <p>
+   * If the provided array is {@code null}, an empty list will be provided.
+   *
+   * @param <T>
+   *          the Java type of the list items
+   * @param array
+   *          the array of items to use to populate the list, which may be
+   *          {@code null}
+   * @return an unmodifiable list containing the items
+   */
   @SafeVarargs
   @SuppressWarnings("null")
   @NonNull
   public static <T> List<T> listOrEmpty(@Nullable T... array) {
-    return array == null || array.length == 0 ? emptyList() : Arrays.asList(array);
+    return array == null || array.length == 0 ? emptyList() : unmodifiableList(Arrays.asList(array));
   }
 
+  /**
+   * An implementation of {@link Collections#emptyList()} that respects
+   * non-nullness.
+   *
+   * @param <T>
+   *          the Java type of the list items
+   * @return an unmodifiable empty list
+   */
   @SuppressWarnings("null")
   @NonNull
   public static <T> List<T> emptyList() {
     return Collections.emptyList();
   }
 
+  /**
+   * An implementation of {@link Collections#unmodifiableList(List)} that respects
+   * non-nullness.
+   *
+   * @param <T>
+   *          the Java type of the list items
+   * @param list
+   *          the list to prevent modification of
+   * @return an unmodifiable view of the list
+   */
   @SuppressWarnings("null")
   @NonNull
   public static <T> List<T> unmodifiableList(@NonNull List<T> list) {
     return Collections.unmodifiableList(list);
   }
 
+  /**
+   * An implementation of {@link Collections#singletonList(Object)} that respects
+   * non-nullness.
+   *
+   * @param <T>
+   *          the Java type of the list items
+   * @param instance
+   *          the singleton item to use
+   * @return an unmodifiable list containing the singleton item
+   */
   @SuppressWarnings("null")
   @NonNull
   public static <T> List<T> singletonList(@NonNull T instance) {
     return Collections.singletonList(instance);
   }
 
+  /**
+   * An implementation of {@link Collections#emptyMap()} that respects
+   * non-nullness.
+   *
+   * @param <K>
+   *          the Java type of the map's keys
+   * @param <V>
+   *          the Java type of the map's values
+   * @return an unmodifiable empty map
+   */
   @SuppressWarnings("null")
   @NonNull
   public static <K, V> Map<K, V> emptyMap() {
     return Collections.emptyMap();
   }
 
+  /**
+   * An implementation of {@link Collections#singletonMap(Object, Object)} that
+   * respects non-nullness.
+   *
+   * @param <K>
+   *          the Java type of the map's keys
+   * @param <V>
+   *          the Java type of the map's values
+   * @param key
+   *          the singleton key
+   * @param value
+   *          the singleton value
+   * @return an unmodifiable map containing the singleton entry
+   */
   @SuppressWarnings("null")
   @NonNull
   public static <K, V> Map<K, V> singletonMap(@NonNull K key, @NonNull V value) {
     return Collections.singletonMap(key, value);
   }
 
+  /**
+   * An implementation of {@link Collections#unmodifiableMap(Map)} that respects
+   * non-nullness.
+   *
+   * @param map
+   *          the map to prevent modification of
+   * @param <K>
+   *          the Java type of the map's keys
+   * @param <V>
+   *          the Java type of the map's values
+   * @return an unmodifiable view of the map
+   */
   @SuppressWarnings("null")
   @NonNull
   public static <K, V> Map<K, V> unmodifiableMap(@NonNull Map<K, V> map) {
     return Collections.unmodifiableMap(map);
+  }
+
+  private CollectionUtil() {
+    // disable construction
   }
 }

@@ -66,6 +66,7 @@ import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class CLIProcessor {
   private static final Logger LOGGER = LogManager.getLogger(CLIProcessor.class);
@@ -109,12 +110,14 @@ public class CLIProcessor {
       SHOW_STACK_TRACE_OPTION,
       VERSION_OPTION);
 
+  public static final String COMMAND_VERSION = "http://csrc.nist.gov/ns/metaschema-java/cli/command-version";
+
   @NonNull
   private final List<ICommand> commands = new LinkedList<>();
   @NonNull
   private final String exec;
   @NonNull
-  private final List<IVersionInfo> versionInfos;
+  private final Map<String, IVersionInfo> versionInfos;
 
   public static void main(String... args) {
     System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
@@ -129,10 +132,10 @@ public class CLIProcessor {
 
   @SuppressWarnings("null")
   public CLIProcessor(@NonNull String exec) {
-    this(exec, List.of());
+    this(exec, Map.of());
   }
 
-  public CLIProcessor(@NonNull String exec, @NonNull List<IVersionInfo> versionInfos) {
+  public CLIProcessor(@NonNull String exec, @NonNull Map<String, IVersionInfo> versionInfos) {
     this.exec = exec;
     this.versionInfos = versionInfos;
     AnsiConsole.systemInstall();
@@ -154,7 +157,7 @@ public class CLIProcessor {
    * @return the versionInfo
    */
   @NonNull
-  public List<IVersionInfo> getVersionInfos() {
+  public Map<String, IVersionInfo> getVersionInfos() {
     return versionInfos;
   }
 
@@ -195,7 +198,7 @@ public class CLIProcessor {
     return status;
   }
 
-  protected List<ICommand> getTopLevelCommands() {
+  protected final List<ICommand> getTopLevelCommands() {
     List<ICommand> retval = Collections.unmodifiableList(commands);
     assert retval != null;
     return retval;
@@ -206,7 +209,6 @@ public class CLIProcessor {
     AnsiConsole.systemUninstall();
   }
 
-  @SuppressWarnings("resource")
   public static void handleQuiet() {
     LoggerContext ctx = (LoggerContext) LogManager.getContext(false); // NOPMD not closable here
     Configuration config = ctx.getConfiguration();
@@ -220,7 +222,7 @@ public class CLIProcessor {
 
   protected void showVersion() {
     @SuppressWarnings("resource") PrintStream out = AnsiConsole.out(); // NOPMD - not owner
-    getVersionInfos().stream().forEach((info) -> {
+    getVersionInfos().values().stream().forEach(info -> {
       out.println(ansi()
           .bold().a(info.getName()).boldOff()
           .a(" ")
@@ -253,6 +255,7 @@ public class CLIProcessor {
     @NonNull
     private final List<String> extraArgs;
 
+    @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
     public CallingContext(@NonNull List<String> args) {
       Map<String, ICommand> topLevelCommandMap = getTopLevelCommands().stream()
           .collect(Collectors.toUnmodifiableMap(ICommand::getName, Function.identity()));
@@ -263,35 +266,31 @@ public class CLIProcessor {
 
       boolean endArgs = false;
       for (String arg : args) {
-        if (endArgs) {
+        if (endArgs || arg.startsWith("-")) {
           extraArgs.add(arg);
+        } else if ("--".equals(arg)) {
+          endArgs = true;
         } else {
-          if (arg.startsWith("-")) {
+          ICommand command;
+          if (calledCommands.isEmpty()) {
+            command = topLevelCommandMap.get(arg);
+          } else {
+            command = calledCommands.getLast();
+            command = command.getSubCommandByName(arg);
+          }
+
+          if (command == null) {
             extraArgs.add(arg);
-          } else if ("--".equals(arg)) {
             endArgs = true;
           } else {
-            ICommand command;
-            if (calledCommands.isEmpty()) {
-              command = topLevelCommandMap.get(arg);
-            } else {
-              command = calledCommands.getLast();
-              command = command.getSubCommandByName(arg);
-            }
-
-            if (command == null) {
-              extraArgs.add(arg);
-              endArgs = true;
-            } else {
-              calledCommands.add(command);
-            }
+            calledCommands.add(command);
           }
         }
       }
 
       if (LOGGER.isDebugEnabled()) {
         String commandChain = calledCommands.stream()
-            .map(command -> command.getName())
+            .map(ICommand::getName)
             .collect(Collectors.joining(" -> "));
         LOGGER.debug("Processing command chain: {}", commandChain);
       }
@@ -309,6 +308,11 @@ public class CLIProcessor {
       this.options = options;
       this.calledCommands = calledCommands;
       this.extraArgs = extraArgs;
+    }
+
+    @NonNull
+    public CLIProcessor getCLIProcessor() {
+      return CLIProcessor.this;
     }
 
     @Nullable
@@ -546,7 +550,7 @@ public class CLIProcessor {
 
       // output required options
       getOptionsList().stream()
-          .filter(option -> option.isRequired())
+          .filter(Option::isRequired)
           .forEach(option -> {
             builder
                 .append(' ')

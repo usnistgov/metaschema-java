@@ -33,14 +33,28 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import java.util.regex.Pattern;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Represents a rule requiring the value of a field or flag to match a pattern
  * and/or conform to an identified data type.
  */
 public interface IMatchesConstraint extends IConstraint {
+  /**
+   * Get the expected pattern.
+   *
+   * @return the expected pattern or {@code null} if there is no expected pattern
+   */
+  @Nullable
   Pattern getPattern();
 
+  /**
+   * Get the expected data type.
+   *
+   * @return the expected data type or {@code null} if there is no expected data
+   *         type
+   */
+  @Nullable
   IDataTypeAdapter<?> getDataType();
 
   @Override
@@ -48,6 +62,11 @@ public interface IMatchesConstraint extends IConstraint {
     return visitor.visitMatchesConstraint(this, state);
   }
 
+  /**
+   * Create a new constraint builder.
+   *
+   * @return the builder
+   */
   @NonNull
   static Builder builder() {
     return new Builder();
@@ -62,15 +81,36 @@ public interface IMatchesConstraint extends IConstraint {
       // disable construction
     }
 
+    /**
+     * Use the provided pattern to validate associated values.
+     *
+     * @param pattern
+     *          the pattern to use
+     * @return this builder
+     */
     public Builder regex(@NonNull String pattern) {
       return regex(ObjectUtils.notNull(Pattern.compile(pattern)));
     }
 
+    /**
+     * Use the provided pattern to validate associated values.
+     *
+     * @param pattern
+     *          the expected pattern
+     * @return this builder
+     */
     public Builder regex(@NonNull Pattern pattern) {
       this.pattern = pattern;
       return this;
     }
 
+    /**
+     * Use the provided data type to validate associated values.
+     *
+     * @param datatype
+     *          the expected data type
+     * @return this builder
+     */
     public Builder datatype(@NonNull IDataTypeAdapter<?> datatype) {
       this.datatype = datatype;
       return this;
@@ -90,11 +130,11 @@ public interface IMatchesConstraint extends IConstraint {
       }
     }
 
-    protected Pattern getPattern() {
+    private Pattern getPattern() {
       return pattern;
     }
 
-    protected IDataTypeAdapter<?> getDatatype() {
+    private IDataTypeAdapter<?> getDatatype() {
       return datatype;
     }
 

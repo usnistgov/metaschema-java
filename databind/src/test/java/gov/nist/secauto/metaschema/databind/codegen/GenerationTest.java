@@ -29,12 +29,12 @@ package gov.nist.secauto.metaschema.databind.codegen;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import gov.nist.secauto.metaschema.core.model.IMetaschemaModule;
 import gov.nist.secauto.metaschema.core.model.MetaschemaException;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.DeserializationFeature;
 import gov.nist.secauto.metaschema.databind.model.metaschema.BindingModuleLoader;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
 
 import org.junit.jupiter.api.Test;
 
@@ -48,7 +48,7 @@ public class GenerationTest {
   void testOscalBindingModuleLoader() throws MetaschemaException, IOException {
     BindingModuleLoader loader = new BindingModuleLoader();
     loader.set(DeserializationFeature.DESERIALIZE_XML_ALLOW_ENTITY_RESOLUTION, true);
-    IBindingModule module = loader.load(ObjectUtils.notNull(URI.create(
+    IMetaschemaModule module = loader.load(ObjectUtils.notNull(URI.create(
         "https://raw.githubusercontent.com/usnistgov/OSCAL/main/src/metaschema/oscal_complete_metaschema.xml")));
     IBindingContext context = IBindingContext.instance().registerModule(module, Paths.get("target/oscal-classes"));
     assertAll(

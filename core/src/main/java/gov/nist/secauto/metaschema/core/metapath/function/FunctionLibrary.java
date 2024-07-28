@@ -53,7 +53,7 @@ public class FunctionLibrary implements IFunctionLibrary {
    *           if the provided function has the same arity as a previously
    *           registered function with the same name
    */
-  public void registerFunction(@NonNull IFunction function) {
+  public final void registerFunction(@NonNull IFunction function) {
     registerFunctionByQName(function);
     registerFunctionByName(function);
   }
@@ -89,12 +89,9 @@ public class FunctionLibrary implements IFunctionLibrary {
   }
 
   @Override
-  public Stream<IFunction> getFunctionsAsStream() {
+  public Stream<IFunction> stream() {
     synchronized (this) {
-      return ObjectUtils.notNull(
-          libraryByQName.values().stream().flatMap(set -> {
-            return set.getFunctionsAsStream();
-          }));
+      return ObjectUtils.notNull(libraryByQName.values().stream().flatMap(NamedFunctionSet::getFunctionsAsStream));
     }
   }
 

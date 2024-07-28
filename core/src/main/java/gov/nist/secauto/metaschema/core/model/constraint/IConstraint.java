@@ -42,6 +42,13 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * flag. Provides a common interface for all constraint definitions.
  */
 public interface IConstraint extends IAttributable, IDescribable {
+  enum Kind {
+    NOT_APPLICABLE,
+    PASS,
+    FAIL,
+    INFORMATIONAL;
+  }
+
   /**
    * The degree to which a constraint violation is significant.
    * <p>
@@ -49,9 +56,18 @@ public interface IConstraint extends IAttributable, IDescribable {
    */
   enum Level {
     /**
+     * No violation.
+     */
+    NONE,
+    /**
      * A violation of the constraint represents a point of interest.
      */
     INFORMATIONAL,
+    /**
+     * A violation of the constraint represents a fault in the content that may
+     * warrant review by a developer when performing model or tool development.
+     */
+    DEBUG,
     /**
      * A violation of the constraint represents a potential issue with the content.
      */
@@ -73,11 +89,7 @@ public interface IConstraint extends IAttributable, IDescribable {
    */
   @NonNull
   Level DEFAULT_LEVEL = Level.ERROR;
-  /**
-   * The default target Metapath expression to use if no target is provided.
-   */
-  @NonNull
-  MetapathExpression DEFAULT_TARGET = MetapathExpression.CONTEXT_NODE;
+
   /**
    * The default target Metapath expression to use if no target is provided.
    */
@@ -115,7 +127,7 @@ public interface IConstraint extends IAttributable, IDescribable {
    * @return a Metapath expression
    */
   @NonNull
-  MetapathExpression getTarget();
+  String getTarget();
 
   /**
    * Based on the provided {@code contextNodeItem}, find all nodes matching the
@@ -129,7 +141,7 @@ public interface IConstraint extends IAttributable, IDescribable {
   @NonNull
   default ISequence<? extends IDefinitionNodeItem<?, ?>> matchTargets(
       @NonNull IDefinitionNodeItem<?, ?> contextNodeItem) {
-    return getTarget().evaluate(contextNodeItem);
+    return MetapathExpression.compile(getTarget()).evaluate(contextNodeItem);
   }
 
   /**
@@ -144,9 +156,11 @@ public interface IConstraint extends IAttributable, IDescribable {
    * @see #getTarget()
    */
   @NonNull
-  default ISequence<? extends IDefinitionNodeItem<?, ?>> matchTargets(@NonNull IDefinitionNodeItem<?, ?> item,
+  default ISequence<? extends IDefinitionNodeItem<?, ?>> matchTargets(
+      @NonNull IDefinitionNodeItem<?, ?> item,
       @NonNull DynamicContext dynamicContext) {
-    return item.hasValue() ? getTarget().evaluate(item, dynamicContext) : ISequence.empty();
+    return item.hasValue() ? MetapathExpression.compile(getTarget(), dynamicContext.getStaticContext())
+        .evaluate(item, dynamicContext) : ISequence.empty();
   }
 
   /**

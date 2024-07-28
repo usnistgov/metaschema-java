@@ -45,7 +45,7 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class MarkupLine
+public final class MarkupLine
     extends AbstractMarkupString<MarkupLine> {
 
   @NonNull
@@ -56,7 +56,7 @@ public class MarkupLine
 
   @SuppressWarnings("null")
   @NonNull
-  protected static DataSet newParserOptions() {
+  private static DataSet newParserOptions() {
     MutableDataSet options = new MutableDataSet();
     // disable inline HTML
     options.set(Parser.HTML_BLOCK_PARSER, false);
@@ -66,18 +66,32 @@ public class MarkupLine
 
     Collection<Extension> currentExtensions = Parser.EXTENSIONS.get(FlexmarkConfiguration.FLEXMARK_CONFIG);
     List<Extension> extensions = new LinkedList<>(currentExtensions);
-    extensions.add(SuppressPTagExtension.create());
+    extensions.add(SuppressPTagExtension.newInstance());
     Parser.EXTENSIONS.set(options, extensions);
 
     return FlexmarkConfiguration.newFlexmarkConfig(options);
   }
 
+  /**
+   * Convert the provided HTML string into markup.
+   *
+   * @param html
+   *          the HTML
+   * @return the markup instance
+   */
   @NonNull
   public static MarkupLine fromHtml(@NonNull String html) {
     return new MarkupLine(
         parseHtml(html, FLEXMARK_FACTORY.getFlexmarkHtmlConverter(), FLEXMARK_FACTORY.getMarkdownParser()));
   }
 
+  /**
+   * Convert the provided markdown string into markup.
+   *
+   * @param markdown
+   *          the markup
+   * @return the markup instance
+   */
   @NonNull
   public static MarkupLine fromMarkdown(@NonNull String markdown) {
     return new MarkupLine(parseMarkdown(markdown, FLEXMARK_FACTORY.getMarkdownParser()));
@@ -88,6 +102,12 @@ public class MarkupLine
     return FLEXMARK_FACTORY;
   }
 
+  /**
+   * Construct a new single line markup instance.
+   *
+   * @param astNode
+   *          the parsed markup AST
+   */
   protected MarkupLine(@NonNull Document astNode) {
     super(astNode);
     Node child = astNode.getFirstChild();

@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.core.model.constraint;
 
+import gov.nist.secauto.metaschema.core.datatype.IDataTypeAdapter;
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
@@ -39,6 +40,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -180,10 +182,11 @@ public class LoggingConstraintValidationHandler
       @NonNull IMatchesConstraint constraint,
       @NonNull INodeItem node,
       @NonNull INodeItem target,
-      @NonNull String value) {
+      @NonNull String value,
+      @NonNull Pattern pattern) {
     Level level = constraint.getLevel();
     if (isLogged(level)) {
-      logConstraint(level, target, newMatchPatternViolationMessage(constraint, node, target, value), null);
+      logConstraint(level, target, newMatchPatternViolationMessage(constraint, node, target, value, pattern), null);
     }
   }
 
@@ -193,10 +196,11 @@ public class LoggingConstraintValidationHandler
       @NonNull INodeItem node,
       @NonNull INodeItem target,
       @NonNull String value,
+      @NonNull IDataTypeAdapter<?> adapter,
       @NonNull IllegalArgumentException cause) {
     Level level = constraint.getLevel();
     if (isLogged(level)) {
-      logConstraint(level, target, newMatchDatatypeViolationMessage(constraint, node, target, value), cause);
+      logConstraint(level, target, newMatchDatatypeViolationMessage(constraint, node, target, value, adapter), cause);
     }
   }
 
@@ -242,12 +246,16 @@ public class LoggingConstraintValidationHandler
   }
 
   @Override
-  public void handleGenericValidationViolation(IConstraint constraint, INodeItem node, INodeItem target,
+  public void handleMissingIndexViolation(IIndexHasKeyConstraint constraint, INodeItem node, INodeItem target,
       String message) {
     Level level = constraint.getLevel();
     if (isLogged(level)) {
-      logConstraint(level, node, newGenericValidationViolationMessage(constraint, node, target, message), null);
+      logConstraint(level, node, newMissingIndexViolationMessage(constraint, node, target, message), null);
     }
   }
 
+  @Override
+  public void handlePass(IConstraint constraint, INodeItem node, INodeItem target) {
+    // do nothing
+  }
 }

@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.databind.model.impl;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupMultiline;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.model.constraint.AssemblyConstraintSet;
 import gov.nist.secauto.metaschema.core.model.constraint.IModelConstrained;
 import gov.nist.secauto.metaschema.core.model.constraint.ISource;
@@ -35,7 +36,6 @@ import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.IBindingContext;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
 import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelAssembly;
-import gov.nist.secauto.metaschema.databind.model.IBoundInstanceFlag;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModel;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelAssembly;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelChoiceGroup;
@@ -57,15 +57,16 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import nl.talsmasoftware.lazy4j.Lazy;
 
 //TODO: implement getProperties()
-public class DefinitionAssembly
+public final class DefinitionAssembly
     extends AbstractBoundDefinitionModelComplex<MetaschemaAssembly>
     implements IBoundDefinitionModelAssembly,
     IFeatureBoundContainerModelAssembly<
-        IBoundInstanceModel,
-        IBoundInstanceModelNamed,
-        IBoundInstanceModelField,
+        IBoundInstanceModel<?>,
+        IBoundInstanceModelNamed<?>,
+        IBoundInstanceModelField<?>,
         IBoundInstanceModelAssembly,
         IBoundInstanceModelChoiceGroup> {
+
   @NonNull
   private final Lazy<FlagContainerSupport> flagContainer;
   @NonNull
@@ -75,25 +76,27 @@ public class DefinitionAssembly
   @NonNull
   private final Lazy<QName> xmlRootQName;
   @NonNull
-  private final Lazy<Map<String, IBoundProperty>> jsonProperties;
+  private final Lazy<Map<String, IBoundProperty<?>>> jsonProperties;
 
-  public DefinitionAssembly(
-      @NonNull Class<?> clazz,
+  public static DefinitionAssembly newInstance(
+      @NonNull Class<? extends IBoundObject> clazz,
       @NonNull IBindingContext bindingContext) {
-    super(clazz, MetaschemaAssembly.class, bindingContext);
+    MetaschemaAssembly annotation = ModelUtil.getAnnotation(clazz, MetaschemaAssembly.class);
+    Class<? extends IBoundModule> moduleClass = annotation.moduleClass();
+    return new DefinitionAssembly(clazz, annotation, moduleClass, bindingContext);
+  }
+
+  private DefinitionAssembly(
+      @NonNull Class<? extends IBoundObject> clazz,
+      @NonNull MetaschemaAssembly annotation,
+      @NonNull Class<? extends IBoundModule> moduleClass,
+      @NonNull IBindingContext bindingContext) {
+    super(clazz, annotation, moduleClass, bindingContext);
 
     String rootLocalName = ModelUtil.resolveNoneOrDefault(getAnnotation().rootName(), null);
-    this.xmlRootQName = ObjectUtils.notNull(Lazy.lazy(() -> {
-      QName retval = null;
-      if (rootLocalName != null) {
-        String namespace = ModelUtil.resolveOptionalNamespace(getAnnotation().rootNamespace());
-        if (namespace == null) {
-          namespace = getContainingModule().getXmlNamespace().toASCIIString();
-        }
-        retval = new QName(namespace, rootLocalName);
-      }
-      return retval;
-    }));
+    this.xmlRootQName = ObjectUtils.notNull(Lazy.lazy(() -> rootLocalName == null
+        ? null
+        : getContainingModule().toModelQName(rootLocalName)));
     this.flagContainer = ObjectUtils.notNull(Lazy.lazy(() -> new FlagContainerSupport(this, null)));
     this.modelContainer = ObjectUtils.notNull(Lazy.lazy(() -> new AssemblyModelContainerSupport(this)));
     this.constraints = ObjectUtils.notNull(Lazy.lazy(() -> {
@@ -113,13 +116,18 @@ public class DefinitionAssembly
   }
 
   @Override
-  protected void deepCopyItemInternal(Object fromObject, Object toObject) throws BindingException {
+  protected void deepCopyItemInternal(IBoundObject fromObject, IBoundObject toObject) throws BindingException {
     // copy the flags
     super.deepCopyItemInternal(fromObject, toObject);
 
-    for (IBoundInstanceModel instance : getModelInstances()) {
+    for (IBoundInstanceModel<?> instance : getModelInstances()) {
       instance.deepCopy(fromObject, toObject);
     }
+  }
+
+  @Override
+  public Map<String, IBoundProperty<?>> getJsonProperties() {
+    return ObjectUtils.notNull(jsonProperties.get());
   }
 
   // ------------------------------------------
@@ -134,11 +142,6 @@ public class DefinitionAssembly
   }
 
   @Override
-  public IBoundInstanceFlag getJsonKeyFlagInstance() {
-    return getFlagContainer().getJsonKeyFlagInstance();
-  }
-
-  @Override
   @SuppressWarnings("null")
   @NonNull
   public AssemblyModelContainerSupport getModelContainer() {
@@ -149,11 +152,6 @@ public class DefinitionAssembly
   @NonNull
   public IModelConstrained getConstraintSupport() {
     return ObjectUtils.notNull(constraints.get());
-  }
-
-  @Override
-  public Map<String, IBoundProperty> getJsonProperties() {
-    return ObjectUtils.notNull(jsonProperties.get());
   }
 
   @Override
@@ -177,19 +175,13 @@ public class DefinitionAssembly
   @Override
   @Nullable
   public Integer getIndex() {
-    return ModelUtil.resolveNullOrInteger(getAnnotation().index());
+    return ModelUtil.resolveDefaultInteger(getAnnotation().index());
   }
 
   @Override
   @Nullable
   public MarkupMultiline getRemarks() {
     return ModelUtil.resolveToMarkupMultiline(getAnnotation().description());
-  }
-
-  @Override
-  @NonNull
-  protected Class<? extends IBoundModule> getModuleClass() {
-    return getAnnotation().moduleClass();
   }
 
   @Override
@@ -217,7 +209,7 @@ public class DefinitionAssembly
   @Override
   @Nullable
   public Integer getRootIndex() {
-    return ModelUtil.resolveNullOrInteger(getAnnotation().rootIndex());
+    return ModelUtil.resolveDefaultInteger(getAnnotation().rootIndex());
   }
 
   // ----------------------------------------

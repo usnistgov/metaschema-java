@@ -84,7 +84,7 @@ public class Range
         range.add(IIntegerItem.valueOf(val));
       }
 
-      retval = ISequence.of(range);
+      retval = ISequence.ofCollection(range);
     }
     return retval;
   }

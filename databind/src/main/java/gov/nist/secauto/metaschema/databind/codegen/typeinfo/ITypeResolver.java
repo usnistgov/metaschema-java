@@ -44,6 +44,8 @@ import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IDefinitionType
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IFieldDefinitionTypeInfo;
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.def.IModelDefinitionTypeInfo;
 
+import java.util.List;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -176,6 +178,17 @@ public interface ITypeResolver {
    */
   @NonNull
   ClassName getClassName(@NonNull INamedModelInstanceTypeInfo typeInfo);
+
+  /**
+   * Get the name of the super interfaces associated with the provided Metaschema
+   * definition.
+   *
+   * @param definition
+   *          the Metaschema definition to get the super ineterfaces for
+   * @return the super interface information for the definition
+   */
+  @NonNull
+  List<ClassName> getSuperinterfaces(@NonNull IModelDefinition definition);
 
   /**
    * Get the name of the class associated with the provided Metaschema definition

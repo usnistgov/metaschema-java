@@ -140,6 +140,7 @@
 		<dependency.moxy.version>4.0.2</dependency.moxy.version>
 		<dependency.plexus-utils.version>4.0.0</dependency.plexus-utils.version>
 		<dependency.plexus-build-api.version>1.2.0</dependency.plexus-build-api.version>
+		<dependency.pmd.version>7.1.0</dependency.pmd.version>
 		<dependency.saxon.version>12.4</dependency.saxon.version>
 		<dependency.spotbugs-annotations.version>4.8.3</dependency.spotbugs-annotations.version>
 		<dependency.stax2-api.version>4.2.2</dependency.stax2-api.version>
@@ -156,8 +157,9 @@
 		<plugin.maven-changes.version>2.12.1</plugin.maven-changes.version>
 		<plugin.maven-invoker.version>3.6.0</plugin.maven-invoker.version>
 		<plugin.maven-toolchains.version>3.1.0</plugin.maven-toolchains.version>
+		<plugin.pmd.version>3.22.0</plugin.pmd.version>
+		<plugin.spotbugs.version>4.8.4.0</plugin.spotbugs.version>
 		<plugin.templating.version>3.0.0</plugin.templating.version>
-
 		<!-- The Surefire and Failsafe configurations override the <argLine>
 		element using the @{argLine} notation which
          allows to include any argLine defined by plugins executing before them (such as
@@ -207,6 +209,11 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>metaschema-databind</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>metaschema-databind-modules</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -526,6 +533,11 @@
 				<artifactId>biz.aQute.bnd.util</artifactId>
 				<version>6.4.1</version>
 			</dependency>
+			<dependency>
+			    <groupId>org.eclipse.jdt</groupId>
+			    <artifactId>org.eclipse.jdt.annotation</artifactId>
+			    <version>2.3.0</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -648,6 +660,7 @@
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
+					<version>${plugin.spotbugs.version}</version>
 					<configuration>
 						<excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
 						<sarifOutput>true</sarifOutput>
@@ -696,6 +709,19 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
+					<version>${plugin.pmd.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>net.sourceforge.pmd</groupId>
+							<artifactId>pmd-core</artifactId>
+							<version>${dependency.pmd.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>net.sourceforge.pmd</groupId>
+							<artifactId>pmd-java</artifactId>
+							<version>${dependency.pmd.version}</version>
+						</dependency>
+					</dependencies>
 					<executions>
 						<execution>
 							<id>pmd-verify</id>

@@ -51,7 +51,7 @@ public abstract class AbstractParentCommand implements ICommand {
     this.subCommandRequired = subCommandRequired;
   }
 
-  protected void addCommandHandler(ICommand handler) {
+  protected final void addCommandHandler(ICommand handler) {
     String commandName = handler.getName();
     this.commandToSubcommandHandlerMap.put(commandName, handler);
   }
@@ -87,7 +87,7 @@ public abstract class AbstractParentCommand implements ICommand {
       status = ExitCode.INVALID_COMMAND
           .exitMessage("Please use one of the following sub-commands: " +
               getSubCommands().stream()
-                  .map(command -> command.getName())
+                  .map(ICommand::getName)
                   .collect(Collectors.joining(", ")));
     } else {
       status = ExitCode.OK.exit();

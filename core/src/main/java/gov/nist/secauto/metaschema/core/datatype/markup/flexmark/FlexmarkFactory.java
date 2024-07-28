@@ -35,6 +35,10 @@ import com.vladsch.flexmark.util.data.DataHolder;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * Provides factory methods for Flexmark processing to support HTML-to-markdown
+ * and markdown-to-HTML conversion.
+ */
 @SuppressWarnings("PMD.DataClass")
 public final class FlexmarkFactory {
   @NonNull
@@ -50,12 +54,25 @@ public final class FlexmarkFactory {
   @NonNull
   final ListOptions listOptions;
 
+  /**
+   * Get the static Flexmark factory instance.
+   *
+   * @return the instance
+   */
   @SuppressWarnings("PMD.AvoidSynchronizedAtMethodLevel")
   @NonNull
   public static synchronized FlexmarkFactory instance() {
     return SINGLETON;
   }
 
+  /**
+   * Get a Flexmark factory instance that uses the provided Flexmark
+   * configuration.
+   *
+   * @param config
+   *          the Flexmark configuration
+   * @return the instance
+   */
   @NonNull
   public static FlexmarkFactory newInstance(@NonNull DataHolder config) {
     return new FlexmarkFactory(config);
@@ -76,26 +93,54 @@ public final class FlexmarkFactory {
     this.listOptions = ListOptions.get(config);
   }
 
+  /**
+   * Get configured options for processing HTML and markdown lists.
+   *
+   * @return the options
+   */
   @NonNull
   public ListOptions getListOptions() {
     return listOptions;
   }
 
+  /**
+   * Get the Flexmark markdown parser, which can produce a markdown syntax tree.
+   *
+   * @return the parser
+   */
   @NonNull
   public Parser getMarkdownParser() {
     return markdownParser;
   }
 
+  /**
+   * Get the Flexmark HTML renderer, which can produce HTML from a markdown syntax
+   * tree.
+   *
+   * @return the parser
+   */
   @NonNull
   public HtmlRenderer getHtmlRenderer() {
     return htmlRenderer;
   }
 
+  /**
+   * Get the Flexmark formatter, which can produce markdown from a markdown syntax
+   * tree.
+   *
+   * @return the parser
+   */
   @NonNull
   public Formatter getFormatter() {
     return formatter;
   }
 
+  /**
+   * Get the Flexmark HTML converter, which can produce markdown from HTML
+   * content.
+   *
+   * @return the parser
+   */
   @NonNull
   public FlexmarkHtmlConverter getFlexmarkHtmlConverter() {
     return htmlConverter;

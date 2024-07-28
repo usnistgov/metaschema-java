@@ -27,7 +27,6 @@
 package gov.nist.secauto.metaschema.core.model.constraint;
 
 import gov.nist.secauto.metaschema.core.metapath.DynamicContext;
-import gov.nist.secauto.metaschema.core.metapath.MetapathExpression;
 import gov.nist.secauto.metaschema.core.metapath.item.node.INodeItem;
 import gov.nist.secauto.metaschema.core.model.constraint.impl.DefaultExpectConstraint;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
@@ -40,26 +39,45 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * <p>
  * A custom message can be used to indicate what a test failure signifies.
  */
-
 public interface IExpectConstraint extends IConstraint {
+  /**
+   * Get the test to use to validate selected nodes.
+   *
+   * @return the test metapath expression to use
+   */
   @NonNull
-  MetapathExpression getTest();
+  String getTest();
 
   /**
    * A message to emit when the constraint is violated. Allows embedded Metapath
-   * expressions using the syntax {@code \{metapath\}}.
+   * expressions using the syntax {@code \{ metapath \}}.
    *
    * @return the message if defined or {@code null} otherwise
    */
   String getMessage();
 
-  CharSequence generateMessage(@NonNull INodeItem item, @NonNull DynamicContext context);
+  /**
+   * Generate a violation message using the provide item and dynamic context for
+   * inline Metapath value insertion.
+   *
+   * @param item
+   *          the target Metapath item to use as the focus for Metapath evaluation
+   * @param context
+   *          the dynamic context for Metapath evaluation
+   * @return the message
+   */
+  String generateMessage(@NonNull INodeItem item, @NonNull DynamicContext context);
 
   @Override
   default <T, R> R accept(IConstraintVisitor<T, R> visitor, T state) {
     return visitor.visitExpectConstraint(this, state);
   }
 
+  /**
+   * Create a new constraint builder.
+   *
+   * @return the builder
+   */
   @NonNull
   static Builder builder() {
     return new Builder();
@@ -67,19 +85,34 @@ public interface IExpectConstraint extends IConstraint {
 
   final class Builder
       extends AbstractConstraintBuilder<Builder, IExpectConstraint> {
-    private MetapathExpression test;
+    private String test;
     private String message;
 
     private Builder() {
       // disable construction
     }
 
+    /**
+     * Use the provided test to validate selected nodes.
+     *
+     * @param test
+     *          the test metapath expression to use
+     * @return this builder
+     */
     @NonNull
-    public Builder test(@NonNull MetapathExpression test) {
+    public Builder test(@NonNull String test) {
       this.test = test;
       return this;
     }
 
+    /**
+     * A message to emit when the constraint is violated. Allows embedded Metapath
+     * expressions using the syntax {@code \{ metapath \}}.
+     *
+     * @param message
+     *          the message if defined or {@code null} otherwise
+     * @return this builder
+     */
     @NonNull
     public Builder message(@NonNull String message) {
       this.message = message;
@@ -98,11 +131,11 @@ public interface IExpectConstraint extends IConstraint {
       ObjectUtils.requireNonNull(getTest());
     }
 
-    protected MetapathExpression getTest() {
+    private String getTest() {
       return test;
     }
 
-    protected String getMessage() {
+    private String getMessage() {
       return message;
     }
 

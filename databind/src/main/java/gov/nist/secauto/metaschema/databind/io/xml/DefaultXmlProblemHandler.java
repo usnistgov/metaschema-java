@@ -26,9 +26,10 @@
 
 package gov.nist.secauto.metaschema.databind.io.xml;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.model.util.XmlEventUtil;
 import gov.nist.secauto.metaschema.databind.io.AbstractProblemHandler;
-import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModel;
+import gov.nist.secauto.metaschema.databind.model.IBoundDefinitionModelComplex;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,8 +63,8 @@ public class DefaultXmlProblemHandler
 
   @Override
   public boolean handleUnknownAttribute(
-      IBoundDefinitionModel parentDefinition,
-      Object targetObject,
+      IBoundDefinitionModelComplex parentDefinition,
+      IBoundObject targetObject,
       Attribute attribute,
       IXmlParsingContext parsingContext) {
     QName qname = attribute.getName();

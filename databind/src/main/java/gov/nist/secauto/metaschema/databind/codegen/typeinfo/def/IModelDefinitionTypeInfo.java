@@ -36,6 +36,7 @@ import gov.nist.secauto.metaschema.databind.codegen.typeinfo.IFlagInstanceTypeIn
 import gov.nist.secauto.metaschema.databind.codegen.typeinfo.ITypeResolver;
 
 import java.util.Collection;
+import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -89,6 +90,15 @@ public interface IModelDefinitionTypeInfo extends IDefinitionTypeInfo {
    */
   @NonNull
   ClassName getClassName();
+
+  /**
+   * Get the list of super interfaces the class must implement for the object
+   * definition for which this class is being generated.
+   *
+   * @return a list of super interfaces to implement
+   */
+  @NonNull
+  List<ClassName> getSuperinterfaces();
 
   /**
    * Get the type information for the provided {@code instance} value.

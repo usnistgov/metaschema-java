@@ -46,6 +46,11 @@ public class ExpressionTestBase {
   @RegisterExtension
   private final Mockery context = new JUnit5Mockery();
 
+  /**
+   * Get the mocking context.
+   *
+   * @return the mocking context
+   */
   @NonNull
   protected Mockery getContext() {
     return context;
@@ -60,13 +65,18 @@ public class ExpressionTestBase {
   protected static DynamicContext newDynamicContext() {
     URI baseUri = ObjectUtils.notNull(new File("").getAbsoluteFile().toURI());
 
-    return StaticContext.builder()
+    return new DynamicContext(StaticContext.builder()
         .baseUri(baseUri)
-        .build().dynamicContext();
+        .build());
   }
 
+  /**
+   * Get a mocked document node item.
+   *
+   * @return the mocked node item
+   */
   @NonNull
-  protected IDocumentNodeItem newDocumentNodeContext() {
+  protected IDocumentNodeItem newDocumentNodeMock() {
     IDocumentNodeItem retval = getContext().mock(IDocumentNodeItem.class);
     assert retval != null;
 
@@ -82,8 +92,16 @@ public class ExpressionTestBase {
     return retval;
   }
 
+  /**
+   * Get a mocked node item.
+   *
+   * @param mockName
+   *          the name of the mocked object
+   *
+   * @return the mocked node item
+   */
   @NonNull
-  protected INodeItem newNonDocumentNodeContext(@NonNull String mockName) {
+  protected INodeItem newNonDocumentNodeMock(@NonNull String mockName) {
     INodeItem retval = getContext().mock(INodeItem.class, mockName);
     assert retval != null;
 

@@ -32,9 +32,11 @@ import gov.nist.secauto.metaschema.core.metapath.InvalidTypeMetapathException;
 import gov.nist.secauto.metaschema.core.metapath.MetapathException;
 import gov.nist.secauto.metaschema.core.metapath.function.library.FnData;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.metapath.item.TypeSystem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyUriItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -192,70 +194,38 @@ public class DefaultFunction
             String.format("argument signature doesn't match '%s'", function.toSignature()));
       }
 
-      assert argument != null;
-
       ISequence<?> parameter = parametersIterator.next();
+      assert argument != null;
+      assert parameter != null;
 
-      int size = parameter.size();
-      Occurrence occurrence = argument.getSequenceType().getOccurrence();
-      switch (occurrence) {
-      case ONE: {
-        if (size != 1) {
-          throw new InvalidTypeMetapathException(
-              null,
-              String.format("a sequence of one expected, but found '%d'", size));
-        }
+      retval.add(convertArgument(argument, parameter));
+    }
+    return retval;
+  }
 
-        IItem item = FunctionUtils.getFirstItem(parameter, true);
-        parameter = item == null ? ISequence.empty() : ISequence.of(item);
-        break;
-      }
-      case ZERO_OR_ONE: {
-        if (size > 1) {
-          throw new InvalidTypeMetapathException(
-              null,
-              String.format("a sequence of zero or one expected, but found '%d'", size));
-        }
+  @NonNull
+  private static ISequence<?> convertArgument(
+      @NonNull IArgument argument,
+      @NonNull ISequence<?> parameter) {
+    // apply occurrence
+    ISequence<?> retval = argument.getSequenceType().getOccurrence().getSequenceHandler().handle(parameter);
 
-        IItem item = FunctionUtils.getFirstItem(parameter, false);
-        parameter = item == null ? ISequence.empty() : ISequence.of(item);
-        break;
-      }
-      case ONE_OR_MORE:
-        if (size < 1) {
-          throw new InvalidTypeMetapathException(
-              null,
-              String.format("a sequence of zero or more expected, but found '%d'", size));
-        }
-        break;
-      case ZERO:
-        if (size != 0) {
-          throw new InvalidTypeMetapathException(
-              null,
-              String.format("an empty sequence expected, but found '%d'", size));
-        }
-        break;
-      case ZERO_OR_MORE:
-      default:
-        // do nothing
-      }
+    // apply function conversion and type promotion to the parameter
+    if (!retval.isEmpty()) {
+      retval = convertSequence(argument, retval);
 
+      // verify resulting values
       Class<? extends IItem> argumentClass = argument.getSequenceType().getType();
-
-      // apply function conversion and type promotion to the parameter
-      parameter = convertSequence(argument, parameter);
-
-      // check resulting values
-      for (IItem item : parameter.asList()) {
+      for (IItem item : retval.getValue()) {
         Class<? extends IItem> itemClass = item.getClass();
         if (!argumentClass.isAssignableFrom(itemClass)) {
           throw new InvalidTypeMetapathException(
               item,
-              String.format("The type '%s' is not a subtype of '%s'", itemClass.getName(), argumentClass.getName()));
+              String.format("The type '%s' is not a subtype of '%s'",
+                  TypeSystem.getName(itemClass),
+                  TypeSystem.getName(argumentClass)));
         }
       }
-
-      retval.add(parameter);
     }
     return retval;
   }
@@ -273,44 +243,38 @@ public class DefaultFunction
    */
   @NonNull
   protected static ISequence<?> convertSequence(@NonNull IArgument argument, @NonNull ISequence<?> sequence) {
-    @NonNull ISequence<?> retval;
-    if (sequence.isEmpty()) {
-      retval = ISequence.empty();
-    } else {
-      ISequenceType requiredSequenceType = argument.getSequenceType();
-      Class<? extends IItem> requiredSequenceTypeClass = requiredSequenceType.getType();
+    ISequenceType requiredSequenceType = argument.getSequenceType();
+    Class<? extends IItem> requiredSequenceTypeClass = requiredSequenceType.getType();
 
-      List<IItem> result = new ArrayList<>(sequence.size());
+    Stream<? extends IItem> stream = sequence.safeStream();
 
-      boolean atomize = IAnyAtomicItem.class.isAssignableFrom(requiredSequenceTypeClass);
+    if (IAnyAtomicItem.class.isAssignableFrom(requiredSequenceTypeClass)) {
+      Stream<? extends IAnyAtomicItem> atomicStream = stream.flatMap(FnData::atomize);
 
-      for (IItem item : sequence.asList()) {
-        assert item != null;
-        if (atomize) {
-          item = FnData.fnDataItem(item); // NOPMD - intentional
+      // if (IUntypedAtomicItem.class.isInstance(item)) { // NOPMD
+      // // TODO: apply cast to atomic type
+      // }
 
-          // if (IUntypedAtomicItem.class.isInstance(item)) { // NOPMD
-          // // TODO: apply cast to atomic type
-          // }
-
-          // promote URIs to strings if a string is required
-          if (IStringItem.class.equals(requiredSequenceTypeClass) && IAnyUriItem.class.isInstance(item)) {
-            item = IStringItem.cast((IAnyUriItem) item); // NOPMD - intentional
-          }
-        }
-
-        // item = requiredSequenceType.
-        if (!requiredSequenceTypeClass.isInstance(item)) {
-          throw new InvalidTypeMetapathException(
-              item,
-              String.format("The type '%s' is not a subtype of '%s'", item.getClass().getName(),
-                  requiredSequenceTypeClass.getName()));
-        }
-        result.add(item);
+      if (IStringItem.class.equals(requiredSequenceTypeClass)) {
+        // promote URIs to strings if a string is required
+        atomicStream = atomicStream.map(item -> IAnyUriItem.class.isInstance(item) ? IStringItem.cast(item) : item);
       }
-      retval = ISequence.of(result);
+
+      stream = atomicStream;
     }
-    return retval;
+
+    stream = stream.peek(item -> {
+      if (!requiredSequenceTypeClass.isInstance(item)) {
+        throw new InvalidTypeMetapathException(
+            item,
+            String.format("The type '%s' is not a subtype of '%s'",
+                item.getClass().getName(),
+                requiredSequenceTypeClass.getName()));
+      }
+    });
+    assert stream != null;
+
+    return ISequence.of(stream);
   }
 
   @Override
@@ -321,7 +285,7 @@ public class DefaultFunction
     try {
       List<ISequence<?>> convertedArguments = convertArguments(this, arguments);
 
-      IItem contextItem = isFocusDepenent() ? FunctionUtils.requireFirstItem(focus, true) : null;
+      IItem contextItem = isFocusDepenent() ? ObjectUtils.requireNonNull(focus.getFirstItem(true)) : null;
 
       CallingContext callingContext = null;
       ISequence<?> result = null;
@@ -379,32 +343,6 @@ public class DefaultFunction
   @Override
   public String toString() {
     return toSignature();
-  }
-
-  @Override
-  public String toSignature() {
-    StringBuilder builder = new StringBuilder()
-        .append("Q{")
-        .append(getNamespace())
-        .append('}')
-        .append(getName()) // name
-        .append('('); // arguments
-
-    List<IArgument> arguments = getArguments();
-    if (arguments.isEmpty()) {
-      builder.append("()");
-    } else {
-      builder.append(arguments.stream().map(argument -> argument.toSignature()).collect(Collectors.joining(",")));
-
-      if (isArityUnbounded()) {
-        builder.append(", ...");
-      }
-    }
-
-    builder.append(") as ")
-        .append(getResult().toSignature());// return type
-
-    return builder.toString();
   }
 
   public final class CallingContext {

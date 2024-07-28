@@ -38,8 +38,8 @@ import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.AstCollectingVi
 import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.FlexmarkFactory;
 import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.IMarkupVisitor;
 import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.IMarkupWriter;
+import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.InsertAnchorExtension;
 import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.InsertAnchorExtension.InsertAnchorNode;
-import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.InsertVisitor;
 import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.MarkupVisitor;
 import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.MarkupXmlEventWriter;
 import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.MarkupXmlStreamWriter;
@@ -288,7 +288,7 @@ public abstract class AbstractMarkupString<TYPE extends AbstractMarkupString<TYP
   @Override
   @NonNull
   public List<InsertAnchorNode> getInserts(@NonNull Predicate<InsertAnchorNode> filter) {
-    InsertVisitor visitor = new InsertVisitor(filter);
+    InsertAnchorExtension.InsertVisitor visitor = new InsertAnchorExtension.InsertVisitor(filter);
     visitor.visitChildren(getDocument());
     return visitor.getInserts();
   }

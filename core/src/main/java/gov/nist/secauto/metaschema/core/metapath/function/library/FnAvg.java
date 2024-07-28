@@ -93,7 +93,7 @@ public final class FnAvg {
     ISequence<? extends IAnyAtomicItem> sequence = FunctionUtils.asType(
         ObjectUtils.requireNonNull(arguments.get(0)));
 
-    List<? extends IAnyAtomicItem> items = sequence.asList();
+    List<? extends IAnyAtomicItem> items = sequence.getValue();
 
     return ISequence.of(average(items));
   }
@@ -163,7 +163,7 @@ public final class FnAvg {
           InvalidArgumentFunctionException.INVALID_ARGUMENT_TYPE,
           String.format("Values must all be of type '%s'.",
               OperationFunctions.AGGREGATE_MATH_TYPES.stream()
-                  .map(type -> type.getName())
+                  .map(Class::getName)
                   .collect(CustomCollectors.joiningWithOxfordComma(","))));
     }
 
@@ -172,6 +172,7 @@ public final class FnAvg {
     return retval;
   }
 
+  @SuppressWarnings("PMD.UnnecessaryCast")
   @NonNull
   private static <T, R extends T> R average(
       @NonNull Collection<? extends T> items,

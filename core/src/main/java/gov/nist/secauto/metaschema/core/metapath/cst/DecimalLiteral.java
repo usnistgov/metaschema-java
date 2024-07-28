@@ -34,6 +34,12 @@ import java.math.BigDecimal;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * An implementation of the
+ * <a href="https://www.w3.org/TR/xpath-31/#id-literals">Decimal Literal
+ * Expression</a> supporting the creation of a Metapath constant literal
+ * {@link IDecimalItem}.
+ */
 public class DecimalLiteral
     extends AbstractLiteralExpression<IDecimalItem, BigDecimal> {
 

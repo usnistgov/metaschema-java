@@ -65,13 +65,13 @@ public final class FlexmarkConfiguration {
 
     List<Extension> extensions = List.of(
         // Metaschema insert
-        InsertAnchorExtension.create(),
+        InsertAnchorExtension.newInstance(),
         // q tag handling
-        HtmlQuoteTagExtension.create(),
+        HtmlQuoteTagExtension.newInstance(),
         TypographicExtension.create(),
         TablesExtension.create(),
         // fix for code handling
-        HtmlCodeRenderExtension.create(),
+        HtmlCodeRenderExtension.newInstance(),
         // to ensure that escaped characters are not lost
         EscapedCharacterExtension.create(),
         SuperscriptExtension.create(),

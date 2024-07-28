@@ -42,6 +42,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.xml.namespace.QName;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -57,6 +59,13 @@ public final class FieldBuilder
     super(ctx);
   }
 
+  /**
+   * Create a new builder using the provided mocking context.
+   *
+   * @param ctx
+   *          the mocking context
+   * @return the new builder
+   */
   @NonNull
   public static FieldBuilder builder(@NonNull Mockery ctx) {
     return new FieldBuilder(ctx).reset();
@@ -70,21 +79,50 @@ public final class FieldBuilder
     return this;
   }
 
+  /**
+   * Apply the provided data type adapter to built fields.
+   *
+   * @param dataTypeAdapter
+   *          the data type adapter to use
+   * @return this builder
+   */
   public FieldBuilder dataTypeAdapter(@NonNull IDataTypeAdapter<?> dataTypeAdapter) {
     this.dataTypeAdapter = dataTypeAdapter;
     return this;
   }
 
+  /**
+   * Apply the provided data type adapter to built fields.
+   *
+   * @param defaultValue
+   *          the default value to use
+   * @return this builder
+   */
   public FieldBuilder defaultValue(@NonNull Object defaultValue) {
     this.defaultValue = defaultValue;
     return this;
   }
 
+  /**
+   * Use the provided flag instances for built fields.
+   *
+   * @param flags
+   *          the flags to use
+   * @return this builder
+   */
   public FieldBuilder flags(@Nullable List<FlagBuilder> flags) {
     this.flags = flags == null ? CollectionUtil.emptyList() : flags;
     return this;
   }
 
+  /**
+   * Build a mocked field instance, based on a mocked definition, as a child of
+   * the provided parent.
+   *
+   * @param parent
+   *          the parent containing the new instance
+   * @return the new mocked instance
+   */
   @Override
   @NonNull
   public IFieldInstanceAbsolute toInstance(
@@ -93,6 +131,16 @@ public final class FieldBuilder
     return toInstance(parent, def);
   }
 
+  /**
+   * Build a mocked field instance, using the provided definition, as a child of
+   * the provided parent.
+   *
+   * @param parent
+   *          the parent containing the new instance
+   * @param definition
+   *          the definition to base the instance on
+   * @return the new mocked instance
+   */
   @NonNull
   public IFieldInstanceAbsolute toInstance(
       @NonNull IAssemblyDefinition parent,
@@ -104,6 +152,11 @@ public final class FieldBuilder
     return retval;
   }
 
+  /**
+   * Build a mocked field definition.
+   *
+   * @return the new mocked definition
+   */
   @SuppressWarnings("null")
   @NonNull
   public IFieldDefinition toDefinition() {
@@ -112,10 +165,10 @@ public final class FieldBuilder
     IFieldDefinition retval = mock(IFieldDefinition.class);
     applyDefinition(retval);
 
-    Map<String, IFlagInstance> flags = this.flags.stream()
+    Map<QName, IFlagInstance> flags = this.flags.stream()
         .map(builder -> builder.toInstance(retval))
         .collect(Collectors.toUnmodifiableMap(
-            IFlagInstance::getEffectiveName,
+            IFlagInstance::getXmlQName,
             Function.identity()));
 
     getContext().checking(new Expectations() {

@@ -26,6 +26,7 @@
 
 package gov.nist.secauto.metaschema.databind.model;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.model.IChoiceGroupInstance;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.BindingException;
@@ -45,7 +46,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * Represents a choice group instance bound to Java field.
  */
 public interface IBoundInstanceModelChoiceGroup
-    extends IBoundInstanceModel, IBoundContainerModelChoiceGroup, IChoiceGroupInstance {
+    extends IBoundInstanceModel<IBoundObject>, IBoundContainerModelChoiceGroup, IChoiceGroupInstance {
 
   /**
    * Create a new bound choice group instance.
@@ -60,12 +61,7 @@ public interface IBoundInstanceModelChoiceGroup
   static IBoundInstanceModelChoiceGroup newInstance(
       @NonNull Field field,
       @NonNull IBoundDefinitionModelAssembly containingDefinition) {
-    return new InstanceModelChoiceGroup(field, containingDefinition);
-  }
-
-  @Override
-  default IBoundInstanceModelChoiceGroup getInstance() {
-    return this;
+    return InstanceModelChoiceGroup.newInstance(field, containingDefinition);
   }
 
   @Override
@@ -135,24 +131,19 @@ public interface IBoundInstanceModelChoiceGroup
   }
 
   @Override
-  default Object readItem(Object parent, IItemReadHandler handler) throws IOException {
+  default IBoundObject readItem(IBoundObject parent, IItemReadHandler handler) throws IOException {
     return handler.readChoiceGroupItem(ObjectUtils.requireNonNull(parent, "parent"), this);
   }
 
   @Override
-  default void writeItem(Object item, IItemWriteHandler handler) throws IOException {
+  default void writeItem(IBoundObject item, IItemWriteHandler handler) throws IOException {
     handler.writeChoiceGroupItem(item, this);
   }
 
   @Override
-  default Object deepCopyItem(Object item, Object parentInstance) throws BindingException {
+  default IBoundObject deepCopyItem(IBoundObject item, IBoundObject parentInstance) throws BindingException {
     IBoundInstanceModelGroupedNamed itemInstance = getItemInstance(item);
-    return itemInstance.deepCopyItem(itemInstance, parentInstance);
-  }
-
-  @Override
-  default boolean canHandleJsonPropertyName(@NonNull String name) {
-    return name.equals(getJsonName());
+    return itemInstance.deepCopyItem(item, parentInstance);
   }
 
   @Override

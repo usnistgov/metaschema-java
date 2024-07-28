@@ -97,7 +97,7 @@ public abstract class AbstractCodedMetapathException
    *
    * @return the error code value
    */
-  protected int getCode() {
+  public int getCode() {
     return code;
   }
 
@@ -106,7 +106,7 @@ public abstract class AbstractCodedMetapathException
    *
    * @return the error code family
    */
-  protected abstract String getCodePrefix();
+  public abstract String getCodePrefix();
 
   /**
    * Get a combination of the error code family and value.

@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 
 import gov.nist.secauto.metaschema.core.configuration.IMutableConfiguration;
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.io.AbstractSerializer;
 import gov.nist.secauto.metaschema.databind.io.SerializationFeature;
@@ -41,7 +42,7 @@ import java.io.Writer;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-public class DefaultJsonSerializer<CLASS>
+public class DefaultJsonSerializer<CLASS extends IBoundObject>
     extends AbstractSerializer<CLASS> {
   private JsonFactory jsonFactory;
 
@@ -98,7 +99,7 @@ public class DefaultJsonSerializer<CLASS>
   }
 
   @Override
-  public void serialize(CLASS data, Writer writer) throws IOException {
+  public void serialize(IBoundObject data, Writer writer) throws IOException {
     try (JsonGenerator generator = newJsonGenerator(writer)) {
       IBoundDefinitionModelAssembly definition = getDefinition();
 
@@ -111,7 +112,7 @@ public class DefaultJsonSerializer<CLASS>
       }
 
       MetaschemaJsonWriter jsonWriter = new MetaschemaJsonWriter(generator);
-      definition.writeItem(data, jsonWriter);
+      jsonWriter.write(definition, data);
 
       if (serializeRoot) {
         generator.writeEndObject();

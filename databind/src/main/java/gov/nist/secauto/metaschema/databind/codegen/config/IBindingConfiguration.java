@@ -29,6 +29,8 @@ package gov.nist.secauto.metaschema.databind.codegen.config;
 import gov.nist.secauto.metaschema.core.model.IModelDefinition;
 import gov.nist.secauto.metaschema.core.model.IModule;
 
+import java.util.List;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -75,4 +77,15 @@ public interface IBindingConfiguration {
    */
   @Nullable
   String getQualifiedBaseClassName(@NonNull IModelDefinition definition);
+
+  /**
+   * Get the Java class names of the superinterfaces to use for the class
+   * associated with the provided definition.
+   *
+   * @param definition
+   *          a definition that may be built as a class
+   * @return a list of superinterface class names
+   */
+  @NonNull
+  List<String> getQualifiedSuperinterfaceClassNames(@NonNull IModelDefinition definition);
 }

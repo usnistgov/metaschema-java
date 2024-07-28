@@ -47,6 +47,7 @@ import java.util.List;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public abstract class AbstractCollectionBuilder<T extends AbstractCollectionBuilder<T>>
     extends AbstractBuilder<T>
@@ -139,19 +140,11 @@ public abstract class AbstractCollectionBuilder<T extends AbstractCollectionBuil
     @NonNull
     private final IKey key;
 
+    @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
     protected Type(@NonNull T instance) {
       this.namedModelInstance = instance;
 
-      String jsonKeyFlagName = instance.getJsonKeyFlagName();
-      IFlagInstance jsonKey = null;
-      if (jsonKeyFlagName != null) {
-        jsonKey = instance.getDefinition().getFlagInstanceByName(jsonKeyFlagName);
-
-        if (jsonKey == null) {
-          throw new IllegalStateException(String.format("No JSON key flag named '%s.", jsonKeyFlagName));
-        }
-      }
-      this.jsonKeyFlag = jsonKey;
+      this.jsonKeyFlag = instance.getEffectiveJsonKey();
 
       if (instance instanceof INamedModelInstanceGrouped) {
         INamedModelInstanceGrouped grouped = (INamedModelInstanceGrouped) instance;
@@ -162,7 +155,11 @@ public abstract class AbstractCollectionBuilder<T extends AbstractCollectionBuil
         this.discriminatorValue = null;
       }
       this.key
-          = IKey.of(instance.getDefinition(), jsonKeyFlagName, this.discriminatorProperty, this.discriminatorValue);
+          = IKey.of(
+              instance.getDefinition(),
+              jsonKeyFlag == null ? null : jsonKeyFlag.getName(),
+              this.discriminatorProperty,
+              this.discriminatorValue);
     }
 
     @NonNull

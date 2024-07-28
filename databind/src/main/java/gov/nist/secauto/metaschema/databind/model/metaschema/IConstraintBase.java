@@ -27,8 +27,8 @@
 package gov.nist.secauto.metaschema.databind.model.metaschema;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.MarkupLine;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Property;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.Remarks;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.Property;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.Remarks;
 
 import java.util.List;
 

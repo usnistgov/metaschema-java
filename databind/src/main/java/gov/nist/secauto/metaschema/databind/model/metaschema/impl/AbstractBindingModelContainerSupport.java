@@ -26,65 +26,68 @@
 
 package gov.nist.secauto.metaschema.databind.model.metaschema.impl;
 
+import gov.nist.secauto.metaschema.core.model.IAssemblyDefinition;
+import gov.nist.secauto.metaschema.core.model.IAssemblyInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IContainerModelAbsolute;
 import gov.nist.secauto.metaschema.core.model.IContainerModelSupport;
+import gov.nist.secauto.metaschema.core.model.IFieldDefinition;
+import gov.nist.secauto.metaschema.core.model.IFieldInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IModelInstanceAbsolute;
+import gov.nist.secauto.metaschema.core.model.IModule;
+import gov.nist.secauto.metaschema.core.model.INamedModelInstanceAbsolute;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.databind.model.IBoundInstanceModelGroupedAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingContainerModelAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionAssembly;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingDefinitionModelField;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelAssemblyAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelFieldAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingInstanceModelNamedAbsolute;
-import gov.nist.secauto.metaschema.databind.model.metaschema.IBindingModule;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.AssemblyReference;
-import gov.nist.secauto.metaschema.databind.model.metaschema.binding.FieldReference;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.AssemblyReference;
+import gov.nist.secauto.metaschema.databind.model.binding.metaschema.FieldReference;
 
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class AbstractBindingModelContainerSupport
     implements IContainerModelSupport<
-        IBindingInstanceModelAbsolute,
-        IBindingInstanceModelNamedAbsolute,
-        IBindingInstanceModelFieldAbsolute,
-        IBindingInstanceModelAssemblyAbsolute> {
+        IModelInstanceAbsolute,
+        INamedModelInstanceAbsolute,
+        IFieldInstanceAbsolute,
+        IAssemblyInstanceAbsolute> {
 
   protected static void addInstance(
-      @NonNull IBindingInstanceModelAssemblyAbsolute assembly,
-      @NonNull List<IBindingInstanceModelAbsolute> modelInstances,
-      @NonNull Map<String, IBindingInstanceModelNamedAbsolute> namedModelInstances,
-      @NonNull Map<String, IBindingInstanceModelAssemblyAbsolute> assemblyInstances) {
-    String effectiveName = assembly.getEffectiveName();
+      @NonNull IAssemblyInstanceAbsolute assembly,
+      @NonNull List<IModelInstanceAbsolute> modelInstances,
+      @NonNull Map<QName, INamedModelInstanceAbsolute> namedModelInstances,
+      @NonNull Map<QName, IAssemblyInstanceAbsolute> assemblyInstances) {
+    QName effectiveName = assembly.getXmlQName();
     modelInstances.add(assembly);
     namedModelInstances.put(effectiveName, assembly);
     assemblyInstances.put(effectiveName, assembly);
   }
 
   protected static void addInstance(
-      @NonNull IBindingInstanceModelFieldAbsolute field,
-      @NonNull List<IBindingInstanceModelAbsolute> modelInstances,
-      @NonNull Map<String, IBindingInstanceModelNamedAbsolute> namedModelInstances,
-      @NonNull Map<String, IBindingInstanceModelFieldAbsolute> fieldInstances) {
-    String effectiveName = field.getEffectiveName();
+      @NonNull IFieldInstanceAbsolute field,
+      @NonNull List<IModelInstanceAbsolute> modelInstances,
+      @NonNull Map<QName, INamedModelInstanceAbsolute> namedModelInstances,
+      @NonNull Map<QName, IFieldInstanceAbsolute> fieldInstances) {
+    QName effectiveName = field.getXmlQName();
     modelInstances.add(field);
     namedModelInstances.put(effectiveName, field);
     fieldInstances.put(effectiveName, field);
   }
 
   @NonNull
-  protected static IBindingInstanceModelAssemblyAbsolute newInstance(
+  protected static IAssemblyInstanceAbsolute newInstance(
       @NonNull AssemblyReference obj,
       @NonNull IBoundInstanceModelGroupedAssembly objInstance,
       int position,
-      @NonNull IBindingContainerModelAbsolute parent) {
-    IBindingDefinitionAssembly owningDefinition = parent.getOwningDefinition();
-    IBindingModule module = owningDefinition.getContainingModule();
+      @NonNull IContainerModelAbsolute parent) {
+    IAssemblyDefinition owningDefinition = parent.getOwningDefinition();
+    IModule module = owningDefinition.getContainingModule();
 
     String name = ObjectUtils.requireNonNull(obj.getRef());
-    IBindingDefinitionAssembly definition = module.getScopedAssemblyDefinitionByName(name);
+    IAssemblyDefinition definition = module.getScopedAssemblyDefinitionByName(
+        module.toModelQName(name));
 
     if (definition == null) {
       throw new IllegalStateException(
@@ -97,16 +100,17 @@ public abstract class AbstractBindingModelContainerSupport
   }
 
   @NonNull
-  protected static IBindingInstanceModelFieldAbsolute newInstance(
+  protected static IFieldInstanceAbsolute newInstance(
       @NonNull FieldReference obj,
       @NonNull IBoundInstanceModelGroupedAssembly objInstance,
       int position,
-      @NonNull IBindingContainerModelAbsolute parent) {
-    IBindingDefinitionAssembly owningDefinition = parent.getOwningDefinition();
-    IBindingModule module = owningDefinition.getContainingModule();
+      @NonNull IContainerModelAbsolute parent) {
+    IAssemblyDefinition owningDefinition = parent.getOwningDefinition();
+    IModule module = owningDefinition.getContainingModule();
 
     String name = ObjectUtils.requireNonNull(obj.getRef());
-    IBindingDefinitionModelField definition = module.getScopedFieldDefinitionByName(name);
+    IFieldDefinition definition = module.getScopedFieldDefinitionByName(
+        module.toModelQName(name));
     if (definition == null) {
       throw new IllegalStateException(
           String.format("Unable to resolve field reference '%s' in definition '%s' in module '%s'",

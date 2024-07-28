@@ -45,7 +45,12 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public class SuppressPTagExtension
     implements HtmlRenderer.HtmlRendererExtension {
 
-  public static SuppressPTagExtension create() {
+  /**
+   * Construct a new extension instance.
+   *
+   * @return the instance
+   */
+  public static SuppressPTagExtension newInstance() {
     return new SuppressPTagExtension();
   }
 

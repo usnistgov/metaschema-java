@@ -34,6 +34,12 @@ import java.math.BigInteger;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * An implementation of the
+ * <a href="https://www.w3.org/TR/xpath-31/#id-literals">Integer Literal
+ * Expression</a> supporting the creation of a Metapath constant literal
+ * {@link IIntegerItem}.
+ */
 public class IntegerLiteral
     extends AbstractLiteralExpression<IIntegerItem, BigInteger> {
 

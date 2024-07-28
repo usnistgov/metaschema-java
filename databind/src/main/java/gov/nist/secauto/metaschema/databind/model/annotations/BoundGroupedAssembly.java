@@ -31,6 +31,8 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import gov.nist.secauto.metaschema.core.model.IBoundObject;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -42,8 +44,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * Module assembly.
  * <p>
  * For XML serialization, the {@link #useName()} identifies the name of the
- * element to use and the {@link #namespace()} identifies the namespace of this
- * element.
+ * element to use for this element.
  * <p>
  * For JSON and YAML serializations, the {@link #useName()} identifies the
  * property/item name to use.
@@ -96,17 +97,6 @@ public @interface BoundGroupedAssembly {
   int useIndex() default Integer.MIN_VALUE;
 
   /**
-   * The namespace to use for associated XML elements.
-   * <p>
-   * If the value is "##default", then element name is derived from the namespace
-   * provided in the package-info.
-   *
-   * @return the namespace
-   */
-  @NonNull
-  String namespace() default ModelUtil.DEFAULT_STRING_VALUE;
-
-  /**
    * Get any remarks for this field.
    *
    * @return a markdown string or {@code "##none"} if no remarks are provided
@@ -132,5 +122,5 @@ public @interface BoundGroupedAssembly {
    * @return the bound class
    */
   @NonNull
-  Class<?> binding();
+  Class<? extends IBoundObject> binding();
 }

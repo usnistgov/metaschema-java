@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.cst;
 
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.List;
 
@@ -56,9 +57,9 @@ public class Intersect
 
   @Override
   protected ISequence<?> applyFilterTo(@NonNull ISequence<?> result, @NonNull List<? extends IItem> items) {
-    return ISequence.of(result.asStream()
+    return ISequence.of(ObjectUtils.notNull(result.stream()
         .distinct()
-        .filter(items::contains));
+        .filter(items::contains)));
   }
 
   @Override

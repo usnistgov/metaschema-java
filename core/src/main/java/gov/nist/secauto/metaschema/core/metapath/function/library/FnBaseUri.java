@@ -101,7 +101,7 @@ public final class FnBaseUri {
 
     ISequence<? extends INodeItem> arg = FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0)));
 
-    INodeItem item = FunctionUtils.getFirstItem(arg, true);
+    INodeItem item = arg.getFirstItem(true);
 
     return ISequence.of(fnBaseUri(item));
   }

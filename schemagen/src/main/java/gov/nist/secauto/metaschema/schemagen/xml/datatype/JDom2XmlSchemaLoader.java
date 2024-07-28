@@ -54,11 +54,13 @@ public class JDom2XmlSchemaLoader {
   private final Document document;
 
   @SuppressWarnings("null")
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   public JDom2XmlSchemaLoader(@NonNull Path path) throws JDOMException, IOException {
     this(new SAXBuilder().build(path.toFile()));
   }
 
   @SuppressWarnings("null")
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   public JDom2XmlSchemaLoader(@NonNull InputStream is) throws JDOMException, IOException {
     this(new SAXBuilder().build(is));
   }

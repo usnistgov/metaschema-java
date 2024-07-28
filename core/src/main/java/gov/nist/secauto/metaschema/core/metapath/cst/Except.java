@@ -28,6 +28,7 @@ package gov.nist.secauto.metaschema.core.metapath.cst;
 
 import gov.nist.secauto.metaschema.core.metapath.ISequence;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
+import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.List;
 
@@ -55,8 +56,8 @@ public class Except
 
   @Override
   protected ISequence<?> applyFilterTo(@NonNull ISequence<?> result, @NonNull List<? extends IItem> items) {
-    return ISequence.of(result.asStream()
-        .filter(item -> !items.contains(item)));
+    return ISequence.of(ObjectUtils.notNull(result.stream()
+        .filter(item -> !items.contains(item))));
   }
 
   @Override

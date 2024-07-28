@@ -35,7 +35,6 @@ import gov.nist.secauto.metaschema.core.metapath.function.IFunction;
 import gov.nist.secauto.metaschema.core.metapath.item.IItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IBooleanItem;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IStringItem;
-import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
 import java.util.List;
 
@@ -48,6 +47,9 @@ public final class FnStartsWith {
   static final IFunction SIGNATURE = IFunction.builder()
       .name("starts-with")
       .namespace(MetapathConstants.NS_METAPATH_FUNCTIONS)
+      .deterministic()
+      .contextDependent()
+      .focusIndependent()
       .argument(IArgument.builder()
           .name("arg1").type(IStringItem.class)
           .zeroOrOne()
@@ -68,10 +70,9 @@ public final class FnStartsWith {
       @NonNull List<ISequence<?>> arguments,
       @NonNull DynamicContext dynamicContext,
       IItem focus) {
-    IStringItem arg1 = FunctionUtils.getFirstItem(
-        FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(0))), true);
-    IStringItem arg2 = FunctionUtils.getFirstItem(
-        FunctionUtils.asType(ObjectUtils.requireNonNull(arguments.get(1))), true);
+    IStringItem arg1 = FunctionUtils.asTypeOrNull(arguments.get(0).getFirstItem(true));
+
+    IStringItem arg2 = FunctionUtils.asTypeOrNull(arguments.get(1).getFirstItem(true));
 
     return ISequence.of(fnStartsWith(arg1, arg2));
   }

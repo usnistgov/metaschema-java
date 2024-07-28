@@ -33,6 +33,7 @@ import gov.nist.secauto.metaschema.databind.codegen.config.IBindingConfiguration
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.jdt.annotation.Owning;
 
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;
@@ -138,21 +139,26 @@ public final class ModuleCompilerHelper {
    *          load a class
    * @return the new class loader
    */
-  @SuppressWarnings("null")
   @NonNull
   public static ClassLoader newClassLoader(
       @NonNull final Path classDir,
       @NonNull final ClassLoader parent) {
-    return AccessController.doPrivileged(new PrivilegedAction<>() {
-      @Override
-      public URLClassLoader run() {
-        try {
-          return new URLClassLoader(new URL[] { classDir.toUri().toURL() }, parent);
-        } catch (MalformedURLException ex) {
-          throw new IllegalStateException("unable to configure class loader", ex);
-        }
-      }
-    });
+    ClassLoader retval = AccessController
+        .doPrivileged((PrivilegedAction<ClassLoader>) () -> newClassLoaderInternal(classDir, parent));
+    assert retval != null;
+    return retval;
+  }
+
+  @Owning
+  @NonNull
+  private static ClassLoader newClassLoaderInternal(
+      @NonNull final Path classDir,
+      @NonNull final ClassLoader parent) {
+    try {
+      return new URLClassLoader(new URL[] { classDir.toUri().toURL() }, parent);
+    } catch (MalformedURLException ex) {
+      throw new IllegalStateException("unable to configure class loader", ex);
+    }
   }
 
   @SuppressWarnings({

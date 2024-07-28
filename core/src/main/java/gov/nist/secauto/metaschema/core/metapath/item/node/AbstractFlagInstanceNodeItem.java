@@ -30,8 +30,6 @@ import gov.nist.secauto.metaschema.core.metapath.item.atomic.IAnyAtomicItem;
 import gov.nist.secauto.metaschema.core.model.IFlagDefinition;
 import gov.nist.secauto.metaschema.core.model.IFlagInstance;
 
-import java.net.URI;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
@@ -70,11 +68,6 @@ abstract class AbstractFlagInstanceNodeItem
   @NonNull
   public IModelNodeItem<?, ?> getParentNodeItem() {
     return parent;
-  }
-
-  @Override
-  public URI getBaseUri() {
-    return getDefinition().getContainingModule().getLocation();
   }
 
   @Override

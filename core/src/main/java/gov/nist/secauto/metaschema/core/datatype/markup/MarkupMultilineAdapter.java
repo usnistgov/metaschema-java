@@ -29,6 +29,7 @@ package gov.nist.secauto.metaschema.core.datatype.markup;
 import com.fasterxml.jackson.core.JsonParser;
 
 import gov.nist.secauto.metaschema.core.datatype.markup.flexmark.XmlMarkupParser;
+import gov.nist.secauto.metaschema.core.metapath.MetapathConstants;
 import gov.nist.secauto.metaschema.core.metapath.item.atomic.IMarkupItem;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 
@@ -45,15 +46,15 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 public class MarkupMultilineAdapter
     extends AbstractMarkupAdapter<MarkupMultiline> {
   @NonNull
-  private static final List<String> NAMES = ObjectUtils.notNull(
-      List.of("markup-multiline"));
+  private static final List<QName> NAMES = ObjectUtils.notNull(
+      List.of(new QName(MetapathConstants.NS_METAPATH.toASCIIString(), "markup-multiline")));
 
   MarkupMultilineAdapter() {
     super(MarkupMultiline.class);
   }
 
   @Override
-  public List<String> getNames() {
+  public List<QName> getNames() {
     return NAMES;
   }
 

@@ -33,6 +33,7 @@ import java.net.URI;
 import java.nio.file.Path;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 class PackageProductionImpl implements IPackageProduction {
   @NonNull
@@ -40,6 +41,7 @@ class PackageProductionImpl implements IPackageProduction {
   @NonNull
   private final IGeneratedClass packageInfoClass;
 
+  @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "Use of final fields")
   public PackageProductionImpl(
       @NonNull PackageMetadata metadata,
       @NonNull IMetaschemaClassFactory classFactory,
