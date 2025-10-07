@@ -46,7 +46,7 @@ jobs:
         MAVEN_CENTRAL_TOKEN: ${{ secrets.SONATYPE_PASSWORD }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
     - name: Create release
-      uses: softprops/action-gh-release@9d7c94cfd0a1f3ed45544c887983e9fa900f0564
+      uses: softprops/action-gh-release@aec2ec56f94eb8180ceec724245f64ef008b89f5
       with:
         draft: true
         generate_release_notes: true
