@@ -43,7 +43,6 @@ import gov.nist.secauto.metaschema.core.model.xml.ModuleLoader;
 import gov.nist.secauto.metaschema.core.util.CustomCollectors;
 import gov.nist.secauto.metaschema.core.util.ObjectUtils;
 import gov.nist.secauto.metaschema.core.util.UriUtils;
-import gov.nist.secauto.metaschema.databind.io.Format;
 import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator;
 import gov.nist.secauto.metaschema.schemagen.ISchemaGenerator.SchemaFormat;
 import gov.nist.secauto.metaschema.schemagen.SchemaGenerationFeature;
@@ -88,7 +87,7 @@ public class GenerateSchemaCommand
           .required()
           .hasArg()
           .argName("FORMAT")
-          .desc("source format: xml, json, or yaml")
+          .desc("generated schema format: xml or json")
           .build());
   @NonNull
   private static final Option INLINE_TYPES_OPTION = ObjectUtils.notNull(
@@ -139,7 +138,7 @@ public class GenerateSchemaCommand
       InvalidArgumentException newEx = new InvalidArgumentException( // NOPMD - intentional
           String.format("Invalid '%s' argument. The format must be one of: %s.",
               OptionUtils.toArgument(AS_OPTION),
-              Arrays.asList(Format.values()).stream()
+              Arrays.asList(SchemaFormat.values()).stream()
                   .map(format -> format.name())
                   .collect(CustomCollectors.joiningWithOxfordComma("and"))));
       newEx.setOption(AS_OPTION);
