@@ -283,7 +283,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
 
   @Override
   public String getUseName() {
-    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName() : null;
+    return getXmlAssembly().isSetUseName() ? getXmlAssembly().getUseName().getStringValue() : null;
   }
 
   @Override
@@ -324,7 +324,7 @@ class XmlGlobalAssemblyDefinition implements IAssemblyDefinition { // NOPMD - in
 
   @Override
   public String getRootName() {
-    return getXmlAssembly().isSetRootName() ? getXmlAssembly().getRootName() : null;
+    return getXmlAssembly().isSetRootName() ? getXmlAssembly().getRootName().getStringValue() : null;
   }
 
   @SuppressWarnings("null")

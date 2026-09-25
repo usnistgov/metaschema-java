@@ -127,7 +127,7 @@ class XmlFieldInstance
 
   @Override
   public String getUseName() {
-    return getXmlField().isSetUseName() ? getXmlField().getUseName() : null;
+    return getXmlField().isSetUseName() ? getXmlField().getUseName().getStringValue() : null;
   }
 
   @Override
