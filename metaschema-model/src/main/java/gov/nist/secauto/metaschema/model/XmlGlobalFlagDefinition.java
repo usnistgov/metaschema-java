@@ -195,7 +195,7 @@ class XmlGlobalFlagDefinition implements IFlagDefinition {
 
   @Override
   public String getUseName() {
-    String retval = getXmlFlag().getUseName();
+    String retval = getXmlFlag().getUseName().getStringValue();
     if (retval == null) {
       retval = getName();
     }

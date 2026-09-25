@@ -118,7 +118,7 @@ class XmlFlagInstance
 
   @Override
   public String getUseName() {
-    return getXmlFlag().isSetUseName() ? getXmlFlag().getUseName() : null;
+    return getXmlFlag().isSetUseName() ? getXmlFlag().getUseName().getStringValue() : null;
   }
 
   @Override
